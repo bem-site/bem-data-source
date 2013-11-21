@@ -16,42 +16,65 @@ var make = function() {
     LOGGER.info('- data source start -');
     util.createContentDirectory()
     .then(function() {
-        return resolveRepositories();
+        return getSources();
     })
-    .then(function() {
-        return resolveTags();
+    .then(function(sources) {
+        return resolveRepositories(sources);
+    })
+    .then(function(sources) {
+        return resolveTags(sources);
     })
 };
 
-var resolveRepositories = function() {
-    var sources = config.get('sources');
-
-    var s = [];
-
-    Object.getOwnPropertyNames(sources).forEach(function(key) {
-        sources[key].forEach(function(source) {
-            var owner = source.org || source.user,
-                repositories = source.repositories;
-
-            (owner && repositories) && repositories.forEach(function(repository) {
-                s.push(_.extend(repository, { user: owner, isPrivate: key == 'private' }))
-            })
-        });
-    });
+var getSources = function() {
 
     var def = Q.defer(),
-        promises = s.map(function(item) {
+        _sources = [],
+        sources = config.get('sources');
+
+    try {
+        Object.getOwnPropertyNames(sources).forEach(function(key) {
+            sources[key].forEach(function(source) {
+                var owner = source.org || source.user,
+                    repositories = source.repositories;
+
+                (owner && repositories) && repositories.forEach(function(repository) {
+                    _sources.push(_.extend(repository, { user: owner, isPrivate: key == 'private' }))
+                })
+            });
+        });
+
+        def.resolve(_sources);
+    } catch(err) {
+        def.reject(err);
+    } finally {
+        return def.promise;
+    }
+
+};
+
+var resolveRepositories = function(sources) {
+
+    var def = Q.defer(),
+        promises = null;
+
+    try {
+        promises = sources.map(function(item) {
             return git.getRepository(item.user, item.name, item.isPrivate);
         });
 
-    Q.allSettled(promises).then(function(res) {
-        def.resolve(res);
-    });
+        Q.allSettled(promises).then(function(res) {
+            def.resolve(res);
+        });
 
-    return def.promise;
+    } catch(err) {
+        def.reject(err);
+    } finally {
+        return def.promise;
+    }
 };
 
-var resolveTags = function() {
+var resolveTags = function(data) {
 
 };
 
