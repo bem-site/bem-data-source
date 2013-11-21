@@ -1,0 +1,52 @@
+{
+    "private": [
+        {
+            "org": "lego",
+            "repositories": [
+                {
+                    "name": "islands-components",
+                    "dir": "islands-components",
+                    "tags-allow": [],
+                    "tags-deny": []
+                },
+                {
+                    "name": "islands-page",
+                    "dir": "islands-page",
+                    "tags-allow": [],
+                    "tags-deny": []
+                },
+                {
+                    "name": "islands-user",
+                    "dir": "islands-user",
+                    "tags-allow": [],
+                    "tags-deny": []
+                },
+                {
+                    "name": "islands-search",
+                    "dir": "islands-search",
+                    "tags-allow": [],
+                    "tags-deny": []
+                }
+            ]
+        }
+    ],
+    "public": [
+        {
+            "org": "bem",
+            "repositories": [
+                {
+                    "name": "bem-core",
+                    "dir": "bem-core",
+                    "tags-allow": [],
+                    "tags-deny": []
+                },
+                {
+                    "name": "bem-components",
+                    "dir": "bem-components",
+                    "tags-allow": [],
+                    "tags-deny": []
+                }
+            ]
+        }
+    ]
+}
