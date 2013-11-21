@@ -1,6 +1,111 @@
 {
     "contentDirectory": "content",
 
+    "gitAPI": {
+        "common": {
+            "version": "3.0.0",
+            "debug": "true",
+            "protocol": "https",
+            "timeout": "5000"
+        },
+        "public": {
+            "host": "api.github.com"
+        },
+        "private": {
+            "host": "github.yandex-team.ru",
+            "url": "/api/v3"
+        }
+    },
+
+    "sources": {
+        "private": [
+            {
+                "org": "lego",
+                "repositories": [
+                    {
+                        "name": "islands-components",
+                        "dir": "islands-components",
+                        "tags": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "branches": {
+                            "include": [],
+                            "exclude": []
+                        }
+                    },
+                    {
+                        "name": "islands-page",
+                        "dir": "islands-page",
+                        "tags": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "branches": {
+                            "include": [],
+                            "exclude": []
+                        }
+                    },
+                    {
+                        "name": "islands-user",
+                        "dir": "islands-user",
+                        "tags": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "branches": {
+                            "include": [],
+                            "exclude": []
+                        }
+                    },
+                    {
+                        "name": "islands-search",
+                        "dir": "islands-search",
+                        "tags": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "branches": {
+                            "include": [],
+                            "exclude": []
+                        }
+                    }
+                ]
+            }
+        ],
+        "public": [
+            {
+                "org": "bem",
+                "repositories": [
+                    {
+                        "name": "bem-core",
+                        "dir": "bem-core",
+                        "tags": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "branches": {
+                            "include": [],
+                            "exclude": []
+                        }
+                    },
+                    {
+                        "name": "bem-components",
+                        "dir": "bem-components",
+                        "tags": {
+                            "include": [],
+                            "exclude": []
+                        },
+                        "branches": {
+                            "include": [],
+                            "exclude": []
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+
     "messages": {
         "contentDirectory": {
             "created": "Content directory has been created",
