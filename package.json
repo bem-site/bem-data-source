@@ -1,0 +1,24 @@
+{
+  "name": "bem-data-source",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node make.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tormozz48/bem-data-source.git"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "dependencies": {
+    "bem": "~0.6.16",
+    "bower": "~1.2.7",
+    "nconf": "~0.6.8",
+    "q": "~0.9.7",
+    "q-io": "~1.10.6",
+    "github": "git://github.com/whentomanage/node-github.git",
+    "underscore": "~1.5.2"
+  }
+}
