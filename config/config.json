@@ -1,3 +1,10 @@
 {
-    "targetDirectory": "content"
+    "contentDirectory": "content",
+
+    "messages": {
+        "contentDirectory": {
+            "created": "Content directory has been created",
+            "exist": "Content directory already exist"
+        }
+    }
 }
