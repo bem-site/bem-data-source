@@ -43,7 +43,7 @@ exports.getRepository = function(source) {
 };
 
 exports.getRepositoryTags = function(source) {
-    LOGGER.finfo('getRepositoryTags user: %s repo: %s isPrivate: %s', source.user, source.name, source.isPrivate);
+    LOGGER.finfo('getRepositoryTags user: %s repo: %s isPrivate: %s url: %s', source.user, source.name, source.isPrivate, source.url);
 
     var def = Q.defer(),
         git = source.isPrivate ? gitPrivate : gitPublic;
