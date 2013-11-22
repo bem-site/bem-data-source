@@ -25,24 +25,53 @@ var gitPublic = null,
     gitPrivate = new API(_.extend(privateConfig, commonConfig));
 })();
 
-exports.getRepository = function(user, repo, isPrivate) {
-    LOGGER.finfo('getRepository user: %s repo: %s isPrivate: %s', user, repo, isPrivate);
+exports.getRepository = function(source) {
+    LOGGER.finfo('getRepository user: %s repo: %s isPrivate: %s', source.user, source.name, source.isPrivate);
 
     var def = Q.defer(),
-        git = isPrivate ? gitPrivate : gitPublic;
+        git = source.isPrivate ? gitPrivate : gitPublic;
 
-    git.repos.get({ user: user, repo: repo }, function(err, res) {
-        if (err) def.reject(err);
-        def.resolve(res);
+    git.repos.get({ user: source.user, repo: source.name }, function(err, res) {
+        if (err) {
+            LOGGER.error(err.message);
+            def.reject(err);
+        }
+        def.resolve({ source: source, result: res });
     });
 
     return def.promise;
 };
 
-exports.getRepositoryTags = function() {
+exports.getRepositoryTags = function(source) {
+    LOGGER.finfo('getRepositoryTags user: %s repo: %s isPrivate: %s', source.user, source.name, source.isPrivate);
 
+    var def = Q.defer(),
+        git = source.isPrivate ? gitPrivate : gitPublic;
+
+    git.repos.getTags({ user: source.user, repo: source.name }, function(err, res) {
+        if (err) {
+            LOGGER.error(err.message);
+            def.reject(err);
+        }
+        def.resolve({ source: source, result: res });
+    });
+
+    return def.promise;
 };
 
-exports.getRepositoryBranches = function() {
+exports.getRepositoryBranches = function(source) {
+    LOGGER.finfo('getRepositoryBranches user: %s repo: %s isPrivate: %s', source.user, source.name, source.isPrivate);
 
+    var def = Q.defer(),
+        git = source.isPrivate ? gitPrivate : gitPublic;
+
+    git.repos.getBranches({ user: source.user, repo: source.name }, function(err, res) {
+        if (err) {
+            LOGGER.error(err.message);
+            def.reject(err);
+        }
+        def.resolve({ source: source, result: res });
+    });
+
+    return def.promise;
 };
