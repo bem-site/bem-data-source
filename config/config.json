@@ -26,7 +26,7 @@
                         "name": "islands-components",
                         "dir": "islands-components",
                         "tags": {
-                            "include": [],
+                            "include": "last",
                             "exclude": []
                         },
                         "branches": {
@@ -38,7 +38,7 @@
                         "name": "islands-page",
                         "dir": "islands-page",
                         "tags": {
-                            "include": [],
+                            "include": "last",
                             "exclude": []
                         },
                         "branches": {
@@ -50,7 +50,7 @@
                         "name": "islands-user",
                         "dir": "islands-user",
                         "tags": {
-                            "include": [],
+                            "include": "last",
                             "exclude": []
                         },
                         "branches": {
@@ -62,7 +62,7 @@
                         "name": "islands-search",
                         "dir": "islands-search",
                         "tags": {
-                            "include": [],
+                            "include": "last",
                             "exclude": []
                         },
                         "branches": {
@@ -93,7 +93,7 @@
                         "name": "bem-components",
                         "dir": "bem-components",
                         "tags": {
-                            "include": [],
+                            "include": "last",
                             "exclude": []
                         },
                         "branches": {

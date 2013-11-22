@@ -1,6 +1,7 @@
 var FS = require('fs'),
     CP = require('child_process'),
 
+    //bem tools modules
     BEM = require('bem'),
     Q = BEM.require('q'),
     FS = BEM.require('q-io/fs'),
@@ -9,6 +10,7 @@ var FS = require('fs'),
     U = BEM.require('./util'),
     _ = BEM.require('underscore'),
 
+    //application modules
     config = require('./config/config'),
     git = require('./libs/git'),
     util = require('./libs/util');
@@ -31,6 +33,10 @@ var make = (function() {
         })
 })();
 
+/**
+ * Retrieves sources configuration and modify it for suitable github API calling
+ * @returns {defer.promise|*}
+ */
 var getSources = function() {
     LOGGER.info('getSources start');
 
@@ -57,7 +63,6 @@ var getSources = function() {
     } finally {
         return def.promise;
     }
-
 };
 
 /**
@@ -147,6 +152,10 @@ var resolveTags = function(sources) {
                         }
                         if(_.isArray(source.tags.include) && source.tags.include.length > 0) {
                             tags = _.intersection(tags, source.tags.include);
+                        }else if(_.isString(source.tags.include)) {
+                            if(source.tags.include == 'last') {
+                                tags = [_.last(tags.sort(util.sortTags))];
+                            }
                         }
                     }
 
@@ -169,4 +178,52 @@ var resolveTags = function(sources) {
 
 var resolveBranches = function(sources) {
     LOGGER.info('resolveBranches start');
+
+    var def = Q.defer();
+    try {
+        Q.allSettled(
+                sources.map(function(item) {
+                    return git.getRepositoryBranches(item);
+                })
+            ).then(function(res) {
+                //remove all rejected promises
+                res = res.filter(function(item) {
+                    return item.state == 'fulfilled';
+                });
+
+                res = res.map(function(item) {
+                    item = item.value;
+
+                    //return array which contains only branch names
+                    var branches = item.result.map(function(branch) {
+                        return branch.name;
+                    });
+
+                    //remove tags which excluded in config
+                    //remove tags which not included in config
+                    var source = item.source;
+                    if(source.branches) {
+                        if(_.isArray(source.branches.exclude)) {
+                            branches = _.difference(branches, source.branches.exclude);
+                        }
+                        if(_.isArray(source.branches.include)) {
+                            branches = _.intersection(branches, source.branches.include);
+                        }
+                    }
+
+                    LOGGER.finfo('repository: %s branches: %s', source.name, branches);
+
+                    item.source.branches = branches;
+                    return item.source;
+                });
+
+                def.resolve(res);
+            });
+
+    } catch(err) {
+        LOGGER.error(err.message);
+        def.reject(err);
+    } finally {
+        return def.promise;
+    }
 };
