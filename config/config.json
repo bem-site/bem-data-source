@@ -50,7 +50,7 @@
                         "name": "islands-user",
                         "dir": "islands-user",
                         "tags": {
-                            "include": "last",
+                            "include": ["v1.36.0"],
                             "exclude": []
                         },
                         "branches": {

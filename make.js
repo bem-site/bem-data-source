@@ -1,5 +1,6 @@
 var FS = require('fs'),
     CP = require('child_process'),
+    UTIL = require('util'),
 
     //bem tools modules
     BEM = require('bem'),
@@ -30,6 +31,9 @@ var make = (function() {
         })
         .then(function(sources) {
             return resolveBranches(sources);
+        })
+        .then(function(sources) {
+            return gitClone(sources);
         })
 })();
 
@@ -67,7 +71,7 @@ var getSources = function() {
 
 /**
  * Retrieves information about git repositories by their names
- * @param sources - {Object} object with fields:
+ * @param sources - {Array} of objects with fields:
  * - user {String} name of user or organization
  * - isPrivate {Boolean} indicate if repository from private github
  * - name - {String} name of repository
@@ -110,7 +114,7 @@ var resolveRepositories = function(sources) {
 
 /**
  * Retrieves information about repository tags and filter them according to config
- * @param sources - {Object} object with fields:
+ * @param sources - {Array} of objects with fields:
  * - user {String} name of user or organization
  * - isPrivate {Boolean} indicate if repository from private github
  * - name - {String} name of repository
@@ -126,47 +130,47 @@ var resolveTags = function(sources) {
     var def = Q.defer();
     try {
         Q.allSettled(
-                sources.map(function(item) {
-                    return git.getRepositoryTags(item);
-                })
-            ).then(function(res) {
-                //remove all rejected promises
-                res = res.filter(function(item) {
-                    return item.state == 'fulfilled';
+            sources.map(function(item) {
+                return git.getRepositoryTags(item);
+            })
+        ).then(function(res) {
+            //remove all rejected promises
+            res = res.filter(function(item) {
+                return item.state == 'fulfilled';
+            });
+
+            res = res.map(function(item) {
+                item = item.value;
+
+                //return array which contains only tag names
+                var tags = item.result.map(function(tag) {
+                   return tag.name;
                 });
 
-                res = res.map(function(item) {
-                    item = item.value;
-
-                    //return array which contains only tag names
-                    var tags = item.result.map(function(tag) {
-                       return tag.name;
-                    });
-
-                    //remove tags which excluded in config
-                    //remove tags which not included in config
-                    var source = item.source;
-                    if(source.tags) {
-                        if(_.isArray(source.tags.exclude) && source.tags.exclude.length > 0) {
-                            tags = _.difference(tags, source.tags.exclude);
-                        }
-                        if(_.isArray(source.tags.include) && source.tags.include.length > 0) {
-                            tags = _.intersection(tags, source.tags.include);
-                        }else if(_.isString(source.tags.include)) {
-                            if(source.tags.include == 'last') {
-                                tags = [_.last(tags.sort(util.sortTags))];
-                            }
+                //remove tags which excluded in config
+                //remove tags which not included in config
+                var source = item.source;
+                if(source.tags) {
+                    if(_.isArray(source.tags.exclude) && source.tags.exclude.length > 0) {
+                        tags = _.difference(tags, source.tags.exclude);
+                    }
+                    if(_.isArray(source.tags.include) && source.tags.include.length > 0) {
+                        tags = _.intersection(tags, source.tags.include);
+                    }else if(_.isString(source.tags.include)) {
+                        if(source.tags.include == 'last') {
+                            tags = [_.last(tags.sort(util.sortTags))];
                         }
                     }
+                }
 
-                    LOGGER.finfo('repository: %s tags: %s', source.name, tags);
+                LOGGER.finfo('repository: %s tags: %s', source.name, tags);
 
-                    item.source.tags = tags;
-                    return item.source;
-                });
-
-                def.resolve(res);
+                item.source.tags = tags;
+                return item.source;
             });
+
+            def.resolve(res);
+        });
 
     } catch(err) {
         LOGGER.error(err.message);
@@ -176,49 +180,61 @@ var resolveTags = function(sources) {
     }
 };
 
+/**
+ * Retrieves information about repository branches and filter them according to config
+ * @param sources - {Array} of objects with fields:
+ * - user {String} name of user or organization
+ * - isPrivate {Boolean} indicate if repository from private github
+ * - name - {String} name of repository
+ * - dir - {String} target directory
+ * - tags - {Array} array of tags which should be included or excluded from make process
+ * - branches - {Object} object which holds arrays of branches which should be included or excluded from make process
+ * - url - {String} git url of repository
+ * @returns {defer.promise|*}
+ */
 var resolveBranches = function(sources) {
     LOGGER.info('resolveBranches start');
 
     var def = Q.defer();
     try {
         Q.allSettled(
-                sources.map(function(item) {
-                    return git.getRepositoryBranches(item);
-                })
-            ).then(function(res) {
-                //remove all rejected promises
-                res = res.filter(function(item) {
-                    return item.state == 'fulfilled';
-                });
-
-                res = res.map(function(item) {
-                    item = item.value;
-
-                    //return array which contains only branch names
-                    var branches = item.result.map(function(branch) {
-                        return branch.name;
-                    });
-
-                    //remove tags which excluded in config
-                    //remove tags which not included in config
-                    var source = item.source;
-                    if(source.branches) {
-                        if(_.isArray(source.branches.exclude)) {
-                            branches = _.difference(branches, source.branches.exclude);
-                        }
-                        if(_.isArray(source.branches.include)) {
-                            branches = _.intersection(branches, source.branches.include);
-                        }
-                    }
-
-                    LOGGER.finfo('repository: %s branches: %s', source.name, branches);
-
-                    item.source.branches = branches;
-                    return item.source;
-                });
-
-                def.resolve(res);
+            sources.map(function(item) {
+                return git.getRepositoryBranches(item);
+            })
+        ).then(function(res) {
+            //remove all rejected promises
+            res = res.filter(function(item) {
+                return item.state == 'fulfilled';
             });
+
+            res = res.map(function(item) {
+                item = item.value;
+
+                //return array which contains only branch names
+                var branches = item.result.map(function(branch) {
+                    return branch.name;
+                });
+
+                //remove tags which excluded in config
+                //remove tags which not included in config
+                var source = item.source;
+                if(source.branches) {
+                    if(_.isArray(source.branches.exclude)) {
+                        branches = _.difference(branches, source.branches.exclude);
+                    }
+                    if(_.isArray(source.branches.include)) {
+                        branches = _.intersection(branches, source.branches.include);
+                    }
+                }
+
+                LOGGER.finfo('repository: %s branches: %s', source.name, branches);
+
+                item.source.branches = branches;
+                return item.source;
+            });
+
+            def.resolve(res);
+        });
 
     } catch(err) {
         LOGGER.error(err.message);
@@ -226,4 +242,49 @@ var resolveBranches = function(sources) {
     } finally {
         return def.promise;
     }
+};
+
+var gitClone = function(sources) {
+    LOGGER.info('gitClone start');
+
+    var rootPath = config.get('contentDirectory'),
+        cloneTargets = [];
+
+    sources.forEach(function(source) {
+        var sourceDir = source.dir || source.name,
+            existedTagsAndBranches = U.getDirs(PATH.join(rootPath, sourceDir));
+        source.tags.forEach(function(tag) {
+            if(_.indexOf(existedTagsAndBranches, tag) == -1) {
+                LOGGER.finfo('target source: %s %s tag %s into dir %s',
+                    source.name, source.url, tag, PATH.join(rootPath, sourceDir, tag));
+                cloneTargets.push({
+                    url: source.url,
+                    ref: tag,
+                    path: PATH.join(rootPath, sourceDir, tag)
+                });
+            }
+        });
+        source.branches.forEach(function(branch) {
+            if(_.indexOf(existedTagsAndBranches, branch) == -1) {
+                LOGGER.finfo('target source: %s %s branch %s into dir %s',
+                    source.name, source.url, branch, PATH.join(rootPath, sourceDir, branch));
+                cloneTargets.push({
+                    url: source.url,
+                    ref: branch,
+                    path: PATH.join(rootPath, sourceDir, tag)
+                });
+            }
+        });
+    });
+
+    Q.allSettled(
+        cloneTargets.map(function(target) {
+            var cmd = UTIL.format('git clone --progress %s %s && cd %s && git checkout %s',
+                target.url, target.path, target.path, target.ref);
+            LOGGER.finfo(cmd);
+            return U.exec(cmd);
+        })
+    ).then(function(res) {
+        LOGGER.finfo("Finish clone process");
+    });
 };
