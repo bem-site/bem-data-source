@@ -21,3 +21,10 @@ exports.createContentDirectory = function() {
                 LOGGER.warn(config.get("messages")["contentDirectory"]["exist"])
         });
 };
+
+exports.sortTags = function(a, b) {
+    var re = /^v?(\d+)\.(\d+)\.(\d+)$/;
+    a = a.replace(re, "$1$2$3");
+    b = b.replace(re, "$1$2$3");
+    return a - b;
+};
