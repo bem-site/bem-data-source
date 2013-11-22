@@ -4,7 +4,7 @@
     "gitAPI": {
         "common": {
             "version": "3.0.0",
-            "debug": "true",
+            "debug": "false",
             "protocol": "https",
             "timeout": "5000"
         },
