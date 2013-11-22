@@ -1,8 +1,9 @@
-var BEM = require('bem'),
+var API = require("github"),
+    BEM = require('bem'),
     Q = BEM.require('q'),
     LOGGER = BEM.require('./logger'),
-    API = require("github"),
-    _ = require('underscore'),
+    _ = BEM.require('underscore'),
+
     config = require('../config/config.js');
 
 var gitPublic = null,
@@ -25,6 +26,8 @@ var gitPublic = null,
 })();
 
 exports.getRepository = function(user, repo, isPrivate) {
+    LOGGER.finfo('getRepository user: %s repo: %s isPrivate: %s', user, repo, isPrivate);
+
     var def = Q.defer(),
         git = isPrivate ? gitPrivate : gitPublic;
 
