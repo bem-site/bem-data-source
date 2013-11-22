@@ -1,8 +1,9 @@
-var BEM = require('bem'),
-    FS = require('fs'),
+var FS = require('fs'),
     CP = require('child_process'),
+
+    BEM = require('bem'),
     Q = BEM.require('q'),
-    QIOFS = BEM.require('q-io/fs'),
+    QIO_FS = BEM.require('q-io/fs'),
     PATH = BEM.require('./path'),
     LOGGER = BEM.require('./logger'),
     U = BEM.require('./util'),
@@ -10,7 +11,7 @@ var BEM = require('bem'),
     config = require('../config/config');
 
 exports.createContentDirectory = function() {
-    return QIOFS
+    return QIO_FS
         .makeDirectory(config.get('contentDirectory'))
         .then(function() {
             LOGGER.info(config.get("messages")["contentDirectory"]["created"]);
