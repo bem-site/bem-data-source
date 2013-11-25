@@ -26,11 +26,11 @@
                         "name": "islands-components",
                         "dir": "islands-components",
                         "tags": {
-                            "include": [],
+                            "include": "last",
                             "exclude": []
                         },
                         "branches": {
-                            "include": ["BEM-1397"],
+                            "include": [],
                             "exclude": []
                         }
                     },
@@ -50,7 +50,7 @@
                         "name": "islands-user",
                         "dir": "islands-user",
                         "tags": {
-                            "include": [],
+                            "include": ["v1.36.0", "v1.37.0"],
                             "exclude": []
                         },
                         "branches": {
@@ -62,11 +62,11 @@
                         "name": "islands-search",
                         "dir": "islands-search",
                         "tags": {
-                            "include": [],
+                            "include": "last",
                             "exclude": []
                         },
                         "branches": {
-                            "include": ["bem-sets_test"],
+                            "include": [],
                             "exclude": []
                         }
                     }
@@ -93,7 +93,7 @@
                         "name": "bem-components",
                         "dir": "bem-components",
                         "tags": {
-                            "include": [],
+                            "include": "last",
                             "exclude": []
                         },
                         "branches": {
@@ -104,5 +104,12 @@
                 ]
             }
         ]
+    },
+
+    "messages": {
+        "contentDirectory": {
+            "created": "Content directory has been created",
+            "exist": "Content directory already exist"
+        }
     }
 }
