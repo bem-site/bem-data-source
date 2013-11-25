@@ -23,11 +23,22 @@ var gitPublic = null,
 
     gitPublic = new API(_.extend(publicConfig, commonConfig));
     gitPrivate = new API(_.extend(privateConfig, commonConfig));
+
+    gitPublic.authenticate({
+        type: "basic",
+        username: "tormozz48",
+        password: "pass4boedj"
+    });
 })();
 
+/**
+ * Return information about github repository
+ * @param source - {Object} configuration object with fields:
+ * - user {String} owner of repository
+ * - name {String} name of repository
+ * @returns {defer.promise|*}
+ */
 exports.getRepository = function(source) {
-    LOGGER.finfo('getRepository user: %s repo: %s isPrivate: %s', source.user, source.name, source.isPrivate);
-
     var def = Q.defer(),
         git = source.isPrivate ? gitPrivate : gitPublic;
 
@@ -42,9 +53,14 @@ exports.getRepository = function(source) {
     return def.promise;
 };
 
+/**
+ * Returns information about tags of github repository
+ * @param source - {Object} configuration object with fields:
+ * - user {String} owner of repository
+ * - name {String} name of repository
+ * @returns {defer.promise|*}
+ */
 exports.getRepositoryTags = function(source) {
-    LOGGER.finfo('getRepositoryTags user: %s repo: %s isPrivate: %s url: %s', source.user, source.name, source.isPrivate, source.url);
-
     var def = Q.defer(),
         git = source.isPrivate ? gitPrivate : gitPublic;
 
@@ -59,9 +75,14 @@ exports.getRepositoryTags = function(source) {
     return def.promise;
 };
 
+/**
+ * Return information about branches of github repository
+ * @param source - {Object} configuration object with fields:
+ * - user {String} owner of repository
+ * - name {String} name of repository
+ * @returns {defer.promise|*}
+ */
 exports.getRepositoryBranches = function(source) {
-    LOGGER.finfo('getRepositoryBranches user: %s repo: %s isPrivate: %s', source.user, source.name, source.isPrivate);
-
     var def = Q.defer(),
         git = source.isPrivate ? gitPrivate : gitPublic;
 
