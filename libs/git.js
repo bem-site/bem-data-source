@@ -23,12 +23,7 @@ var gitPublic = null,
 
     gitPublic = new API(_.extend(publicConfig, commonConfig));
     gitPrivate = new API(_.extend(privateConfig, commonConfig));
-
-    gitPublic.authenticate({
-        type: "basic",
-        username: "tormozz48",
-        password: "pass4boedj"
-    });
+    
 })();
 
 /**
