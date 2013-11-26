@@ -29,6 +29,7 @@ var execute = function(sources) {
                     var packageJsonExist = U.isFile(PATH.join(rootPath, sourceDir, item, 'package.json')),
                         nodeModulesExist = U.isDirectory(PATH.join(rootPath, sourceDir, item, 'node_modules')),
                         libsExist = U.isDirectory(PATH.join(rootPath, sourceDir, item, 'libs')),
+                        bemMakeSetsCompleted = U.isFile(PATH.join(rootPath, sourceDir, item, 'make_sets_completed.txt')),
                         target = {
                             name: UTIL.format('%s %s', source.name, item),
                             url: source.url,
@@ -41,8 +42,6 @@ var execute = function(sources) {
                         };
 
                     if(_.indexOf(existedTagsAndBranches, item) > -1) {
-                        LOGGER.finfo('target source: %s %s ref %s into dir %s',
-                            source.name, source.url, item, PATH.join(rootPath, sourceDir, item));
                         target.taskGitClone = false;
                     }
 
@@ -53,6 +52,13 @@ var execute = function(sources) {
                     if(!target.taskNpmInstall && libsExist) {
                         target.taskMakeLibs = false;
                     }
+
+                    if(!target.taskMakeLibs && bemMakeSetsCompleted) {
+                        target.taskMakeSets = false;
+                    }
+
+                    LOGGER.finfo('target source: %s %s ref %s into dir %s',
+                        source.name, source.url, item, PATH.join(rootPath, sourceDir, item));
 
                     targets.push(target);
                 };

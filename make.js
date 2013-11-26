@@ -48,16 +48,22 @@ var run = function(targets) {
 var runTarget = function(target) {
 
     if(target.taskGitClone)
-        return Q.all([gitClone(target), npmInstall(target), makeLibs(target), makeSets(target)]);
+        return gitClone(target)
+            .then(function() { return npmInstall(target) })
+            .then(function() { return makeLibs(target) })
+            .then(function() { return makeSets(target) });
 
     if(target.taskNpmInstall)
-        return Q.all([npmInstall(target), makeLibs(target), makeSets(target)]);
+        return npmInstall(target)
+            .then(function() { return makeLibs(target) })
+            .then(function() { return makeSets(target) });
 
     if(target.taskMakeLibs)
-        return Q.all([makeLibs(target), makeSets(target)]);
+        return makeLibs(target)
+            .then(function() { return makeSets(target)});
 
     if(target.taskMakeSets)
-        return Q.all([makeSets(target)]);
+        return makeSets(target);
 }
 
 var gitClone = function(target) {
@@ -124,7 +130,15 @@ var makeSets = function(target) {
     U.exec(cmd, { maxBuffer: 10000*1024 }, true).then(
         function(result) {
             LOGGER.info(UTIL.format('bem make sets for target %s completed', target.name));
-            def.resolve(result);
+
+            U.writeFile(PATH.join(target.path, 'make_sets_completed.txt'), 'bem make sets completed')
+                .then(
+                    function() {
+                        def.resolve(result);
+                    },
+                    function(error) {
+                        def.reject(error);
+                    });
         },
         function(error) {
             LOGGER.error(UTIL.format('bem make sets for target %s failed with reason %s', target.name, error.message));
