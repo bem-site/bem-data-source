@@ -23,7 +23,7 @@ var gitPublic = null,
 
     gitPublic = new API(_.extend(publicConfig, commonConfig));
     gitPrivate = new API(_.extend(privateConfig, commonConfig));
-    
+
 })();
 
 /**
