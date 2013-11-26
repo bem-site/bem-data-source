@@ -1,12 +1,7 @@
-var UTIL = require('util'),
-
-    //bem tools modules
-    BEM = require('bem'),
+//bem tools modules
+var BEM = require('bem'),
     Q = BEM.require('q'),
-    PATH = BEM.require('./path'),
     LOGGER = BEM.require('./logger'),
-    U = BEM.require('./util'),
-    _ = BEM.require('underscore'),
 
     //application modules
     util = require('./libs/util'),
@@ -15,7 +10,11 @@ var UTIL = require('util'),
     resolveRepositories = require('./tasks/resolve_repositories'),
     resolveBranches = require('./tasks/resolve_branches'),
     resolveTags = require('./tasks/resolve_tags'),
-    createTargets = require('./tasks/create_targets');
+    createTargets = require('./tasks/create_targets'),
+    gitClone = require('./tasks/git_clone'),
+    npmInstall = require('./tasks/npm_install'),
+    makeLibs = require('./tasks/bem_make_libs'),
+    makeSets = require('./tasks/bem_make_sets');
 
 var make = (function() {
     LOGGER.setLevel(0);
@@ -65,84 +64,3 @@ var runTarget = function(target) {
     if(target.taskMakeSets)
         return makeSets(target);
 }
-
-var gitClone = function(target) {
-    var def = Q.defer(),
-        cmd = UTIL.format('git clone --progress %s %s && cd %s && git checkout %s',
-                    target.url, target.path, target.path, target.ref);
-
-    LOGGER.info(cmd);
-
-    U.exec(cmd, null, true).then(
-        function(result) {
-            LOGGER.info(UTIL.format('git clone for target %s completed', target.name));
-            def.resolve(result);
-        },
-        function(error) {
-            LOGGER.error(UTIL.format('git clone for target %s failed with reason %s', target.name, error.message));
-            return def.reject(error);
-        });
-    return def.promise;
-};
-
-var npmInstall = function(target) {
-    var def = Q.defer(),
-        cmd = UTIL.format('cd %s && npm install --registry=http://npm.yandex-team.ru', target.path);
-
-    LOGGER.info(cmd);
-
-    U.exec(cmd, null, true).then(
-        function(result) {
-            LOGGER.info(UTIL.format('npm install for target %s completed', target.name));
-            def.resolve(result);
-        },
-        function(error) {
-            LOGGER.error(UTIL.format('npm install for target %s failed with reason %s', target.name, error.message));
-            return def.reject(error);
-        });
-    return def.promise;
-};
-
-var makeLibs = function(target) {
-    var def = Q.defer(),
-        cmd = UTIL.format('bem make libs -r %s', target.path);
-
-    LOGGER.info(cmd);
-
-    U.exec(cmd, null, true).then(
-        function(result) {
-            LOGGER.info(UTIL.format('bem make libs for target %s completed', target.name));
-            def.resolve(result);
-        },
-        function(error) {
-            LOGGER.error(UTIL.format('bem make libs for target %s failed with reason %s', target.name, error.message));
-            return def.reject(error);
-        });
-    return def.promise;
-};
-
-var makeSets = function(target) {
-    var def = Q.defer(),
-        cmd = UTIL.format('cd %s && bem make sets', target.path);
-
-    LOGGER.info(cmd);
-
-    U.exec(cmd, { maxBuffer: 10000*1024 }, true).then(
-        function(result) {
-            LOGGER.info(UTIL.format('bem make sets for target %s completed', target.name));
-
-            U.writeFile(PATH.join(target.path, 'make_sets_completed.txt'), 'bem make sets completed')
-                .then(
-                    function() {
-                        def.resolve(result);
-                    },
-                    function(error) {
-                        def.reject(error);
-                    });
-        },
-        function(error) {
-            LOGGER.error(UTIL.format('bem make sets for target %s failed with reason %s', target.name, error.message));
-            return def.reject(error);
-        });
-    return def.promise;
-};
