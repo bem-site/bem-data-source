@@ -2,6 +2,7 @@
 var BEM = require('bem'),
     Q = BEM.require('q'),
     LOGGER = BEM.require('./logger'),
+    _ = BEM.require('underscore'),
 
     //application modules
     config = require('../config/config');
