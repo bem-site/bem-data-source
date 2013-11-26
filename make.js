@@ -16,6 +16,7 @@ var FS = require('fs'),
     git = require('./libs/git'),
     util = require('./libs/util'),
 
+    getSources = require('./tasks/get_sources'),
     resolveRepositories = require('./tasks/resolve_repositories'),
     resolveBranches = require('./tasks/resolve_branches'),
     resolveTags = require('./tasks/resolve_tags');
@@ -24,54 +25,12 @@ var make = (function() {
     LOGGER.setLevel(0);
     LOGGER.info('- data source start -');
     util.createContentDirectory()
-        .then(function() {
-            return getSources();
-        })
-        .then(function(sources) {
-            return resolveRepositories(sources);
-        })
-        .then(function(sources) {
-            return resolveTags(sources);
-        })
-        .then(function(sources) {
-            return resolveBranches(sources);
-        })
-        .then(function(sources) {
-            return run(sources);
-        })
+        .then(function() { return getSources() })
+        .then(function(sources) { return resolveRepositories(sources)})
+        .then(function(sources) { return resolveTags(sources) })
+        .then(function(sources) { return resolveBranches(sources) })
+        .then(function(sources) { return run(sources) })
 })();
-
-/**
- * Retrieves sources configuration and modify it for suitable github API calling
- * @returns {defer.promise|*}
- */
-var getSources = function() {
-    LOGGER.info('getSources start');
-
-    var def = Q.defer(),
-        _sources = [],
-        sources = config.get('sources');
-
-    try {
-        Object.getOwnPropertyNames(sources).forEach(function(key) {
-            sources[key].forEach(function(source) {
-                var owner = source.org || source.user,
-                    repositories = source.repositories;
-
-                (owner && repositories) && repositories.forEach(function(repository) {
-                    _sources.push(_.extend(repository, { user: owner, isPrivate: key == 'private' }))
-                })
-            });
-        });
-
-        def.resolve(_sources);
-    } catch(err) {
-        LOGGER.error(err.message);
-        def.reject(err);
-    } finally {
-        return def.promise;
-    }
-};
 
 var run = function(sources) {
     LOGGER.info('run commands start');
