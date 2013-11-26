@@ -30,7 +30,7 @@
                             "exclude": []
                         },
                         "branches": {
-                            "include": ["BEM-1397"],
+                            "include": [],
                             "exclude": []
                         }
                     },
@@ -38,7 +38,7 @@
                         "name": "islands-page",
                         "dir": "islands-page",
                         "tags": {
-                            "include": "last",
+                            "include": [],
                             "exclude": []
                         },
                         "branches": {
@@ -81,7 +81,7 @@
                         "name": "bem-core",
                         "dir": "bem-core",
                         "tags": {
-                            "include": [],
+                            "include": "last",
                             "exclude": []
                         },
                         "branches": {
