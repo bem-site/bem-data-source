@@ -24,6 +24,11 @@ var gitPublic = null,
     gitPublic = new API(_.extend(publicConfig, commonConfig));
     gitPrivate = new API(_.extend(privateConfig, commonConfig));
 
+    gitPublic.authenticate({
+        type: "oauth",
+        token: "7a2fb4d7a380f8a20562f5fc910f35d3b1605341"
+    });
+
 })();
 
 /**

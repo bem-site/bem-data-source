@@ -14,11 +14,9 @@
   },
   "dependencies": {
     "bem": "~0.6.16",
-    "bower": "~1.2.7",
     "nconf": "~0.6.8",
-    "q": "~0.9.7",
-    "q-io": "~1.10.6",
     "github": "git://github.com/whentomanage/node-github.git",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "wrench": "*"
   }
 }
