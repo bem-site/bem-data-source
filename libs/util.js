@@ -4,7 +4,7 @@ var FS = require('fs'),
 
     BEM = require('bem'),
     Q = BEM.require('q'),
-    QIO_FS = BEM.require('q-io/fs'),
+    QIO_FS = BEM.require('q-fs'),
     PATH = BEM.require('./path'),
     LOGGER = BEM.require('./logger'),
     U = BEM.require('./util'),
@@ -28,28 +28,4 @@ exports.sortTags = function(a, b) {
     a = a.replace(re, "$1$2$3");
     b = b.replace(re, "$1$2$3");
     return a - b;
-};
-
-exports.spawn = function(cmd, args, options) {
-    var spawn = require('child_process').spawn,
-        cp = spawn(cmd, args, options),
-        def = Q.defer(),
-        output = '';
-
-    cp.stdout.on('data', function (data) {
-        output += data;
-    });
-
-    cp.stderr.on('data', function (data) {
-        output += data;
-    });
-
-    cp.on('close', function (code) {
-        if (code === 0) {
-            return def.resolve(code);
-        }
-        def.reject(new Error(UTIL.format('%s failed with code %s and reason %s', cmd, code, output)));
-    });
-
-    return def.promise;
 };

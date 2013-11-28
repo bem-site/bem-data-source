@@ -14,7 +14,9 @@ var BEM = require('bem'),
     gitClone = require('./tasks/git_clone'),
     npmInstall = require('./tasks/npm_install'),
     makeLibs = require('./tasks/bem_make_libs'),
-    makeSets = require('./tasks/bem_make_sets');
+    makeSets = require('./tasks/bem_make_sets'),
+    makeDocs = require('./tasks/make_docs'),
+    clear = require('./tasks/clear');
 
 var make = (function() {
     LOGGER.setLevel(0);
@@ -46,6 +48,14 @@ var run = function(targets) {
 
 var runTarget = function(target) {
 
+    if(target.type == 'libs') {
+        return runTargetLibs(target);
+    } else if (target.type == 'docs') {
+        return runTargetDocs(target);
+    }
+}
+
+var runTargetLibs = function(target) {
     if(target.taskGitClone)
         return gitClone(target)
             .then(function() { return npmInstall(target) })
@@ -63,4 +73,18 @@ var runTarget = function(target) {
 
     if(target.taskMakeSets)
         return makeSets(target);
-}
+};
+
+var runTargetDocs = function(target) {
+    if(target.taskClear)
+        return clear(target)
+            .then(function() { gitClone(target) })
+            .then(function() { makeDocs(target) });
+
+    if(target.taskGitClone)
+        return gitClone(target)
+            .then(function() { makeDocs(target) });
+
+    if(target.taskMakeDocs)
+        return makeDocs(target);
+};

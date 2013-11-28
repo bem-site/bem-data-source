@@ -15,7 +15,9 @@ var BEM = require('bem'),
  * - user {String} name of user or organization
  * - isPrivate {Boolean} indicate if repository from private github
  * - name - {String} name of repository
- * - dir - {String} target directory
+ * - targetDir - {String} target directory
+ * - docDirs - {Array} array of string path where docs are
+ * - type - {String} type of repository. Different engines should be used for different types
  * - tags - {Object} object which holds arrays of tags which should be included or excluded from make process
  * - branches - {Object} object which holds arrays of branches which should be included or excluded from make process
  * @returns {defer.promise|*}

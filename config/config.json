@@ -24,7 +24,8 @@
                 "repositories": [
                     {
                         "name": "islands-components",
-                        "dir": "islands-components",
+                        "targetDir": "islands-components",
+                        "type": "libs",
                         "tags": {
                             "include": [],
                             "exclude": []
@@ -36,7 +37,8 @@
                     },
                     {
                         "name": "islands-page",
-                        "dir": "islands-page",
+                        "targetDir": "islands-page",
+                        "type": "libs",
                         "tags": {
                             "include": [],
                             "exclude": []
@@ -48,7 +50,8 @@
                     },
                     {
                         "name": "islands-user",
-                        "dir": "islands-user",
+                        "targetDir": "islands-user",
+                        "type": "libs",
                         "tags": {
                             "include": [],
                             "exclude": []
@@ -60,13 +63,14 @@
                     },
                     {
                         "name": "islands-search",
-                        "dir": "islands-search",
+                        "targetDir": "islands-search",
+                        "type": "libs",
                         "tags": {
                             "include": [],
                             "exclude": []
                         },
                         "branches": {
-                            "include": ["bem-sets_test"],
+                            "include": [],
                             "exclude": []
                         }
                     }
@@ -79,9 +83,10 @@
                 "repositories": [
                     {
                         "name": "bem-core",
-                        "dir": "bem-core",
+                        "targetDir": "bem-core",
+                        "type": "libs",
                         "tags": {
-                            "include": "last",
+                            "include": [],
                             "exclude": []
                         },
                         "branches": {
@@ -91,7 +96,8 @@
                     },
                     {
                         "name": "bem-components",
-                        "dir": "bem-components",
+                        "targetDir": "bem-components",
+                        "type": "libs",
                         "tags": {
                             "include": [],
                             "exclude": []
@@ -99,6 +105,166 @@
                         "branches": {
                             "include": [],
                             "exclude": []
+                        }
+                    },
+                    {
+                        "name": "bem-method",
+                        "targetDir": "bem-method",
+                        "docDirs": [],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["master"]
+                        }
+                    },
+                    {
+                        "name": "borschik",
+                        "targetDir": "borschik",
+                        "docDirs": ["docs"],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["master"]
+                        }
+                    },
+                    {
+                        "name": "borschik-server",
+                        "targetDir": "borschik-server",
+                        "docDirs": ["docs"],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["master"]
+                        }
+                    },
+                    {
+                        "name": "bem-articles",
+                        "targetDir": "articles/bem-articles",
+                        "docDirs": ["docs"],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["master"]
+                        }
+                    },
+                    {
+                        "name": "bem-www",
+                        "targetDir": "bem-www",
+                        "docDirs": ["content/blog", "content/tools", "content/authors", "content/pages"],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["master"]
+                        }
+                    }
+                ]
+            },
+            {
+                "org": "css",
+                "repositories": [
+                    {
+                        "name": "csso",
+                        "targetDir": "csso",
+                        "docDirs": ["docs"],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["master"]
+                        }
+                    }
+                ]
+            },
+            {
+                "user": "AndreyGeonya",
+                "repositories": [
+                    {
+                        "name": "firmCardStory",
+                        "targetDir": "articles/firm-card-story",
+                        "docDirs": ["docs"],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["master"]
+                        }
+                    }
+                ]
+            },
+            {
+                "user": "mursya",
+                "repositories": [
+                    {
+                        "name": "bem-news",
+                        "targetDir": "blog/bem-news",
+                        "docDirs": [],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["master"]
+                        }
+                    }
+                ]
+            },
+            {
+                "user": "veged",
+                "repositories": [
+                    {
+                        "name": "xjst",
+                        "targetDir": "xjst",
+                        "docDirs": ["doc"],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["master"]
+                        }
+                    }
+                ]
+            },
+            {
+                "user": "svg",
+                "repositories": [
+                    {
+                        "name": "svgo",
+                        "targetDir": "svgo",
+                        "docDirs": ["docs"],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["master"]
+                        }
+                    }
+                ]
+            },
+            {
+                "user": "lesanra",
+                "repositories": [
+                    {
+                        "name": "setochka",
+                        "targetDir": "setochka",
+                        "docDirs": ["doc"],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["bem-info-data"]
+                        }
+                    },
+                    {
+                        "name": "ometa-js",
+                        "targetDir": "ometa-js",
+                        "docDirs": ["doc"],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["bem-info-data"]
+                        }
+                    },
+                    {
+                        "name": "gonzales",
+                        "targetDir": "gonzales",
+                        "docDirs": ["doc"],
+                        "type": "docs",
+                        "force": "true",
+                        "branches": {
+                            "include": ["bem-info-data"]
                         }
                     }
                 ]
