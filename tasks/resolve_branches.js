@@ -1,5 +1,7 @@
-//bem tools modules
-var BEM = require('bem'),
+var UTIL = require('util'),
+
+    //bem tools modules
+    BEM = require('bem'),
     Q = BEM.require('q'),
     LOGGER = BEM.require('./logger'),
     _ = BEM.require('underscore'),
@@ -15,7 +17,9 @@ var BEM = require('bem'),
  * - user {String} name of user or organization
  * - isPrivate {Boolean} indicate if repository from private github
  * - name - {String} name of repository
- * - dir - {String} target directory
+ * - targetDir - {String} target directory
+ * - docDirs - {Array} array of string path where docs are
+ * - type - {String} type of repository. Different engines should be used for different types
  * - tags - {Array} array of tags which should be included or excluded from make process
  * - branches - {Object} object which holds arrays of branches which should be included or excluded from make process
  * - url - {String} git url of repository
@@ -42,23 +46,31 @@ var execute = function(sources) {
                     //return array which contains only branch names
                     var branches = item.result.map(function(branch) {
                         return branch.name;
-                    });
+                    }),
+                    source = item.source,
+                    resultBranches = [];
 
                     //remove tags which excluded in config
                     //remove tags which not included in config
-                    var source = item.source;
+                    //also exclude rule have greater priority
                     if(source.branches) {
-                        if(_.isArray(source.branches.exclude)) {
-                            branches = _.difference(branches, source.branches.exclude);
+                        var branchesInclude = source.branches['include'],
+                            branchesExclude = source.branches['exclude'];
+
+                        if(_.isArray(branchesInclude)) {
+                            resultBranches = _.intersection(branches, branchesInclude);
                         }
-                        if(_.isArray(source.branches.include)) {
-                            branches = _.intersection(branches, source.branches.include);
+                        if(_.isArray(branchesExclude)) {
+                            resultBranches = resultBranches.filter(function(branch) {
+                                return branchesExclude.indexOf(branch) == -1;
+                            });
                         }
                     }
 
-                    LOGGER.finfo('repository: %s branches: %s', source.name, branches);
+                    resultBranches.length > 0 &&
+                        LOGGER.info(UTIL.format('repository: %s branches: %s will be executed', source.name, resultBranches));
 
-                    item.source.branches = branches;
+                    item.source.branches = resultBranches;
                     return item.source;
                 });
 
