@@ -1,11 +1,11 @@
 //bem tools modules
-var BEM = require('bem'),
-    Q = BEM.require('q'),
-    LOGGER = BEM.require('./logger'),
-    _ = BEM.require('underscore'),
+const   BEM = require('bem'),
+        Q = BEM.require('q'),
+        LOGGER = BEM.require('./logger'),
+        _ = BEM.require('underscore'),
 
-    //application modules
-    config = require('../config/config');
+        //application modules
+        config = require('../config/config');
 
 /**
  * Retrieves sources configuration and modify it for suitable github API calling

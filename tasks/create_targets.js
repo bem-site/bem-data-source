@@ -1,21 +1,21 @@
-var UTIL = require('util'),
+const   UTIL = require('util'),
 
-    //bem tools modules
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    LOGGER = BEM.require('./logger'),
-    U = BEM.require('./util'),
-    PATH = BEM.require('./path'),
-    _ = BEM.require('underscore'),
+        //bem tools modules
+        BEM = require('bem'),
+        Q = BEM.require('q'),
+        LOGGER = BEM.require('./logger'),
+        U = BEM.require('./util'),
+        PATH = BEM.require('./path'),
+        _ = BEM.require('underscore'),
 
-    //application modules
-    config = require('../config/config');
+        //application modules
+        config = require('../config/config');
 
-var FILE_PACKAGE_JSON = 'package.json',
-    DIR_NODE_MODULES = 'node_modules',
-    DIR_LIBS = 'libs',
-    TASK_TYPE_LIBS = 'libs',
-    TASK_TYPE_DOCS = 'docs';
+const   FILE_PACKAGE_JSON = 'package.json',
+        DIR_NODE_MODULES = 'node_modules',
+        DIR_LIBS = 'libs',
+        TASK_TYPE_LIBS = 'libs',
+        TASK_TYPE_DOCS = 'docs';
 
 var execute = function(sources) {
     LOGGER.info('create targets start');
@@ -107,6 +107,7 @@ var createDocTarget = function(rootPath, sourceDir, existedRefDirs, source, ref)
             url: source.url,
             ref: ref,
             type: source.type,
+            docDirs: source.docDirs,
             path: PATH.join(rootPath, sourceDir, ref),
             taskClear: true,
             taskGitClone: true,
