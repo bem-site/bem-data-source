@@ -1,15 +1,13 @@
-var UTIL = require('util'),
+const   UTIL = require('util'),
 
-    //bem tools modules
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    LOGGER = BEM.require('./logger'),
-    _ = BEM.require('underscore'),
+        //bem tools modules
+        BEM = require('bem'),
+        Q = BEM.require('q'),
+        LOGGER = BEM.require('./logger'),
+        _ = BEM.require('underscore'),
 
-    //application modules
-    config = require('../config/config'),
-    git = require('../libs/git'),
-    util = require('../libs/util');
+        //application modules
+        git = require('../libs/git');
 
 /**
  * Retrieves information about repository branches and filter them according to config

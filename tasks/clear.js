@@ -1,11 +1,12 @@
-var UTIL = require('util'),
+const   UTIL = require('util'),
 
-    WRENCH = require('wrench'),
+        WRENCH = require('wrench'),
 
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    LOGGER = BEM.require('./logger'),
-    U = BEM.require('./util');
+        //bem modules
+        BEM = require('bem'),
+        Q = BEM.require('q'),
+        LOGGER = BEM.require('./logger'),
+        U = BEM.require('./util');
 
 /**
  * Recursively removes source directories from filesystem
