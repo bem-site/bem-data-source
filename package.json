@@ -17,6 +17,12 @@
     "nconf": "~0.6.8",
     "github": "git://github.com/whentomanage/node-github.git",
     "underscore": "~1.5.2",
-    "wrench": "*"
+    "rimraf": "~2.2.4",
+    "shmakowiki": "*",
+    "mkdirp": "*",
+    "ometajs": "~3.1.4",
+    "marked": "~0.2.5",
+    "highlight.js": "7",
+    "sha1": "1.0.0"
   }
 }

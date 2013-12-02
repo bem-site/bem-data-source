@@ -1,6 +1,6 @@
 const   UTIL = require('util'),
 
-        WRENCH = require('wrench'),
+        RMRF = require('rimraf'),
 
         //bem modules
         BEM = require('bem'),
@@ -23,7 +23,7 @@ const   UTIL = require('util'),
 var execute = function(target) {
     var def = Q.defer();
 
-    Q.nfapply(WRENCH.rmdirRecursive, [target.path]).then(
+    Q.nfapply(RMRF, [target.path]).then(
         function(result) {
             LOGGER.info(UTIL.format('remove directory for target %s completed', target.name));
             def.resolve(result);

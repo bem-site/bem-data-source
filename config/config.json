@@ -25,7 +25,7 @@
                     {
                         "name": "islands-components",
                         "targetDir": "islands-components",
-                        "type": "libs",
+                        "type": ["libs"],
                         "tags": {
                             "include": [],
                             "exclude": []
@@ -38,7 +38,7 @@
                     {
                         "name": "islands-page",
                         "targetDir": "islands-page",
-                        "type": "libs",
+                        "type": ["libs"],
                         "tags": {
                             "include": [],
                             "exclude": []
@@ -51,7 +51,7 @@
                     {
                         "name": "islands-user",
                         "targetDir": "islands-user",
-                        "type": "libs",
+                        "type": ["libs"],
                         "tags": {
                             "include": [],
                             "exclude": []
@@ -64,7 +64,7 @@
                     {
                         "name": "islands-search",
                         "targetDir": "islands-search",
-                        "type": "libs",
+                        "type": ["libs"],
                         "tags": {
                             "include": [],
                             "exclude": []
@@ -84,7 +84,8 @@
                     {
                         "name": "bem-core",
                         "targetDir": "bem-core",
-                        "type": "libs",
+                        "type": ["libs", "docs"],
+                        "docDirs": ["common.docs"],
                         "tags": {
                             "include": [],
                             "exclude": []
@@ -97,7 +98,7 @@
                     {
                         "name": "bem-components",
                         "targetDir": "bem-components",
-                        "type": "libs",
+                        "type": ["libs"],
                         "tags": {
                             "include": [],
                             "exclude": []
@@ -111,8 +112,7 @@
                         "name": "bem-method",
                         "targetDir": "bem-method",
                         "docDirs": [],
-                        "type": "docs",
-                        "force": "true",
+                        "type": ["docs"],
                         "branches": {
                             "include": ["master"]
                         }
@@ -121,8 +121,7 @@
                         "name": "borschik",
                         "targetDir": "borschik",
                         "docDirs": ["docs"],
-                        "type": "docs",
-                        "force": "true",
+                        "type": ["docs"],
                         "branches": {
                             "include": ["master"]
                         }
@@ -131,8 +130,7 @@
                         "name": "borschik-server",
                         "targetDir": "borschik-server",
                         "docDirs": ["docs"],
-                        "type": "docs",
-                        "force": "true",
+                        "type": ["docs"],
                         "branches": {
                             "include": ["master"]
                         }
@@ -140,9 +138,8 @@
                     {
                         "name": "bem-articles",
                         "targetDir": "articles/bem-articles",
-                        "docDirs": ["docs"],
-                        "type": "docs",
-                        "force": "true",
+                        "docDirs": [],
+                        "type": ["docs"],
                         "branches": {
                             "include": ["master"]
                         }
@@ -151,8 +148,7 @@
                         "name": "bem-www",
                         "targetDir": "bem-www",
                         "docDirs": ["content/blog", "content/tools", "content/authors", "content/pages"],
-                        "type": "docs",
-                        "force": "true",
+                        "type": ["docs"],
                         "branches": {
                             "include": ["master"]
                         }
@@ -166,8 +162,7 @@
                         "name": "csso",
                         "targetDir": "csso",
                         "docDirs": ["docs"],
-                        "type": "docs",
-                        "force": "true",
+                        "type": ["docs"],
                         "branches": {
                             "include": ["master"]
                         }
@@ -181,8 +176,7 @@
                         "name": "firmCardStory",
                         "targetDir": "articles/firm-card-story",
                         "docDirs": ["docs"],
-                        "type": "docs",
-                        "force": "true",
+                        "type": ["docs"],
                         "branches": {
                             "include": ["master"]
                         }
@@ -196,8 +190,7 @@
                         "name": "bem-news",
                         "targetDir": "blog/bem-news",
                         "docDirs": [],
-                        "type": "docs",
-                        "force": "true",
+                        "type": ["docs"],
                         "branches": {
                             "include": ["master"]
                         }
@@ -211,8 +204,7 @@
                         "name": "xjst",
                         "targetDir": "xjst",
                         "docDirs": ["doc"],
-                        "type": "docs",
-                        "force": "true",
+                        "type": ["docs"],
                         "branches": {
                             "include": ["master"]
                         }
@@ -226,8 +218,7 @@
                         "name": "svgo",
                         "targetDir": "svgo",
                         "docDirs": ["docs"],
-                        "type": "docs",
-                        "force": "true",
+                        "type": ["docs"],
                         "branches": {
                             "include": ["master"]
                         }
@@ -241,8 +232,7 @@
                         "name": "setochka",
                         "targetDir": "setochka",
                         "docDirs": ["doc"],
-                        "type": "docs",
-                        "force": "true",
+                        "type": ["docs"],
                         "branches": {
                             "include": ["bem-info-data"]
                         }
@@ -251,8 +241,7 @@
                         "name": "ometa-js",
                         "targetDir": "ometa-js",
                         "docDirs": ["doc"],
-                        "type": "docs",
-                        "force": "true",
+                        "type": ["docs"],
                         "branches": {
                             "include": ["bem-info-data"]
                         }
@@ -261,8 +250,7 @@
                         "name": "gonzales",
                         "targetDir": "gonzales",
                         "docDirs": ["doc"],
-                        "type": "docs",
-                        "force": "true",
+                        "type": ["docs"],
                         "branches": {
                             "include": ["bem-info-data"]
                         }
