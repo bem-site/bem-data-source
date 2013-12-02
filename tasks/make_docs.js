@@ -1,4 +1,12 @@
+/* global toString: false */
+'use strict';
+
 var UTIL = require('util'),
+
+    MARKED = require('marked'),
+    HIGHLIGHT = require('highlight.js'),
+    SHMAKOWIKI = require('shmakowiki'),
+    SHA = require('sha1'),
 
     BEM = require('bem'),
     Q = BEM.require('q'),
@@ -10,6 +18,15 @@ var UTIL = require('util'),
     //application modules
     util = require('../libs/util');
 
+    //EXTENSION_MD = 'md',
+    //EXTENSION_WIKI = 'wiki',
+    //EXTENSION_META = 'meta.json';
+
+/**
+ *
+ * @param target
+ * @returns {defer.promise|*}
+ */
 var execute = function(target) {
     LOGGER.silly(UTIL.format('make docs start for target %s', target.name));
 
@@ -21,16 +38,23 @@ var execute = function(target) {
     }else if(!_.isArray(docDirs)) {
         def.reject(new Error(UTIL.format('docDir property for target %s must be array', target.name)));
     } else {
-        if(docDirs.length == 0) {
+        if(docDirs.length === 0) {
             docDirs = [''];
         }
 
-        Q.all(docDirs.map(function(dir) {
-            return readDocsDirectory(target, dir);
+        Q.allSettled(docDirs.map(function(dir) {
+            return readDirectories.apply(null, [target, dir]);
         }))
         .then(
             function(result) {
-                def.resolve(result);
+                var data = collectResults(result),
+                    writeFiles = data.map(function(item) {
+                        return U.writeFile(PATH.join(target.path, item.lang) + '.json', JSON.stringify(item.data, null, 4));
+                    });
+
+                Q.all(writeFiles).then(function() {
+                    def.resolve(data);
+                });
             },
             function(err) {
                 def.reject(err);
@@ -40,39 +64,297 @@ var execute = function(target) {
     return def.promise;
 };
 
-var readDocsDirectory = function(target, dir) {
+/**
+ * Reads documents folder
+ * @param arguments - {Array} - array with elements:
+ * [0] - {Object} target object,
+ * [1] - {String} name of one of documentation directories of repository
+ * @returns {*|Promise|then}
+ */
+var readDirectories = function() {
+    var args = Array.prototype.slice.call(arguments),
+        target = args[0],
+        dir = args[1];
+
     LOGGER.silly(
         UTIL.format('make docs: read docs directory %s for target %s',
             dir.length > 0 ? dir : 'root', target.name));
 
     return U.getDirsAsync(PATH.join(target.path, dir))
         .then(function(directories) {
-            return Q.all(directories
+            return Q.allSettled(directories
                     .filter(util.filterDocDirectory)
-                    .map(function(dirName) {
-                        return readDocDirectory(target, dirName, PATH.join(target.path, dir, dirName));
+                    .map(function(docName) {
+                        return readDirectory.apply(
+                            null, _.union(args, [docName, PATH.join(target.path, dir, docName)])
+                        );
                     })
             );
         });
 };
 
-var readDocDirectory = function(target, docName, path) {
-    LOGGER.silly(UTIL.format('make docs: read doc directory %s for target %s', docName, target.name));
+/**
+ * Reads single document folder
+ * @param arguments - {Array} - array with elements:
+ * [0] - {Object} target object,
+ * [1] - {String} name of one of documentation directories of repository
+ * [2] - {String} name of doc directory (name of article)
+ * [3] - {String} path to the doc directory
+ * @returns {*|Promise|then}
+ */
+var readDirectory = function() {
+    var args = Array.prototype.slice.call(arguments),
+        target = args[0],
+        docName = args[2],
+        path = args[3];
+
+    LOGGER.silly(
+        UTIL.format('make docs: read doc directory %s for target %s',
+            docName, target.name));
+
     return U.getFilesAsync(path)
         .then(function(files) {
-            return Q.all(files
+            return Q.allSettled(files
                     .filter(function(fileName) {
                         return util.filterDocFile(fileName, docName);
                     })
                     .map(function(fileName) {
-                        return readDocFile(target, docName, PATH.join(path, fileName), fileName);
+                        return readFile.apply(
+                            null, _.union(_.initial(args), [PATH.join(path, fileName), fileName]));
                     })
             );
         });
 };
 
-var readDocFile  = function(target, docName, path, fileName) {
-    LOGGER.silly(UTIL.format('make docs: read file %s for target %s', fileName, target.name));
-}
+/**
+ * Reads single file
+ * @param arguments - {Array} - array with elements:
+ * [0] - {Object} target object,
+ * [1] - {String} name of one of documentation directories of repository
+ * [2] - {String} name of doc directory (name of article)
+ * [3] - {String} path to the doc file
+ * [4] - {String} file name
+ * @returns {*|Promise|then}
+ */
+var readFile = function() {
+    var args = Array.prototype.slice.call(arguments),
+        target = args[0],
+        path = args[3],
+        fileName = args[4];
+
+    LOGGER.silly(
+        UTIL.format('make docs: read file %s for target %s',
+            fileName, target.name));
+
+    return U.readFile(path).then(
+        function(content) {
+            return parseContent.apply(null, _.union(args, [content]));
+        }
+    );
+};
+
+/**
+ * Parse content of file
+ * @param arguments - {Array} - array with elements:
+ * [0] - {Object} target object,
+ * [1] - {String} name of one of documentation directories of repository
+ * [2] - {String} name of doc directory (name of article)
+ * [3] - {String} path to the doc file
+ * [4] - {String} file name
+ * [5] - {String} content of file
+ * @returns {defer.promise|*}
+ */
+var parseContent = function() {
+    var docName = arguments[2],
+        fileName = arguments[4],
+        content = arguments[5],
+        extension = util.getFileExtension(fileName),
+        language = util.getFileLanguage(fileName),
+        def = Q.defer();
+
+    try{
+        var parser = {
+            'wiki': parseWiki,
+            'md': parseMarkdown,
+            'meta.json': parseJson
+        }[extension];
+
+        content = parser ? parser.call(null, content) : content;
+
+        def.resolve({
+            name: docName,
+            language: language,
+            extension: extension,
+            content: content
+        });
+    }catch(error) {
+        def.reject(error);
+    }finally {
+        return def.promise;
+    }
+};
+
+/**
+ * Returns parsed wiki files
+ * @param content - {String} string content of file
+ * @returns {String} compiled html from wiki
+ */
+var parseWiki = function(content) {
+    return SHMAKOWIKI.shmakowikiToHtml(content);
+};
+
+/**
+ * Returns parsed markdown
+ * @param content - {String} string content of file
+ * @returns {String} compiled html from markdown
+ */
+var parseMarkdown = function(content) {
+    var languages = {};
+
+    return MARKED(content, {
+        gfm: true,
+        pedantic: false,
+        sanitize: false,
+        highlight: function(code, lang) {
+            if (!lang) {
+                return code;
+            }
+            var res = HIGHLIGHT.highlight(function(alias) {
+                return {
+                    'js' : 'javascript',
+                    'patch': 'diff',
+                    'md': 'markdown',
+                    'html': 'xml',
+                    'sh': 'bash'
+                }[alias] || alias;
+            }(lang), code);
+
+            languages[lang] = res.language;
+            return res.value;
+        }
+    })
+    .replace(/<pre><code class="lang-(.+?)">([\s\S]+?)<\/code><\/pre>/gm,
+        function(m, lang, code) {
+            return '<pre class="highlight"><code class="highlight__code ' + languages[lang] + '">' + code + '</code></pre>';
+        }
+    );
+};
+
+/**
+ * Returns parsed JSON content
+ * @param content - {String} string content of file
+ * @returns {Object}
+ */
+var parseJson = function(content) {
+    return JSON.parse(content);
+};
+
+/**
+ *
+ * @param data
+ */
+var collectResults = function(data) {
+    var en = [],
+        ru = [];
+
+    try {
+        data = planerizeResults(data);
+
+        data.filter(function(item) {
+                return item.extension === 'meta.json';
+            }).map(function(item) {
+                var type = null,
+                    category = null,
+                    meta = item.content;
+
+                meta.content = findContentForMeta(data, item);
+
+                //parse date from dd-mm-yyyy format into milliseconds
+                if(meta.createDate) {
+                    meta.createDate = util.formatDate(meta.createDate);
+                }
+
+                //parse date from dd-mm-yyyy format into milliseconds
+                if(meta.editDate) {
+                    meta.editDate = util.formatDate(meta.editDate);
+                }
+
+                if(_.isArray(meta.type)) {
+                    type = meta.type[0];
+                }
+
+                category = (meta.categories && meta.categories.length > 0) ? meta.categories[0] : null;
+
+                if(category) {
+                    category = category.url || category;
+                }
+
+                //set canonical url for item
+                meta.url =
+                    [type, category, item.name].reduce(function(prev, item) {
+                        return prev + (item ? ('/' + item) : '');
+                    }, '') + '/';
+
+                item.meta = meta;
+
+                item.language === 'en' && en.push(meta);
+                item.language === 'ru' && ru.push(meta);
+
+                return item;
+            });
+    }catch(err) {
+        LOGGER.error(err.message);
+    }
+
+    return [
+        {lang: 'en', data: en},
+        {lang: 'ru', data: ru}
+    ];
+};
+
+/**
+ *
+ * @param data
+ * @returns {Array}
+ */
+var planerizeResults = function(data) {
+    var plane = [];
+    data
+        .filter(function(docs) {
+            return docs.state === 'fulfilled';
+        })
+        .map(function(docs) {
+            return docs.value
+                .filter(function(doc) {
+                    return doc.state === 'fulfilled';
+                })
+                .map(function(doc) {
+                    return doc.value
+                        .filter(function(file) {
+                            return file.state === 'fulfilled';
+                        })
+                        .map(function(file) {
+                            return plane.push(file.value);
+                        });
+                });
+        });
+    return plane;
+};
+
+/**
+ *
+ * @param data - {Array} array of items
+ * @param meta - {Object}
+ * @returns {String} html string content parsed from md ow wiki files
+ */
+var findContentForMeta = function(data, meta) {
+    var result = data.filter(function(item) {
+        return  item.name === meta.name &&
+                item.language === meta.language &&
+                (item.extension === 'md' || item.extension === 'wiki');
+    });
+
+    return result.length > 0 ? result[0].content : null;
+};
 
 module.exports = execute;

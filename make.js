@@ -10,21 +10,21 @@ var BEM = require('bem'),
     resolveRepositories = require('./tasks/resolve_repositories'),
     resolveBranches = require('./tasks/resolve_branches'),
     resolveTags = require('./tasks/resolve_tags'),
-    createTargets = require('./tasks/create_targets'),
-    commands = require('./tasks/cmd'),
-    makeDocs = require('./tasks/make_docs'),
-    clear = require('./tasks/clear');
+    createTargets = require('./tasks/create_targets');
+    //commands = require('./tasks/cmd'),
+    //makeDocs = require('./tasks/make_docs'),
+    //clear = require('./tasks/clear');
 
 var make = (function() {
     LOGGER.setLevel('silly');
     LOGGER.info('--- data source start ---');
     util.createContentDirectory()
-        .then(function() { return getSources() })
-        .then(function(sources) { return resolveRepositories(sources)})
-        .then(function(sources) { return resolveTags(sources) })
-        .then(function(sources) { return resolveBranches(sources) })
-        .then(function(sources) { return createTargets(sources) })
-        .then(function(targets) { return run(targets) })
+        .then(function() { return getSources(); })
+        .then(function(sources) { return resolveRepositories(sources); })
+        .then(function(sources) { return resolveTags(sources); })
+        .then(function(sources) { return resolveBranches(sources); })
+        .then(function(sources) { return createTargets(sources); })
+        .then(function(targets) { return run(targets); });
 })();
 
 var run = function(targets) {
@@ -44,44 +44,8 @@ var run = function(targets) {
 };
 
 var runTarget = function(target) {
-
-    if(target.type == 'libs') {
-        return runTargetLibs(target);
-    } else if (target.type == 'docs') {
-        return runTargetDocs(target);
-    }
-}
-
-var runTargetLibs = function(target) {
-    if(target.taskGitClone)
-        return commands.gitClone(target)
-            .then(function() { return commands.npmInstall(target) })
-            .then(function() { return commands.bemMakeLibs(target) })
-            .then(function() { return commands.bemMakeSets(target) });
-
-    if(target.taskNpmInstall)
-        return commands.npmInstall(target)
-            .then(function() { return commands.bemMakeLibs(target) })
-            .then(function() { return commands.bemMakeSets(target) });
-
-    if(target.taskMakeLibs)
-        return commands.bemMakeLibs(target)
-            .then(function() { return commands.bemMakeSets(target)});
-
-    if(target.taskMakeSets)
-        return commands.bemMakeSets(target);
-};
-
-var runTargetDocs = function(target) {
-    if(target.taskClear)
-        return clear(target)
-            .then(function() { return commands.gitClone(target) })
-            .then(function() { return makeDocs(target) });
-
-    if(target.taskGitClone)
-        return commands.gitClone(target)
-            .then(function() { return makeDocs(target) });
-
-    if(target.taskMakeDocs)
-        return makeDocs(target);
+    var initial = target.tasks.shift();
+    return target.tasks.reduce(function(prev, item) {
+        return prev.then(function() { return item.call(null, target); });
+    }, initial.call(null, target));
 };
