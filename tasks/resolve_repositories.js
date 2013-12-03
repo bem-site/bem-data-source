@@ -1,8 +1,10 @@
 /* global toString: false */
 'use strict';
 
-//bem tools modules
-var BEM = require('bem'),
+var UTIL = require('util'),
+
+    //bem tools modules
+    BEM = require('bem'),
     Q = BEM.require('q'),
     LOGGER = BEM.require('./logger'),
     _ = BEM.require('underscore'),
@@ -24,7 +26,7 @@ var BEM = require('bem'),
  * @returns {defer.promise|*}
  */
 var execute = function(sources) {
-    LOGGER.info('resolveRepositories start');
+    LOGGER.info('step2: - resolveRepositories start');
 
     var def = Q.defer();
     try {
@@ -41,6 +43,8 @@ var execute = function(sources) {
                 //return array of sources with items extended by git urls of repositories
                 res = res.map(function(item) {
                     item = item.value;
+
+                    LOGGER.debug(UTIL.format('resolve repository with name %s and url %s', item.source.name, item.result.git_url));
                     return _.extend({url: item.result.git_url}, item.source);
                 });
 
@@ -51,8 +55,9 @@ var execute = function(sources) {
         LOGGER.error(err.message);
         def.reject(err);
     } finally {
-        return def.promise;
+        LOGGER.info('step2: - resolveRepositories end');
     }
+    return def.promise;
 };
 
 module.exports = execute;

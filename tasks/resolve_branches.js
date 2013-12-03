@@ -27,7 +27,7 @@ var UTIL = require('util'),
  * @returns {defer.promise|*}
  */
 var execute = function(sources) {
-    LOGGER.info('resolveBranches start');
+    LOGGER.info('step4: - resolveBranches start');
 
     var def = Q.defer();
     try {
@@ -69,22 +69,22 @@ var execute = function(sources) {
                     }
 
                     if(resultBranches.length > 0) {
-                        LOGGER.info(UTIL.format('repository: %s branches: %s will be executed', source.name, resultBranches));
+                        LOGGER.debug(UTIL.format('repository: %s branches: %s will be executed', source.name, resultBranches));
                     }
 
                     item.source.branches = resultBranches;
                     return item.source;
                 });
 
+                LOGGER.info('step4: - resolveBranches end');
                 def.resolve(res);
             });
 
     } catch(err) {
         LOGGER.error(err.message);
         def.reject(err);
-    } finally {
-        return def.promise;
     }
+    return def.promise;
 };
 
 module.exports = execute;

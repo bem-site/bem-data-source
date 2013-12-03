@@ -33,21 +33,25 @@ var run = function(targets) {
     LOGGER.info('run commands start');
     var def = Q.defer();
     try{
-        Q.allSettled(targets.map(runTarget)).then(function() {
-            def.resolve();
-            LOGGER.info("--- data source end ---");
-        });
+        Q.allSettled(
+            targets.map(
+                function(target) {
+                    var initial = target.tasks.shift();
+                    return target.tasks.reduce(function(prev, item) {
+                        return prev.then(function() { return item.call(null, target); });
+                    }, initial.call(null, target));
+                }
+            )
+        ).then(
+            function() {
+                def.resolve();
+                LOGGER.info("--- data source end ---");
+            }
+        );
     }catch(err) {
         LOGGER.error(err.message);
         def.reject(err);
     }finally {
         return def.promise;
     }
-};
-
-var runTarget = function(target) {
-    var initial = target.tasks.shift();
-    return target.tasks.reduce(function(prev, item) {
-        return prev.then(function() { return item.call(null, target); });
-    }, initial.call(null, target));
 };
