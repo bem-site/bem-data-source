@@ -17,7 +17,8 @@ var BEM = require('bem'),
     createTargets = require('./tasks/create_targets');
 
 var make = (function() {
-    LOGGER.setLevel('silly');
+
+    LOGGER.setLevel(config.get('v'));
     LOGGER.info('--- data source start ---');
     util.createContentDirectory()
         .then(function() { return getSources(); })
