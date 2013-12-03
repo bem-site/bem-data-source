@@ -297,8 +297,13 @@ var collectResults = function(data) {
 
                 item.meta = meta;
 
-                item.language === 'en' && en.push(meta);
-                item.language === 'ru' && ru.push(meta);
+                if(item.language === 'en') {
+                    en.push(meta);
+                }
+
+                if(item.language === 'ru') {
+                    ru.push(meta);
+                }
 
                 return item;
             });

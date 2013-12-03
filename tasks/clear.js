@@ -1,12 +1,14 @@
-const   UTIL = require('util'),
+/* global toString: false */
+'use strict';
 
-        RMRF = require('rimraf'),
+var UTIL = require('util'),
+    RMRF = require('rimraf'),
 
-        //bem modules
-        BEM = require('bem'),
-        Q = BEM.require('q'),
-        LOGGER = BEM.require('./logger'),
-        U = BEM.require('./util');
+    //bem modules
+    BEM = require('bem'),
+    Q = BEM.require('q'),
+    LOGGER = BEM.require('./logger'),
+    U = BEM.require('./util');
 
 /**
  * Recursively removes source directories from filesystem
@@ -29,7 +31,7 @@ var execute = function(target) {
             def.resolve(result);
         },
         function(error) {
-            if(error.code == 'ENOENT') {
+            if(error.code === 'ENOENT') {
                 LOGGER.warn(UTIL.format('remove directory target %s failed. Directory does not exist', target.name));
                 return def.resolve();
             }else {
