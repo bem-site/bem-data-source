@@ -18,10 +18,6 @@ var UTIL = require('util'),
     //application modules
     util = require('../libs/util');
 
-    //EXTENSION_MD = 'md',
-    //EXTENSION_WIKI = 'wiki',
-    //EXTENSION_META = 'meta.json';
-
 /**
  *
  * @param target
@@ -267,6 +263,7 @@ var collectResults = function(data) {
                     category = null,
                     meta = item.content;
 
+                //find and set linked content
                 meta.content = findContentForMeta(data, item);
 
                 //parse date from dd-mm-yyyy format into milliseconds
@@ -295,6 +292,9 @@ var collectResults = function(data) {
                         return prev + (item ? ('/' + item) : '');
                     }, '') + '/';
 
+                //generate unique id for source
+                meta.id = SHA(JSON.stringify(meta));
+
                 item.meta = meta;
 
                 if(item.language === 'en') {
@@ -318,8 +318,8 @@ var collectResults = function(data) {
 };
 
 /**
- *
- * @param data
+ * Returns plane content from tree of promises
+ * @param data {Object} tree of promises
  * @returns {Array}
  */
 var planerizeResults = function(data) {
@@ -347,9 +347,9 @@ var planerizeResults = function(data) {
 };
 
 /**
- *
- * @param data - {Array} array of items
- * @param meta - {Object}
+ * Returns content of linked markdown or wiki files
+ * @param data - {Array} plane array of items
+ * @param meta - {Object} item of meta file which we should find content for
  * @returns {String} html string content parsed from md ow wiki files
  */
 var findContentForMeta = function(data, meta) {
