@@ -87,7 +87,7 @@ exports.bemMakeSets = function(target) {
  * @returns {defer.promise|*}
  */
 var runCommand = function(cmd, name, target) {
-    LOGGER.info(cmd);
+    LOGGER.debug(cmd);
 
     var def = Q.defer();
     U.exec(cmd, null, true).then(

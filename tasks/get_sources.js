@@ -15,10 +15,10 @@ var BEM = require('bem'),
  * @returns {defer.promise|*}
  */
 var execute = function() {
-    LOGGER.info('getSources start');
+    LOGGER.info('step1: - getSources start');
 
     var def = Q.defer(),
-        _sources = [],
+        result = [],
         sources = config.get('sources');
 
     try {
@@ -29,19 +29,20 @@ var execute = function() {
 
                 if(owner && repositories) {
                     repositories.forEach(function(repository) {
-                        _sources.push(_.extend(repository, { user: owner, isPrivate: key === 'private' }));
+                        result.push(_.extend(repository, { user: owner, isPrivate: key === 'private' }));
                     });
                 }
             });
         });
 
-        def.resolve(_sources);
+        def.resolve(result);
     } catch(err) {
         LOGGER.error(err.message);
         def.reject(err);
     } finally {
-        return def.promise;
+        LOGGER.info('step1: - getSources end');
     }
+    return def.promise;
 };
 
 module.exports = execute;
