@@ -1,18 +1,21 @@
-const   FS = require('fs'),
-        CP = require('child_process'),
-        UTIL = require('util'),
+/* global toString: false */
+'use strict';
 
-        BEM = require('bem'),
-        Q = BEM.require('q'),
-        QIO_FS = BEM.require('q-fs'),
-        PATH = BEM.require('./path'),
-        LOGGER = BEM.require('./logger'),
-        U = BEM.require('./util'),
+var FS = require('fs'),
+    CP = require('child_process'),
+    UTIL = require('util'),
 
-        config = require('../config/config');
+    BEM = require('bem'),
+    Q = BEM.require('q'),
+    QIO_FS = BEM.require('q-fs'),
+    PATH = BEM.require('./path'),
+    LOGGER = BEM.require('./logger'),
+    U = BEM.require('./util'),
 
-const   EXTENSIONS = ['wiki', 'md', 'meta.json', 'png'],
-        LANGUAGES = ['en', 'ru'];
+    config = require('../config/config');
+
+var EXTENSIONS = ['wiki', 'md', 'meta.json', 'png'],
+    LANGUAGES = ['en', 'ru'];
 
 exports.createContentDirectory = function() {
     return QIO_FS
@@ -21,8 +24,9 @@ exports.createContentDirectory = function() {
             LOGGER.debug('Content directory has been created');
         })
         .fail(function(err) {
-            if(err.code == 'EEXIST')
-                LOGGER.warn('Content directory already exist')
+            if(err.code === 'EEXIST') {
+                LOGGER.warn('Content directory already exist');
+            }
         });
 };
 
@@ -34,7 +38,7 @@ exports.sortTags = function(a, b) {
 };
 
 exports.filterDocDirectory = function(dir) {
-    return ['.git', '.bem'].indexOf(dir) == -1;
+    return ['.git', '.bem'].indexOf(dir) === -1;
 };
 
 exports.filterDocFile = function(file, dir) {
@@ -42,7 +46,9 @@ exports.filterDocFile = function(file, dir) {
         return file.indexOf(extension, file.length - extension.length) !== -1;
     });
 
-    if(!isValidExtension) return false;
+    if(!isValidExtension){
+        return false;
+    }
 
     return file.split('.')[0] === dir;
 };
@@ -55,7 +61,7 @@ exports.filterDocFile = function(file, dir) {
 exports.getFileExtension = function(file) {
     var result = null;
     EXTENSIONS.some(function(extension) {
-        result = extension
+        result = extension;
         return file.indexOf(extension, file.length - extension.length) !== -1;
     });
     return result;
@@ -95,10 +101,12 @@ exports.formatDate = function(dateStr) {
                 date.setMonth(dateParse[indx] - 1);
                 break;
             default:
-                if (dateParse[indx].length == 2) {
-                    date.getFullYear() % 100 >= dateParse[indx] ?
-                        date.setFullYear('20' + dateParse[indx]) :
+                if (dateParse[indx].length === 2) {
+                    if(date.getFullYear() % 100 >= dateParse[indx]) {
+                        date.setFullYear('20' + dateParse[indx]);
+                    }else {
                         date.setFullYear('19' + dateParse[indx]);
+                    }
                 }else {
                     date.setFullYear(dateParse[indx]);
                 }
@@ -106,4 +114,4 @@ exports.formatDate = function(dateStr) {
     });
 
     return date.valueOf();
-}
+};

@@ -1,11 +1,14 @@
-//bem tools modules
-const   BEM = require('bem'),
-        Q = BEM.require('q'),
-        LOGGER = BEM.require('./logger'),
-        _ = BEM.require('underscore'),
+/* global toString: false */
+'use strict';
 
-        //application modules
-        git = require('../libs/git');
+//bem tools modules
+var BEM = require('bem'),
+    Q = BEM.require('q'),
+    LOGGER = BEM.require('./logger'),
+    _ = BEM.require('underscore'),
+
+    //application modules
+    git = require('../libs/git');
 
 /**
  * Retrieves information about git repositories by their names
@@ -20,7 +23,7 @@ const   BEM = require('bem'),
  * - branches - {Object} object which holds arrays of branches which should be included or excluded from make process
  * @returns {defer.promise|*}
  */
-execute = function(sources) {
+var execute = function(sources) {
     LOGGER.info('resolveRepositories start');
 
     var def = Q.defer();
@@ -32,7 +35,7 @@ execute = function(sources) {
             ).then(function(res) {
                 //remove all rejected promises
                 res = res.filter(function(item) {
-                    return item.state == 'fulfilled';
+                    return item.state === 'fulfilled';
                 });
 
                 //return array of sources with items extended by git urls of repositories

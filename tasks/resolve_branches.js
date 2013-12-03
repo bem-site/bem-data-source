@@ -1,13 +1,16 @@
-const   UTIL = require('util'),
+/* global toString: false */
+'use strict';
 
-        //bem tools modules
-        BEM = require('bem'),
-        Q = BEM.require('q'),
-        LOGGER = BEM.require('./logger'),
-        _ = BEM.require('underscore'),
+var UTIL = require('util'),
 
-        //application modules
-        git = require('../libs/git');
+    //bem tools modules
+    BEM = require('bem'),
+    Q = BEM.require('q'),
+    LOGGER = BEM.require('./logger'),
+    _ = BEM.require('underscore'),
+
+    //application modules
+    git = require('../libs/git');
 
 /**
  * Retrieves information about repository branches and filter them according to config
@@ -35,7 +38,7 @@ var execute = function(sources) {
             ).then(function(res) {
                 //remove all rejected promises
                 res = res.filter(function(item) {
-                    return item.state == 'fulfilled';
+                    return item.state === 'fulfilled';
                 });
 
                 res = res.map(function(item) {
@@ -52,21 +55,22 @@ var execute = function(sources) {
                     //remove tags which not included in config
                     //also exclude rule have greater priority
                     if(source.branches) {
-                        var branchesInclude = source.branches['include'],
-                            branchesExclude = source.branches['exclude'];
+                        var branchesInclude = source.branches.include,
+                            branchesExclude = source.branches.exclude;
 
                         if(_.isArray(branchesInclude)) {
                             resultBranches = _.intersection(branches, branchesInclude);
                         }
                         if(_.isArray(branchesExclude)) {
                             resultBranches = resultBranches.filter(function(branch) {
-                                return branchesExclude.indexOf(branch) == -1;
+                                return branchesExclude.indexOf(branch) === -1;
                             });
                         }
                     }
 
-                    resultBranches.length > 0 &&
+                    if(resultBranches.length > 0) {
                         LOGGER.info(UTIL.format('repository: %s branches: %s will be executed', source.name, resultBranches));
+                    }
 
                     item.source.branches = resultBranches;
                     return item.source;

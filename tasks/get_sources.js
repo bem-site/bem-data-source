@@ -1,11 +1,14 @@
-//bem tools modules
-const   BEM = require('bem'),
-        Q = BEM.require('q'),
-        LOGGER = BEM.require('./logger'),
-        _ = BEM.require('underscore'),
+/* global toString: false */
+'use strict';
 
-        //application modules
-        config = require('../config/config');
+//bem tools modules
+var BEM = require('bem'),
+    Q = BEM.require('q'),
+    LOGGER = BEM.require('./logger'),
+    _ = BEM.require('underscore'),
+
+    //application modules
+    config = require('../config/config');
 
 /**
  * Retrieves sources configuration and modify it for suitable github API calling
@@ -24,9 +27,11 @@ var execute = function() {
                 var owner = source.org || source.user,
                     repositories = source.repositories;
 
-                (owner && repositories) && repositories.forEach(function(repository) {
-                    _sources.push(_.extend(repository, { user: owner, isPrivate: key == 'private' }))
-                })
+                if(owner && repositories) {
+                    repositories.forEach(function(repository) {
+                        _sources.push(_.extend(repository, { user: owner, isPrivate: key === 'private' }));
+                    });
+                }
             });
         });
 
