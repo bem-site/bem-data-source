@@ -258,7 +258,7 @@ var collectResults = function(data) {
 
         data.filter(function(item) {
                 return item.extension === 'meta.json';
-            }).map(function(item) {
+            }).forEach(function(item) {
                 var type = null,
                     category = null,
                     meta = item.content;
@@ -304,8 +304,6 @@ var collectResults = function(data) {
                 if(item.language === 'ru') {
                     ru.push(meta);
                 }
-
-                return item;
             });
     }catch(err) {
         LOGGER.error(err.message);
