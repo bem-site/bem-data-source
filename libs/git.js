@@ -1,3 +1,6 @@
+/* global toString: false */
+'use strict';
+
 var API = require("github"),
     BEM = require('bem'),
     Q = BEM.require('q'),
@@ -17,9 +20,9 @@ var gitPublic = null,
     LOGGER.info('Initialize github API');
 
     var gitConfig = config.get('gitAPI'),
-        commonConfig = gitConfig['common'],
-        publicConfig = gitConfig['public'],
-        privateConfig = gitConfig['private'];
+        commonConfig = gitConfig.common,
+        publicConfig = gitConfig.public,
+        privateConfig = gitConfig.private;
 
     gitPublic = new API(_.extend(publicConfig, commonConfig));
     gitPrivate = new API(_.extend(privateConfig, commonConfig));

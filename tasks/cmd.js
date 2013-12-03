@@ -1,10 +1,13 @@
-const   UTIL = require('util'),
+/* global toString: false */
+'use strict';
 
-        //bem tools modules
-        BEM = require('bem'),
-        Q = BEM.require('q'),
-        LOGGER = BEM.require('./logger'),
-        U = BEM.require('./util');
+var UTIL = require('util'),
+
+    //bem tools modules
+    BEM = require('bem'),
+    Q = BEM.require('q'),
+    LOGGER = BEM.require('./logger'),
+    U = BEM.require('./util');
 
 /**
  * Execute git clone command in child process

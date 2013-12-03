@@ -1,18 +1,21 @@
-const   UTIL = require('util'),
+/* global toString: false */
+'use strict';
 
-        //bem tools modules
-        BEM = require('bem'),
-        Q = BEM.require('q'),
-        LOGGER = BEM.require('./logger'),
-        _ = BEM.require('underscore'),
+var UTIL = require('util'),
 
-        //application modules
-        config = require('../config/config'),
-        git = require('../libs/git'),
-        util = require('../libs/util');
+    //bem tools modules
+    BEM = require('bem'),
+    Q = BEM.require('q'),
+    LOGGER = BEM.require('./logger'),
+    _ = BEM.require('underscore'),
 
-const   TAGS_ALL = 'all',
-        TAGS_LAST = 'last';
+    //application modules
+    config = require('../config/config'),
+    git = require('../libs/git'),
+    util = require('../libs/util');
+
+var TAGS_ALL = 'all',
+    TAGS_LAST = 'last';
 
 /**
  * Retrieves information about repository tags and filter them according to config
@@ -40,7 +43,7 @@ var execute = function(sources) {
             ).then(function(res) {
                 //remove all rejected promises
                 res = res.filter(function(item) {
-                    return item.state == 'fulfilled';
+                    return item.state === 'fulfilled';
                 });
 
                 res = res.map(function(item) {
@@ -59,27 +62,28 @@ var execute = function(sources) {
                     //left all tags if there 'all' in config
                     //also exclude rule have greater priority
                     if(source.tags) {
-                        var tagsInclude = source.tags['include'],
-                            tagsExclude = source.tags['exclude'];
+                        var tagsInclude = source.tags.include,
+                            tagsExclude = source.tags.exclude;
 
                         if(_.isArray(tagsInclude)) {
                             resultTags = _.intersection(tags, tagsInclude);
                         }else if(_.isString(tagsInclude)) {
-                            if(tagsInclude == TAGS_LAST) {
+                            if(tagsInclude === TAGS_LAST) {
                                 resultTags = [_.last(tags.sort(util.sortTags))];
-                            }else if(tagsInclude == TAGS_ALL) {
+                            }else if(tagsInclude === TAGS_ALL) {
                                 resultTags = tags;
                             }
                         }
                         if(_.isArray(tagsExclude)) {
                             resultTags = resultTags.filter(function(tag) {
-                                return tagsExclude.indexOf(tag) == -1;
+                                return tagsExclude.indexOf(tag) === -1;
                             });
                         }
                     }
 
-                    resultTags.length > 0 &&
+                    if(resultTags.length > 0) {
                         LOGGER.info(UTIL.format('repository: %s tags: %s will be executed', source.name, resultTags));
+                    }
 
                     item.source.tags = resultTags;
                     return item.source;

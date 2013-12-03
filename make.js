@@ -1,9 +1,13 @@
+/* global toString: false */
+'use strict';
+
 //bem tools modules
 var BEM = require('bem'),
     Q = BEM.require('q'),
     LOGGER = BEM.require('./logger'),
 
     //application modules
+    config = require('./config/config'),
     util = require('./libs/util'),
 
     getSources = require('./tasks/get_sources'),
@@ -11,9 +15,6 @@ var BEM = require('bem'),
     resolveBranches = require('./tasks/resolve_branches'),
     resolveTags = require('./tasks/resolve_tags'),
     createTargets = require('./tasks/create_targets');
-    //commands = require('./tasks/cmd'),
-    //makeDocs = require('./tasks/make_docs'),
-    //clear = require('./tasks/clear');
 
 var make = (function() {
     LOGGER.setLevel('silly');
