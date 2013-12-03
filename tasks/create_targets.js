@@ -15,7 +15,8 @@ var UTIL = require('util'),
     config = require('../config/config'),
     commands = require('../tasks/cmd'),
     makeDocs = require('../tasks/make_docs'),
-    clear = require('../tasks/clear');
+    clear = require('../tasks/clear'),
+    finalize = require('../tasks/finalize');
 
 var FILE_PACKAGE_JSON = 'package.json',
     DIR_NODE_MODULES = 'node_modules',
@@ -24,7 +25,7 @@ var FILE_PACKAGE_JSON = 'package.json',
     TASK_TYPE_DOCS = 'docs';
 
 var execute = function(sources) {
-    LOGGER.info('create targets start');
+    LOGGER.info('step5: - createTargets start');
 
     var rootPath = config.get('contentDirectory'),
         targets = [],
@@ -49,8 +50,9 @@ var execute = function(sources) {
         LOGGER.error(err.message);
         def.reject(err);
     }finally {
-        return def.promise;
+        LOGGER.info('step5: - createTargets end');
     }
+    return def.promise;
 };
 
 /**
@@ -133,7 +135,10 @@ var createTarget = function() {
         target.tasks.push(commands.bemMakeSets);
     }
 
-    LOGGER.info(UTIL.format('create target for source: %s with ref %s into directory %s',
+    //add finalize tasks to queue
+    target.tasks.push(finalize);
+
+    LOGGER.debug(UTIL.format('create target for source: %s with ref %s into directory %s',
         source.name, ref, PATH.join(rootPath, sourceDir, ref)));
 
     return target;

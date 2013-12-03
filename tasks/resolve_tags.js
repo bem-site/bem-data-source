@@ -32,7 +32,7 @@ var TAGS_ALL = 'all',
  * @returns {defer.promise|*}
  */
 var execute = function(sources) {
-    LOGGER.info('resolveTags start');
+    LOGGER.info('step3: - resolveTags start');
 
     var def = Q.defer();
     try {
@@ -82,22 +82,22 @@ var execute = function(sources) {
                     }
 
                     if(resultTags.length > 0) {
-                        LOGGER.info(UTIL.format('repository: %s tags: %s will be executed', source.name, resultTags));
+                        LOGGER.debug(UTIL.format('repository: %s tags: %s will be executed', source.name, resultTags));
                     }
 
                     item.source.tags = resultTags;
                     return item.source;
                 });
 
+                LOGGER.info('step3: - resolveTags end');
                 def.resolve(res);
             });
 
     } catch(err) {
         LOGGER.error(err.message);
         def.reject(err);
-    } finally {
-        return def.promise;
     }
+    return def.promise;
 };
 
 module.exports = execute;
