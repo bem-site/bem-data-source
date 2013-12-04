@@ -17,24 +17,33 @@ var UTIL = require('util'),
 var execute = function(targets) {
     LOGGER.info('step7: - finalize start');
 
-    var path = PATH.resolve('config', 'config') + '.json';
+    var def = Q.defer();
 
-    return U.readFile(path)
-        .then(
-            function(content) {
-                return markAsMade(targets, content);
-            }
-        )
-        .then(
-            function(content) {
-                return U.writeFile(path, JSON.stringify(content, null, 4));
-            }
-        )
-        .then(
-            function() {
-                LOGGER.info('step7: - finalize end');
-            }
-        );
+    try {
+        var path = PATH.resolve('config', 'config') + '.json';
+
+        U.readFile(path)
+            .then(
+                function(content) {
+                    return markAsMade(targets, content);
+                }
+            )
+            .then(
+                function(content) {
+                    return U.writeFile(path, JSON.stringify(content, null, 4));
+                }
+            )
+            .then(
+                function() {
+                    LOGGER.info('step7: - finalize end');
+                    def.resolve(targets);
+                }
+            );
+    }catch(error) {
+        def.reject(error);
+    }
+
+    return def.promise;
 };
 
 /**
