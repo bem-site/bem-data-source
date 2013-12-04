@@ -119,17 +119,16 @@ var createTarget = function() {
     }
 
     if(sourceTypes.indexOf(TASK_TYPE_LIBS) > -1) {
-        var packageJsonExist = U.isFile(PATH.join(rootPath, sourceDir, ref, FILE_PACKAGE_JSON)),
-            nodeModulesExist = U.isDirectory(PATH.join(rootPath, sourceDir, ref, DIR_NODE_MODULES)),
-            libsExist = U.isDirectory(PATH.join(rootPath, sourceDir, ref, DIR_LIBS));
+        var needNpmInstall = !U.isDirectory(PATH.join(rootPath, sourceDir, ref, DIR_NODE_MODULES)),
+            needBemMakeLibs = !U.isDirectory(PATH.join(rootPath, sourceDir, ref, DIR_LIBS));
 
         //check if npm install command is needed for execution
-        if(target.tasks.indexOf(commands.gitClone) === -1 && packageJsonExist && !nodeModulesExist) {
+        if(needNpmInstall) {
             target.tasks.push(commands.npmInstall);
         }
 
         //check if bem make libs command is needed for execution
-        if(!libsExist) {
+        if(needBemMakeLibs) {
             target.tasks.push(commands.bemMakeLibs);
         }
 

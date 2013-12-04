@@ -76,8 +76,12 @@
                             "exclude": []
                         },
                         "branches": {
-                            "include": [],
-                            "exclude": []
+                            "include": [
+                                "bem-sets_test"
+                            ],
+                            "exclude": [
+                                "bem-sets_test"
+                            ]
                         }
                     }
                 ]

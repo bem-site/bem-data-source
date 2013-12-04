@@ -90,14 +90,13 @@ var runCommand = function(cmd, name, target) {
     LOGGER.debug(cmd);
 
     var def = Q.defer();
-    U.exec(cmd, null, true).then(
-        function(result) {
+    U.exec(cmd, { maxBuffer: 10000*1024 }, true).then(
+        function() {
             LOGGER.info(UTIL.format('%s for target %s completed', name, target.name));
-            def.resolve(result);
+            def.resolve(target);
         },
         function(error) {
-            LOGGER.error(UTIL.format('%s for target %s failed with reason %s',
-                name, target.name, error.message));
+            LOGGER.error(UTIL.format('%s for target %s failed', name, target.name));
             def.reject(error);
         });
     return def.promise;
