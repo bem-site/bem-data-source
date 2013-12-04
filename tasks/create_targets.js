@@ -15,8 +15,7 @@ var UTIL = require('util'),
     config = require('../config/config'),
     commands = require('../tasks/cmd'),
     makeDocs = require('../tasks/make_docs'),
-    clear = require('../tasks/clear'),
-    finalize = require('../tasks/finalize');
+    clear = require('../tasks/clear');
 
 var FILE_PACKAGE_JSON = 'package.json',
     DIR_NODE_MODULES = 'node_modules',
@@ -27,21 +26,20 @@ var FILE_PACKAGE_JSON = 'package.json',
 var execute = function(sources) {
     LOGGER.info('step5: - createTargets start');
 
-    var rootPath = config.get('contentDirectory'),
-        targets = [],
-        def = Q.defer();
-
+    var def = Q.defer();
     try{
+        var rootPath = config.get('contentDirectory'),
+            targets = [];
+
         sources.forEach(function(source) {
             var sourceDir = source.targetDir || source.name,
-                existed = U.getDirs(PATH.join(rootPath, sourceDir)),
+                existed = U.getDirs(PATH.join(rootPath, sourceDir));
 
-                ct = function(item) {
-                    targets.push(createTarget.apply(null, [source, item, rootPath, sourceDir, existed]));
-                };
-
-            source.tags.forEach(ct);
-            source.branches.forEach(ct);
+            ['tags', 'branches'].forEach(function(type) {
+                source[type].forEach(function(item) {
+                    targets.push(createTarget.apply(null, [source, item, rootPath, sourceDir, existed, type]));
+                });
+            });
         });
 
         def.resolve(_.compact(targets));
@@ -57,12 +55,13 @@ var execute = function(sources) {
 
 /**
  * Creates target for tag or branch of current source
- * @param args - {Array} of arguments with elements:
+ * @param arguments - {Array} of arguments with elements:
  * [0] - {Object} source object
  * [1] - {String} name of tag or branch
  * [2] - {String} root path of content directory
  * [3] - {String} source directory (name of directory where source should be cloned. By default it equal to repository name)
  * [4] - {Array} array of directories corresponded to tags or branches of current source
+ * [5] - {String} type of reference (tags or branches)
  * @returns {*}
  */
 var createTarget = function() {
@@ -71,11 +70,14 @@ var createTarget = function() {
         rootPath = arguments[2],
         sourceDir = arguments[3],
         existed = arguments[4],
+        type = arguments[5],
 
         target = {
+            source: source,
             name: UTIL.format('%s %s', source.name, ref),
             url: source.url,
             ref: ref,
+            type: type,
             path: PATH.join(rootPath, sourceDir, ref),
             tasks: []
         };
@@ -134,9 +136,6 @@ var createTarget = function() {
         //add bem make sets command to scenario
         target.tasks.push(commands.bemMakeSets);
     }
-
-    //add finalize tasks to queue
-    target.tasks.push(finalize);
 
     LOGGER.debug(UTIL.format('create target for source: %s with ref %s into directory %s',
         source.name, ref, PATH.join(rootPath, sourceDir, ref)));
