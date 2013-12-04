@@ -15,6 +15,7 @@ var BEM = require('bem'),
     resolveBranches = require('./tasks/resolve_branches'),
     resolveTags = require('./tasks/resolve_tags'),
     createTargets = require('./tasks/create_targets'),
+    executeTargets = require('./tasks/execute_targets'),
     finalize = require('./tasks/finalize');
 
 var make = (function() {
@@ -27,39 +28,11 @@ var make = (function() {
         .then(function(sources) { return resolveTags(sources); })
         .then(function(sources) { return resolveBranches(sources); })
         .then(function(sources) { return createTargets(sources); })
-        .then(function(targets) { return run(targets); })
-        .then(function(targets) { return finalize(targets); });
+        .then(function(targets) { return executeTargets(targets); })
+        .then(function(targets) { return finalize(targets); })
+        .then(function() {
+            LOGGER.info('--- data source end ---');
+        });
+
 })();
 
-var run = function(targets) {
-    LOGGER.info('run commands start');
-    var def = Q.defer();
-    try {
-        Q.allSettled(
-            targets.map(
-                function(target) {
-                    var initial = target.tasks.shift();
-                    return target.tasks.reduce(function(prev, item) {
-                        return prev.then(function() { return item.call(null, target); });
-                    }, initial.call(null, target));
-                }
-            )
-        ).then(
-            function(result) {
-                def.resolve(result
-                    .filter(function(item) {
-                        return item.state === 'fulfilled';
-                    })
-                    .map(function(item) {
-                        return item.value;
-                    })
-                );
-            }
-        );
-    }catch(err) {
-        LOGGER.error(err.message);
-        def.reject(err);
-    }finally {
-        return def.promise;
-    }
-};
