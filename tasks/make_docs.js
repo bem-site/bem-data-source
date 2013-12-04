@@ -24,7 +24,7 @@ var UTIL = require('util'),
  * @returns {defer.promise|*}
  */
 var execute = function(target) {
-    LOGGER.silly(UTIL.format('make docs start for target %s', target.name));
+    LOGGER.debug(UTIL.format('make docs start for target %s', target.name));
 
     var def = Q.defer(),
         docDirs = target.docDirs;
@@ -43,13 +43,17 @@ var execute = function(target) {
         }))
         .then(
             function(result) {
-                var data = collectResults(result),
-                    writeFiles = data.map(function(item) {
-                        return U.writeFile(PATH.join(target.path, item.lang) + '.json', JSON.stringify(item.data, null, 4));
-                    });
+                //collect parsed files content
+                //merge, post-process and write to separate files by localization
+                var writeFiles = collectResults(result).map(function(item) {
+                    return U.writeFile(
+                        PATH.join(target.path, item.lang) + '.json',
+                        JSON.stringify(item.data, null, 4)
+                    );
+                });
 
                 Q.all(writeFiles).then(function() {
-                    def.resolve(data);
+                    def.resolve(target);
                 });
             },
             function(err) {

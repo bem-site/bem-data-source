@@ -14,7 +14,8 @@ var BEM = require('bem'),
     resolveRepositories = require('./tasks/resolve_repositories'),
     resolveBranches = require('./tasks/resolve_branches'),
     resolveTags = require('./tasks/resolve_tags'),
-    createTargets = require('./tasks/create_targets');
+    createTargets = require('./tasks/create_targets'),
+    finalize = require('./tasks/finalize');
 
 var make = (function() {
 
@@ -26,13 +27,14 @@ var make = (function() {
         .then(function(sources) { return resolveTags(sources); })
         .then(function(sources) { return resolveBranches(sources); })
         .then(function(sources) { return createTargets(sources); })
-        .then(function(targets) { return run(targets); });
+        .then(function(targets) { return run(targets); })
+        .then(function(targets) { return finalize(targets); });
 })();
 
 var run = function(targets) {
     LOGGER.info('run commands start');
     var def = Q.defer();
-    try{
+    try {
         Q.allSettled(
             targets.map(
                 function(target) {
@@ -43,9 +45,15 @@ var run = function(targets) {
                 }
             )
         ).then(
-            function() {
-                def.resolve();
-                LOGGER.info("--- data source end ---");
+            function(result) {
+                def.resolve(result
+                    .filter(function(item) {
+                        return item.state === 'fulfilled';
+                    })
+                    .map(function(item) {
+                        return item.value;
+                    })
+                );
             }
         );
     }catch(err) {
