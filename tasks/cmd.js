@@ -92,7 +92,7 @@ var runCommand = function(cmd, name, target) {
     var def = Q.defer();
     U.exec(cmd, { maxBuffer: 10000*1024 }, true).then(
         function() {
-            LOGGER.info(UTIL.format('%s for target %s completed', name, target.name));
+            LOGGER.debug(UTIL.format('%s for target %s completed', name, target.name));
             def.resolve(target);
         },
         function(error) {
