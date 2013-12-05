@@ -19,7 +19,6 @@
     "underscore": "~1.5.2",
     "rimraf": "~2.2.4",
     "shmakowiki": "*",
-    "mkdirp": "*",
     "ometajs": "~3.1.4",
     "marked": "~0.2.5",
     "highlight.js": "7",
