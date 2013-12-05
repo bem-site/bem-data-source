@@ -29,6 +29,8 @@ var database = {
 };
 
 var execute = function(targets) {
+    LOGGER.info('step8: - collectResults start');
+
     var def = Q.defer(),
         contentDir = config.get('contentDirectory'),
         outputTargetFile = config.get('outputTargetFile');
@@ -46,10 +48,13 @@ var execute = function(targets) {
             function(data) {
                 data = planerizeResults(data);
                 data = _.union.apply(null, data);
+
+                LOGGER.info('step8: - collectResults end');
                 def.resolve(targets);
             }
         );
     }catch(err) {
+        LOGGER.error(err.message);
         def.reject(err);
     }
     return def.promise;
@@ -64,6 +69,7 @@ var readFiles = function(files) {
     return Q.allSettled(
         files.map(
             function(file) {
+                LOGGER.silly(UTIL.format('collect results: read file %s', file));
                 return U.readFile(file)
                     .then(
                         function(src) {
