@@ -15,7 +15,7 @@ var FS = require('fs'),
     config = require('../config/config');
 
 var EXTENSIONS = ['wiki', 'md', 'meta.json', 'png'],
-    LANGUAGES = ['en', 'ru'];
+    LANGUAGES = ['en', 'ru', 'ja', 'ko'];
 
 exports.createContentDirectory = function() {
     return QIO_FS
