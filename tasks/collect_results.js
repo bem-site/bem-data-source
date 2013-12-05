@@ -29,26 +29,29 @@ var database = {
 };
 
 var execute = function(targets) {
-    var def = Q.defer();
+    var def = Q.defer(),
+        contentDir = config.get('contentDirectory'),
+        outputTargetFile = config.get('outputTargetFile');
 
-    var contentDir = config.get('contentDirectory');
-
-    QIO_FS.listTree(PATH.resolve(contentDir), function(path, stat) {
-        return path.indexOf('data.json', path.length - 'data.json'.length) !== -1;
-    })
-    .then(
-        function(files) {
-            return readFiles(files);
-        }
-    )
-    .then(
-        function(data) {
-            data = planerizeResults(data);
-            LOGGER.silly('ok');
-        }
-    );
-
-    def.resolve(targets);
+    try {
+        QIO_FS.listTree(PATH.resolve(contentDir), function(path) {
+            return path.indexOf(outputTargetFile, path.length - outputTargetFile.length) !== -1;
+        })
+        .then(
+            function(files) {
+                return readFiles(files);
+            }
+        )
+        .then(
+            function(data) {
+                data = planerizeResults(data);
+                data = _.union.apply(null, data);
+                def.resolve(targets);
+            }
+        );
+    }catch(err) {
+        def.reject(err);
+    }
     return def.promise;
 };
 

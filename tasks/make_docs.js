@@ -16,6 +16,7 @@ var UTIL = require('util'),
     _ = BEM.require('underscore'),
 
     //application modules
+    config = require('../config/config'),
     util = require('../libs/util');
 
 /**
@@ -27,7 +28,8 @@ var execute = function(target) {
     LOGGER.debug(UTIL.format('make docs start for target %s', target.name));
 
     var def = Q.defer(),
-        docDirs = target.docDirs;
+        docDirs = target.docDirs,
+        outputTargetFile = config.get('outputTargetFile');
 
     if(!docDirs) {
         def.reject(new Error(UTIL.format('docDir property for target %s undefined', target.name)));
@@ -46,7 +48,7 @@ var execute = function(target) {
                 //collect parsed files content
                 //merge, post-process and write to files
                 U.writeFile(
-                    PATH.join(target.path, 'data') + '.json',
+                    PATH.join(target.path, outputTargetFile),
                     JSON.stringify(collectResults(result), null, 4)
                 ).then(function() {
                     def.resolve(target);
