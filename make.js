@@ -16,7 +16,8 @@ var BEM = require('bem'),
     resolveTags = require('./tasks/resolve_tags'),
     createTargets = require('./tasks/create_targets'),
     executeTargets = require('./tasks/execute_targets'),
-    finalize = require('./tasks/finalize');
+    finalize = require('./tasks/finalize'),
+    collectResults = require('./tasks/collect_results');
 
 var make = (function() {
 
@@ -29,7 +30,8 @@ var make = (function() {
         .then(function(sources) { return resolveBranches(sources); })
         .then(function(sources) { return createTargets(sources); })
         .then(function(targets) { return executeTargets(targets); })
-        .then(function(targets) { return finalize(targets); })
+        //.then(function(targets) { return finalize(targets); }) TODO uncomment it for config overwrite
+        .then(function(targets) { return collectResults(targets); })
         .then(function() {
             LOGGER.info('--- data source end ---');
         });
