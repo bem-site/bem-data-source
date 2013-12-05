@@ -44,15 +44,11 @@ var execute = function(target) {
         .then(
             function(result) {
                 //collect parsed files content
-                //merge, post-process and write to separate files by localization
-                var writeFiles = collectResults(result).map(function(item) {
-                    return U.writeFile(
-                        PATH.join(target.path, item.lang) + '.json',
-                        JSON.stringify(item.data, null, 4)
-                    );
-                });
-
-                Q.all(writeFiles).then(function() {
+                //merge, post-process and write to files
+                U.writeFile(
+                    PATH.join(target.path, 'data') + '.json',
+                    JSON.stringify(collectResults(result), null, 4)
+                ).then(function() {
                     def.resolve(target);
                 });
             },
@@ -254,8 +250,7 @@ var parseJson = function(content) {
  * @param data
  */
 var collectResults = function(data) {
-    var en = [],
-        ru = [];
+    var output = [];
 
     try {
         data = planerizeResults(data);
@@ -299,24 +294,16 @@ var collectResults = function(data) {
                 //generate unique id for source
                 meta.id = SHA(JSON.stringify(meta));
 
+                meta.language = item.language;
+
                 item.meta = meta;
-
-                if(item.language === 'en') {
-                    en.push(meta);
-                }
-
-                if(item.language === 'ru') {
-                    ru.push(meta);
-                }
+                output.push(meta);
             });
     }catch(err) {
         LOGGER.error(err.message);
     }
 
-    return [
-        {lang: 'en', data: en},
-        {lang: 'ru', data: ru}
-    ];
+    return output;
 };
 
 /**
