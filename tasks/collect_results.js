@@ -36,8 +36,17 @@ var execute = function(targets) {
         )
         .then(
             function(data) {
-                data = normalize(_.union.apply(null, planerizeResults(data)));
-
+                var db = normalize(_.union.apply(null, planerizeResults(data)));
+                return Q.all(
+                        [
+                            U.writeFile('db.json', JSON.stringify(db, null, 4)),
+                            U.writeFile('db_min.json', JSON.stringify(db))
+                        ]
+                );
+            }
+        )
+        .then(
+            function() {
                 LOGGER.info('step8: - collectResults end');
                 def.resolve(targets);
             }
