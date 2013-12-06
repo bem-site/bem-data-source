@@ -1,5 +1,6 @@
 {
     "contentDirectory": "content",
+    "outputTargetFile": "__data.json",
 
     "gitAPI": {
         "common": {
