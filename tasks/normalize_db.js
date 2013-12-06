@@ -175,8 +175,7 @@ var extrudeAuthors = function(data, db) {
     db.authors = _.uniq(JSPATH.apply('.data{.type === $type}', data, { type: typeIds })).map(
         function(item, index) {
             idMap[item.url.replace(/\//g, '') + '_' + item.language] = index;
-            item.id = index;
-            return item;
+            return _.extend({ id: index }, item);
         }
     );
 
@@ -205,7 +204,7 @@ var extrudeCategories = function(data, db) {
 };
 
 var extrudePosts = function(data, db) {
-    LOGGER.debug('normalize: extrude categories');
+    LOGGER.debug('normalize: extrude posts');
 };
 
 module.exports = execute;
