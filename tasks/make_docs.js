@@ -294,7 +294,7 @@ var collectResults = function(data) {
                     }, '') + '/';
 
                 //generate unique id for source
-                meta.id = SHA(JSON.stringify(meta));
+                //meta.id = SHA(JSON.stringify(meta));
 
                 meta.language = item.language;
 
