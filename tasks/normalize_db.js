@@ -30,6 +30,7 @@ var execute = function(data) {
     extrudeTags(data, db);
     extrudeAuthors(data, db);
     extrudeCategories(data, db);
+    extrudePosts(data, db);
 
     return db;
 };
@@ -200,6 +201,10 @@ var extrudeAuthors = function(data, db) {
 };
 
 var extrudeCategories = function(data, db) {
+    LOGGER.debug('normalize: extrude categories');
+};
+
+var extrudePosts = function(data, db) {
     LOGGER.debug('normalize: extrude categories');
 };
 
