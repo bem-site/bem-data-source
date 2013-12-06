@@ -13,5 +13,8 @@ logs
 results
 content
 
+db.json
+db_min.json
+
 npm-debug.log
 node_modules
