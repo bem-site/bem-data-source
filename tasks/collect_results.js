@@ -4,6 +4,7 @@
 var UTIL = require('util'),
 
     QIO_FS = require("q-io/fs"),
+    JSPATH = require('jspath'),
 
     //bem tools modules
     BEM = require('bem'),
@@ -14,19 +15,8 @@ var UTIL = require('util'),
     _ = BEM.require('underscore'),
 
     //application modules
-    config = require('../config/config');
-
-var database = {
-    tags: [],
-    types: [],
-    authors: [],
-    categories: [],
-    posts: [],
-    libs: [],
-    versions: [],
-    levels: [],
-    blocks: []
-};
+    config = require('../config/config'),
+    normalize = require('./normalize_db');
 
 var execute = function(targets) {
     LOGGER.info('step8: - collectResults start');
@@ -46,8 +36,7 @@ var execute = function(targets) {
         )
         .then(
             function(data) {
-                data = planerizeResults(data);
-                data = _.union.apply(null, data);
+                data = normalize(_.union.apply(null, planerizeResults(data)));
 
                 LOGGER.info('step8: - collectResults end');
                 def.resolve(targets);
@@ -97,5 +86,7 @@ var planerizeResults = function(data) {
         });
     return plane;
 };
+
+
 
 module.exports = execute;
