@@ -92,6 +92,7 @@
                         "name": "bem-core",
                         "targetDir": "bem-core",
                         "type": [
+                            "libs",
                             "docs"
                         ],
                         "docDirs": [
@@ -102,12 +103,8 @@
                             "exclude": []
                         },
                         "branches": {
-                            "include": [
-                                "v1"
-                            ],
-                            "exclude": [
-                                "v1"
-                            ]
+                            "include": [],
+                            "exclude": []
                         }
                     },
                     {
