@@ -7,7 +7,9 @@ var UTIL = require('util'),
     //bem tools modules
     BEM = require('bem'),
     LOGGER = BEM.require('./logger'),
-    _ = BEM.require('underscore');
+    _ = BEM.require('underscore'),
+
+    HUMAN_TYPES = ['authors', 'translators'];
 
 var execute = function(data) {
     data = {data: data};
@@ -159,7 +161,7 @@ var extrudeTags = function(data, db) {
 var extrudeAuthors = function(data, db) {
     LOGGER.debug('normalize: extrude authors');
 
-    var typeIds = ['authors', 'translators'].map(
+    var typeIds = HUMAN_TYPES.map(
         function(typeName) {
             var ids = db.types.filter(
                 function(type) {
@@ -184,7 +186,7 @@ var extrudeAuthors = function(data, db) {
 
             //replace authors by author ids
             //replace translators by translator ids
-            ['authors', 'translators'].forEach(function(key) {
+            HUMAN_TYPES.forEach(function(key) {
                 if(item[key] && _.isArray(item[key])) {
                     item[key] = item[key].map(
                         function(at) {
@@ -201,6 +203,35 @@ var extrudeAuthors = function(data, db) {
 
 var extrudeCategories = function(data, db) {
     LOGGER.debug('normalize: extrude categories');
+
+    var idMap = {},
+    categories = _.uniq(
+        JSPATH.apply('.data.categories', data), false,
+            function(item) {
+                return item.url + '_' + item.name;
+            }
+    ).map(
+        function(item, index) {
+            idMap[item] = index;
+            return _.extend({ id: index }, item);
+        }
+    );
+
+    //replace tag values by tag ids
+    data.data = data.data.map(
+        function(item) {
+            if(item.categories && _.isArray(item.categories)) {
+                item.categories = item.categories.map(
+                    function(category) {
+                        return idMap[category];
+                    }
+                );
+            }
+            return item;
+        }
+    );
+
+    db.categories = categories;
 };
 
 var extrudePosts = function(data, db) {
