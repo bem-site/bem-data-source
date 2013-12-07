@@ -85,14 +85,14 @@
                     {
                         "name": "bem-core",
                         "targetDir": "bem-core",
-                        "type": ["libs", "docs"],
+                        "type": ["docs"],
                         "docDirs": ["common.docs"],
                         "tags": {
                             "include": [],
                             "exclude": []
                         },
                         "branches": {
-                            "include": [],
+                            "include": ["v1"],
                             "exclude": []
                         }
                     },
@@ -157,7 +157,7 @@
                 ]
             },
             {
-                "org": "css",
+                "org": "tormozz48",
                 "repositories": [
                     {
                         "name": "csso",
