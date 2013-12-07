@@ -261,11 +261,14 @@ var collectResults = function(data) {
                 return item.extension === 'meta.json';
             }).forEach(function(item) {
                 var type = null,
-                    category = null,
+                    primaryCategory = null,
+                    content = findContentForMeta(data, item),
                     meta = item.content;
 
-                //find and set linked content
-                meta.content = findContentForMeta(data, item);
+                //set linked founded content
+                if(content) {
+                    meta.content = content;
+                }
 
                 //parse date from dd-mm-yyyy format into milliseconds
                 if(meta.createDate) {
@@ -277,25 +280,52 @@ var collectResults = function(data) {
                     meta.editDate = util.formatDate(meta.editDate);
                 }
 
+                //remove empty strings from authors array
+                if(meta.authors && _.isArray(meta.authors)) {
+                    meta.authors = _.compact(meta.authors);
+                }
+
+                //remove empty strings from translators array
+                if(meta.translators && _.isArray(meta.translators)) {
+                    meta.translators = _.compact(meta.translators);
+                }
+
                 if(_.isArray(meta.type)) {
                     type = meta.type[0];
                 }
 
-                category = (meta.categories && meta.categories.length > 0) ? meta.categories[0] : null;
-
-                if(category) {
-                    category = category.url || category;
+                //set root to false if it is undefined
+                if((meta.authors || meta.translators) && !meta.root) {
+                    meta.root = false;
                 }
 
-                //set canonical url for item
-                meta.url =
-                    [type, category, item.name].reduce(function(prev, item) {
-                        return prev + (item ? ('/' + item) : '');
-                    }, '') + '/';
+                if(meta.categories && meta.categories.length > 0) {
 
-                //generate unique id for source
-                //meta.id = SHA(JSON.stringify(meta));
+                    meta.categories = meta.categories.map(function(category) {
+                        if(_.isString(category)) {
 
+                            return {
+                                name: category,
+                                url: category,
+                                order: category.split('/').map(function() { return 0; }).join('/'),
+                                type: type
+                            };
+                        }else {
+                            return category;
+                        }
+                    });
+
+                    primaryCategory =  meta.categories[0];
+                    if(primaryCategory) {
+                        primaryCategory = primaryCategory.url || primaryCategory;
+                    }
+
+                    meta.url = [type, primaryCategory, item.name, ''].join('/');
+                }else {
+                    meta.url = [type, item.name, ''].join('/');
+                }
+
+                //set language to meta information
                 meta.language = item.language;
 
                 item.meta = meta;
