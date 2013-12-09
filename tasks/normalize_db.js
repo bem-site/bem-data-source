@@ -204,34 +204,95 @@ var extrudeAuthors = function(data, db) {
 var extrudeCategories = function(data, db) {
     LOGGER.debug('normalize: extrude categories');
 
-    var idMap = {},
-    categories = _.uniq(
-        JSPATH.apply('.data.categories', data), false,
-            function(item) {
-                return item.url + '_' + item.name;
-            }
-    ).map(
-        function(item, index) {
-            idMap[item] = index;
-            return _.extend({ id: index }, item);
+    var count = 0,
+        idMap = {};
+
+    db.languages.forEach(
+        function(lang) {
+            var language = lang.name,
+                localizationHash = {},
+                categoriesHash = {},
+                orderHash = {},
+                categories = [];
+
+            categories = _.uniq(
+                JSPATH.apply('.data{.language === $lang}.categories', data, { lang: lang.id }), false,
+                    function(item) { return item.url; }
+            );
+
+            categories.forEach(
+                function(category) {
+                    var urlArr = category.url.split('/'),
+                        nameArr = category.name ? category.name.split('/') : [],
+                        orderArr = category.order ? category.order.split('/') : [];
+
+                    urlArr.forEach(
+                        function(url, index) {
+                            localizationHash[url] = nameArr[index] || url;
+                            orderHash[url] = orderArr[index] || 0;
+                        }
+                    );
+                }
+            );
+
+            categories.forEach(
+                function(category) {
+                    category.url.split('/').reduce(
+                        function(parent, url) {
+                            categoriesHash[url] = categoriesHash[url] ||
+                            {
+                                name: localizationHash[url],
+                                url: url,
+                                order: orderHash[url],
+                                type: category.type,
+                                parent: parent,
+                                language: lang.id,
+                                key: category.url + '_' + category.name
+                            };
+                            return url;
+                        }, null
+                    );
+                }
+            );
+
+            categories = _.values(categoriesHash)
+                .map(
+                    function(category) {
+                        return _.extend({ id: count++ }, category);
+                    }
+                )
+                .map(
+                    function(category, index, arr) {
+                        var parent = arr.filter(
+                            function(cat) {
+                                return category.parent === cat.url;
+                            }
+                        )[0];
+
+                        category.parent = parent ? parent.id : null;
+                        idMap[category.key] = category.id;
+                        delete category.key;
+
+                        db.categories.push(category);
+                        return category;
+                    }
+                );
         }
     );
 
-    //replace tag values by tag ids
     data.data = data.data.map(
         function(item) {
             if(item.categories && _.isArray(item.categories)) {
                 item.categories = item.categories.map(
                     function(category) {
-                        return idMap[category];
+                        return idMap[category.url + '_' + category.name];
                     }
                 );
             }
+
             return item;
         }
     );
-
-    db.categories = categories;
 };
 
 var extrudePosts = function(data, db) {

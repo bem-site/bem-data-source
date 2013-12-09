@@ -292,6 +292,8 @@ var collectResults = function(data) {
 
                 if(_.isArray(meta.type)) {
                     type = meta.type[0];
+                }else{
+                    type = meta.type;
                 }
 
                 //set root to false if it is undefined
@@ -311,6 +313,7 @@ var collectResults = function(data) {
                                 type: type
                             };
                         }else {
+                            category.type = category.type || type;
                             return category;
                         }
                     });
