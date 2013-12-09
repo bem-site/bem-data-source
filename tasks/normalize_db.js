@@ -176,7 +176,7 @@ var extrudeAuthors = function(data, db) {
     var idMap = {};
     db.authors = _.uniq(JSPATH.apply('.data{.type === $type}', data, { type: typeIds })).map(
         function(item, index) {
-            idMap[item.url.replace(/\//g, '') + '_' + item.language] = index;
+            idMap[item.id + '_' + item.language] = index;
             return _.extend({ id: index }, item);
         }
     );

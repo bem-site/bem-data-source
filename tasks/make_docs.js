@@ -331,6 +331,8 @@ var collectResults = function(data) {
                 //set language to meta information
                 meta.language = item.language;
 
+                meta.id = item.name;
+
                 item.meta = meta;
                 output.push(meta);
             });
