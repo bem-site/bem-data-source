@@ -326,6 +326,22 @@ var extrudeCategories = function(data, db) {
 
 var extrudePosts = function(data, db) {
     LOGGER.debug('normalize: extrude posts');
+
+    var typeIds = db.types
+        .filter(
+            function(type) {
+                return HUMAN_TYPES.indexOf(type.name) === -1;
+            }
+        )
+        .map(function(type) {
+            return type.id;
+        });
+
+    db.posts = _.uniq(JSPATH.apply('.data{.type === $type}', data, { type: typeIds })).map(
+        function(item, index) {
+            return _.extend({ id: index }, item);
+        }
+    );
 };
 
 module.exports = execute;
