@@ -201,6 +201,18 @@ var extrudeAuthors = function(data, db) {
     );
 };
 
+/**
+ * Makes db quasi table with categories as array of objects with fields:
+ * - id {Number} - generate unique id of category
+ * - name {String} - name of category
+ * - url {String} - url of category
+ * - order {Number} - order of category
+ * - type {Number} - id of type of category
+ * - parent {Number} - id of parent category
+ * - language {Number} - id of language
+ * @param data - {Object} with field data, which holds plane array of all collected data
+ * @param db - {Object} target database object
+ */
 var extrudeCategories = function(data, db) {
     LOGGER.debug('normalize: extrude categories');
 
@@ -213,13 +225,15 @@ var extrudeCategories = function(data, db) {
                 localizationHash = {},
                 categoriesHash = {},
                 orderHash = {},
-                categories = [];
+                categories = null;
 
+            //retrieve categories for language
             categories = _.uniq(
                 JSPATH.apply('.data{.language === $lang}.categories', data, { lang: lang.id }), false,
                     function(item) { return item.url; }
             );
 
+            //build localization and order hashes for categories
             categories.forEach(
                 function(category) {
                     var urlArr = category.url.split('/'),
@@ -235,8 +249,18 @@ var extrudeCategories = function(data, db) {
                 }
             );
 
+            //build categories hash with parent links
+            //also type and language ids should be added
+            //unique key is concatenation of url and name of category
             categories.forEach(
                 function(category) {
+                    var type = db.types.filter(
+                         function(type) {
+                             return type.name === category.type;
+                         }
+                    )[0];
+                    type = type ? type.id : null;
+
                     category.url.split('/').reduce(
                         function(parent, url) {
                             categoriesHash[url] = categoriesHash[url] ||
@@ -244,7 +268,7 @@ var extrudeCategories = function(data, db) {
                                 name: localizationHash[url],
                                 url: url,
                                 order: orderHash[url],
-                                type: category.type,
+                                type: type,
                                 parent: parent,
                                 language: lang.id,
                                 key: category.url + '_' + category.name
@@ -255,6 +279,10 @@ var extrudeCategories = function(data, db) {
                 }
             );
 
+            //merge categories hash into array
+            //generate unique ids and parent ids for categories
+            //create id map for data integration
+            //push into db categories aray
             categories = _.values(categoriesHash)
                 .map(
                     function(category) {
@@ -280,6 +308,7 @@ var extrudeCategories = function(data, db) {
         }
     );
 
+    //replace post categories object by generated links to them
     data.data = data.data.map(
         function(item) {
             if(item.categories && _.isArray(item.categories)) {
