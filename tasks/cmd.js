@@ -12,14 +12,13 @@ var UTIL = require('util'),
 /**
  * Execute git clone command in child process
  * @param target - {Object} with fields:
+ * - source - {Object} reference to source which target was created for
  * - name - {String} - formatted repository and tag or branch names for log
  * - url - {String} - git url of repository
  * - ref - {String} - tag or branch name
  * - path - {String} - target path for git clone (relative path from the root of project)
- * - taskGitClone - {Boolean} - indicates when git clone operation execution is needed
- * - taskNpmInstall - {Boolean} - indicates when npm install operation execution is needed
- * - taskMakeLibs - {Boolean} - indicates when make libs operation is needed
- * - taskMakeSets - {Boolean} - indicates when make sets operation is needed
+ * - type - {String} - indicate type of target (tag or branch)
+ * - tasks - {Array} - array of tasks which should be executed for this target
  * @returns {defer.promise|*}
  */
 exports.gitClone = function(target) {
@@ -30,14 +29,13 @@ exports.gitClone = function(target) {
 /**
  * Execute npm install command in child process
  * @param target - {Object} with fields:
+ * - source - {Object} reference to source which target was created for
  * - name - {String} - formatted repository and tag or branch names for log
  * - url - {String} - git url of repository
  * - ref - {String} - tag or branch name
  * - path - {String} - target path for git clone (relative path from the root of project)
- * - taskGitClone - {Boolean} - indicates when git clone operation execution is needed
- * - taskNpmInstall - {Boolean} - indicates when npm install operation execution is needed
- * - taskMakeLibs - {Boolean} - indicates when make libs operation is needed
- * - taskMakeSets - {Boolean} - indicates when make sets operation is needed
+ * - type - {String} - indicate type of target (tag or branch)
+ * - tasks - {Array} - array of tasks which should be executed for this target
  * @returns {defer.promise|*}
  */
 exports.npmInstall = function(target) {
@@ -48,14 +46,13 @@ exports.npmInstall = function(target) {
 /**
  * Execute bem make libs command in child process
  * @param target - {Object} with fields:
+ * - source - {Object} reference to source which target was created for
  * - name - {String} - formatted repository and tag or branch names for log
  * - url - {String} - git url of repository
  * - ref - {String} - tag or branch name
  * - path - {String} - target path for git clone (relative path from the root of project)
- * - taskGitClone - {Boolean} - indicates when git clone operation execution is needed
- * - taskNpmInstall - {Boolean} - indicates when npm install operation execution is needed
- * - taskMakeLibs - {Boolean} - indicates when make libs operation is needed
- * - taskMakeSets - {Boolean} - indicates when make sets operation is needed
+ * - type - {String} - indicate type of target (tag or branch)
+ * - tasks - {Array} - array of tasks which should be executed for this target
  * @returns {defer.promise|*}
  */
 exports.bemMakeLibs = function(target) {
@@ -65,14 +62,13 @@ exports.bemMakeLibs = function(target) {
 /**
  * Execute bem make sets command in child process
  * @param target - {Object} with fields:
+ * - source - {Object} reference to source which target was created for
  * - name - {String} - formatted repository and tag or branch names for log
  * - url - {String} - git url of repository
  * - ref - {String} - tag or branch name
  * - path - {String} - target path for git clone (relative path from the root of project)
- * - taskGitClone - {Boolean} - indicates when git clone operation execution is needed
- * - taskNpmInstall - {Boolean} - indicates when npm install operation execution is needed
- * - taskMakeLibs - {Boolean} - indicates when make libs operation is needed
- * - taskMakeSets - {Boolean} - indicates when make sets operation is needed
+ * - type - {String} - indicate type of target (tag or branch)
+ * - tasks - {Array} - array of tasks which should be executed for this target
  * @returns {defer.promise|*}
  */
 exports.bemMakeSets = function(target) {
