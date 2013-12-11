@@ -96,6 +96,4 @@ var planerizeResults = function(data) {
     return plane;
 };
 
-
-
 module.exports = execute;
