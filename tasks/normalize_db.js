@@ -324,6 +324,27 @@ var extrudeCategories = function(data, db) {
     );
 };
 
+/**
+ * Makes db quasi table with categories as array of objects with fields:
+ * - id {Number} unique id of post
+ * - title {String} title of post
+ * - longTitle {String} long title of post (optional)
+ * - createDate {Number} post creation date in milliseconds
+ * - editDate {Number} post edit date in milliseconds
+ * - summary {String} short description of post
+ * - thumbnail {String} link to post image
+ * - authors {Array} array of author ids
+ * - translators {Array} array of translators ids
+ * - categories {Array} array of category ids
+ * - tags {Array} array of tag ids
+ * - url {String} full url of post
+ * - type {Number} type of post
+ * - content - {String} html representation of post content
+ * - root {Boolean} boolean flag which indicates if this post is root of current type or category
+ * - language - {Number} id of language of post
+ * @param data - {Object} with field data, which holds plane array of all collected data
+ * @param db - {Object} target database object
+ */
 var extrudePosts = function(data, db) {
     LOGGER.debug('normalize: extrude posts');
 
