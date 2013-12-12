@@ -10,8 +10,8 @@ var UTIL = require('util'),
     _ = BEM.require('underscore'),
 
     //application modules
-    git = require('../libs/git'),
-    util = require('../libs/util');
+    git = require('../../libs/git'),
+    util = require('../../libs/util');
 
 /**
  * Retrieves information about git repositories by their names
