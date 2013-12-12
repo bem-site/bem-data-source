@@ -87,9 +87,7 @@ var filterBranches = function(source, branches) {
             result = _.intersection(branches, branchesInclude);
         }
         if(_.isArray(branchesExclude)) {
-            result = result.filter(function(branch) {
-                return branchesExclude.indexOf(branch) === -1;
-            });
+            result = _.difference(result, branchesExclude);
         }
     }
 
