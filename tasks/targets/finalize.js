@@ -12,7 +12,7 @@ var UTIL = require('util'),
     _ = BEM.require('underscore'),
 
     //application modules
-    config = require('../config/config');
+    config = require('../../config/config');
 
 var execute = function(targets) {
     LOGGER.info('step7: - finalize start');

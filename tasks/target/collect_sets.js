@@ -15,20 +15,25 @@ var UTIL = require('util'),
     _ = BEM.require('underscore'),
 
     //application modules
-    config = require('../config/config'),
-    normalize = require('./normalize_db');
+    config = require('../../config/config');
 
-var execute = function(targets) {
-    LOGGER.info('step8: - collectResults start');
+/**
+ *
+ * @param target
+ */
+var execute = function(target) {
+    LOGGER.debug(UTIL.format('collect sets start for target %s', target.name));
 
     var def = Q.defer(),
-        contentDir = config.get('contentDirectory'),
+        blockResultFile = 'data.json',
         outputTargetFile = config.get('outputTargetFile');
 
     try {
-        QIO_FS.listTree(PATH.resolve(contentDir), function(path) {
-            return path.indexOf(outputTargetFile, path.length - outputTargetFile.length) !== -1;
-        })
+        QIO_FS.listTree(PATH.resolve(target.path),
+            function(path) {
+                return path.indexOf(blockResultFile, path.length - blockResultFile.length) !== -1;
+            }
+        )
         .then(
             function(files) {
                 return readFiles(files);
@@ -36,19 +41,14 @@ var execute = function(targets) {
         )
         .then(
             function(data) {
-                var db = normalize(_.union.apply(null, planerizeResults(data)));
-                return Q.all(
-                        [
-                            U.writeFile('db.json', JSON.stringify(db, null, 4)),
-                            U.writeFile('db_min.json', JSON.stringify(db))
-                        ]
-                );
+                data = _.union.apply(null, planerizeResults(data));
+                return U.writeFile(PATH.join(target.path, outputTargetFile), JSON.stringify(data, null, 4));
             }
         )
-        .then(
+            .then(
             function() {
                 LOGGER.info('step8: - collectResults end');
-                def.resolve(targets);
+                def.resolve(target);
             }
         );
     }catch(err) {
@@ -97,3 +97,4 @@ var planerizeResults = function(data) {
 };
 
 module.exports = execute;
+
