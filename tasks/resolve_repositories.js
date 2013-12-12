@@ -10,7 +10,8 @@ var UTIL = require('util'),
     _ = BEM.require('underscore'),
 
     //application modules
-    git = require('../libs/git');
+    git = require('../libs/git'),
+    util = require('../libs/util');
 
 /**
  * Retrieves information about git repositories by their names
@@ -31,26 +32,26 @@ var execute = function(sources) {
     var def = Q.defer();
     try {
         Q.allSettled(
-                sources.map(function(item) {
-                    return git.getRepository(item);
-                })
+                sources.map(
+                    function(item) {
+                        return git.getRepository(item);
+                    }
+                )
             ).then(function(res) {
                 //remove all rejected promises
-                res = res.filter(function(item) {
-                    return item.state === 'fulfilled';
-                });
-
                 //return array of sources with items extended by git urls of repositories
-                res = res.map(function(item) {
-                    item = item.value;
+                res = util.filterAndMapFulfilledPromises(res,
+                    function(item) {
+                        item = item.value;
 
-                    LOGGER.debug(UTIL.format('resolve repository with name %s and url %s', item.source.name, item.result.git_url));
-                    return _.extend({url: item.result.git_url}, item.source);
-                });
+                        LOGGER.debug(UTIL.format('resolve repository with name %s and url %s', item.source.name, item.result.git_url));
+                        return _.extend({ url: item.result.git_url }, item.source);
+                    }
+                );
 
                 def.resolve(res);
-            });
-
+            }
+        );
     } catch(err) {
         LOGGER.error(err.message);
         def.reject(err);
