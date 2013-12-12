@@ -56,7 +56,7 @@ exports.npmInstall = function(target) {
  * @returns {defer.promise|*}
  */
 exports.bemMakeLibs = function(target) {
-    return runCommand(UTIL.format('bem make libs -r %s', target.path), 'bem make libs', target);
+    return runCommand(UTIL.format('cd %s && bem make libs', target.path), 'bem make libs', target);
 };
 
 /**
