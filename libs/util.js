@@ -115,3 +115,13 @@ exports.formatDate = function(dateStr) {
 
     return date.valueOf();
 };
+
+exports.filterAndMapFulfilledPromises = function(promises, mapCallback) {
+    return promises
+        .filter(
+            function(item) {
+                return item.state === 'fulfilled';
+            }
+        )
+        .map(mapCallback);
+};
