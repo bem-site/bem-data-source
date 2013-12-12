@@ -48,15 +48,7 @@ var execute = function(sources) {
                 res = util.filterAndMapFulfilledPromises(res,
                     function(item) {
                         item = item.value;
-
-                        //return array which contains only tag names
-                        var tags = item.result.map(
-                            function(tag) {
-                                return tag.name;
-                            }
-                        );
-
-                        item.source.tags = filterTags(item.source, tags);
+                        item.source.tags = filterTags(item.source, _.pluck(item.result, 'name'));
                         return item.source;
                     }
                 );
