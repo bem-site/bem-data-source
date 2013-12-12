@@ -99,10 +99,9 @@ var filterTags = function(source, tags) {
                 result = tags;
             }
         }
+
         if(_.isArray(tagsExclude)) {
-            result = result.filter(function(tag) {
-                return tagsExclude.indexOf(tag) === -1;
-            });
+            result = _.difference(result, tagsExclude);
         }
     }
 
