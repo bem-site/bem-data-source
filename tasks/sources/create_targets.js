@@ -12,10 +12,11 @@ var UTIL = require('util'),
     _ = BEM.require('underscore'),
 
     //application modules
-    config = require('../config/config'),
-    commands = require('../tasks/cmd'),
-    makeDocs = require('../tasks/make_docs'),
-    clear = require('../tasks/clear');
+    config = require('../../config/config'),
+    commands = require('../cmd'),
+    makeDocs = require('../target/make_docs'),
+    clear = require('../clear'),
+    collectSets = require('../target/collect_sets');
 
 var FILE_PACKAGE_JSON = 'package.json',
     DIR_NODE_MODULES = 'node_modules',
@@ -134,6 +135,9 @@ var createTarget = function() {
 
         //add bem make sets command to scenario
         target.tasks.push(commands.bemMakeSets);
+
+        //add collect sets task to scenario
+        target.tasks.push(collectSets);
     }
 
     LOGGER.debug(UTIL.format('create target for source: %s with ref %s into directory %s',
