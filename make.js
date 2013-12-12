@@ -14,10 +14,10 @@ var BEM = require('bem'),
     resolveRepositories = require('./tasks/sources/resolve_repositories'),
     resolveBranches = require('./tasks/sources/resolve_branches'),
     resolveTags = require('./tasks/sources/resolve_tags'),
-    createTargets = require('./tasks/create_targets'),
-    executeTargets = require('./tasks/execute_targets'),
-    finalize = require('./tasks/finalize'),
-    collectResults = require('./tasks/collect_results');
+    createTargets = require('./tasks/sources/create_targets'),
+    executeTargets = require('./tasks/targets/execute_targets'),
+    finalize = require('./tasks/targets/finalize'),
+    collectResults = require('./tasks/targets/collect_results');
 
 var make = (function() {
 

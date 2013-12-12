@@ -16,8 +16,8 @@ var UTIL = require('util'),
     _ = BEM.require('underscore'),
 
     //application modules
-    config = require('../config/config'),
-    util = require('../libs/util');
+    config = require('../../config/config'),
+    util = require('../../libs/util');
 
 /**
  *
