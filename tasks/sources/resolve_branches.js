@@ -29,28 +29,24 @@ var UTIL = require('util'),
  */
 var execute = function(sources) {
     LOGGER.info('step4: - resolveBranches start');
-
     var def = Q.defer();
+
     try {
         Q.allSettled(
-                sources.map(
-                    function(item) {
-                        return git.getRepositoryBranches(item);
-                    }
-                )
-            ).then(function(res) {
-                //remove all rejected promises
-                res = util.filterAndMapFulfilledPromises(res,
-                    function(item) {
-                        item = item.value;
-                        item.source.branches = filterBranches(item.source, _.pluck(item.result, 'name'));
-                        return item.source;
-                    }
-                );
-
-                LOGGER.info('step4: - resolveBranches end');
-                def.resolve(res);
+            sources.map(function(item) {
+                return git.getRepositoryBranches(item);
+            })
+        ).then(function(res) {
+            //remove all rejected promises
+            res = util.filterAndMapFulfilledPromises(res, function(item) {
+                item = item.value;
+                item.source.branches = filterBranches(item.source, _.pluck(item.result, 'name'));
+                return item.source;
             });
+
+            LOGGER.info('step4: - resolveBranches end');
+            def.resolve(res);
+        });
 
     } catch(err) {
         LOGGER.error(err.message);
@@ -86,6 +82,7 @@ var filterBranches = function(source, branches) {
         if(_.isArray(branchesInclude)) {
             result = _.intersection(branches, branchesInclude);
         }
+
         if(_.isArray(branchesExclude)) {
             result = _.difference(result, branchesExclude);
         }

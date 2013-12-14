@@ -137,7 +137,7 @@ var createTarget = function() {
         target.tasks.push(commands.bemMakeSets);
 
         //add collect sets task to scenario
-        target.tasks.push(collectSets);
+        //target.tasks.push(collectSets);
     }
 
     LOGGER.debug(UTIL.format('create target for source: %s with ref %s into directory %s',

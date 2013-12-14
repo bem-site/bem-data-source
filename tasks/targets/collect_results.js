@@ -16,6 +16,7 @@ var UTIL = require('util'),
 
     //application modules
     config = require('../../config/config'),
+    util = require('../../libs/util'),
     normalize = require('./../normalize_db');
 
 var execute = function(targets) {
@@ -23,34 +24,42 @@ var execute = function(targets) {
 
     var def = Q.defer(),
         contentDir = config.get('contentDirectory'),
-        outputTargetFile = config.get('outputTargetFile');
+        outputDir = config.get('outputDirectory'),
+        outputTargetFile = config.get('outputTargetFile'),
+        normalize = config.get('normalize');
 
     try {
         QIO_FS.listTree(PATH.resolve(contentDir), function(path) {
             return path.indexOf(outputTargetFile, path.length - outputTargetFile.length) !== -1;
         })
-        .then(
-            function(files) {
-                return readFiles(files);
+        .then(function(files) {
+            return readFiles(files);
+        })
+        .then(function(data) {
+            var versionFolder = (new Date()).getTime().toString();
+            data = _.union.apply(null, planerizeResults(data));
+
+            if(normalize) {
+                data = normalize(data);
             }
-        )
-        .then(
-            function(data) {
-                var db = normalize(_.union.apply(null, planerizeResults(data)));
-                return Q.all(
+
+            return util.createDirectory(PATH.join(outputDir, versionFolder))
+                .then(function() {
+                    return Q.all(
                         [
-                            U.writeFile('db.json', JSON.stringify(db, null, 4)),
-                            U.writeFile('db_min.json', JSON.stringify(db))
+                            U.writeFile(PATH.join(outputDir, versionFolder, 'data.json'), JSON.stringify(data, null, 4)),
+                            U.writeFile(PATH.join(outputDir, versionFolder, 'data_min.json'), JSON.stringify(data))
                         ]
-                );
-            }
-        )
-        .then(
-            function() {
-                LOGGER.info('step8: - collectResults end');
-                def.resolve(targets);
-            }
-        );
+                    );
+                })
+                .then(function() {
+                    //TODO commit data to github
+                });
+        })
+        .then(function() {
+            LOGGER.info('step8: - collectResults end');
+            def.resolve(targets);
+        });
     }catch(err) {
         LOGGER.error(err.message);
         def.reject(err);
@@ -65,17 +74,13 @@ var execute = function(targets) {
  */
 var readFiles = function(files) {
     return Q.allSettled(
-        files.map(
-            function(file) {
-                LOGGER.silly(UTIL.format('collect results: read file %s', file));
-                return U.readFile(file)
-                    .then(
-                        function(src) {
-                            return JSON.parse(src);
-                        }
-                    );
-            }
-        )
+        files.map(function(file) {
+            LOGGER.silly(UTIL.format('collect results: read file %s', file));
+            return U.readFile(file)
+                .then(function(src) {
+                    return JSON.parse(src);
+                });
+        })
     );
 };
 
@@ -85,15 +90,10 @@ var readFiles = function(files) {
  * @returns {Array}
  */
 var planerizeResults = function(data) {
-    var plane = [];
-    data
-        .filter(function(item) {
-            return item.state === 'fulfilled';
-        })
-        .map(function(item) {
-            return plane.push(item.value);
-        });
-    return plane;
+    return util.filterFulfilledPromises(data)
+        .reduce(function(prev, item) {
+            return prev.concat(item.value);
+        }, []);
 };
 
 module.exports = execute;

@@ -23,23 +23,20 @@ var execute = function(targets) {
         var path = PATH.resolve('config', 'config') + '.json';
 
         U.readFile(path)
-            .then(
-                function(content) {
-                    return markAsMade(targets, content);
-                }
-            )
-            .then(
-                function(content) {
-                    return U.writeFile(path, JSON.stringify(content, null, 4));
-                }
-            )
-            .then(
-                function() {
-                    LOGGER.info('step7: - finalize end');
-                    def.resolve(targets);
-                }
-            );
+        .then(function(content) {
+            //overwrite configuration file
+            return markAsMade(targets, content);
+        })
+        .then(function(content) {
+            //write changed json file to file system
+            return U.writeFile(path, JSON.stringify(content, null, 4));
+        })
+        .then(function() {
+            LOGGER.info('step7: - finalize end');
+            def.resolve(targets);
+        });
     }catch(error) {
+        LOGGER.error(error.message);
         def.reject(error);
     }
 
