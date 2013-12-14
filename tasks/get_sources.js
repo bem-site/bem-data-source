@@ -29,7 +29,10 @@ var execute = function() {
 
                 if(owner && repositories) {
                     repositories.forEach(function(repository) {
-                        result.push(_.extend(repository, { user: owner, isPrivate: key === 'private' }));
+                        result.push(_.extend(repository, {
+                            user: owner,
+                            isPrivate: key === 'private'
+                        }));
                     });
                 }
             });

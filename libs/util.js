@@ -17,15 +17,20 @@ var FS = require('fs'),
 var EXTENSIONS = ['wiki', 'md', 'meta.json', 'png'],
     LANGUAGES = ['en', 'ru', 'ja', 'ko'];
 
-exports.createContentDirectory = function() {
+/**
+ * Creates directory with given name
+ * @param dirName - {String} name of directory
+ * @returns {Promise|*|Promise.fail}
+ */
+exports.createDirectory = function(dirName) {
     return QIO_FS
-        .makeDirectory(config.get('contentDirectory'))
+        .makeDirectory(dirName)
         .then(function() {
-            LOGGER.debug('Content directory has been created');
+            LOGGER.debug(UTIL.format('%s directory has been created', dirName));
         })
         .fail(function(err) {
             if(err.code === 'EEXIST') {
-                LOGGER.warn('Content directory already exist');
+                LOGGER.warn(UTIL.format('%s directory already exist', dirName));
             }
         });
 };
@@ -116,6 +121,12 @@ exports.formatDate = function(dateStr) {
     return date.valueOf();
 };
 
+/**
+ * Filter promises collection by fulfilled criteria and post processing them
+ * @param promises - {Array} array of promises
+ * @param mapCallback - {Function} callback function for map
+ * @returns {Array|*}
+ */
 exports.filterAndMapFulfilledPromises = function(promises, mapCallback) {
     return promises
         .filter(
@@ -124,4 +135,17 @@ exports.filterAndMapFulfilledPromises = function(promises, mapCallback) {
             }
         )
         .map(mapCallback);
+};
+
+/**
+ * Filter promises collection by fulfilled criteria and post processing them
+ * @param promises - {Array} array of promises
+ * @returns {Array|*}
+ */
+exports.filterFulfilledPromises = function(promises) {
+    return promises.filter(
+        function(item) {
+            return item.state === 'fulfilled';
+        }
+    );
 };

@@ -33,30 +33,27 @@ var TAGS_ALL = 'all',
  */
 var execute = function(sources) {
     LOGGER.info('step3: - resolveTags start');
-
     var def = Q.defer();
+
     try {
         Q.allSettled(
-                sources.map(
-                    function(item) {
-                        return git.getRepositoryTags(item);
-                    }
-                )
-            ).then(function(res) {
-                //remove all rejected promises
-                //and map fulfilled promises
-                res = util.filterAndMapFulfilledPromises(res,
-                    function(item) {
-                        item = item.value;
-                        item.source.tags = filterTags(item.source, _.pluck(item.result, 'name'));
-                        return item.source;
-                    }
-                );
+            sources.map(function(item) {
+                return git.getRepositoryTags(item);
+            })
+        ).then(function(res) {
+            //remove all rejected promises
+            //and map fulfilled promises
+            res = util.filterAndMapFulfilledPromises(res,
+                function(item) {
+                    item = item.value;
+                    item.source.tags = filterTags(item.source, _.pluck(item.result, 'name'));
+                    return item.source;
+                }
+            );
 
-                LOGGER.info('step3: - resolveTags end');
-                def.resolve(res);
-            });
-
+            LOGGER.info('step3: - resolveTags end');
+            def.resolve(res);
+        });
     } catch(err) {
         LOGGER.error(err.message);
         def.reject(err);

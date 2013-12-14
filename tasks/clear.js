@@ -17,15 +17,13 @@ var UTIL = require('util'),
  * - url - {String} - git url of repository
  * - ref - {String} - tag or branch names
  * - path - {String} - target path for git clone (relative path from the root of project)
- * - taskClear - {Boolean} - indicates when operation for removing directories from previous lunches is needed
- * - taskGitClone - {Boolean} - indicates when git clone operation execution is needed
- * - taskMakeDocs - {Boolean} - indicates when make docs operation execution is needed
  * @returns {defer.promise|*}
  */
 var execute = function(target) {
     var def = Q.defer();
 
-    Q.nfapply(RMRF, [target.path]).then(
+    Q.nfapply(RMRF, [target.path])
+    .then(
         function(result) {
             LOGGER.info(UTIL.format('remove directory for target %s completed', target.name));
             def.resolve(result);
@@ -39,7 +37,8 @@ var execute = function(target) {
                 return def.reject(error);
             }
 
-        });
+        }
+    );
     return def.promise;
 };
 
