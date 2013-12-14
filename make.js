@@ -23,18 +23,21 @@ var make = (function() {
 
     LOGGER.setLevel(config.get('v'));
     LOGGER.info('--- data source start ---');
-    util.createContentDirectory()
-        .then(function() { return getSources(); })
-        .then(function(sources) { return resolveRepositories(sources); })
-        .then(function(sources) { return resolveTags(sources); })
-        .then(function(sources) { return resolveBranches(sources); })
-        .then(function(sources) { return createTargets(sources); })
-        .then(function(targets) { return executeTargets(targets); })
-        .then(function(targets) { return finalize(targets); })
-        .then(function(targets) { return collectResults(targets); })
-        .then(function() {
-            LOGGER.info('--- data source end ---');
-        });
+    Q.allSettled([
+        util.createDirectory(config.get('contentDirectory')),
+        util.createDirectory(config.get('outputDirectory'))
+    ])
+    .then(function() { return getSources(); })
+    .then(function(sources) { return resolveRepositories(sources); })
+    .then(function(sources) { return resolveTags(sources); })
+    .then(function(sources) { return resolveBranches(sources); })
+    .then(function(sources) { return createTargets(sources); })
+    .then(function(targets) { return executeTargets(targets); })
+    .then(function(targets) { return finalize(targets); })
+    .then(function(targets) { return collectResults(targets); })
+    .then(function() {
+        LOGGER.info('--- data source end ---');
+    });
 
 })();
 

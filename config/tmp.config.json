@@ -1,7 +1,8 @@
 {
     "contentDirectory": "content",
+    "outputDirectory": "output",
     "outputTargetFile": "__data.json",
-
+    "normalize": "true",
     "gitAPI": {
         "common": {
             "version": "3.0.0",
