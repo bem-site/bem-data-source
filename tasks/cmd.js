@@ -7,7 +7,9 @@ var UTIL = require('util'),
     BEM = require('bem'),
     Q = BEM.require('q'),
     LOGGER = BEM.require('./logger'),
-    U = BEM.require('./util');
+    U = BEM.require('./util'),
+
+    config = require('./../config/config');
 
 /**
  * Execute git clone command in child process
@@ -75,6 +77,34 @@ exports.bemMakeSets = function(target) {
     return runCommand(UTIL.format('cd %s && bem make sets', target.path), 'bem make sets', target);
 };
 
+exports.gitInit = function(contentDir) {
+    return runCommand(UTIL.format('cd %s && git init', contentDir), 'git init', null);
+};
+
+exports.gitRemoteAdd = function(contentDir, name, path) {
+    return runCommand(UTIL.format('cd %s && git remote add %s %s', contentDir, name, path), 'git remote add', null);
+};
+
+exports.gitAddSets = function(contentDir) {
+    return runCommand(UTIL.format('cd %s && git add *.sets', contentDir), 'git add sets', null);
+};
+
+exports.gitAddFiles = function(contentDir, paths) {
+    var cmd = paths.reduce(function(prev, item) {
+        return prev + ' && git add ' + item;
+    }, UTIL.format('cd %s', contentDir));
+
+    return runCommand(cmd, 'git add file', null);
+};
+
+exports.gitCommit = function(message) {
+    return runCommand(UTIL.format('cd %s && git commit -a -m "%s"', config.get('contentDirectory'), message), 'git commit', null);
+};
+
+exports.gitPush = function() {
+    return runCommand(UTIL.format('cd %s && git push -u origin master', config.get('contentDirectory')), 'git push', null);
+};
+
 /**
  * Run command in child process
  * @param cmd - {String} command to run
@@ -83,6 +113,10 @@ exports.bemMakeSets = function(target) {
  * @returns {defer.promise|*}
  */
 var runCommand = function(cmd, name, target) {
+    if(!target) {
+        target = {name: 'all'};
+    }
+
     LOGGER.debug(cmd);
 
     var def = Q.defer();
@@ -93,7 +127,9 @@ var runCommand = function(cmd, name, target) {
             def.resolve(target);
         },
         function(error) {
+            LOGGER.error(error.message);
             LOGGER.error(UTIL.format('%s for target %s failed', name, target.name));
+            LOGGER.error(UTIL.format('execution of command %s failed', cmd));
             def.reject(error);
         }
     );
