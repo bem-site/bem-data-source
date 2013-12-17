@@ -99,3 +99,71 @@ exports.getRepositoryBranches = function(source) {
 
     return def.promise;
 };
+
+/**
+ * Retrieve content for the given path for repository
+ * @param repository - [Object] repository {user: user, repo: repo, ref: ref}
+ * @param path - [String] relative path from root of repository
+ * @returns {defer.promise|*|Function|promise|Q.promise}
+ */
+exports.getContent = function(repository, path) {
+    repository.path = path || '';
+
+    var def = Q.defer();
+    gitPublic.repos.getContent(repository, function(err, res) {
+        if (err) {
+            def.reject(err);
+        }
+        def.resolve(res);
+    });
+    return def.promise;
+};
+
+/**
+ * Creates file in the repository
+ * @param config [Object] - configuration object with following fields:
+ *   - user [String] name of owner or organization
+ *   - repo [String] name of repository
+ *   - branch [String] branch (optional)
+ *   - path [String] relative path from root of repository
+ *   - message [String] commit message
+ *   - content [String] base64 encoded content of file
+ * @returns {defer.promise|*|Function|promise|Q.promise}
+ */
+exports.createFile = function(config) {
+    var def = Q.defer();
+
+    gitPublic.repos.createFile(config, function(err, res) {
+        if(err || !res) {
+            def.reject(err);
+        } else {
+            def.resolve(res);
+        }
+    });
+    return def.promise;
+};
+
+/**
+ * Updates file in the repository
+ * @param config [Object] - configuration object with following fields:
+ *   - user [String] name of owner or organization
+ *   - repo [String] name of repository
+ *   - branch [String] branch (optional)
+ *   - path [String] relative path from root of repository
+ *   - sha [String] sha sum of target file
+ *   - message [String] commit message
+ *   - content [String] base64 encoded content of file
+ * @returns {defer.promise|*|Function|promise|Q.promise}
+ */
+exports.updateFile = function(config) {
+    var def = Q.defer();
+
+    gitPublic.repos.updateFile(config, function(err, res) {
+        if(err || !res) {
+            def.reject(err);
+        } else {
+            def.resolve(res);
+        }
+    });
+    return def.promise;
+};
