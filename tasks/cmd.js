@@ -77,24 +77,29 @@ exports.bemMakeSets = function(target) {
     return runCommand(UTIL.format('cd %s && bem make sets', target.path), 'bem make sets', target);
 };
 
-exports.gitInit = function(contentDir) {
-    return runCommand(UTIL.format('cd %s && git init', contentDir), 'git init', null);
+/**
+ * Initialize git repository in dir folder
+ * @param dir - {String} directory which git repository should be initialized in
+ * @returns {defer.promise|*}
+ */
+exports.gitInit = function(dir) {
+    return runCommand(UTIL.format('cd %s && git init', dir), 'git init', null);
 };
 
-exports.gitRemoteAdd = function(contentDir, name, path) {
-    return runCommand(UTIL.format('cd %s && git remote add %s %s', contentDir, name, path), 'git remote add', null);
+/**
+ * Add remote url to existing git repository
+ * @param dir - {String} directory which git repository
+ * @param name - {String} alias for remote url
+ * @param path - {String} url of remote repository
+ * @returns {defer.promise|*}
+ */
+exports.gitRemoteAdd = function(dir, name, path) {
+    return runCommand(UTIL.format('cd %s && git remote add %s %s', dir, name, path), 'git remote add', null);
 };
 
-exports.gitAddSets = function(contentDir) {
-    return runCommand(UTIL.format('cd %s && git add *.sets', contentDir), 'git add sets', null);
-};
 
-exports.gitAddFiles = function(contentDir, paths) {
-    var cmd = paths.reduce(function(prev, item) {
-        return prev + ' && git add ' + item;
-    }, UTIL.format('cd %s', contentDir));
-
-    return runCommand(cmd, 'git add file', null);
+exports.gitAddSets = function(dir) {
+    return runCommand(UTIL.format('cd %s && git add *.sets', dir), 'git add sets', null);
 };
 
 exports.gitCommit = function(message) {
