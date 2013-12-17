@@ -2,7 +2,13 @@
     "contentDirectory": "content",
     "outputDirectory": "output",
     "outputTargetFile": "__data.json",
-    "normalize": "true",
+    "outputDataFile": "data.json",
+    "outputDataMinFile": "data_min.json",
+    "dataRepository": {
+        "user": "tormozz48",
+        "name": "bem-data"
+    },
+    "normalize": "false",
     "gitAPI": {
         "common": {
             "version": "3.0.0",
