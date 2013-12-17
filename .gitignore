@@ -12,6 +12,7 @@ pids
 logs
 results
 content
+output
 
 db.json
 db_min.json
