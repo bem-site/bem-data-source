@@ -15,6 +15,14 @@ var BEM = require('bem'),
 
     commands = require('./cmd');
 
+/**
+ * Creates content and output directories
+ * If content directory doesn't link to remote git repository yet
+ * then initialize git repository, retrieves ssh url of remote
+ * github repository for build results and link local git repository
+ * in content directory with remote github repo
+ * @returns {*|then}
+ */
 var execute = function() {
     var contentDir = config.get('contentDirectory'),
         outputDir = config.get('outputDirectory');
