@@ -79,7 +79,6 @@ var createTarget = function() {
             url: source.url,
             ref: ref,
             type: type,
-            path: PATH.join(rootPath, sourceDir, ref),
             tasks: []
         };
 
@@ -115,11 +114,13 @@ var createTarget = function() {
 
     if(sourceTypes.indexOf(TASK_TYPE_DOCS) > -1) {
         target.tasks.push(makeDocs);
-
+        target.path = PATH.join(rootPath, TASK_TYPE_DOCS, sourceDir, ref);
         target.docDirs = source.docDirs;
     }
 
     if(sourceTypes.indexOf(TASK_TYPE_LIBS) > -1) {
+        target.path = PATH.join(rootPath, TASK_TYPE_LIBS, sourceDir, ref);
+
         var needNpmInstall = !U.isDirectory(PATH.join(rootPath, sourceDir, ref, DIR_NODE_MODULES)),
             needBemMakeLibs = !U.isDirectory(PATH.join(rootPath, sourceDir, ref, DIR_LIBS));
 
