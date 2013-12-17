@@ -8,8 +8,10 @@ var BEM = require('bem'),
 
     //application modules
     config = require('./config/config'),
+    git = require('./libs/git'),
     util = require('./libs/util'),
 
+    init = require('./tasks/init'),
     getSources = require('./tasks/get_sources'),
     resolveRepositories = require('./tasks/sources/resolve_repositories'),
     resolveBranches = require('./tasks/sources/resolve_branches'),
@@ -23,21 +25,18 @@ var make = (function() {
 
     LOGGER.setLevel(config.get('v'));
     LOGGER.info('--- data source start ---');
-    Q.allSettled([
-        util.createDirectory(config.get('contentDirectory')),
-        util.createDirectory(config.get('outputDirectory'))
-    ])
-    .then(function() { return getSources(); })
-    .then(function(sources) { return resolveRepositories(sources); })
-    .then(function(sources) { return resolveTags(sources); })
-    .then(function(sources) { return resolveBranches(sources); })
-    .then(function(sources) { return createTargets(sources); })
-    .then(function(targets) { return executeTargets(targets); })
-    .then(function(targets) { return finalize(targets); })
-    .then(function(targets) { return collectResults(targets); })
+
+    init.apply(null)
+    .then(getSources)
+    .then(resolveRepositories)
+    .then(resolveTags)
+    .then(resolveBranches)
+    .then(createTargets)
+    .then(executeTargets)
+    .then(finalize)
+    .then(collectResults)
     .then(function() {
         LOGGER.info('--- data source end ---');
     });
 
 })();
-
