@@ -12,6 +12,4 @@ config.argv({
     .env()
     .file({ file: path.join(__dirname, 'config.json') });
 
-config.file('repositories', path.join(__dirname, 'repositories.json'));
-
 module.exports = config;
