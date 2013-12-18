@@ -4,6 +4,8 @@
 //bem tools modules
 var BEM = require('bem'),
     Q = BEM.require('q'),
+    U = BEM.require('./util'),
+    PATH = BEM.require('./path'),
     LOGGER = BEM.require('./logger'),
     _ = BEM.require('underscore'),
 
@@ -21,6 +23,7 @@ var execute = function() {
     LOGGER.info('step1: - getSources start');
 
     var dataRepository = config.get("dataRepository"),
+        path = PATH.resolve('config', 'repositories') + '.json',
         localMode = config.get("localMode");
 
     return git.getContent({
@@ -33,14 +36,20 @@ var execute = function() {
             function(file) {
                 //XXX development hack
                 if(localMode && localMode === 'true') {
-                    return createSources(config.get('repositories'));
+                    return U.readFile(path)
+                        .then(function(content) {
+                            return createSources(JSON.parse(content));
+                        });
                 }else {
                     return createSources(JSON.parse(new Buffer(file.content, 'base64')));
                 }
             },
             function(error) {
                 if(error.code === 404) {
-                    return createSources(config.get('repositories'));
+                    return U.readFile(path)
+                        .then(function(content) {
+                            return createSources(JSON.parse(content));
+                        });
                 }
             }
         );
