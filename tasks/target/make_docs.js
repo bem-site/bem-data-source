@@ -31,34 +31,28 @@ var execute = function(target) {
         docDirs = target.docDirs,
         outputTargetFile = config.get('outputTargetFile');
 
-    if(!docDirs) {
-        def.reject(new Error(UTIL.format('docDir property for target %s undefined', target.name)));
-    }else if(!_.isArray(docDirs)) {
-        def.reject(new Error(UTIL.format('docDir property for target %s must be array', target.name)));
-    } else {
-        if(docDirs.length === 0) {
-            docDirs = [''];
-        }
+    if(!docDirs || !_.isArray(docDirs) || docDirs.length === 0) {
+        docDirs = [''];
+    }
 
-        Q.allSettled(docDirs.map(function(dir) {
+    Q.allSettled(docDirs.map(function(dir) {
             return readDirectories.apply(null, [target, dir]);
         }))
         .then(
-            function(result) {
-                //collect parsed files content
-                //merge, post-process and write to files
-                U.writeFile(
+        function(result) {
+            //collect parsed files content
+            //merge, post-process and write to files
+            U.writeFile(
                     PATH.join(target.path, outputTargetFile),
                     JSON.stringify(collectResults(result), null, 4)
                 ).then(function() {
                     def.resolve(target);
                 });
-            },
-            function(err) {
-                def.reject(err);
-            }
-        );
-    }
+        },
+        function(err) {
+            def.reject(err);
+        }
+    );
     return def.promise;
 };
 
