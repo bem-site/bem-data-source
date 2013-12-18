@@ -80,6 +80,14 @@ var filterBranches = function(source, branches) {
             branchesExclude = source.branches.exclude;
 
         if(_.isArray(branchesInclude)) {
+            //show errors in console log if invalid branches are presented in repositories configuration
+            branchesInclude.forEach(function(branchInclude) {
+                if(branches.indexOf(branchInclude) === -1) {
+                    LOGGER.error(
+                        UTIL.format('Branch %s does not actually presented in branches of %s repository ', branchInclude, source.name));
+                }
+            });
+
             result = _.intersection(branches, branchesInclude);
         }
 
