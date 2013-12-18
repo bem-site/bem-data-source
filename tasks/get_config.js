@@ -24,7 +24,7 @@ var execute = function() {
 
     var dataRepository = config.get("dataRepository"),
         path = PATH.resolve('config', 'repositories') + '.json',
-        localMode = config.get("localMode");
+        localMode = config.get('localMode');
 
     return git.getContent({
                 user: dataRepository.user,

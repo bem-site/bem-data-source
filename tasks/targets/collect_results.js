@@ -17,7 +17,7 @@ var UTIL = require('util'),
     config = require('../../config/config'),
     git = require('../../libs/git'),
     util = require('../../libs/util'),
-    normalize = require('./../normalize_db');
+    normalize = require('./normalize_db');
 
 var execute = function(targets) {
     LOGGER.info('step8: - collectResults start');
