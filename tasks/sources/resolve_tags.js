@@ -33,32 +33,23 @@ var TAGS_ALL = 'all',
  */
 var execute = function(sources) {
     LOGGER.info('step3: - resolveTags start');
-    var def = Q.defer();
 
-    try {
-        Q.allSettled(
+    return Q.allSettled(
             sources.map(function(item) {
                 return git.getRepositoryTags(item);
             })
         ).then(function(res) {
             //remove all rejected promises
             //and map fulfilled promises
-            res = util.filterAndMapFulfilledPromises(res,
-                function(item) {
-                    item = item.value;
-                    item.source.tags = filterTags(item.source, _.pluck(item.result, 'name'));
-                    return item.source;
-                }
-            );
+            res = util.filterAndMapFulfilledPromises(res, function(item) {
+                item = item.value;
+                item.source.tags = filterTags(item.source, _.pluck(item.result, 'name'));
+                return item.source;
+            });
 
             LOGGER.info('step3: - resolveTags end');
-            def.resolve(res);
+            return res;
         });
-    } catch(err) {
-        LOGGER.error(err.message);
-        def.reject(err);
-    }
-    return def.promise;
 };
 
 /**
@@ -88,6 +79,14 @@ var filterTags = function(source, tags) {
             tagsExclude = source.tags.exclude;
 
         if(_.isArray(tagsInclude)) {
+            //show errors in console log if invalid tags are presented in repositories configuration
+            tagsInclude.forEach(function(tagInclude) {
+               if(tags.indexOf(tagInclude) === -1) {
+                   LOGGER.error(
+                       UTIL.format('Tag %s does not actually presented in tags of %s repository', tagInclude, source.name));
+               }
+            });
+
             result = _.intersection(tags, tagsInclude);
         }else if(_.isString(tagsInclude)) {
             if(tagsInclude === TAGS_LAST) {
