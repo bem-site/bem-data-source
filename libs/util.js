@@ -2,8 +2,8 @@
 'use strict';
 
 var FS = require('fs'),
-    CP = require('child_process'),
     UTIL = require('util'),
+    SEMVER = require('semver'),
 
     BEM = require('bem'),
     Q = BEM.require('q'),
@@ -35,11 +35,20 @@ exports.createDirectory = function(dirName) {
         });
 };
 
+/**
+ * Sort tags function
+ * @param a - {String} first tag value
+ * @param b - {String} second tag value
+ * @returns {number}
+ */
 exports.sortTags = function(a, b) {
-    var re = /^v?(\d+)\.(\d+)\.(\d+)$/;
-    a = a.replace(re, "$1$2$3");
-    b = b.replace(re, "$1$2$3");
-    return a - b;
+    a = SEMVER.clean(a);
+    b = SEMVER.clean(b);
+    if(SEMVER.valid(a) !== null && SEMVER.valid(b) !== null) {
+        return SEMVER.gt(a, b) ? 1 : (SEMVER.lt(a, b) ? -1 : 0);
+    }else {
+        return a - b;
+    }
 };
 
 exports.filterDocDirectory = function(dir) {
