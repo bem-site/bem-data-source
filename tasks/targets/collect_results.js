@@ -95,7 +95,7 @@ var writeFiles = function(data) {
 var updateRemoteData = function(data) {
     return createOrUpdate(JSON.stringify(data, null, 4), config.get('outputDataFile'))
         .then(function() {
-            createOrUpdate(JSON.stringify(data), config.get('outputDataMinFile'))
+            createOrUpdate(JSON.stringify(data), config.get('outputDataMinFile'));
         });
 };
 
@@ -123,6 +123,7 @@ var createOrUpdate = function(data, path) {
             }
         },
         function(error) {
+            //TODO change this code
             console.log(error);
         }
     );
