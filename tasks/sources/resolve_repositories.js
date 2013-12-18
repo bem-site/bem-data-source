@@ -7,11 +7,7 @@ var UTIL = require('util'),
     BEM = require('bem'),
     Q = BEM.require('q'),
     LOGGER = BEM.require('./logger'),
-    _ = BEM.require('underscore'),
-
-    //application modules
-    git = require('../../libs/git'),
-    util = require('../../libs/util');
+    _ = BEM.require('underscore');
 
 /**
  * Retrieves information about git repositories by their names
@@ -28,33 +24,17 @@ var UTIL = require('util'),
  */
 var execute = function(sources) {
     LOGGER.info('step2: - resolveRepositories start');
-    var def = Q.defer();
 
-    try {
-        Q.allSettled(
-            sources.map(function(item) {
-                return git.getRepository(item);
-            })
-        )
-        .then(function(res) {
-            //remove all rejected promises
-            //return array of sources with items extended by git urls of repositories
-            res = util.filterAndMapFulfilledPromises(res, function(item) {
-                item = item.value;
+    sources = sources.map(function(source) {
+        var gitUrl = UTIL.format('git://%s/%s/%s.git',
+                source.isPrivate ? 'github.yandex-team.ru' : 'github.com', source.user, source.name);
 
-                LOGGER.debug(UTIL.format('resolve repository with name %s and url %s', item.source.name, item.result.git_url));
-                return _.extend({ url: item.result.git_url }, item.source);
-            });
+        LOGGER.debug(UTIL.format('resolve repository with name %s and url %s', source.name, gitUrl));
+        return _.extend({ url: gitUrl }, source);
+    });
 
-            def.resolve(res);
-        });
-    } catch(err) {
-        LOGGER.error(err.message);
-        def.reject(err);
-    } finally {
-        LOGGER.info('step2: - resolveRepositories end');
-    }
-    return def.promise;
+    LOGGER.info('step2: - resolveRepositories end');
+    return sources;
 };
 
 module.exports = execute;
