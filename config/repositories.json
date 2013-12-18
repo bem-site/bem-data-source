@@ -16,9 +16,7 @@
                     "branches": {
                         "include": [],
                         "exclude": []
-                    },
-                    "user": "lego",
-                    "isPrivate": true
+                    }
                 },
                 {
                     "name": "islands-page",
@@ -33,9 +31,7 @@
                     "branches": {
                         "include": [],
                         "exclude": []
-                    },
-                    "user": "lego",
-                    "isPrivate": true
+                    }
                 },
                 {
                     "name": "islands-user",
@@ -50,9 +46,7 @@
                     "branches": {
                         "include": [],
                         "exclude": []
-                    },
-                    "user": "lego",
-                    "isPrivate": true
+                    }
                 },
                 {
                     "name": "islands-search",
@@ -67,9 +61,7 @@
                     "branches": {
                         "include": [],
                         "exclude": []
-                    },
-                    "user": "lego",
-                    "isPrivate": true
+                    }
                 }
             ]
         }
@@ -98,9 +90,7 @@
                         "exclude": [
                             "v1"
                         ]
-                    },
-                    "user": "bem",
-                    "isPrivate": false
+                    }
                 },
                 {
                     "name": "bem-components",
@@ -115,9 +105,7 @@
                     "branches": {
                         "include": [],
                         "exclude": []
-                    },
-                    "user": "bem",
-                    "isPrivate": false
+                    }
                 },
                 {
                     "name": "bem-method",
@@ -134,8 +122,6 @@
                             "master"
                         ]
                     },
-                    "user": "bem",
-                    "isPrivate": false,
                     "tags": []
                 },
                 {
@@ -155,8 +141,6 @@
                             "master"
                         ]
                     },
-                    "user": "bem",
-                    "isPrivate": false,
                     "tags": []
                 },
                 {
@@ -176,8 +160,6 @@
                             "master"
                         ]
                     },
-                    "user": "bem",
-                    "isPrivate": false,
                     "tags": []
                 },
                 {
@@ -195,8 +177,6 @@
                             "master"
                         ]
                     },
-                    "user": "bem",
-                    "isPrivate": false,
                     "tags": []
                 },
                 {
@@ -219,8 +199,6 @@
                             "master"
                         ]
                     },
-                    "user": "bem",
-                    "isPrivate": false,
                     "tags": []
                 }
             ]
@@ -245,8 +223,6 @@
                             "master"
                         ]
                     },
-                    "user": "tormozz48",
-                    "isPrivate": false,
                     "tags": []
                 }
             ]
@@ -271,8 +247,6 @@
                             "master"
                         ]
                     },
-                    "user": "AndreyGeonya",
-                    "isPrivate": false,
                     "tags": []
                 }
             ]
@@ -295,8 +269,6 @@
                             "master"
                         ]
                     },
-                    "user": "mursya",
-                    "isPrivate": false,
                     "tags": []
                 }
             ]
@@ -321,8 +293,6 @@
                             "master"
                         ]
                     },
-                    "user": "veged",
-                    "isPrivate": false,
                     "tags": []
                 }
             ]
@@ -347,8 +317,6 @@
                             "master"
                         ]
                     },
-                    "user": "svg",
-                    "isPrivate": false,
                     "tags": []
                 }
             ]
@@ -373,8 +341,6 @@
                             "bem-info-data"
                         ]
                     },
-                    "user": "lesanra",
-                    "isPrivate": false,
                     "tags": []
                 },
                 {
@@ -394,8 +360,6 @@
                             "bem-info-data"
                         ]
                     },
-                    "user": "lesanra",
-                    "isPrivate": false,
                     "tags": []
                 },
                 {
@@ -415,8 +379,6 @@
                             "bem-info-data"
                         ]
                     },
-                    "user": "lesanra",
-                    "isPrivate": false,
                     "tags": []
                 }
             ]
