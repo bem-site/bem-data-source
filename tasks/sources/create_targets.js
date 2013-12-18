@@ -18,9 +18,8 @@ var UTIL = require('util'),
     clear = require('../target/clear'),
     collectSets = require('../target/collect_sets');
 
-var FILE_PACKAGE_JSON = 'package.json',
-    DIR_NODE_MODULES = 'node_modules',
-    DIR_LIBS = 'libs',
+var //DIR_NODE_MODULES = 'node_modules',
+    //DIR_LIBS = 'libs',
     TASK_TYPE_LIBS = 'libs',
     TASK_TYPE_DOCS = 'docs';
 
@@ -76,6 +75,7 @@ var createTarget = function() {
         target = {
             source: source,
             name: UTIL.format('%s %s', source.name, ref),
+            path: PATH.join(rootPath, sourceDir, ref),
             url: source.url,
             ref: ref,
             type: type,
@@ -114,25 +114,22 @@ var createTarget = function() {
 
     if(sourceTypes.indexOf(TASK_TYPE_DOCS) > -1) {
         target.tasks.push(makeDocs);
-        target.path = PATH.join(rootPath, TASK_TYPE_DOCS, sourceDir, ref);
         target.docDirs = source.docDirs;
     }
 
     if(sourceTypes.indexOf(TASK_TYPE_LIBS) > -1) {
-        target.path = PATH.join(rootPath, TASK_TYPE_LIBS, sourceDir, ref);
-
-        var needNpmInstall = !U.isDirectory(PATH.join(rootPath, sourceDir, ref, DIR_NODE_MODULES)),
-            needBemMakeLibs = !U.isDirectory(PATH.join(rootPath, sourceDir, ref, DIR_LIBS));
+        //var needNpmInstall = !U.isDirectory(PATH.join(rootPath, sourceDir, ref, DIR_NODE_MODULES)),
+        //    needBemMakeLibs = !U.isDirectory(PATH.join(rootPath, sourceDir, ref, DIR_LIBS));
 
         //check if npm install command is needed for execution
-        if(needNpmInstall) {
+        //if(needNpmInstall) {
             target.tasks.push(commands.npmInstall);
-        }
+        //}
 
         //check if bem make libs command is needed for execution
-        if(needBemMakeLibs) {
+        //if(needBemMakeLibs) {
             target.tasks.push(commands.bemMakeLibs);
-        }
+        //}
 
         //add bem make sets command to scenario
         target.tasks.push(commands.bemMakeSets);
