@@ -1,0 +1,425 @@
+{
+    "private": [
+        {
+            "org": "lego",
+            "repositories": [
+                {
+                    "name": "islands-components",
+                    "targetDir": "islands-components",
+                    "type": [
+                        "libs"
+                    ],
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "user": "lego",
+                    "isPrivate": true
+                },
+                {
+                    "name": "islands-page",
+                    "targetDir": "islands-page",
+                    "type": [
+                        "libs"
+                    ],
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "user": "lego",
+                    "isPrivate": true
+                },
+                {
+                    "name": "islands-user",
+                    "targetDir": "islands-user",
+                    "type": [
+                        "libs"
+                    ],
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "user": "lego",
+                    "isPrivate": true
+                },
+                {
+                    "name": "islands-search",
+                    "targetDir": "islands-search",
+                    "type": [
+                        "libs"
+                    ],
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "user": "lego",
+                    "isPrivate": true
+                }
+            ]
+        }
+    ],
+    "public": [
+        {
+            "org": "bem",
+            "repositories": [
+                {
+                    "name": "bem-core",
+                    "targetDir": "bem-core",
+                    "type": [
+                        "docs"
+                    ],
+                    "docDirs": [
+                        "common.docs"
+                    ],
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
+                        "include": [
+                            "v1"
+                        ],
+                        "exclude": [
+                            "v1"
+                        ]
+                    },
+                    "user": "bem",
+                    "isPrivate": false
+                },
+                {
+                    "name": "bem-components",
+                    "targetDir": "bem-components",
+                    "type": [
+                        "libs"
+                    ],
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "user": "bem",
+                    "isPrivate": false
+                },
+                {
+                    "name": "bem-method",
+                    "targetDir": "bem-method",
+                    "docDirs": [],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "master"
+                        ],
+                        "exclude": [
+                            "master"
+                        ]
+                    },
+                    "user": "bem",
+                    "isPrivate": false,
+                    "tags": []
+                },
+                {
+                    "name": "borschik",
+                    "targetDir": "borschik",
+                    "docDirs": [
+                        "docs"
+                    ],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "master"
+                        ],
+                        "exclude": [
+                            "master"
+                        ]
+                    },
+                    "user": "bem",
+                    "isPrivate": false,
+                    "tags": []
+                },
+                {
+                    "name": "borschik-server",
+                    "targetDir": "borschik-server",
+                    "docDirs": [
+                        "docs"
+                    ],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "master"
+                        ],
+                        "exclude": [
+                            "master"
+                        ]
+                    },
+                    "user": "bem",
+                    "isPrivate": false,
+                    "tags": []
+                },
+                {
+                    "name": "bem-articles",
+                    "targetDir": "articles/bem-articles",
+                    "docDirs": [],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "master"
+                        ],
+                        "exclude": [
+                            "master"
+                        ]
+                    },
+                    "user": "bem",
+                    "isPrivate": false,
+                    "tags": []
+                },
+                {
+                    "name": "bem-www",
+                    "targetDir": "bem-www",
+                    "docDirs": [
+                        "content/blog",
+                        "content/tools",
+                        "content/authors",
+                        "content/pages"
+                    ],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "master"
+                        ],
+                        "exclude": [
+                            "master"
+                        ]
+                    },
+                    "user": "bem",
+                    "isPrivate": false,
+                    "tags": []
+                }
+            ]
+        },
+        {
+            "org": "tormozz48",
+            "repositories": [
+                {
+                    "name": "csso",
+                    "targetDir": "csso",
+                    "docDirs": [
+                        "docs"
+                    ],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "master"
+                        ],
+                        "exclude": [
+                            "master"
+                        ]
+                    },
+                    "user": "tormozz48",
+                    "isPrivate": false,
+                    "tags": []
+                }
+            ]
+        },
+        {
+            "user": "AndreyGeonya",
+            "repositories": [
+                {
+                    "name": "firmCardStory",
+                    "targetDir": "articles/firm-card-story",
+                    "docDirs": [
+                        "docs"
+                    ],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "master"
+                        ],
+                        "exclude": [
+                            "master"
+                        ]
+                    },
+                    "user": "AndreyGeonya",
+                    "isPrivate": false,
+                    "tags": []
+                }
+            ]
+        },
+        {
+            "user": "mursya",
+            "repositories": [
+                {
+                    "name": "bem-news",
+                    "targetDir": "blog/bem-news",
+                    "docDirs": [],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "master"
+                        ],
+                        "exclude": [
+                            "master"
+                        ]
+                    },
+                    "user": "mursya",
+                    "isPrivate": false,
+                    "tags": []
+                }
+            ]
+        },
+        {
+            "user": "veged",
+            "repositories": [
+                {
+                    "name": "xjst",
+                    "targetDir": "xjst",
+                    "docDirs": [
+                        "doc"
+                    ],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "master"
+                        ],
+                        "exclude": [
+                            "master"
+                        ]
+                    },
+                    "user": "veged",
+                    "isPrivate": false,
+                    "tags": []
+                }
+            ]
+        },
+        {
+            "user": "svg",
+            "repositories": [
+                {
+                    "name": "svgo",
+                    "targetDir": "svgo",
+                    "docDirs": [
+                        "docs"
+                    ],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "master"
+                        ],
+                        "exclude": [
+                            "master"
+                        ]
+                    },
+                    "user": "svg",
+                    "isPrivate": false,
+                    "tags": []
+                }
+            ]
+        },
+        {
+            "user": "lesanra",
+            "repositories": [
+                {
+                    "name": "setochka",
+                    "targetDir": "setochka",
+                    "docDirs": [
+                        "doc"
+                    ],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "bem-info-data"
+                        ],
+                        "exclude": [
+                            "bem-info-data"
+                        ]
+                    },
+                    "user": "lesanra",
+                    "isPrivate": false,
+                    "tags": []
+                },
+                {
+                    "name": "ometa-js",
+                    "targetDir": "ometa-js",
+                    "docDirs": [
+                        "doc"
+                    ],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "bem-info-data"
+                        ],
+                        "exclude": [
+                            "bem-info-data"
+                        ]
+                    },
+                    "user": "lesanra",
+                    "isPrivate": false,
+                    "tags": []
+                },
+                {
+                    "name": "gonzales",
+                    "targetDir": "gonzales",
+                    "docDirs": [
+                        "doc"
+                    ],
+                    "type": [
+                        "docs"
+                    ],
+                    "branches": {
+                        "include": [
+                            "bem-info-data"
+                        ],
+                        "exclude": [
+                            "bem-info-data"
+                        ]
+                    },
+                    "user": "lesanra",
+                    "isPrivate": false,
+                    "tags": []
+                }
+            ]
+        }
+    ]
+}
