@@ -12,13 +12,13 @@ var BEM = require('bem'),
     util = require('./libs/util'),
 
     init = require('./tasks/init'),
-    getSources = require('./tasks/get_sources'),
+    getConfig = require('./tasks/get_config'),
     resolveRepositories = require('./tasks/sources/resolve_repositories'),
     resolveBranches = require('./tasks/sources/resolve_branches'),
     resolveTags = require('./tasks/sources/resolve_tags'),
     createTargets = require('./tasks/sources/create_targets'),
     executeTargets = require('./tasks/targets/execute_targets'),
-    finalize = require('./tasks/targets/finalize'),
+    updateConfig = require('./tasks/targets/update_config'),
     collectResults = require('./tasks/targets/collect_results');
 
 var make = (function() {
@@ -27,13 +27,13 @@ var make = (function() {
     LOGGER.info('--- data source start ---');
 
     init.apply(null)
-    .then(getSources)
+    .then(getConfig)
     .then(resolveRepositories)
     .then(resolveTags)
     .then(resolveBranches)
     .then(createTargets)
     .then(executeTargets)
-    .then(finalize)
+    .then(updateConfig)
     .then(collectResults)
     .then(function() {
         LOGGER.info('--- data source end ---');
