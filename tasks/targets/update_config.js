@@ -21,6 +21,7 @@ var execute = function(targets) {
     var def = Q.defer(),
         path = PATH.resolve('config', 'repositories') + '.json',
         dataRepository = config.get("dataRepository"),
+        localMode = config.get('localMode'),
         o = {
             user: dataRepository.user,
             repo: dataRepository.name,
@@ -37,25 +38,16 @@ var execute = function(targets) {
     )
     .then(
         function(file) {
-            var updatedConfig = JSON.stringify(markAsMade(targets, new Buffer(file.content, 'base64')), null, 4);
-            return Q.all([
-                U.writeFile(path, updatedConfig),
-                git.updateFile(
-                    _.extend({
-                        content: (new Buffer(updatedConfig)).toString('base64'),
-                        sha: file.sha
-                    }, o)
-                )
-            ]);
+            //XXX development hack
+            if(localMode && localMode === 'true') {
+                return updateFromLocal(targets, path, o, file);
+            }else {
+                return updateFromRemote(targets, path, o, file);
+            }
         },
         function(error) {
             if(error.code === 404) {
-                var updatedConfig =  JSON.stringify(
-                        markAsMade(targets, config.get('repositories')), null, 4);
-                return Q.all([
-                    U.writeFile(path, updatedConfig),
-                    git.createFile(_.extend({content: (new Buffer(updatedConfig)).toString('base64')}, o))
-                ]);
+                return createFromLocal(targets, path, o);
             }else {
                 def.reject(error);
             }
@@ -67,6 +59,66 @@ var execute = function(targets) {
     });
 
     return def.promise;
+};
+
+var createFromLocal = function(targets, path, o) {
+    return U.readFile(path)
+        .then(function(content) {
+            var updatedConfig =  JSON.stringify(markAsMade(targets, content), null, 4);
+            return Q.all([
+                U.writeFile(path, updatedConfig),
+                git.createFile(
+                    _.extend({
+                        content: (new Buffer(updatedConfig)).toString('base64')}, o)
+                )
+            ]);
+        });
+};
+
+/**
+ * Config update based on local repositories file
+ * need for development mode and first application lunch
+ * @param targets - {Array} array of completed targets
+ * @param path - {String} path to repositories file on file system
+ * @param o - {Object} configuration object for github API
+ * @param file - {String} base64 encoded content of repositories file
+ * @returns {*|then}
+ */
+var updateFromLocal = function(targets, path, o, file) {
+    return U.readFile(path)
+        .then(function(content) {
+            var updatedConfig =  JSON.stringify(markAsMade(targets, content), null, 4);
+            return Q.all([
+                U.writeFile(path, updatedConfig),
+                git.updateFile(
+                    _.extend({
+                        content: (new Buffer(updatedConfig)).toString('base64'),
+                        sha: file.sha
+                    }, o)
+                )
+            ]);
+        });
+};
+
+/**
+ * Config update based on remote repositories file
+ * @param targets - {Array} array of completed targets
+ * @param path - {String} path to repositories file on file system
+ * @param o - {Object} configuration object for github API
+ * @param file - {String} base64 encoded content of repositories file
+ * @returns {exports.all|*|exports.defaults.styles.all|Iterator.all|all|async.all}
+ */
+var updateFromRemote = function(targets, path, o, file) {
+    var updatedConfig = JSON.stringify(markAsMade(targets, new Buffer(file.content, 'base64')), null, 4);
+    return Q.all([
+        U.writeFile(path, updatedConfig),
+        git.updateFile(
+            _.extend({
+                content: (new Buffer(updatedConfig)).toString('base64'),
+                sha: file.sha
+            }, o)
+        )
+    ]);
 };
 
 /**
