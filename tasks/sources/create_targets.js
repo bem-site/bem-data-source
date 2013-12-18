@@ -15,7 +15,7 @@ var UTIL = require('util'),
     config = require('../../config/config'),
     commands = require('../cmd'),
     makeDocs = require('../target/make_docs'),
-    clear = require('../clear'),
+    clear = require('../target/clear'),
     collectSets = require('../target/collect_sets');
 
 var FILE_PACKAGE_JSON = 'package.json',
