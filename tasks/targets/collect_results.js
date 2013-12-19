@@ -99,6 +99,12 @@ var updateRemoteData = function(data) {
         });
 };
 
+/**
+ * Method that creates or updates result data files on github repository through github API
+ * @param data - {JSON} content of file
+ * @param path - {String} relative path to file from root of repository
+ * @returns {*}
+ */
 var createOrUpdate = function(data, path) {
     var dataRepository = config.get("dataRepository"),
         o = {
@@ -123,8 +129,9 @@ var createOrUpdate = function(data, path) {
             }
         },
         function(error) {
-            //TODO change this code
-            console.log(error);
+            if(error.code === 404) {
+                git.createFile(o);
+            }
         }
     );
 };
