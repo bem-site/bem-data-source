@@ -110,7 +110,6 @@
                 {
                     "name": "bem-method",
                     "targetDir": "bem-method",
-                    "docDirs": [],
                     "type": [
                         "docs"
                     ],
@@ -165,7 +164,6 @@
                 {
                     "name": "bem-articles",
                     "targetDir": "articles/bem-articles",
-                    "docDirs": [],
                     "type": [
                         "docs"
                     ],
@@ -257,7 +255,6 @@
                 {
                     "name": "bem-news",
                     "targetDir": "blog/bem-news",
-                    "docDirs": [],
                     "type": [
                         "docs"
                     ],
