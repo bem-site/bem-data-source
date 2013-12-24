@@ -17,7 +17,7 @@ var UTIL = require('util'),
     config = require('../../config/config'),
     git = require('../../libs/git'),
     util = require('../../libs/util'),
-    normalize = require('./normalize_db');
+    normalize_db = require('./normalize_db');
 
 var execute = function(targets) {
     LOGGER.info('step8: - collectResults start');
@@ -76,8 +76,18 @@ var writeFiles = function(data) {
 
     data = _.union.apply(null, planerizeResults(data));
 
+    //TODO temporary
+    data =(function(d) {
+        var _data = {'en': [], 'ru': []};
+        d.forEach(function(item) {
+            _data[item.language] && _data[item.language].push(item);
+        });
+        return _data;
+    })(data);
+    //
+
     if(normalize && normalize === 'true') {
-        data = normalize(data);
+        data = normalize_db(data);
     }
 
     util.createDirectory(PATH.join(outputDir, version))
