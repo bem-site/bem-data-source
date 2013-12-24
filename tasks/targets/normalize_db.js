@@ -20,11 +20,7 @@ var execute = function(data) {
         types: [],
         authors: [],
         categories: [],
-        posts: [],
-        libs: [],
-        versions: [],
-        levels: [],
-        blocks: []
+        posts: []
     };
 
     extrudeLanguages(data, db);
