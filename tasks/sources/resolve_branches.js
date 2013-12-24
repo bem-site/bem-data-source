@@ -91,7 +91,7 @@ var filterBranches = function(source, branches) {
             result = _.intersection(branches, branchesInclude);
         }
 
-        if(_.isArray(branchesExclude)) {
+        if(_.isArray(branchesExclude) && (!source.noCache || source.noCache === 'false')) {
             result = _.difference(result, branchesExclude);
         }
     }
