@@ -44,7 +44,7 @@ var execute = function(target) {
             //merge, post-process and write to files
             U.writeFile(
                     PATH.join(target.path, outputTargetFile),
-                    JSON.stringify(collectResults(result), null, 4)
+                    JSON.stringify(collectResults(target, result), null, 4)
                 ).then(function() {
                     def.resolve(target);
                 });
@@ -245,7 +245,7 @@ var parseJson = function(content) {
  *
  * @param data
  */
-var collectResults = function(data) {
+var collectResults = function(target, data) {
     var output = [];
 
     try {
@@ -317,15 +317,22 @@ var collectResults = function(data) {
                         primaryCategory = primaryCategory.url || primaryCategory;
                     }
 
-                    meta.url = [type, primaryCategory, item.name, ''].join('/');
+                    meta.url = '/' + [type, primaryCategory, item.name, ''].join('/');
                 }else {
-                    meta.url = [type, item.name, ''].join('/');
+                    meta.url = '/' + [type, item.name, ''].join('/');
                 }
 
                 //set language to meta information
                 meta.language = item.language;
 
-                meta.id = item.name;
+                //set repo information
+                meta.repo = {
+                    url: target.source.url,
+                    treeish: target.type === 'branches' ? target.ref : 'master'
+                };
+
+                meta.slug = item.name;
+                meta.id = SHA(JSON.stringify(meta));
 
                 item.meta = meta;
                 output.push(meta);
