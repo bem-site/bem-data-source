@@ -96,7 +96,7 @@ var filterTags = function(source, tags) {
             }
         }
 
-        if(_.isArray(tagsExclude)) {
+        if(_.isArray(tagsExclude) && (!source.noCache || source.noCache === 'false')) {
             result = _.difference(result, tagsExclude);
         }
     }

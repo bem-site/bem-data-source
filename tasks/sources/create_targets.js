@@ -82,6 +82,10 @@ var createTarget = function() {
             tasks: []
         };
 
+    if(source.noCache && source.noCache === 'true') {
+        target.tasks.push(clear);
+    }
+
     //check if directory for current ref and current source is not exist
     //in this case add git clone task to scenario
     if(_.indexOf(existed, ref) === -1) {
