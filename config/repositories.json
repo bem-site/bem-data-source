@@ -71,6 +71,41 @@
             "org": "bem",
             "repositories": [
                 {
+                    "name": "bem-method",
+                    "targetDir": "bem-info-data",
+                    "noCache": "true",
+                    "type": [
+                        "docs"
+                    ],
+                    "docDirs": [
+                        "documentation/method",
+                        "documentation/platform",
+                        "documentation/tools",
+                        "documentation/libs",
+                        "tutorials",
+                        "videocasts",
+                        "articles",
+                        "video",
+                        "events",
+                        "news",
+                        "faq",
+                        "people",
+                        "pages"
+                    ],
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
+                        "include": [
+                            "bem-info-data"
+                        ],
+                        "exclude": [
+                            "bem-info-data"
+                        ]
+                    }
+                },
+                {
                     "name": "bem-core",
                     "targetDir": "bem-core",
                     "type": [
@@ -106,22 +141,6 @@
                         "include": [],
                         "exclude": []
                     }
-                },
-                {
-                    "name": "bem-method",
-                    "targetDir": "bem-method",
-                    "type": [
-                        "docs"
-                    ],
-                    "branches": {
-                        "include": [
-                            "master"
-                        ],
-                        "exclude": [
-                            "master"
-                        ]
-                    },
-                    "tags": []
                 },
                 {
                     "name": "borschik",
@@ -160,49 +179,11 @@
                         ]
                     },
                     "tags": []
-                },
-                {
-                    "name": "bem-articles",
-                    "targetDir": "articles/bem-articles",
-                    "type": [
-                        "docs"
-                    ],
-                    "branches": {
-                        "include": [
-                            "master"
-                        ],
-                        "exclude": [
-                            "master"
-                        ]
-                    },
-                    "tags": []
-                },
-                {
-                    "name": "bem-www",
-                    "targetDir": "bem-www",
-                    "docDirs": [
-                        "content/blog",
-                        "content/tools",
-                        "content/authors",
-                        "content/pages"
-                    ],
-                    "type": [
-                        "docs"
-                    ],
-                    "branches": {
-                        "include": [
-                            "master"
-                        ],
-                        "exclude": [
-                            "master"
-                        ]
-                    },
-                    "tags": []
                 }
             ]
         },
         {
-            "org": "tormozz48",
+            "org": "css",
             "repositories": [
                 {
                     "name": "csso",
@@ -250,27 +231,6 @@
             ]
         },
         {
-            "user": "mursya",
-            "repositories": [
-                {
-                    "name": "bem-news",
-                    "targetDir": "blog/bem-news",
-                    "type": [
-                        "docs"
-                    ],
-                    "branches": {
-                        "include": [
-                            "master"
-                        ],
-                        "exclude": [
-                            "master"
-                        ]
-                    },
-                    "tags": []
-                }
-            ]
-        },
-        {
             "user": "veged",
             "repositories": [
                 {
@@ -295,7 +255,7 @@
             ]
         },
         {
-            "user": "svg",
+            "org": "svg",
             "repositories": [
                 {
                     "name": "svgo",
@@ -308,10 +268,10 @@
                     ],
                     "branches": {
                         "include": [
-                            "master"
+                            "beminfo"
                         ],
                         "exclude": [
-                            "master"
+                            "beminfo"
                         ]
                     },
                     "tags": []
