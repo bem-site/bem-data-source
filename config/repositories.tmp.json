@@ -63,6 +63,22 @@
             "org": "bem",
             "repositories": [
                 {
+                    "name": "bem-method",
+                    "targetDir": "bem-info-data",
+                    "noCache": "true",
+                    "type": ["docs"],
+                    "docDirs": ["documentation/method", "documentation/platform", "documentation/tools", "documentation/libs",
+                    "tutorials", "videocasts", "articles", "video", "events", "news", "faq", "people", "pages"],
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
+                        "include": ["bem-info-data"],
+                        "exclude": []
+                    }
+                },
+                {
                     "name": "bem-core",
                     "targetDir": "bem-core",
                     "type": ["docs"],
@@ -90,15 +106,6 @@
                     }
                 },
                 {
-                    "name": "bem-method",
-                    "targetDir": "bem-method",
-                    "docDirs": [],
-                    "type": ["docs"],
-                    "branches": {
-                        "include": ["master"]
-                    }
-                },
-                {
                     "name": "borschik",
                     "targetDir": "borschik",
                     "docDirs": ["docs"],
@@ -115,29 +122,11 @@
                     "branches": {
                         "include": ["master"]
                     }
-                },
-                {
-                    "name": "bem-articles",
-                    "targetDir": "articles/bem-articles",
-                    "docDirs": [],
-                    "type": ["docs"],
-                    "branches": {
-                        "include": ["master"]
-                    }
-                },
-                {
-                    "name": "bem-www",
-                    "targetDir": "bem-www",
-                    "docDirs": ["content/blog", "content/tools", "content/authors", "content/pages"],
-                    "type": ["docs"],
-                    "branches": {
-                        "include": ["master"]
-                    }
                 }
             ]
         },
         {
-            "org": "tormozz48",
+            "org": "css",
             "repositories": [
                 {
                     "name": "csso",
@@ -165,20 +154,6 @@
             ]
         },
         {
-            "user": "mursya",
-            "repositories": [
-                {
-                    "name": "bem-news",
-                    "targetDir": "blog/bem-news",
-                    "docDirs": [],
-                    "type": ["docs"],
-                    "branches": {
-                        "include": ["master"]
-                    }
-                }
-            ]
-        },
-        {
             "user": "veged",
             "repositories": [
                 {
@@ -193,7 +168,7 @@
             ]
         },
         {
-            "user": "svg",
+            "org": "svg",
             "repositories": [
                 {
                     "name": "svgo",
@@ -201,7 +176,7 @@
                     "docDirs": ["docs"],
                     "type": ["docs"],
                     "branches": {
-                        "include": ["master"]
+                        "include": ["beminfo"]
                     }
                 }
             ]
