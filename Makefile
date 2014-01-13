@@ -4,7 +4,8 @@ JSCS = $(NPM_BIN)/jscs
 
 .PHONY: build
 build: npm_deps
-	node make.js
+	cp config/_credentials.json config/credentials.json
+	cp config/_repositories.json config/repositories.json
 
 .PHONY: restart
 restart: clean
@@ -14,7 +15,7 @@ restart: clean
 clean:
 	rm -rf content
 	rm config/repositories.json
-	cp config/repositories.tmp.json config/repositories.json
+	cp config/_repositories.json config/repositories.json
 
 .PHONY: lint
 lint: npm_deps
