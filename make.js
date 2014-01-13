@@ -22,6 +22,7 @@ var BEM = require('bem'),
     collectResults = require('./tasks/targets/collect_results');
 
 var make = (function() {
+    //var timers = require('timers');
 
     LOGGER.setLevel(config.get('v'));
     LOGGER.info('--- data source start ---');
