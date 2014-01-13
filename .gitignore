@@ -9,13 +9,8 @@ lib-cov
 *.gz
 
 pids
-logs
-results
 content
 output
-
-db.json
-db_min.json
 
 npm-debug.log
 node_modules
