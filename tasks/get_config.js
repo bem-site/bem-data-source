@@ -1,8 +1,10 @@
 /* global toString: false */
 'use strict';
 
-//bem tools modules
-var BEM = require('bem'),
+var UTIL = require('util'),
+
+    //bem tools modules
+    BEM = require('bem'),
     Q = BEM.require('q'),
     U = BEM.require('./util'),
     PATH = BEM.require('./path'),
@@ -19,40 +21,37 @@ var BEM = require('bem'),
  * and modify it for suitable github API calling
  * @returns {defer.promise|*}
  */
-var execute = function() {
+module.exports = function() {
     LOGGER.info('step1: - getSources start');
 
-    var dataRepository = config.get("dataRepository"),
-        path = PATH.resolve('config', 'repositories') + '.json',
-        localMode = config.get('localMode');
+    var localMode = config.get('localMode'),
+        repositoriesFileName = config.get('repositoriesFileName');
 
-    return git.getContent({
-                user: dataRepository.user,
-                repo: dataRepository.name,
-                ref: 'master'
-            }, config.get('repositoriesFileName')
-        )
+    return git.getContent(config.get('repoConfig'), repositoriesFileName)
         .then(
             function(file) {
-                //XXX development hack
-                if(localMode && localMode === 'true') {
-                    return U.readFile(path)
-                        .then(function(content) {
-                            return createSources(JSON.parse(content));
-                        });
-                }else {
-                    return createSources(JSON.parse(new Buffer(file.content, 'base64')));
-                }
+                return (localMode && localMode === 'true') ? readLocalConfig() :
+                    createSources(JSON.parse(new Buffer(file.content, 'base64')));
             },
             function(error) {
                 if(error.code === 404) {
-                    return U.readFile(path)
-                        .then(function(content) {
-                            return createSources(JSON.parse(content));
-                        });
+                    LOGGER.warn(UTIL.format('%s file was not found on github. Load local %s file', repositoriesFileName, repositoriesFileName));
+                    return readLocalConfig();
                 }
             }
         );
+};
+
+/**
+ * Loads data from local repositories.json configuration file
+ * Needs for local mode and for case when repositories.json file not existed yet
+ * @returns {*}
+ */
+var readLocalConfig = function() {
+    return U.readFile(PATH.resolve('config', 'repositories') + '.json')
+        .then(function(content) {
+            return createSources(JSON.parse(content));
+        });
 };
 
 /**
@@ -82,5 +81,3 @@ var createSources = function(sources) {
 
     return result;
 };
-
-module.exports = execute;

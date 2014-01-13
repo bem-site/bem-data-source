@@ -20,59 +20,39 @@ var execute = function(targets) {
 
     var def = Q.defer(),
         path = PATH.resolve('config', 'repositories') + '.json',
-        dataRepository = config.get("dataRepository"),
+        repoConfig = config.get('repoConfig'),
+        repoFile = config.get('repositoriesFileName'),
         localMode = config.get('localMode'),
         o = {
-            user: dataRepository.user,
-            repo: dataRepository.name,
-            branch: 'master',
-            message: UTIL.format('Build: %s', (new Date()).toString()),
-            path: config.get('repositoriesFileName')
+            user: repoConfig.user || repoConfig.org,
+            repo: repoConfig.repo,
+            branch: repoConfig.ref,
+            message: UTIL.format('Update repositories configuration file for build: %s', (new Date()).toString()),
+            path: repoFile,
+            private: repoConfig.private
         };
 
-    git.getContent({
-            user: dataRepository.user,
-            repo: dataRepository.name,
-            ref: 'master'
-        }, config.get('repositoriesFileName')
-    )
-    .then(
-        function(file) {
-            //XXX development hack
-            if(localMode && localMode === 'true') {
-                return updateFromLocal(targets, path, o, file);
-            }else {
-                return updateFromRemote(targets, path, o, file);
+    git
+        .getContent(repoConfig, repoFile)
+        .then(
+            function(file) {
+                return (localMode && localMode === 'true') ?
+                    createOrUpdateFromLocal(targets, path, o, file) : updateFromRemote(targets, path, o, file);
+            },
+            function(error) {
+                if(error.code === 404) {
+                    return createOrUpdateFromLocal(targets, path, o, null);
+                }else {
+                    def.reject(error);
+                }
             }
-        },
-        function(error) {
-            if(error.code === 404) {
-                return createFromLocal(targets, path, o);
-            }else {
-                def.reject(error);
-            }
-        }
-    )
-    .then(function() {
-        LOGGER.info('step7: - finalize end');
-        def.resolve(targets);
-    });
+        )
+        .then(function() {
+            LOGGER.info('step7: - finalize end');
+            def.resolve(targets);
+        });
 
     return def.promise;
-};
-
-var createFromLocal = function(targets, path, o) {
-    return U.readFile(path)
-        .then(function(content) {
-            var updatedConfig =  JSON.stringify(markAsMade(targets, content), null, 4);
-            return Q.all([
-                U.writeFile(path, updatedConfig),
-                git.createFile(
-                    _.extend({
-                        content: (new Buffer(updatedConfig)).toString('base64')}, o)
-                )
-            ]);
-        });
 };
 
 /**
@@ -84,18 +64,24 @@ var createFromLocal = function(targets, path, o) {
  * @param file - {String} base64 encoded content of repositories file
  * @returns {*|then}
  */
-var updateFromLocal = function(targets, path, o, file) {
+var createOrUpdateFromLocal = function(targets, path, o, file) {
+    var promise = function(config) {
+        return file ?
+            git.updateFile(_.extend({
+                content: (new Buffer(config)).toString('base64'),
+                sha: file.sha
+            }, o)) :
+            git.createFile(_.extend({
+                content: (new Buffer(config)).toString('base64')
+            }, o));
+    };
+
     return U.readFile(path)
         .then(function(content) {
             var updatedConfig =  JSON.stringify(markAsMade(targets, content), null, 4);
             return Q.all([
                 U.writeFile(path, updatedConfig),
-                git.updateFile(
-                    _.extend({
-                        content: (new Buffer(updatedConfig)).toString('base64'),
-                        sha: file.sha
-                    }, o)
-                )
+                promise(updatedConfig)
             ]);
         });
 };
@@ -136,7 +122,7 @@ var markAsMade = function(targets, content) {
             return sources;
         }
 
-        ['private', 'public'].forEach(function(privacy) {
+        Object.getOwnPropertyNames(sources).forEach(function(privacy) {
             sources[privacy].forEach(function(owner) {
                 owner.repositories.forEach(
                     function(repo) {

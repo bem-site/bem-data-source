@@ -19,7 +19,7 @@ var UTIL = require('util'),
     util = require('../../libs/util'),
     normalize_db = require('./normalize_db');
 
-var execute = function(targets) {
+module.exports = function(targets) {
     LOGGER.info('step8: - collectResults start');
 
     var def = Q.defer(),
@@ -31,8 +31,10 @@ var execute = function(targets) {
             return path.indexOf(outputTargetFile, path.length - outputTargetFile.length) !== -1;
         })
         .then(readFiles)
-        .then(writeFiles)
-        .then(updateRemoteData)
+        .then(postProcessData)
+        .then(function(data) {
+            return Q.all([updateLocalData(data), updateRemoteData(data)]);
+        })
         .then(function() {
             LOGGER.info('step8: - collectResults end');
             def.resolve(targets);
@@ -62,33 +64,53 @@ var readFiles = function(files) {
 };
 
 /**
+ * Post process all data for final output
+ * @param data - {Array} array of fulfilled promises with content of files
+ * @returns {}
+ */
+var postProcessData = function(data) {
+    var def = Q.defer(),
+        normalize = config.get('normalize');
+
+    try {
+        data = _.union.apply(null, function(_data) {
+            return util.filterFulfilledPromises(_data)
+                .reduce(function(prev, item) {
+                    return prev.concat(item.value);
+                }, []);
+        }(data));
+
+        data =(function(d) {
+            var _data = {'en': [], 'ru': []};
+            d.forEach(function(item) {
+                _data[item.language] && _data[item.language].push(item);
+            });
+            return _data;
+        })(data);
+
+        if(normalize && normalize === 'true') {
+            data = normalize_db(data);
+        }
+
+        def.resolve(data);
+    }catch(err) {
+        def.reject(err.message);
+    }
+
+    return def.promise;
+};
+
+/**
  * Write data into two json files (human readable and minified)
  * @param data - {Object} data
  * @returns {defer.promise|*}
  */
-var writeFiles = function(data) {
+var updateLocalData = function(data) {
     var def = Q.defer(),
         outputDir = config.get('outputDirectory'),
         dataFile = config.get('outputDataFile'),
         dataMinFile = config.get('outputDataMinFile'),
-        normalize = config.get('normalize'),
         version = (new Date()).getTime().toString();
-
-    data = _.union.apply(null, planerizeResults(data));
-
-    //TODO temporary
-    data =(function(d) {
-        var _data = {'en': [], 'ru': []};
-        d.forEach(function(item) {
-            _data[item.language] && _data[item.language].push(item);
-        });
-        return _data;
-    })(data);
-    //
-
-    if(normalize && normalize === 'true') {
-        data = normalize_db(data);
-    }
 
     util.createDirectory(PATH.join(outputDir, version))
     .then([
@@ -102,60 +124,39 @@ var writeFiles = function(data) {
     return def.promise;
 };
 
+/**
+ * Update remote data on dataRepository with github API
+ * @param data - {Object} data
+ * @returns {*}
+ */
 var updateRemoteData = function(data) {
+    var createOrUpdate = function(data, path) {
+        var dataConfig = config.get("dataConfig"),
+            o = _.extend(dataConfig, {
+                branch: dataConfig.ref,
+                message: UTIL.format('Build: %s', (new Date()).toString()),
+                content: (new Buffer(data)).toString('base64'),
+                path: path
+            });
+
+        return git
+            .getContent(dataConfig, path)
+            .then(
+                function(file) {
+                    return file.type === 'file' ? git.updateFile(_.extend({ sha: file.sha }, o)) : git.createFile(o);
+                },
+                function(error) {
+                    if(error.code === 404) {
+                        git.createFile(o);
+                    }
+                }
+            );
+    };
+
     return createOrUpdate(JSON.stringify(data, null, 4), config.get('outputDataFile'))
         .then(function() {
             createOrUpdate(JSON.stringify(data), config.get('outputDataMinFile'));
         });
+
 };
 
-/**
- * Method that creates or updates result data files on github repository through github API
- * @param data - {JSON} content of file
- * @param path - {String} relative path to file from root of repository
- * @returns {*}
- */
-var createOrUpdate = function(data, path) {
-    var dataRepository = config.get("dataRepository"),
-        o = {
-            user: dataRepository.user,
-            repo: dataRepository.name,
-            branch: 'master',
-            message: UTIL.format('Build: %s', (new Date()).toString()),
-            content: (new Buffer(data)).toString('base64'),
-            path: path
-        };
-
-    return git.getContent({
-        user: dataRepository.user,
-        repo: dataRepository.name,
-        ref: 'master'
-    }, path).then(
-        function(file) {
-            if(file.type === 'file') {
-                return git.updateFile(_.extend({ sha: file.sha }, o));
-            }else {
-                return git.createFile(o);
-            }
-        },
-        function(error) {
-            if(error.code === 404) {
-                git.createFile(o);
-            }
-        }
-    );
-};
-
-/**
- * Returns plane content from tree of promises
- * @param data {Object} tree of promises
- * @returns {Array}
- */
-var planerizeResults = function(data) {
-    return util.filterFulfilledPromises(data)
-        .reduce(function(prev, item) {
-            return prev.concat(item.value);
-        }, []);
-};
-
-module.exports = execute;

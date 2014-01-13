@@ -12,4 +12,6 @@ config.argv({
     .env()
     .file({ file: path.join(__dirname, 'config.json') });
 
+config.add('credentials', { type: 'file', file: path.join(__dirname, 'credentials.json') });
+
 module.exports = config;

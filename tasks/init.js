@@ -1,8 +1,10 @@
 /* global toString: false */
 'use strict';
 
-//bem tools modules
-var BEM = require('bem'),
+var UTIL = require('util'),
+
+    //bem tools modules
+    BEM = require('bem'),
     Q = BEM.require('q'),
     U = BEM.require('./util'),
     PATH = BEM.require('./path'),
@@ -34,16 +36,21 @@ var execute = function() {
             if(!U.isDirectory(PATH.resolve(contentDir, '.git'))) {
                 return commands.gitInit(contentDir)
                     .then(function() {
-                        var dataRepository = config.get("dataRepository");
+                        var dataRepository = config.get("dataConfig");
 
                         return git.getRepository({
                                 user: dataRepository.user,
-                                name: dataRepository.name,
-                                isPrivate: false
+                                name: dataRepository.repo,
+                                isPrivate: dataRepository.private
                             })
-                            .then(function(res) {
-                                return res.result.ssh_url;
-                            });
+                            .then(
+                                function(res) {
+                                    return res.result.ssh_url;
+                                },
+                                function() {
+                                    LOGGER.error("Data repository was not found. Application will be terminated");
+                                }
+                            );
                     })
                     .then(function(remoteUrl) {
                         return commands.gitRemoteAdd(contentDir, 'origin', remoteUrl);
