@@ -6,6 +6,10 @@ JSCS = $(NPM_BIN)/jscs
 build: npm_deps
 	node make.js
 
+.PHONY: restart
+restart: clean
+	node make.js
+
 .PHONY: clean
 clean:
 	rm -rf content
