@@ -19,3 +19,5 @@ db_min.json
 
 npm-debug.log
 node_modules
+
+config/credentials.json
