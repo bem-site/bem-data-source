@@ -1,71 +1,5 @@
 {
-    "private": [
-        {
-            "org": "lego",
-            "repositories": [
-                {
-                    "name": "islands-components",
-                    "targetDir": "islands-components",
-                    "type": [
-                        "libs"
-                    ],
-                    "tags": {
-                        "include": [],
-                        "exclude": []
-                    },
-                    "branches": {
-                        "include": [],
-                        "exclude": []
-                    }
-                },
-                {
-                    "name": "islands-page",
-                    "targetDir": "islands-page",
-                    "type": [
-                        "libs"
-                    ],
-                    "tags": {
-                        "include": [],
-                        "exclude": []
-                    },
-                    "branches": {
-                        "include": [],
-                        "exclude": []
-                    }
-                },
-                {
-                    "name": "islands-user",
-                    "targetDir": "islands-user",
-                    "type": [
-                        "libs"
-                    ],
-                    "tags": {
-                        "include": [],
-                        "exclude": []
-                    },
-                    "branches": {
-                        "include": [],
-                        "exclude": []
-                    }
-                },
-                {
-                    "name": "islands-search",
-                    "targetDir": "islands-search",
-                    "type": [
-                        "libs"
-                    ],
-                    "tags": {
-                        "include": [],
-                        "exclude": []
-                    },
-                    "branches": {
-                        "include": [],
-                        "exclude": []
-                    }
-                }
-            ]
-        }
-    ],
+    "private": [],
     "public": [
         {
             "org": "bem",
@@ -78,10 +12,10 @@
                         "docs"
                     ],
                     "docDirs": [
-                        "documentation/method",
-                        "documentation/platform",
-                        "documentation/tools",
-                        "documentation/libs",
+                        "method",
+                        "platform",
+                        "tools",
+                        "libs",
                         "tutorials",
                         "videocasts",
                         "articles",
@@ -140,6 +74,28 @@
                     "branches": {
                         "include": [],
                         "exclude": []
+                    }
+                },
+                {
+                    "name": "bem-tools",
+                    "targetDir": "bem-tools",
+                    "type": [
+                        "docs"
+                    ],
+                    "docDirs": [
+                        "docs"
+                    ],
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
+                        "include": [
+                            "dev"
+                        ],
+                        "exclude": [
+                            "dev"
+                        ]
                     }
                 },
                 {

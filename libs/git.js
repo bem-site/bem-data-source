@@ -27,11 +27,8 @@ var gitPublic = null,
     gitPublic = new API(_.extend(publicConfig, commonConfig));
     gitPrivate = new API(_.extend(privateConfig, commonConfig));
 
-    gitPublic.authenticate({
-        type: "oauth",
-        token: "7a2fb4d7a380f8a20562f5fc910f35d3b1605341"
-    });
-
+    gitPublic.authenticate(config.get('credentials:public'));
+    gitPrivate.authenticate(config.get('credentials:private'));
 })();
 
 /**
@@ -43,7 +40,7 @@ var gitPublic = null,
  */
 exports.getRepository = function(source) {
     var def = Q.defer(),
-        git = source.isPrivate ? gitPrivate : gitPublic;
+        git = (source.isPrivate && source.isPrivate === 'true')  ? gitPrivate : gitPublic;
 
     git.repos.get({ user: source.user, repo: source.name }, function(err, res) {
         if (err) {
@@ -109,8 +106,10 @@ exports.getRepositoryBranches = function(source) {
 exports.getContent = function(repository, path) {
     repository.path = path || '';
 
-    var def = Q.defer();
-    gitPublic.repos.getContent(repository, function(err, res) {
+    var def = Q.defer(),
+        git = (repository.private && repository.private === 'true')  ? gitPrivate : gitPublic;
+
+    git.repos.getContent(repository, function(err, res) {
         if (err) {
             def.reject(err);
         }
@@ -121,7 +120,7 @@ exports.getContent = function(repository, path) {
 
 /**
  * Creates file in the repository
- * @param config [Object] - configuration object with following fields:
+ * @param conf [Object] - configuration object with following fields:
  *   - user [String] name of owner or organization
  *   - repo [String] name of repository
  *   - branch [String] branch (optional)
@@ -130,10 +129,11 @@ exports.getContent = function(repository, path) {
  *   - content [String] base64 encoded content of file
  * @returns {defer.promise|*|Function|promise|Q.promise}
  */
-exports.createFile = function(config) {
-    var def = Q.defer();
+exports.createFile = function(conf) {
+    var def = Q.defer(),
+        git = (conf.private && conf.private === 'true') ? gitPrivate : gitPublic;
 
-    gitPublic.repos.createFile(config, function(err, res) {
+    git.repos.createFile(conf, function(err, res) {
         if(err || !res) {
             def.reject(err);
         } else {
@@ -145,7 +145,7 @@ exports.createFile = function(config) {
 
 /**
  * Updates file in the repository
- * @param config [Object] - configuration object with following fields:
+ * @param conf [Object] - configuration object with following fields:
  *   - user [String] name of owner or organization
  *   - repo [String] name of repository
  *   - branch [String] branch (optional)
@@ -155,10 +155,11 @@ exports.createFile = function(config) {
  *   - content [String] base64 encoded content of file
  * @returns {defer.promise|*|Function|promise|Q.promise}
  */
-exports.updateFile = function(config) {
-    var def = Q.defer();
+exports.updateFile = function(conf) {
+    var def = Q.defer(),
+        git = (conf.private && conf.private === 'true') ? gitPrivate : gitPublic;
 
-    gitPublic.repos.updateFile(config, function(err, res) {
+    git.repos.updateFile(conf, function(err, res) {
         if(err || !res) {
             def.reject(err);
         } else {
