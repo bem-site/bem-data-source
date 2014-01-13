@@ -1,13 +1,14 @@
 {
   "name": "bem-data-source",
   "version": "0.0.1",
-  "private": true,
   "scripts": {
-    "start": "node make.js"
+    "start": "node make.js",
+    "build": "make build",
+    "test": "make lint"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/tormozz48/bem-data-source.git"
+    "url": "git://github.com/bem/bem-data-source.git"
   },
   "engines": {
     "node": ">= 0.8.0"
@@ -26,5 +27,12 @@
     "q-io": "~1.10.6",
     "jspath": "~0.2.10",
     "semver": "2.2.1"
-  }
+  },
+  "devDependencies": {
+    "jshint": "2.4.1",
+    "jscs": "1.2.2"
+  },
+  "author": "bemer@yandex-team.ru",
+  "readmeFilename": "README.md",
+  "private": true
 }
