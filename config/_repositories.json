@@ -21,20 +21,6 @@
                     }
                 },
                 {
-                    "name": "bem-core",
-                    "targetDir": "bem-core",
-                    "type": ["docs"],
-                    "docDirs": ["common.docs"],
-                    "tags": {
-                        "include": [],
-                        "exclude": []
-                    },
-                    "branches": {
-                        "include": ["v1"],
-                        "exclude": []
-                    }
-                },
-                {
                     "name": "bem-components",
                     "targetDir": "bem-components",
                     "type": ["libs"],
@@ -165,6 +151,25 @@
                     "type": ["docs"],
                     "branches": {
                         "include": ["bem-info-data"]
+                    }
+                }
+            ]
+        },
+        {
+            "user": "tormozz48",
+            "repositories": [
+                {
+                    "name": "bem-core",
+                    "targetDir": "bem-core",
+                    "type": ["docs"],
+                    "docDirs": ["common.docs"],
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
+                        "include": ["b1.0.0", "b1.1.0"],
+                        "exclude": []
                     }
                 }
             ]
