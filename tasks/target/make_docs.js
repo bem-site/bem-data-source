@@ -174,6 +174,7 @@ var parseContent = function() {
         content = parser ? parser.call(null, content) : content;
 
         def.resolve({
+            dir: arguments[1],
             name: docName,
             language: language,
             extension: extension,
@@ -246,103 +247,206 @@ var parseJson = function(content) {
  * @param data
  */
 var collectResults = function(target, data) {
-    var output = [];
+   var output = [];
 
-    try {
-        data = planerizeResults(data);
+   try {
+       data = planerizeResults(data);
 
-        data.filter(function(item) {
-                return item.extension === 'meta.json';
-            }).forEach(function(item) {
-                var type = null,
-                    primaryCategory = null,
-                    content = findContentForMeta(data, item),
-                    meta = item.content;
+       data.filter(function(item) {
+               return item.extension === 'meta.json';
+           }).forEach(function(item) {
+               var type = null,
+                   primaryCategory = null,
+                   content = findContentForMeta(data, item),
+                   meta = item.content;
 
-                //set linked founded content
-                if(content) {
-                    meta.content = content;
-                }
+               //set linked founded content
+               if(content) {
+                   meta.content = content;
+               }
 
-                //parse date from dd-mm-yyyy format into milliseconds
-                if(meta.createDate) {
-                    meta.createDate = util.formatDate(meta.createDate);
-                }
+               //parse date from dd-mm-yyyy format into milliseconds
+               if(meta.createDate) {
+                   meta.createDate = util.formatDate(meta.createDate);
+               }
 
-                //parse date from dd-mm-yyyy format into milliseconds
-                if(meta.editDate) {
-                    meta.editDate = util.formatDate(meta.editDate);
-                }
+               //parse date from dd-mm-yyyy format into milliseconds
+               if(meta.editDate) {
+                   meta.editDate = util.formatDate(meta.editDate);
+               }
 
-                //remove empty strings from authors array
-                if(meta.authors && _.isArray(meta.authors)) {
-                    meta.authors = _.compact(meta.authors);
-                }
+               //remove empty strings from authors array
+               if(meta.authors && _.isArray(meta.authors)) {
+                   meta.authors = _.compact(meta.authors);
+               }
 
-                //remove empty strings from translators array
-                if(meta.translators && _.isArray(meta.translators)) {
-                    meta.translators = _.compact(meta.translators);
-                }
+               //remove empty strings from translators array
+               if(meta.translators && _.isArray(meta.translators)) {
+                   meta.translators = _.compact(meta.translators);
+               }
 
-                if(_.isArray(meta.type)) {
-                    type = meta.type[0];
-                }else{
-                    type = meta.type;
-                }
+               if(_.isArray(meta.type)) {
+                   type = meta.type[0];
+               }else{
+                   type = meta.type;
+               }
 
-                //set root to false if it is undefined
-                if((meta.authors || meta.translators) && !meta.root) {
-                    meta.root = false;
-                }
+               //set root to false if it is undefined
+               if((meta.authors || meta.translators) && !meta.root) {
+                   meta.root = false;
+               }
 
-                if(meta.categories && meta.categories.length > 0) {
+               if(meta.categories && meta.categories.length > 0) {
 
-                    meta.categories = meta.categories.map(function(category) {
-                        if(_.isString(category)) {
+                   meta.categories = meta.categories.map(function(category) {
+                       if(_.isString(category)) {
 
-                            return {
-                                name: category,
-                                url: category,
-                                order: category.split('/').map(function() { return 0; }).join('/'),
-                                type: type
-                            };
-                        }else {
-                            category.type = category.type || type;
-                            return category;
-                        }
-                    });
+                           return {
+                               name: category,
+                               url: category,
+                               order: category.split('/').map(function() { return 0; }).join('/'),
+                               type: type
+                           };
+                       }else {
+                           category.type = category.type || type;
+                           return category;
+                       }
+                   });
 
-                    primaryCategory =  meta.categories[0];
-                    if(primaryCategory) {
-                        primaryCategory = primaryCategory.url || primaryCategory;
-                    }
+                   primaryCategory =  meta.categories[0];
+                   if(primaryCategory) {
+                       primaryCategory = primaryCategory.url || primaryCategory;
+                   }
 
-                    meta.url = '/' + [type, primaryCategory, item.name, ''].join('/');
-                }else {
-                    meta.url = '/' + [type, item.name, ''].join('/');
-                }
+                   meta.url = '/' + [type, primaryCategory, item.name, ''].join('/');
+               }else {
+                   meta.url = '/' + [type, item.name, ''].join('/');
+               }
 
-                //set language to meta information
-                meta.language = item.language;
+               //set language to meta information
+               meta.language = item.language;
 
-                //set repo information
-                meta.repo = {
-                    url: target.source.url,
-                    treeish: target.type === 'branches' ? target.ref : 'master'
-                };
+               //set repo information
+               meta.repo = {
+                   url: target.source.url,
+                   treeish: target.type === 'branches' ? target.ref : 'master'
+               };
 
-                meta.slug = item.name;
-                meta.id = SHA(JSON.stringify(meta));
+               meta.slug = item.name;
+               meta.id = SHA(JSON.stringify(meta));
 
-                item.meta = meta;
-                output.push(meta);
-            });
-    }catch(err) {
-        LOGGER.error(err.message);
-    }
+               item.meta = meta;
+               output.push(meta);
+           });
+   }catch(err) {
+       LOGGER.error(err.message);
+   }
 
-    return output;
+   return output;
 };
+
+// var collectResults = function(target, data) {
+//     var output = [];
+
+//     try {
+//         data = planerizeResults(data);
+
+//         data.filter(function(item) {
+//             return item.extension === 'meta.json';
+//         }).forEach(function(item) {
+//                 var content = findContentForMeta(data, item),
+//                     meta = item.content;
+
+//                 //set linked founded content
+//                 if(content) {
+//                     meta.content = content;
+//                 }
+
+//                 //parse date from dd-mm-yyyy format into milliseconds
+//                 if(meta.createDate) {
+//                     meta.createDate = util.formatDate(meta.createDate);
+//                 }
+
+//                 //parse date from dd-mm-yyyy format into milliseconds
+//                 if(meta.editDate) {
+//                     meta.editDate = util.formatDate(meta.editDate);
+//                 }
+
+//                 //remove empty strings from authors array
+//                 if(meta.authors && _.isArray(meta.authors)) {
+//                     meta.authors = _.compact(meta.authors);
+//                 }
+
+//                 //remove empty strings from translators array
+//                 if(meta.translators && _.isArray(meta.translators)) {
+//                     meta.translators = _.compact(meta.translators);
+//                 }
+
+//                 //TODO  remove this type hack later after sources meta refactoring!
+//                 if(_.isArray(meta.type)) {
+//                     if(meta.type.indexOf('authors') !== -1 || meta.type.indexOf('translators') !== -1) {
+//                         meta.type = 'people';
+//                     }else if(meta.type.indexOf('page') !== -1) {
+//                         meta.type = 'page';
+//                     }else {
+//                         meta.type = 'post';
+//                     }
+//                 }else if(_.isString(meta.type)){
+//                     if(meta.type === 'authors' || meta.type === 'translators') {
+//                         meta.type = 'people';
+//                     }else if(meta.type === 'page') {
+//                         meta.type = 'page';
+//                     }else {
+//                         meta.type = 'post';
+//                     }
+//                 }
+//                 //TODO end of type hack
+
+//                 //TODO  remove this root hack later after sources meta refactoring!
+//                 if(meta.root) {
+//                     delete meta.root;
+//                 }
+//                 //TODO end of type hack
+
+//                 //TODO  remove this categories hack later after sources meta refactoring!
+//                 if(meta.categories) {
+//                     delete meta.categories;
+//                 }
+//                 //TODO end of categories hack
+
+//                 //TODO  remove this order hack later after sources meta refactoring!
+//                 if(meta.order) {
+//                     delete meta.order;
+//                 }
+//                 //TODO end of order hack
+
+//                 //TODO  remove this url hack later after sources meta refactoring!
+//                 if(meta.url) {
+//                     delete meta.url;
+//                 }
+//                 //TODO end of url hack
+
+//                 //set repo information
+//                 meta.repo = {
+//                     url: target.source.url,
+//                     treeish: target.type === 'branches' ? target.ref : 'master'
+//                 };
+
+//                 meta.language = item.language;
+//                 meta.id = UTIL.format('https://%s/%s/%s/tree/%s/%s/%s',
+//                     target.source.isPrivate ? 'github.yandex-team.ru' : 'github.com', target.source.user, target.source.name,
+//                     target.ref, item.dir, item.name);
+
+
+//                 item.meta = meta;
+//                 output.push(meta);
+//             });
+//     }catch(err) {
+//         LOGGER.error(err.message);
+//     }
+
+//     return output;
+// };
 
 /**
  * Returns plane content from tree of promises
@@ -381,7 +485,8 @@ var planerizeResults = function(data) {
  */
 var findContentForMeta = function(data, meta) {
     var result = data.filter(function(item) {
-        return  item.name === meta.name &&
+        return  item.dir === meta.dir &&
+                item.name === meta.name &&
                 item.language === meta.language &&
                 (item.extension === 'md' || item.extension === 'wiki');
     });
