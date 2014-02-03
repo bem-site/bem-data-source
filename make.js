@@ -12,7 +12,6 @@ var BEM = require('bem'),
     util = require('./libs/util'),
 
     tasks = require('./tasks'),
-    getConfig = require('./tasks/get_config'),
     resolveRepositories = require('./tasks/sources/resolve_repositories'),
     resolveBranches = require('./tasks/sources/resolve_branches'),
     resolveTags = require('./tasks/sources/resolve_tags'),
@@ -28,7 +27,7 @@ var make = (function() {
     LOGGER.info('--- data source start ---');
 
     tasks.init.apply(null)
-    .then(getConfig)
+    .then(tasks.getConfig)
     .then(resolveRepositories)
     .then(resolveTags)
     .then(resolveBranches)
