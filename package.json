@@ -14,18 +14,13 @@
     "node": ">= 0.8.0"
   },
   "dependencies": {
-    "bem": "~0.6.16",
-    "nconf": "~0.6.8",
-    "github": "git://github.com/whentomanage/node-github.git",
-    "underscore": "~1.5.2",
-    "rimraf": "~2.2.4",
-    "shmakowiki": "*",
-    "ometajs": "~3.1.4",
-    "marked": "~0.2.5",
-    "highlight.js": "7",
-    "sha1": "1.0.0",
+    "q": "~1.0.0",
     "q-io": "~1.10.6",
-    "jspath": "~0.2.10",
+    "nconf": "~0.6.8",
+    "lodash": "2.4.1",
+    "winston": "0.7.2",
+    "github": "git://github.com/whentomanage/node-github.git",
+    "rimraf": "~2.2.4",
     "semver": "2.2.1"
   },
   "devDependencies": {

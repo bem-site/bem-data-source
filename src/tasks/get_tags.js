@@ -1,18 +1,16 @@
 /* global toString: false */
 'use strict';
 
-var UTIL = require('util'),
+var util = require('util'),
 
-    //bem tools modules
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    LOGGER = BEM.require('./logger'),
-    _ = BEM.require('underscore'),
+    q = require('q'),
+    _ = require('lodash'),
 
     //application modules
-    config = require('../../config/config'),
-    git = require('../../libs/git'),
-    util = require('../../libs/util');
+    config = require('../config'),
+    logger = require('../libs/logger')(module),
+    api = require('../libs/api'),
+    u = require('../libs/util');
 
 var TAGS_ALL = 'all',
     TAGS_LAST = 'last';
@@ -35,22 +33,22 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     run: function(sources) {
-        LOGGER.info('step3: - resolveTags start');
+        logger.info('step3: - resolveTags start');
 
-        return Q.allSettled(
+        return q.allSettled(
                 sources.map(function(item) {
-                    return git.getRepositoryTags(item);
+                    return api.getRepositoryTags(item);
                 })
             ).then(function(res) {
 
                 //remove all rejected promises and map fulfilled promises
-                res = util.filterAndMapFulfilledPromises(res, function(item) {
+                res = u.filterAndMapFulfilledPromises(res, function(item) {
                     item = item.value;
                     item.source.tags = filterTags(item.source, _.pluck(item.result, 'name'));
                     return item.source;
                 });
 
-                LOGGER.info('step3: - resolveTags end');
+                logger.info('step3: - resolveTags end');
                 return res;
             });
     }
@@ -86,8 +84,7 @@ var filterTags = function(source, tags) {
             //show errors in console log if invalid tags are presented in repositories configuration
             tagsInclude.forEach(function(tagInclude) {
                if(tags.indexOf(tagInclude) === -1) {
-                   LOGGER.error(
-                       UTIL.format('Tag %s does not actually presented in tags of %s repository', tagInclude, source.name));
+                   logger.error('Tag %s does not actually presented in tags of %s repository', tagInclude, source.name);
                }
             });
 
@@ -106,7 +103,7 @@ var filterTags = function(source, tags) {
     }
 
     if(result.length > 0) {
-        LOGGER.debug(UTIL.format('repository: %s tags: %s will be executed', source.name, result));
+        logger.debug('repository: %s tags: %s will be executed', source.name, result);
     }
 
     return result;

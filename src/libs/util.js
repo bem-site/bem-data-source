@@ -1,21 +1,15 @@
 /* global toString: false */
 'use strict';
 
-var FS = require('fs'),
-    UTIL = require('util'),
-    SEMVER = require('semver'),
+var util = require('util'),
+    path = require('path'),
 
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    QIO_FS = BEM.require('q-fs'),
-    PATH = BEM.require('./path'),
-    LOGGER = BEM.require('./logger'),
-    U = BEM.require('./util'),
+    semver = require('semver'),
+    q = require('q'),
+    q_io = require('q-io/fs'),
 
-    config = require('../../config/config');
-
-var EXTENSIONS = ['wiki', 'md', 'meta.json', 'png'],
-    LANGUAGES = ['en', 'ru', 'ja', 'ko'];
+    logger = require('./logger')(module),
+    config = require('../config');
 
 /**
  * Creates directory with given name
@@ -23,14 +17,14 @@ var EXTENSIONS = ['wiki', 'md', 'meta.json', 'png'],
  * @returns {Promise|*|Promise.fail}
  */
 exports.createDirectory = function(dirName) {
-    return QIO_FS
+    return q_io
         .makeDirectory(dirName)
         .then(function() {
-            LOGGER.debug(UTIL.format('%s directory has been created', dirName));
+            logger.debug('%s directory has been created', dirName);
         })
         .fail(function(err) {
             if(err.code === 'EEXIST') {
-                LOGGER.warn(UTIL.format('%s directory already exist', dirName));
+                logger.warn('%s directory already exist', dirName);
             }
         });
 };
@@ -42,92 +36,13 @@ exports.createDirectory = function(dirName) {
  * @returns {number}
  */
 exports.sortTags = function(a, b) {
-    a = SEMVER.clean(a);
-    b = SEMVER.clean(b);
-    if(SEMVER.valid(a) !== null && SEMVER.valid(b) !== null) {
-        return SEMVER.gt(a, b) ? 1 : (SEMVER.lt(a, b) ? -1 : 0);
+    a = semver.clean(a);
+    b = semver.clean(b);
+    if(semver.valid(a) !== null && semver.valid(b) !== null) {
+        return semver.gt(a, b) ? 1 : (semver.lt(a, b) ? -1 : 0);
     }else {
         return a - b;
     }
-};
-
-exports.filterDocDirectory = function(dir) {
-    return ['.git', '.bem'].indexOf(dir) === -1;
-};
-
-exports.filterDocFile = function(file, dir) {
-    var isValidExtension = EXTENSIONS.some(function(extension) {
-        return file.indexOf(extension, file.length - extension.length) !== -1;
-    });
-
-    if(!isValidExtension){
-        return false;
-    }
-
-    return file.split('.')[0] === dir;
-};
-
-/**
- * Returns file extension
- * @param file - {String} file name
- * @returns {String} extension of file
- */
-exports.getFileExtension = function(file) {
-    var result = null;
-    EXTENSIONS.some(function(extension) {
-        result = extension;
-        return file.indexOf(extension, file.length - extension.length) !== -1;
-    });
-    return result;
-};
-
-/**
- * Returns file language
- * @param file - {String} file name
- * @returns {String} language
- */
-exports.getFileLanguage = function(file) {
-    var result = null;
-    LANGUAGES.some(function(language) {
-        result = language;
-        return file.indexOf('.' + language + '.') !== -1;
-    });
-    return result;
-};
-
-/**
- * Return compiled date in milliseconds from date in dd-mm-yyyy format
- * @param  {String} dateStr - staring date in dd-mm-yyy format
- * @return {Number} date in milliseconds
- */
-exports.formatDate = function(dateStr) {
-    var re = /[^\w]+|_+/,
-        date = new Date(),
-        dateParse = dateStr.split(re),
-        dateMaskFrom = 'dd-mm-yyyy'.split(re);
-
-    dateMaskFrom.forEach(function(elem, indx) {
-        switch (elem) {
-            case 'dd':
-                date.setDate(dateParse[indx]);
-                break;
-            case 'mm':
-                date.setMonth(dateParse[indx] - 1);
-                break;
-            default:
-                if (dateParse[indx].length === 2) {
-                    if(date.getFullYear() % 100 >= dateParse[indx]) {
-                        date.setFullYear('20' + dateParse[indx]);
-                    }else {
-                        date.setFullYear('19' + dateParse[indx]);
-                    }
-                }else {
-                    date.setFullYear(dateParse[indx]);
-                }
-        }
-    });
-
-    return date.valueOf();
 };
 
 /**

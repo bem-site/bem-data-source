@@ -1,51 +1,53 @@
 /* global toString: false */
 'use strict';
 
-var UTIL = require('util'),
+var util = require('util'),
+    path = require('path'),
 
-    //bem tools modules
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    LOGGER = BEM.require('./logger'),
-    U = BEM.require('./util'),
-    PATH = BEM.require('./path'),
-    _ = BEM.require('underscore'),
+    q = require('q'),
+    q_io = require('q-io/fs'),
+    _ = require('lodash'),
 
     //application modules
-    config = require('../../config/config'),
-    commands = require('cmd'),
-    clear = require('target/clear');
-    //collectSets = require('../target/collect_sets');
+    config = require('../config'),
+    logger = require('../libs/logger')(module),
+    commands = require('./cmd'),
+    clear = require('./clear'),
+    collectSets = require('./collect_sets');
 
 
 module.exports = {
 
     run: function(sources) {
-        LOGGER.info('step5: - createTargets start');
+        logger.info('step5: - createTargets start');
 
-        var def = Q.defer(),
+        var def = q.defer(),
             rootPath = config.get('contentDirectory'),
             targets = [];
 
         try{
-            sources.forEach(function(source) {
-                var sourceDir = source.targetDir || source.name,
-                    existed = U.getDirs(PATH.join(rootPath, sourceDir));
+            q.allSettled(
+                sources.map(function(source) {
+                    var sourceDir = source.targetDir || source.name;
 
-                ['tags', 'branches'].forEach(function(type) {
-                    source[type].forEach(function(ref) {
-                        targets.push(createTarget.apply(null, [source, ref, rootPath, sourceDir, existed, type]));
-                    });
-                });
+                    return q_io.list(path.join(rootPath, sourceDir)).finally(
+                        function(existed) {
+                            ['tags', 'branches'].forEach(function(type) {
+                                source[type].forEach(function(ref) {
+                                    targets.push(createTarget.apply(null, [source, ref, rootPath, sourceDir, existed || [], type]));
+                                });
+                            });
+                        }
+                    );
+                })
+            ).then(function() {
+                def.resolve(targets);
             });
-
-            def.resolve(_.compact(targets));
-
         }catch(err) {
-            LOGGER.error(err.message);
+            logger.error(err.message);
             def.reject(err);
         }finally {
-            LOGGER.info('step5: - createTargets end');
+            logger.info('step5: - createTargets end');
         }
         return def.promise;
     }
@@ -72,8 +74,8 @@ var createTarget = function() {
 
         target = {
             source: source,
-            name: UTIL.format('%s %s', source.name, ref),
-            path: PATH.join(rootPath, sourceDir, ref),
+            name: util.format('%s %s', source.name, ref),
+            path: path.join(rootPath, sourceDir, ref),
             url: source.url,
             ref: ref,
             type: type,
@@ -93,8 +95,8 @@ var createTarget = function() {
     //add collect sets task to scenario
     //target.tasks.push(collectSets);
 
-    LOGGER.debug(UTIL.format('create target for source: %s with ref %s into directory %s',
-        source.name, ref, PATH.join(rootPath, sourceDir, ref)));
+    logger.debug('create target for source: %s with ref %s into directory %s',
+        source.name, ref, path.join(rootPath, sourceDir, ref));
 
     return target;
 };
