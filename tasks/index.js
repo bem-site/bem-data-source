@@ -1,3 +1,5 @@
-exports.init = require('./init').run;
-exports.getConfig = require('./get_config').run;
-exports.sources = require('./sources');
+module.exports = {
+    init: require('./init'),
+    getConfig: require('./get_config'),
+    sources: require('./sources')
+};

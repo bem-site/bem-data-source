@@ -1,3 +1,5 @@
-exports.resolveRepositories = require('./repositories').run;
-exports.resolveTags = require('./tags').run;
-exports.resolveBranches = require('./branches').run;
+module.exports = {
+    resolveRepositories: require('./repositories'),
+    resolveTags: require('./tags'),
+    resolveBranches: require('./branches')
+};
