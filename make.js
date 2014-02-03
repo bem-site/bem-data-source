@@ -12,7 +12,6 @@ var BEM = require('bem'),
     util = require('./libs/util'),
 
     tasks = require('./tasks'),
-    resolveRepositories = require('./tasks/sources/resolve_repositories'),
     resolveBranches = require('./tasks/sources/resolve_branches'),
     resolveTags = require('./tasks/sources/resolve_tags'),
     createTargets = require('./tasks/sources/create_targets'),
@@ -28,7 +27,7 @@ var make = (function() {
 
     tasks.init.apply(null)
     .then(tasks.getConfig)
-    .then(resolveRepositories)
+    .then(tasks.sources.resolveRepositories)
     .then(resolveTags)
     .then(resolveBranches)
     .then(createTargets)
