@@ -23,11 +23,11 @@ var make = (function() {
     LOGGER.setLevel(config.get('v'));
     LOGGER.info('--- data source start ---');
 
-    tasks.init.apply(null)
-    .then(tasks.getConfig)
-    .then(tasks.sources.resolveRepositories)
-    .then(tasks.sources.resolveTags)
-    .then(tasks.sources.resolveBranches)
+    tasks.init.run.apply(null)
+    .then(tasks.getConfig.run)
+    .then(tasks.sources.resolveRepositories.run)
+    .then(tasks.sources.resolveTags.run)
+    .then(tasks.sources.resolveBranches.run)
     .then(createTargets)
     .then(executeTargets)
     .then(updateConfig)
