@@ -1,16 +1,14 @@
 /* global toString: false */
 'use strict';
 
-var UTIL = require('util'),
+var util = require('util'),
 
-    //bem tools modules
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    LOGGER = BEM.require('./logger'),
-    _ = BEM.require('underscore'),
+    q = require('q'),
+    _ = require('lodash'),
 
     //application modules
-    util = require('../libs/util');
+    logger = require('../libs/logger')(module),
+    u = require('../libs/util');
 
 module.exports = {
 
@@ -21,10 +19,11 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     run: function(targets) {
-        LOGGER.info('step6: - run commands start');
-        var def = Q.defer();
+        logger.info('step6: - run commands start');
+
+        var def = q.defer();
         try {
-            Q.allSettled(
+            q.allSettled(
                     targets.map(function(target) {
                         var initial = target.tasks.shift();
                         return target.tasks.reduce(function(prev, item) {
@@ -35,13 +34,13 @@ module.exports = {
                     })
                 )
                 .then(
-                function(result) {
-                    def.resolve(util.filterAndMapFulfilledPromises(result, function(item) { return item.value; } ));
-                    LOGGER.info('step6: - run commands end');
-                }
-            );
+                    function(result) {
+                        def.resolve(u.filterAndMapFulfilledPromises(result, function(item) { return item.value; } ));
+                        logger.info('step6: - run commands end');
+                    }
+                );
         }catch(err) {
-            LOGGER.error(err.message);
+            logger.error(err.message);
             def.reject(err);
         }
 

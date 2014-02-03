@@ -1,5 +1,5 @@
-var config = require('nconf');
-var path = require('path');
+var config = require('nconf'),
+    path = require('path');
 
 config.argv({
         "v": {

@@ -1,19 +1,16 @@
 /* global toString: false */
 'use strict';
 
-var UTIL = require('util'),
+var util = require('util'),
+    path = require('path'),
 
-    //bem tools modules
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    U = BEM.require('./util'),
-    PATH = BEM.require('./path'),
-    LOGGER = BEM.require('./logger'),
+    q = require('q'),
+    q_io = require('q-io/fs'),
 
-    //application modules
-    config = require('../../config/config'),
-    git = require('../../libs/git'),
-    util = require('../../libs/util'),
+    config = require('../config'),
+    logger = require('../libs/logger')(module),
+    api = require('../libs/api'),
+    util = require('../libs/util'),
 
     commands = require('./cmd');
 
@@ -32,7 +29,7 @@ module.exports = {
             outputDir = config.get('outputDirectory'),
             dataRepository = config.get("dataConfig"),
             getUrlOfRemoteDataRepository = function() {
-                return git
+                return api
                     .getRepository({
                         user: dataRepository.user,
                         name: dataRepository.repo,
@@ -43,19 +40,27 @@ module.exports = {
                             return res.result.ssh_url;
                         },
                         function() {
-                            LOGGER.error("Data repository was not found. Application will be terminated");
+                            logger.error("Data repository was not found. Application will be terminated");
                         }
                     );
             };
 
-        return Q.all([ util.createDirectory(contentDir), util.createDirectory(outputDir) ]).then(function() {
-            if(!U.isDirectory(PATH.resolve(contentDir, '.git'))) {
-                return commands.gitInit(contentDir)
-                    .then(getUrlOfRemoteDataRepository)
-                    .then(function(remoteUrl) {
-                        return commands.gitRemoteAdd(contentDir, 'origin', remoteUrl);
-                    });
-            }
-        });
+        return q.all([
+                    util.createDirectory(contentDir),
+                    util.createDirectory(outputDir)
+                ])
+                .then(function() {
+                    q_io
+                        .isDirectory(path.resolve(contentDir, '.git'))
+                        .then(function(isDir) {
+                            if(!isDir) {
+                                return commands.gitInit(contentDir)
+                                    .then(getUrlOfRemoteDataRepository)
+                                    .then(function(remoteUrl) {
+                                        return commands.gitRemoteAdd(contentDir, 'origin', remoteUrl);
+                                    });
+                            }
+                        });
+                });
     }
 };
