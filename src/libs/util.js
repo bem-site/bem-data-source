@@ -12,7 +12,7 @@ var FS = require('fs'),
     LOGGER = BEM.require('./logger'),
     U = BEM.require('./util'),
 
-    config = require('../config/config');
+    config = require('../../config/config');
 
 var EXTENSIONS = ['wiki', 'md', 'meta.json', 'png'],
     LANGUAGES = ['en', 'ru', 'ja', 'ko'];

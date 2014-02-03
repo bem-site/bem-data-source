@@ -13,7 +13,7 @@ var UTIL = require('util'),
 
     //application modules
     config = require('../../config/config'),
-    git = require('../../libs/git');
+    git = require('../libs/git');
 
 var execute = function(targets) {
     LOGGER.info('step7: - finalize start');

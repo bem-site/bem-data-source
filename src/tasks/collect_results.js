@@ -15,8 +15,8 @@ var UTIL = require('util'),
 
     //application modules
     config = require('../../config/config'),
-    git = require('../../libs/git'),
-    util = require('../../libs/util'),
+    git = require('../libs/git'),
+    util = require('../libs/util'),
     normalize_db = require('./normalize_db');
 
 module.exports = function(targets) {

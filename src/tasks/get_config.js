@@ -12,8 +12,8 @@ var UTIL = require('util'),
     _ = BEM.require('underscore'),
 
     //application modules
-    config = require('../config/config'),
-    git = require('../libs/git');
+    config = require('../../config/config'),
+    git = require('../../libs/git');
 
 module.exports = {
 

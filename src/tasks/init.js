@@ -11,9 +11,9 @@ var UTIL = require('util'),
     LOGGER = BEM.require('./logger'),
 
     //application modules
-    config = require('../config/config'),
-    git = require('../libs/git'),
-    util = require('../libs/util'),
+    config = require('../../config/config'),
+    git = require('../../libs/git'),
+    util = require('../../libs/util'),
 
     commands = require('./cmd');
 
