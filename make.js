@@ -12,23 +12,21 @@ var BEM = require('bem'),
     util = require('./libs/util'),
 
     tasks = require('./tasks'),
-    createTargets = require('./tasks/sources/create_targets'),
+
     executeTargets = require('./tasks/targets/execute_targets'),
     updateConfig = require('./tasks/targets/update_config'),
     collectResults = require('./tasks/targets/collect_results');
 
 var make = (function() {
-    //var timers = require('timers');
-
     LOGGER.setLevel(config.get('v'));
     LOGGER.info('--- data source start ---');
 
     tasks.init.run.apply(null)
     .then(tasks.getConfig.run)
-    .then(tasks.sources.resolveRepositories.run)
-    .then(tasks.sources.resolveTags.run)
-    .then(tasks.sources.resolveBranches.run)
-    .then(createTargets)
+    .then(tasks.getRepositories.run)
+    .then(tasks.getTags.run)
+    .then(tasks.getBranches.run)
+    .then(tasks.createTargets.run)
     .then(executeTargets)
     .then(updateConfig)
     .then(collectResults)
