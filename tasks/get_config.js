@@ -15,27 +15,42 @@ var UTIL = require('util'),
     config = require('../config/config'),
     git = require('../libs/git');
 
+module.exports = {
+
+    /**
+     * Retrieves sources configuration throught github API
+     * (with fallback to local configuration file)
+     * and modify it for suitable github API calling
+     * @returns {defer.promise|*}
+     */
+    run: function() {
+        LOGGER.info('step1: - getSources start');
+
+        var localMode = config.get('localMode');
+
+        if(localMode && localMode === 'true') {
+            LOGGER.debug('Local mode flag is set to true. Repositories list will be loaded from local filesystem');
+            return readLocalConfig();
+        } else {
+            LOGGER.debug('Local mode flag is set to false. Repositories list will be loaded from remote github repository');
+            return readRemoteConfig();
+        }
+    }
+};
+
 /**
- * Retrieves sources configuration throught github API
- * (with fallback to local configuration file)
- * and modify it for suitable github API calling
- * @returns {defer.promise|*}
+ * Loads data from remote repositories.json configuration file
+ * @returns {*}
  */
-module.exports = function() {
-    LOGGER.info('step1: - getSources start');
-
-    var localMode = config.get('localMode'),
-        repositoriesFileName = config.get('repositoriesFileName');
-
-    return git.getContent(config.get('repoConfig'), repositoriesFileName)
+var readRemoteConfig = function() {
+    return git.getContent(config.get('repoConfig'), config.get('repositoriesFileName'))
         .then(
             function(file) {
-                return (localMode && localMode === 'true') ? readLocalConfig() :
-                    createSources(JSON.parse(new Buffer(file.content, 'base64')));
+                return createSources(JSON.parse(new Buffer(file.content, 'base64')));
             },
             function(error) {
                 if(error.code === 404) {
-                    LOGGER.warn(UTIL.format('%s file was not found on github. Load local %s file', repositoriesFileName, repositoriesFileName));
+                    LOGGER.warn('Configuration file was not found on github. Load local configuration file');
                     return readLocalConfig();
                 }
             }
@@ -44,7 +59,7 @@ module.exports = function() {
 
 /**
  * Loads data from local repositories.json configuration file
- * Needs for local mode and for case when repositories.json file not existed yet
+ * Needs for local mode or for case when repositories.json file not existed yet
  * @returns {*}
  */
 var readLocalConfig = function() {
