@@ -11,7 +11,7 @@ var BEM = require('bem'),
     git = require('./libs/git'),
     util = require('./libs/util'),
 
-    init = require('./tasks/init'),
+    tasks = require('./tasks'),
     getConfig = require('./tasks/get_config'),
     resolveRepositories = require('./tasks/sources/resolve_repositories'),
     resolveBranches = require('./tasks/sources/resolve_branches'),
@@ -27,7 +27,7 @@ var make = (function() {
     LOGGER.setLevel(config.get('v'));
     LOGGER.info('--- data source start ---');
 
-    init.apply(null)
+    tasks.init.apply(null)
     .then(getConfig)
     .then(resolveRepositories)
     .then(resolveTags)
