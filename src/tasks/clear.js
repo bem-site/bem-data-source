@@ -1,14 +1,12 @@
 /* global toString: false */
 'use strict';
 
-var UTIL = require('util'),
-    RMRF = require('rimraf'),
+var util = require('util'),
 
-    //bem modules
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    LOGGER = BEM.require('./logger'),
-    U = BEM.require('./util');
+    rmrf = require('rimraf'),
+    q = require('q'),
+
+    logger = require('../libs/logger')(module);
 
 /**
  * Recursively removes source directories from filesystem
@@ -19,21 +17,21 @@ var UTIL = require('util'),
  * - path - {String} - target path for git clone (relative path from the root of project)
  * @returns {defer.promise|*}
  */
-var execute = function(target) {
-    var def = Q.defer();
+module.exports = function(target) {
+    var def = q.defer();
 
-    Q.nfapply(RMRF, [target.path])
+    q.nfapply(rmrf, [target.path])
     .then(
         function(result) {
-            LOGGER.info(UTIL.format('remove directory for target %s completed', target.name));
+            logger.info('remove directory for target %s completed', target.name);
             def.resolve(result);
         },
         function(error) {
             if(error.code === 'ENOENT') {
-                LOGGER.warn(UTIL.format('remove directory target %s failed. Directory does not exist', target.name));
+                logger.warn('remove directory target %s failed. Directory does not exist', target.name);
                 return def.resolve();
             }else {
-                LOGGER.error(UTIL.format('remove directory for target %s failed with reason %s', target.name, error.message));
+                logger.error('remove directory for target %s failed with reason %s', target.name, error.message);
                 return def.reject(error);
             }
 
@@ -41,5 +39,3 @@ var execute = function(target) {
     );
     return def.promise;
 };
-
-module.exports = execute;

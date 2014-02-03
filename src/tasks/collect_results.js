@@ -1,49 +1,46 @@
 /* global toString: false */
 'use strict';
 
-var UTIL = require('util'),
+var util = require('util'),
+    path = require('path'),
 
-    QIO_FS = require("q-io/fs"),
+    q = require('q'),
+    q_io = require('q-io/fs'),
+    _ = require('lodash'),
 
-    //bem tools modules
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    LOGGER = BEM.require('./logger'),
-    U = BEM.require('./util'),
-    PATH = BEM.require('./path'),
-    _ = BEM.require('underscore'),
+    config = require('../config'),
+    logger = require('../libs/logger')(module),
+    api = require('../libs/api'),
+    util = require('../libs/util');
 
-    //application modules
-    config = require('../../config/config'),
-    git = require('../libs/git'),
-    util = require('../libs/util'),
-    normalize_db = require('./normalize_db');
+module.exports = {
 
-module.exports = function(targets) {
-    LOGGER.info('step8: - collectResults start');
+    run: function(targets) {
+        logger.info('step8: - collectResults start');
 
-    var def = Q.defer(),
-        contentDir = config.get('contentDirectory'),
-        outputTargetFile = config.get('outputTargetFile');
+        var def = q.defer(),
+            contentDir = config.get('contentDirectory'),
+            outputTargetFile = config.get('outputTargetFile');
 
-    try {
-        QIO_FS.listTree(PATH.resolve(contentDir), function(path) {
-            return path.indexOf(outputTargetFile, path.length - outputTargetFile.length) !== -1;
-        })
-        .then(readFiles)
-        .then(postProcessData)
-        .then(function(data) {
-            return Q.all([updateLocalData(data), updateRemoteData(data)]);
-        })
-        .then(function() {
-            LOGGER.info('step8: - collectResults end');
-            def.resolve(targets);
-        });
-    }catch(err) {
-        LOGGER.error(err.message);
-        def.reject(err);
+        try {
+            q_io.listTree(path.resolve(contentDir), function(path) {
+                return path.indexOf(outputTargetFile, path.length - outputTargetFile.length) !== -1;
+            })
+                .then(readFiles)
+                .then(postProcessData)
+                .then(function(data) {
+                    return q.all([updateLocalData(data), updateRemoteData(data)]);
+                })
+                .then(function() {
+                    logger.info('step8: - collectResults end');
+                    def.resolve(targets);
+                });
+        }catch(err) {
+            logger.error(err.message);
+            def.reject(err);
+        }
+        return def.promise;
     }
-    return def.promise;
 };
 
 /**
@@ -52,10 +49,10 @@ module.exports = function(targets) {
  * @returns {Q.allSettled|*}
  */
 var readFiles = function(files) {
-    return Q.allSettled(
+    return q.allSettled(
         files.map(function(file) {
-            LOGGER.silly(UTIL.format('collect results: read file %s', file));
-            return U.readFile(file)
+            logger.silly('collect results: read file %s', file);
+            return q_io.read(file)
                 .then(function(src) {
                     return JSON.parse(src);
                 });
@@ -69,7 +66,7 @@ var readFiles = function(files) {
  * @returns {}
  */
 var postProcessData = function(data) {
-    var def = Q.defer(),
+    var def = q.defer(),
         normalize = config.get('normalize');
 
     try {
@@ -87,10 +84,6 @@ var postProcessData = function(data) {
             });
             return _data;
         })(data);
-
-        if(normalize && normalize === 'true') {
-            data = normalize_db(data);
-        }
 
         def.resolve(data);
     }catch(err) {
@@ -112,10 +105,10 @@ var updateLocalData = function(data) {
         dataMinFile = config.get('outputDataMinFile'),
         version = (new Date()).getTime().toString();
 
-    util.createDirectory(PATH.join(outputDir, version))
+    util.createDirectory(path.join(outputDir, version))
     .then([
-        U.writeFile(PATH.join(outputDir, version, dataFile), JSON.stringify(data, null, 4)),
-        U.writeFile(PATH.join(outputDir, version, dataMinFile), JSON.stringify(data))
+        q_io.write(path.join(outputDir, version, dataFile), JSON.stringify(data, null, 4)),
+        q_io.writeFile(path.join(outputDir, version, dataMinFile), JSON.stringify(data))
     ])
     .then(function() {
         def.resolve(data);
@@ -134,20 +127,20 @@ var updateRemoteData = function(data) {
         var dataConfig = config.get("dataConfig"),
             o = _.extend(dataConfig, {
                 branch: dataConfig.ref,
-                message: UTIL.format('Build: %s', (new Date()).toString()),
+                message: util.format('Build: %s', (new Date()).toString()),
                 content: (new Buffer(data)).toString('base64'),
                 path: path
             });
 
-        return git
+        return api
             .getContent(dataConfig, path)
             .then(
                 function(file) {
-                    return file.type === 'file' ? git.updateFile(_.extend({ sha: file.sha }, o)) : git.createFile(o);
+                    return file.type === 'file' ? api.updateFile(_.extend({ sha: file.sha }, o)) : api.createFile(o);
                 },
                 function(error) {
                     if(error.code === 404) {
-                        git.createFile(o);
+                        api.createFile(o);
                     }
                 }
             );

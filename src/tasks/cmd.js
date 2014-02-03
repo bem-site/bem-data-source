@@ -1,15 +1,13 @@
 /* global toString: false */
 'use strict';
 
-var UTIL = require('util'),
+var util = require('util'),
 
-    //bem tools modules
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    LOGGER = BEM.require('./logger'),
-    U = BEM.require('./util'),
+    q = require('q'),
 
-    config = require('./../../config/config');
+    config = require('../config'),
+    logger = require('../libs/logger')(module),
+    u = require('../libs/util');
 
 /**
  * Execute git clone command in child process
@@ -24,7 +22,7 @@ var UTIL = require('util'),
  * @returns {defer.promise|*}
  */
 exports.gitClone = function(target) {
-    return runCommand(UTIL.format('git clone --progress %s %s && cd %s && git checkout %s',
+    return runCommand(util.format('git clone --progress %s %s && cd %s && git checkout %s',
         target.url, target.path, target.path, target.ref), 'git clone', target);
 };
 
@@ -41,7 +39,7 @@ exports.gitClone = function(target) {
  * @returns {defer.promise|*}
  */
 exports.npmInstall = function(target) {
-    return runCommand(UTIL.format('cd %s && npm install --registry=http://npm.yandex-team.ru',
+    return runCommand(util.format('cd %s && npm install --registry=http://npm.yandex-team.ru',
         target.path), 'npm install', target);
 };
 
@@ -58,7 +56,7 @@ exports.npmInstall = function(target) {
  * @returns {defer.promise|*}
  */
 exports.bemMakeLibs = function(target) {
-    return runCommand(UTIL.format('cd %s && bem make libs', target.path), 'bem make libs', target);
+    return runCommand(util.format('cd %s && bem make libs', target.path), 'bem make libs', target);
 };
 
 /**
@@ -74,7 +72,7 @@ exports.bemMakeLibs = function(target) {
  * @returns {defer.promise|*}
  */
 exports.bemMakeSets = function(target) {
-    return runCommand(UTIL.format('cd %s && bem make sets', target.path), 'bem make sets', target);
+    return runCommand(util.format('cd %s && bem make sets', target.path), 'bem make sets', target);
 };
 
 /**
@@ -83,7 +81,7 @@ exports.bemMakeSets = function(target) {
  * @returns {defer.promise|*}
  */
 exports.gitInit = function(dir) {
-    return runCommand(UTIL.format('cd %s && git init', dir), 'git init', null);
+    return runCommand(util.format('cd %s && git init', dir), 'git init', null);
 };
 
 /**
@@ -94,20 +92,20 @@ exports.gitInit = function(dir) {
  * @returns {defer.promise|*}
  */
 exports.gitRemoteAdd = function(dir, name, path) {
-    return runCommand(UTIL.format('cd %s && git remote add %s %s', dir, name, path), 'git remote add', null);
+    return runCommand(util.format('cd %s && git remote add %s %s', dir, name, path), 'git remote add', null);
 };
 
 
 exports.gitAddSets = function(dir) {
-    return runCommand(UTIL.format('cd %s && git add *.sets', dir), 'git add sets', null);
+    return runCommand(util.format('cd %s && git add *.sets', dir), 'git add sets', null);
 };
 
 exports.gitCommit = function(message) {
-    return runCommand(UTIL.format('cd %s && git commit -a -m "%s"', config.get('contentDirectory'), message), 'git commit', null);
+    return runCommand(util.format('cd %s && git commit -a -m "%s"', config.get('contentDirectory'), message), 'git commit', null);
 };
 
 exports.gitPush = function() {
-    return runCommand(UTIL.format('cd %s && git push -u origin master', config.get('contentDirectory')), 'git push', null);
+    return runCommand(util.format('cd %s && git push -u origin master', config.get('contentDirectory')), 'git push', null);
 };
 
 /**
@@ -122,19 +120,19 @@ var runCommand = function(cmd, name, target) {
         target = {name: 'all'};
     }
 
-    LOGGER.debug(cmd);
+    logger.debug(cmd);
 
-    var def = Q.defer();
+    var def = q.defer();
     U.exec(cmd, { maxBuffer: 10000*1024 }, true)
     .then(
         function() {
-            LOGGER.debug(UTIL.format('%s for target %s completed', name, target.name));
+            logger.debug(util.format('%s for target %s completed', name, target.name));
             def.resolve(target);
         },
         function(error) {
-            LOGGER.error(error.message);
-            LOGGER.error(UTIL.format('%s for target %s failed', name, target.name));
-            LOGGER.error(UTIL.format('execution of command %s failed', cmd));
+            logger.error(error.message);
+            logger.error(util.format('%s for target %s failed', name, target.name));
+            logger.error(util.format('execution of command %s failed', cmd));
             def.reject(error);
         }
     );

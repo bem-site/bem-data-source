@@ -1,19 +1,17 @@
 /* global toString: false */
 'use strict';
 
-var UTIL = require('util'),
+var util = require('util'),
+    path = require('path'),
 
-    //bem tools modules
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    U = BEM.require('./util'),
-    PATH = BEM.require('./path'),
-    LOGGER = BEM.require('./logger'),
-    _ = BEM.require('underscore'),
+    q = require('q'),
+    q_io = require('q-io/fs'),
+    _ = require('lodash'),
 
     //application modules
-    config = require('../../config/config'),
-    git = require('../../libs/git');
+    config = require('../config'),
+    logger = require('../libs/logger')(module),
+    api = require('../libs/api');
 
 module.exports = {
 
@@ -24,15 +22,15 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     run: function() {
-        LOGGER.info('step1: - getSources start');
+        logger.info('step1: - getSources start');
 
         var localMode = config.get('localMode');
 
         if(localMode && localMode === 'true') {
-            LOGGER.debug('Local mode flag is set to true. Repositories list will be loaded from local filesystem');
+            logger.debug('Local mode flag is set to true. Repositories list will be loaded from local filesystem');
             return readLocalConfig();
         } else {
-            LOGGER.debug('Local mode flag is set to false. Repositories list will be loaded from remote github repository');
+            logger.debug('Local mode flag is set to false. Repositories list will be loaded from remote github repository');
             return readRemoteConfig();
         }
     }
@@ -43,14 +41,15 @@ module.exports = {
  * @returns {*}
  */
 var readRemoteConfig = function() {
-    return git.getContent(config.get('repoConfig'), config.get('repositoriesFileName'))
+    return api
+        .getContent(config.get('repoConfig'), config.get('repositoriesFileName'))
         .then(
             function(file) {
                 return createSources(JSON.parse(new Buffer(file.content, 'base64')));
             },
             function(error) {
                 if(error.code === 404) {
-                    LOGGER.warn('Configuration file was not found on github. Load local configuration file');
+                    logger.warn('Configuration file was not found on github. Load local configuration file');
                     return readLocalConfig();
                 }
             }
@@ -63,7 +62,7 @@ var readRemoteConfig = function() {
  * @returns {*}
  */
 var readLocalConfig = function() {
-    return U.readFile(PATH.resolve('config', 'repositories') + '.json')
+    return q_io.read(path.resolve('config', 'repositories') + '.json')
         .then(function(content) {
             return createSources(JSON.parse(content));
         });
@@ -78,7 +77,7 @@ var readLocalConfig = function() {
  */
 var createSources = function(sources) {
     var result = [];
-    Object.getOwnPropertyNames(sources).forEach(function(key) {
+    _.keys(sources).forEach(function(key) {
         sources[key].forEach(function(source) {
             var owner = source.org || source.user,
                 repositories = source.repositories;

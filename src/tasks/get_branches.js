@@ -1,17 +1,15 @@
 /* global toString: false */
 'use strict';
 
-var UTIL = require('util'),
+var util = require('util'),
 
-    //bem tools modules
-    BEM = require('bem'),
-    Q = BEM.require('q'),
-    LOGGER = BEM.require('./logger'),
-    _ = BEM.require('underscore'),
+    q = require('q'),
+    _ = require('lodash'),
 
     //application modules
-    git = require('../../libs/git'),
-    util = require('../../libs/util');
+    logger = require('../libs/logger')(module),
+    api = require('../libs/api'),
+    u = require('../libs/util');
 
 
 module.exports = {
@@ -31,28 +29,28 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     run: function(sources) {
-        LOGGER.info('step4: - resolveBranches start');
-        var def = Q.defer();
+        logger.info('step4: - resolveBranches start');
+        var def = q.defer();
 
         try {
-            Q.allSettled(
+            q.allSettled(
                     sources.map(function(item) {
-                        return git.getRepositoryBranches(item);
+                        return api.getRepositoryBranches(item);
                     })
                 ).then(function(res) {
                     //remove all rejected promises
-                    res = util.filterAndMapFulfilledPromises(res, function(item) {
+                    res = u.filterAndMapFulfilledPromises(res, function(item) {
                         item = item.value;
                         item.source.branches = filterBranches(item.source, _.pluck(item.result, 'name'));
                         return item.source;
                     });
 
-                    LOGGER.info('step4: - resolveBranches end');
+                    logger.info('step4: - resolveBranches end');
                     def.resolve(res);
                 });
 
         } catch(err) {
-            LOGGER.error(err.message);
+            logger.error(err.message);
             def.reject(err);
         }
         return def.promise;
@@ -87,8 +85,7 @@ var filterBranches = function(source, branches) {
             //show errors in console log if invalid branches are presented in repositories configuration
             branchesInclude.forEach(function(branchInclude) {
                 if(branches.indexOf(branchInclude) === -1) {
-                    LOGGER.error(
-                        UTIL.format('Branch %s does not actually presented in branches of %s repository ', branchInclude, source.name));
+                    logger.error('Branch %s does not actually presented in branches of %s repository ', branchInclude, source.name);
                 }
             });
 
@@ -101,7 +98,7 @@ var filterBranches = function(source, branches) {
     }
 
     if(result.length > 0) {
-        LOGGER.debug(UTIL.format('repository: %s branches: %s will be executed', source.name, result));
+        logger.debug('repository: %s branches: %s will be executed', source.name, result);
     }
 
     return result;
