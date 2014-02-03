@@ -12,10 +12,10 @@
         "private": "true"
     },
     "dataConfig": {
-        "user": "lego",
-        "repo": "bem-info",
-        "ref": "data",
-        "private": "true"
+        "user": "tormozz48",
+        "repo": "bem-data",
+        "ref": "master",
+        "private": "false"
     },
     "normalize": "false",
     "localMode": "true",
