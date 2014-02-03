@@ -17,39 +17,43 @@ var UTIL = require('util'),
 var TAGS_ALL = 'all',
     TAGS_LAST = 'last';
 
-/**
- * Retrieves information about repository tags and filter them according to config
- * @param sources - {Array} of objects with fields:
- * - user {String} name of user or organization
- * - isPrivate {Boolean} indicate if repository from private github
- * - name - {String} name of repository
- * - targetDir - {String} target directory
- * - docDirs - {Array} array of string path where docs are
- * - type - {String} type of repository. Different engines should be used for different types
- * - tags - {Object} object which holds arrays of tags which should be included or excluded from make process
- * - branches - {Object} object which holds arrays of branches which should be included or excluded from make process
- * - url - {String} git url of repository
- * @returns {defer.promise|*}
- */
-var execute = function(sources) {
-    LOGGER.info('step3: - resolveTags start');
 
-    return Q.allSettled(
-            sources.map(function(item) {
-                return git.getRepositoryTags(item);
-            })
-        ).then(function(res) {
-            //remove all rejected promises
-            //and map fulfilled promises
-            res = util.filterAndMapFulfilledPromises(res, function(item) {
-                item = item.value;
-                item.source.tags = filterTags(item.source, _.pluck(item.result, 'name'));
-                return item.source;
+module.exports = {
+
+    /**
+     * Retrieves information about repository tags and filter them according to config
+     * @param sources - {Array} of objects with fields:
+     * - user {String} name of user or organization
+     * - isPrivate {Boolean} indicate if repository from private github
+     * - name - {String} name of repository
+     * - targetDir - {String} target directory
+     * - docDirs - {Array} array of string path where docs are
+     * - type - {String} type of repository. Different engines should be used for different types
+     * - tags - {Object} object which holds arrays of tags which should be included or excluded from make process
+     * - branches - {Object} object which holds arrays of branches which should be included or excluded from make process
+     * - url - {String} git url of repository
+     * @returns {defer.promise|*}
+     */
+    run: function(sources) {
+        LOGGER.info('step3: - resolveTags start');
+
+        return Q.allSettled(
+                sources.map(function(item) {
+                    return git.getRepositoryTags(item);
+                })
+            ).then(function(res) {
+
+                //remove all rejected promises and map fulfilled promises
+                res = util.filterAndMapFulfilledPromises(res, function(item) {
+                    item = item.value;
+                    item.source.tags = filterTags(item.source, _.pluck(item.result, 'name'));
+                    return item.source;
+                });
+
+                LOGGER.info('step3: - resolveTags end');
+                return res;
             });
-
-            LOGGER.info('step3: - resolveTags end');
-            return res;
-        });
+    }
 };
 
 /**
@@ -107,5 +111,3 @@ var filterTags = function(source, tags) {
 
     return result;
 };
-
-module.exports = execute;
