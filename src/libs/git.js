@@ -7,7 +7,7 @@ var API = require("github"),
     LOGGER = BEM.require('./logger'),
     _ = BEM.require('underscore'),
 
-    config = require('../config/config.js');
+    config = require('../../config/config.js');
 
 var gitPublic = null,
     gitPrivate = null;
