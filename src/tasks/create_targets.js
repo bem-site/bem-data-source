@@ -12,7 +12,7 @@ var UTIL = require('util'),
     _ = BEM.require('underscore'),
 
     //application modules
-    config = require('../config/config'),
+    config = require('../../config/config'),
     commands = require('cmd'),
     clear = require('target/clear');
     //collectSets = require('../target/collect_sets');

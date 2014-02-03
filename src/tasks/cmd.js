@@ -9,7 +9,7 @@ var UTIL = require('util'),
     LOGGER = BEM.require('./logger'),
     U = BEM.require('./util'),
 
-    config = require('./../config/config');
+    config = require('./../../config/config');
 
 /**
  * Execute git clone command in child process

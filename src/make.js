@@ -7,7 +7,7 @@ var BEM = require('bem'),
     LOGGER = BEM.require('./logger'),
 
     //application modules
-    config = require('./config/config'),
+    config = require('./config'),
     git = require('./libs/git'),
     util = require('./libs/util'),
 
