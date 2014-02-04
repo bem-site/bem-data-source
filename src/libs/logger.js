@@ -1,42 +1,25 @@
 /* global toString: false */
 'use strict';
 
-var winston = require('winston');
-var levels = {
-    levels: {
-        debug: 0,
-        info: 1,
-        warn: 2,
-        error: 3
-    },
-    colors: {
-        debug: 'blue',
-        info: 'green',
-        warn: 'orange',
-        error: 'red'
-    }
-};
+var intel = require('intel'),
+    config = require('../config');
 
-var container = new winston.Container({
-    levels: levels.levels,
-    exitOnError: false
-});
 
 module.exports = function(module) {
-    var label = module ? module.filename.split('/').slice(-2).join('/') : '';
+    var name = module ? module.filename.split('/').slice(-2).join('/') : ''
 
-    winston.addColors(levels.colors);
+    var logger = intel.getLogger(name);
 
-    container.add(module.filename, {
-        transports: [
-            new (winston.transports.Console)({
-                level: 'silly',
-                handleExceptions: true,
-                colorize: true,
-                label: label
+    logger.setLevel(config.get('logLevel'));
+    logger.addHandler(
+        new intel.handlers.Console({
+            level: intel.VERBOSE,
+            formatter: new intel.Formatter({
+                format: '[%(date)s] %(levelname)s %(name)s: %(message)s',
+                colorize: true
             })
-        ]
-    });
+        })
+    );
 
-    return container.get(module.filename);
+    return logger;
 };
