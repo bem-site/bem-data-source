@@ -6,6 +6,7 @@ var util = require('util'),
     q = require('q'),
 
     config = require('../config'),
+    constants = require('../constants'),
     logger = require('../libs/logger')(module),
     u = require('../libs/util');
 
@@ -101,11 +102,11 @@ exports.gitAddSets = function(dir) {
 };
 
 exports.gitCommit = function(message) {
-    return runCommand(util.format('cd %s && git commit -a -m "%s"', config.get('contentDirectory'), message), 'git commit', null);
+    return runCommand(util.format('cd %s && git commit -a -m "%s"', constants.DIRECTORY.CONTENT, message), 'git commit', null);
 };
 
 exports.gitPush = function() {
-    return runCommand(util.format('cd %s && git push -u origin master', config.get('contentDirectory')), 'git push', null);
+    return runCommand(util.format('cd %s && git push -u origin master', constants.DIRECTORY.CONTENT), 'git push', null);
 };
 
 /**

@@ -2,7 +2,7 @@
   "name": "bem-data-source",
   "version": "0.1.0",
   "scripts": {
-    "start": "node make.js",
+    "start": "node src/make.js",
     "build": "make build",
     "test": "make lint"
   },

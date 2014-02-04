@@ -9,8 +9,9 @@ var util = require('util'),
     _ = require('lodash'),
 
     //application modules
-    logger = require('../libs/logger'),
     config = require('../config'),
+    constants = require('../constants'),
+    logger = require('../libs/logger'),
     api = require('../libs/api');
 
 module.exports = {
@@ -21,19 +22,18 @@ module.exports = {
         var def = q.defer(),
             path = path.resolve('config', 'repositories') + '.json',
             repoConfig = config.get('repoConfig'),
-            repoFile = config.get('repositoriesFileName'),
             localMode = config.get('localMode'),
             o = {
                 user: repoConfig.user || repoConfig.org,
                 repo: repoConfig.repo,
                 branch: repoConfig.ref,
                 message: util.format('Update repositories configuration file for build: %s', (new Date()).toString()),
-                path: repoFile,
+                path: constants.FILE.REPOSITORIES,
                 private: repoConfig.private
             };
 
         api
-            .getContent(repoConfig, repoFile)
+            .getContent(repoConfig, constants.FILE.REPOSITORIES)
             .then(
                 function(file) {
                     return (localMode && localMode === 'true') ?
