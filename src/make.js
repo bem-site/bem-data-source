@@ -5,11 +5,9 @@ var q = require('q'),
 
     //application modules
     config = require('./config'),
-    logger = require('./libs/logger')(module),
-    api = require('./libs/api'),
-    util = require('./libs/util'),
-
-    tasks = require('./tasks');
+    libs = require('./libs'),
+    tasks = require('./tasks'),
+    logger = libs.logger(module);
 
 var make = (function() {
     logger.info('--- data source start ---');

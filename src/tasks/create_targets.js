@@ -10,6 +10,7 @@ var util = require('util'),
 
     //application modules
     config = require('../config'),
+    constants = require('../constants'),
     logger = require('../libs/logger')(module),
     commands = require('./cmd'),
     clear = require('./clear'),
@@ -22,7 +23,6 @@ module.exports = {
         logger.info('step5: - createTargets start');
 
         var def = q.defer(),
-            rootPath = config.get('contentDirectory'),
             targets = [];
 
         try{
@@ -30,11 +30,11 @@ module.exports = {
                 sources.map(function(source) {
                     var sourceDir = source.targetDir || source.name;
 
-                    return q_io.list(path.join(rootPath, sourceDir)).finally(
+                    return q_io.list(path.join(constants.DIRECTORY.CONTENT, sourceDir)).finally(
                         function(existed) {
                             ['tags', 'branches'].forEach(function(type) {
                                 source[type].forEach(function(ref) {
-                                    targets.push(createTarget.apply(null, [source, ref, rootPath, sourceDir, existed || [], type]));
+                                    targets.push(createTarget.apply(null, [source, ref, sourceDir, existed || [], type]));
                                 });
                             });
                         }
@@ -58,24 +58,22 @@ module.exports = {
  * @param arguments - {Array} of arguments with elements:
  * [0] - {Object} source object
  * [1] - {String} name of tag or branch
- * [2] - {String} root path of content directory
- * [3] - {String} source directory (name of directory where source should be cloned. By default it equal to repository name)
- * [4] - {Array} array of directories corresponded to tags or branches of current source
- * [5] - {String} type of reference (tags or branches)
+ * [2] - {String} source directory (name of directory where source should be cloned. By default it equal to repository name)
+ * [3] - {Array} array of directories corresponded to tags or branches of current source
+ * [4] - {String} type of reference (tags or branches)
  * @returns {*}
  */
 var createTarget = function() {
     var source = arguments[0],
         ref = arguments[1],
-        rootPath = arguments[2],
-        sourceDir = arguments[3],
-        existed = arguments[4],
-        type = arguments[5],
+        sourceDir = arguments[2],
+        existed = arguments[3],
+        type = arguments[4],
 
         target = {
             source: source,
             name: util.format('%s %s', source.name, ref),
-            path: path.join(rootPath, sourceDir, ref),
+            path: path.join(constants.DIRECTORY.CONTENT, sourceDir, ref),
             url: source.url,
             ref: ref,
             type: type,
@@ -96,7 +94,7 @@ var createTarget = function() {
     //target.tasks.push(collectSets);
 
     logger.debug('create target for source: %s with ref %s into directory %s',
-        source.name, ref, path.join(rootPath, sourceDir, ref));
+        source.name, ref, path.join(constants.DIRECTORY.CONTENT, sourceDir, ref));
 
     return target;
 };

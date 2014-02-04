@@ -1,15 +1,10 @@
 {
-    "contentDirectory": "content",
-    "outputDirectory": "output",
-    "outputTargetFile": "__data.json",
-    "outputDataFile": "data.json",
-    "outputDataMinFile": "data.min.json",
-    "repositoriesFileName": "repositories.json",
+    "localMode": "true",
     "repoConfig": {
-        "user": "lego",
-        "repo": "bem-info",
-        "ref": "v3",
-        "private": "true"
+        "user": "tormozz48",
+        "repo": "bem-data",
+        "ref": "master",
+        "private": "false"
     },
     "dataConfig": {
         "user": "tormozz48",
@@ -17,8 +12,6 @@
         "ref": "master",
         "private": "false"
     },
-    "normalize": "false",
-    "localMode": "true",
     "gitAPI": {
         "common": {
             "version": "3.0.0",
