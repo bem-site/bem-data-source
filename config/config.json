@@ -1,4 +1,5 @@
 {
+    "logLevel": "debug",
     "localMode": "true",
     "repoConfig": {
         "user": "tormozz48",
