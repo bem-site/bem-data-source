@@ -8,6 +8,7 @@ var util = require('util'),
     q_io = require('q-io/fs'),
 
     config = require('../config'),
+    constants = require('../constants'),
     logger = require('../libs/logger')(module),
     api = require('../libs/api'),
     util = require('../libs/util'),
@@ -25,9 +26,7 @@ module.exports = {
      * @returns {*|then}
      */
     run: function() {
-        var contentDir = config.get('contentDirectory'),
-            outputDir = config.get('outputDirectory'),
-            dataRepository = config.get("dataConfig"),
+        var dataRepository = config.get("dataConfig"),
             getUrlOfRemoteDataRepository = function() {
                 return api
                     .getRepository({
@@ -46,21 +45,21 @@ module.exports = {
             };
 
         return q.all([
-                    util.createDirectory(contentDir),
-                    util.createDirectory(outputDir)
-                ])
-                .then(function() {
-                    q_io
-                        .isDirectory(path.resolve(contentDir, '.git'))
-                        .then(function(isDir) {
-                            if(!isDir) {
-                                return commands.gitInit(contentDir)
-                                    .then(getUrlOfRemoteDataRepository)
-                                    .then(function(remoteUrl) {
-                                        return commands.gitRemoteAdd(contentDir, 'origin', remoteUrl);
-                                    });
-                            }
-                        });
-                });
+                util.createDirectory(constants.DIRECTORY.CONTENT),
+                util.createDirectory(constants.DIRECTORY.OUTPUT)
+            ])
+            .then(function() {
+                q_io
+                    .isDirectory(path.resolve(constants.DIRECTORY.CONTENT, '.git'))
+                    .then(function(isDir) {
+                        if(!isDir) {
+                            return commands.gitInit(constants.DIRECTORY.CONTENT)
+                                .then(getUrlOfRemoteDataRepository)
+                                .then(function(remoteUrl) {
+                                    return commands.gitRemoteAdd(constants.DIRECTORY.CONTENT, 'origin', remoteUrl);
+                                });
+                        }
+                    });
+            });
     }
 };

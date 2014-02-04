@@ -9,6 +9,7 @@ var util = require('util'),
     _ = require('lodash'),
 
     config = require('../config'),
+    constants = require('../constants'),
     logger = require('../libs/logger')(module),
     api = require('../libs/api'),
     util = require('../libs/util');
@@ -18,13 +19,11 @@ module.exports = {
     run: function(targets) {
         logger.info('step8: - collectResults start');
 
-        var def = q.defer(),
-            contentDir = config.get('contentDirectory'),
-            outputTargetFile = config.get('outputTargetFile');
+        var def = q.defer();
 
         try {
-            q_io.listTree(path.resolve(contentDir), function(path) {
-                return path.indexOf(outputTargetFile, path.length - outputTargetFile.length) !== -1;
+            q_io.listTree(path.resolve(constants.DIRECTORY.CONTENT), function(path) {
+                return path.indexOf(constants.FILE.TARGET, path.length - constants.FILE.TARGET.length) !== -1;
             })
                 .then(readFiles)
                 .then(postProcessData)
@@ -99,16 +98,13 @@ var postProcessData = function(data) {
  * @returns {defer.promise|*}
  */
 var updateLocalData = function(data) {
-    var def = Q.defer(),
-        outputDir = config.get('outputDirectory'),
-        dataFile = config.get('outputDataFile'),
-        dataMinFile = config.get('outputDataMinFile'),
+    var def = q.defer(),
         version = (new Date()).getTime().toString();
 
-    util.createDirectory(path.join(outputDir, version))
+    util.createDirectory(path.join(constants.DIRECTORY.OUTPUT, version))
     .then([
-        q_io.write(path.join(outputDir, version, dataFile), JSON.stringify(data, null, 4)),
-        q_io.writeFile(path.join(outputDir, version, dataMinFile), JSON.stringify(data))
+        q_io.write(path.join(constants.DIRECTORY.OUTPUT, version, constants.FILE.DATA), JSON.stringify(data, null, 4)),
+        q_io.writeFile(path.join(constants.DIRECTORY.OUTPUT, version, constants.FILE.DATA_MIN), JSON.stringify(data))
     ])
     .then(function() {
         def.resolve(data);
@@ -146,9 +142,9 @@ var updateRemoteData = function(data) {
             );
     };
 
-    return createOrUpdate(JSON.stringify(data, null, 4), config.get('outputDataFile'))
+    return createOrUpdate(JSON.stringify(data, null, 4), constants.FILE.DATA)
         .then(function() {
-            createOrUpdate(JSON.stringify(data), config.get('outputDataMinFile'));
+            createOrUpdate(JSON.stringify(data), constants.FILE.DATA_MIN);
         });
 
 };

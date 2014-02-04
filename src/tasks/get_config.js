@@ -10,6 +10,7 @@ var util = require('util'),
 
     //application modules
     config = require('../config'),
+    constants = require('../constants'),
     logger = require('../libs/logger')(module),
     api = require('../libs/api');
 
@@ -42,7 +43,7 @@ module.exports = {
  */
 var readRemoteConfig = function() {
     return api
-        .getContent(config.get('repoConfig'), config.get('repositoriesFileName'))
+        .getContent(config.get('repoConfig'), constants.FILE.REPOSITORIES)
         .then(
             function(file) {
                 return createSources(JSON.parse(new Buffer(file.content, 'base64')));
