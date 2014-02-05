@@ -11,68 +11,53 @@ var util = require('util'),
     api = require('../libs/api'),
     u = require('../libs/util');
 
+var MSG = {
+    INFO: {
+        START: '-- get branches start --',
+        END: '-- get branches end --'
+    },
+    ERR: {
+        BRANCH_NOT_PRESENT: 'Branch %s does not actually presented in branches of %s repository'
+    },
+    DEBUG: {
+        BRANCHES_TO_EXECUTE: 'repository: %s branches: %s will be executed'
+    }
+};
 
 module.exports = {
 
     /**
      * Retrieves information about repository branches and filter them according to config
-     * @param sources - {Array} of objects with fields:
-     * - user {String} name of user or organization
-     * - isPrivate {Boolean} indicate if repository from private github
-     * - name - {String} name of repository
-     * - targetDir - {String} target directory
-     * - docDirs - {Array} array of string path where docs are
-     * - type - {String} type of repository. Different engines should be used for different types
-     * - tags - {Array} array of tags which should be included or excluded from make process
-     * - branches - {Object} object which holds arrays of branches which should be included or excluded from make process
-     * - url - {String} git url of repository
+     * @param sources - {Array} of source objects
      * @returns {defer.promise|*}
      */
     run: function(sources) {
-        logger.info('step4: - resolveBranches start');
-        var def = q.defer();
+        logger.info(MSG.INFO.START);
 
-        try {
-            q.allSettled(
-                    sources.map(function(item) {
-                        return api.getRepositoryBranches(item);
-                    })
-                ).then(function(res) {
-                    //remove all rejected promises
-                    res = u.filterAndMapFulfilledPromises(res, function(item) {
-                        item = item.value;
-                        item.source.branches = filterBranches(item.source, _.pluck(item.result, 'name'));
-                        return item.source;
-                    });
+        return q.allSettled(
+            sources.map(function(item) {
+                return api.getRepositoryBranches(item);
+            })
+        ).then(function(res) {
+            //remove all rejected promises
+            res = u.filterAndMapFulfilledPromises(res, function(item) {
+                item = item.value;
+                item.source.branches = filterBranches(item.source, _.pluck(item.result, 'name'));
+                return item.source;
+            });
 
-                    logger.info('step4: - resolveBranches end');
-                    def.resolve(res);
-                });
+            logger.info(MSG.INFO.END);
 
-        } catch(err) {
-            logger.error(err.message);
-            def.reject(err);
-        }
-        return def.promise;
+            return res;
+        });
     }
 };
 
 /**
- * remove branches which excluded in config
- * remove branches which not included in config
- * also exclude rule have greater priority
- * @param source {Object} with fields:
- * - user {String} name of user or organization
- * - isPrivate {Boolean} indicate if repository from private github
- * - name - {String} name of repository
- * - targetDir - {String} target directory
- * - docDirs - {Array} array of string path where docs are
- * - type - {String} type of repository. Different engines should be used for different types
- * - tags - {Array} array of tags which should be included or excluded from make process
- * - branches - {Object} object which holds arrays of branches which should be included or excluded from make process
- * - url - {String} git url of repository
+ * Removes branches which excluded in config remove branches which not included in config
+ * @param source {Object} source object
  * @param branches - {Array} array of branches which are actually presented for current source
- * @returns {Array}
+ * @returns {Array} of sources with attached branches to execute
  */
 var filterBranches = function(source, branches) {
     var result = [];
@@ -85,20 +70,20 @@ var filterBranches = function(source, branches) {
             //show errors in console log if invalid branches are presented in repositories configuration
             branchesInclude.forEach(function(branchInclude) {
                 if(branches.indexOf(branchInclude) === -1) {
-                    logger.error('Branch %s does not actually presented in branches of %s repository ', branchInclude, source.name);
+                    logger.error(MSG.ERR.BRANCH_NOT_PRESENT, branchInclude, source.name);
                 }
             });
 
             result = _.intersection(branches, branchesInclude);
         }
 
-        if(_.isArray(branchesExclude) && (!source.noCache || source.noCache === 'false')) {
+        if(_.isArray(branchesExclude)) {
             result = _.difference(result, branchesExclude);
         }
     }
 
     if(result.length > 0) {
-        logger.debug('repository: %s branches: %s will be executed', source.name, result);
+        logger.debug(MSG.DEBUG.BRANCHES_TO_EXECUTE, source.name, result);
     }
 
     return result;
