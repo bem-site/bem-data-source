@@ -11,7 +11,7 @@ var util = require('util'),
     //application modules
     config = require('../config'),
     constants = require('../constants'),
-    logger = require('../libs/logger'),
+    logger = require('../libs/logger')(module),
     api = require('../libs/api');
 
 module.exports = {
@@ -20,7 +20,7 @@ module.exports = {
         logger.info('step7: - finalize start');
 
         var def = q.defer(),
-            path = path.resolve('config', 'repositories') + '.json',
+            _path = path.resolve('config', 'repositories') + '.json',
             repoConfig = config.get('repoConfig'),
             localMode = config.get('localMode'),
             o = {
@@ -37,11 +37,12 @@ module.exports = {
             .then(
                 function(file) {
                     return (localMode && localMode === 'true') ?
-                        createOrUpdateFromLocal(targets, path, o, file) : updateFromRemote(targets, path, o, file);
+                        createOrUpdateFromLocal(targets, _path, o, file) :
+                        updateFromRemote(targets, _path, o, file);
                 },
                 function(error) {
                     if(error.code === 404) {
-                        return createOrUpdateFromLocal(targets, path, o, null);
+                        return createOrUpdateFromLocal(targets, _path, o, null);
                     }else {
                         def.reject(error);
                     }
@@ -65,7 +66,7 @@ module.exports = {
  * @param file - {String} base64 encoded content of repositories file
  * @returns {*|then}
  */
-var createOrUpdateFromLocal = function(targets, path, o, file) {
+var createOrUpdateFromLocal = function(targets, _path, o, file) {
     var promise = function(config) {
         return file ?
             api.updateFile(_.extend({
@@ -77,11 +78,11 @@ var createOrUpdateFromLocal = function(targets, path, o, file) {
             }, o));
     };
 
-    return q_io.read(path)
+    return q_io.read(_path)
         .then(function(content) {
             var updatedConfig =  JSON.stringify(markAsMade(targets, content), null, 4);
             return q.all([
-                q_io.write(path, updatedConfig),
+                q_io.write(_path, updatedConfig, { charset: 'utf8' }),
                 promise(updatedConfig)
             ]);
         });
@@ -95,10 +96,10 @@ var createOrUpdateFromLocal = function(targets, path, o, file) {
  * @param file - {String} base64 encoded content of repositories file
  * @returns {exports.all|*|exports.defaults.styles.all|Iterator.all|all|async.all}
  */
-var updateFromRemote = function(targets, path, o, file) {
+var updateFromRemote = function(targets, _path, o, file) {
     var updatedConfig = JSON.stringify(markAsMade(targets, new Buffer(file.content, 'base64')), null, 4);
     return q.all([
-        q_io.write(path, updatedConfig),
+        q_io.write(_path, updatedConfig, { charset: 'utf8' }),
         api.updateFile(
             _.extend({
                 content: (new Buffer(updatedConfig)).toString('base64'),
