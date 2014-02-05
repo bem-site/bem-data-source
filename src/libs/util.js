@@ -108,6 +108,11 @@ exports.exec = function(cmd, options, resolveWithOutput) {
     return d.promise;
 };
 
+/**
+ * Check if current path is directory
+ * @param path {String} path
+ * @returns {Boolean}
+ */
 exports.isDirectory = function(path) {
     try {
         return fs.statSync(path).isDirectory();
@@ -115,6 +120,11 @@ exports.isDirectory = function(path) {
     return false;
 };
 
+/**
+ * Returns list of directory names for _path
+ * @param _path {String} path
+ * @returns {Array} array of directory names, sorted alphabetically
+ */
 exports.getDirs = function(_path) {
     try {
         return exports.isDirectory(_path)?
