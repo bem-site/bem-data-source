@@ -6,7 +6,7 @@ var intel = require('intel'),
 
 
 module.exports = function(module) {
-    var name = module ? module.filename.split('/').slice(-2).join('/') : ''
+    var name = module ? module.filename.split('/').slice(-2).join('/') : '';
 
     var logger = intel.getLogger(name);
 
