@@ -13,6 +13,13 @@ var GITHUB = {
     OUTER: 'github.com'
 };
 
+var MSG = {
+    INFO: {
+        START: '-- get reposittories start --',
+        END: '-- get reposittories end --'
+    }
+};
+
 module.exports = {
 
     /**
@@ -29,18 +36,18 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     run: function(sources) {
-        logger.info('step2: - resolveRepositories start');
+        logger.info(MSG.INFO.START);
 
         sources = sources.map(function(source) {
 
             var host = source.isPrivate ? GITHUB.INNER : GITHUB.OUTER,
                 gitUrl = util.format('git://%s/%s/%s.git', host , source.user, source.name);
 
-            logger.debug('resolve repository with name %s and url %s', source.name, gitUrl);
+            logger.debug('get repository with name %s and url %s', source.name, gitUrl);
             return _.extend({ url: gitUrl }, source);
         });
 
-        logger.info('step2: - resolveRepositories end');
+        logger.info(MSG.INFO.END);
         return sources;
     }
 };
