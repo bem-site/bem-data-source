@@ -3,6 +3,7 @@
 
 var util = require('util'),
     path = require('path'),
+    fs = require('fs'),
 
     semver = require('semver'),
     q = require('q'),
@@ -72,4 +73,58 @@ exports.filterFulfilledPromises = function(promises) {
             return item.state === 'fulfilled';
         }
     );
+};
+
+/**
+ * Executes specified command with options.
+ * @param {String} cmd  Command to execute.
+ * @param {Object} options  Options to `child_process.exec()` function.
+ * @param {Boolean} resolveWithOutput  Resolve returned promise with command output if true.
+ * @return {Promise * String | Undefined}
+ */
+exports.exec = function(cmd, options, resolveWithOutput) {
+
+    var cp = require('child_process').exec(cmd, options),
+        d = q.defer(),
+        output = '';
+
+    cp.on('exit', function(code) {
+        if (code === 0) {
+            return d.resolve(resolveWithOutput && output ? output : null);
+        }
+        d.reject(new Error(util.format('%s failed: %s', cmd, output)));
+    });
+
+    cp.stderr.on('data', function(data) {
+        logger.verbose(data);
+        output += data;
+    });
+
+    cp.stdout.on('data', function(data) {
+        logger.verbose(data);
+        output += data;
+    });
+
+    return d.promise;
+};
+
+exports.isDirectory = function(path) {
+    try {
+        return fs.statSync(path).isDirectory();
+    } catch(ignore) {}
+    return false;
+};
+
+exports.getDirs = function(_path) {
+    try {
+        return exports.isDirectory(_path)?
+            fs.readdirSync(_path)
+                .filter(function(d) {
+                    return !(/^\.svn$/.test(d)) && exports.isDirectory(path.join(_path, d));
+                })
+                .sort() :
+            [];
+    } catch (e) {
+        return [];
+    }
 };
