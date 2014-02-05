@@ -14,6 +14,19 @@ var util = require('util'),
     logger = require('../libs/logger')(module),
     api = require('../libs/api');
 
+var MSG = {
+    ERR: {
+        CONF_NOT_FOUND: 'Configuration file was not found on local filesystem'
+    },
+    WARN: {
+        CONF_NOT_FOUND: 'Configuration file was not found on github. Load local configuration file'
+    },
+    DEBUG: {
+        LOCAL_TRUE: 'Local mode flag is set to true. Repositories list will be loaded from local filesystem',
+        LOCAL_FALSE: 'Local mode flag is set to false. Repositories list will be loaded from remote github repository'
+    }
+};
+
 module.exports = {
 
     /**
@@ -23,15 +36,15 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     run: function() {
-        logger.info('step1: - getSources start');
+        logger.info('-- get configs start --');
 
         var localMode = config.get('localMode');
 
         if(localMode && localMode === 'true') {
-            logger.debug('Local mode flag is set to true. Repositories list will be loaded from local filesystem');
+            logger.debug(MSG.DEBUG.LOCAL_TRUE);
             return readLocalConfig();
         } else {
-            logger.debug('Local mode flag is set to false. Repositories list will be loaded from remote github repository');
+            logger.debug(MSG.DEBUG.LOCAL_FALSE);
             return readRemoteConfig();
         }
     }
@@ -50,7 +63,7 @@ var readRemoteConfig = function() {
             },
             function(error) {
                 if(error.code === 404) {
-                    logger.warn('Configuration file was not found on github. Load local configuration file');
+                    logger.warn(MSG.WARN.CONF_NOT_FOUND);
                     return readLocalConfig();
                 }
             }
@@ -64,9 +77,14 @@ var readRemoteConfig = function() {
  */
 var readLocalConfig = function() {
     return q_io.read(path.resolve('config', 'repositories') + '.json')
-        .then(function(content) {
-            return createSources(JSON.parse(content));
-        });
+        .then(
+            function(content) {
+                return createSources(JSON.parse(content));
+            },
+            function() {
+                logger.error(MSG.ERR.CONF_NOT_FOUND);
+            }
+        );
 };
 
 /**
