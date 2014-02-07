@@ -21,13 +21,13 @@ var CMD = {
         NAME: 'git remote add',
         VALUE: 'git remote add %s %s'
     },
-    GIT_CHECKOUT: {
-        NAME: 'git checkout',
-        VALUE: 'git checkout -b %s'
-    },
     GIT_CLONE: {
         NAME: 'git clone',
-        VALUE: 'git clone --progress %s %s && cd %s && git checkout %s'
+        VALUE: 'git clone --progress %s %s'
+    },
+    GIT_CHECKOUT: {
+        NAME: 'git checkout',
+        VALUE: 'git checkout %s'
     },
     NPM_INSTALL: {
         NAME: 'npm install',
@@ -75,14 +75,14 @@ module.exports = {
             { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, CMD.GIT_REMOTE_ADD.NAME, null);
     },
 
-    gitCheckout: function(dir, ref) {
-        return runCommand(util.format(CMD.GIT_CHECKOUT.VALUE, ref),
-            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, CMD.GIT_CHECKOUT.NAME, null);
-    },
-
     gitClone: function(target) {
         return runCommand(
-            util.format(CMD.GIT_CLONE.VALUE, target.url, target.contentPath, target.contentPath, target.ref), {}, CMD.GIT_CLONE.NAME, target);
+            util.format(CMD.GIT_CLONE.VALUE, target.url, target.contentPath), {}, CMD.GIT_CLONE.NAME, target);
+    },
+
+    gitCheckout: function(target) {
+        return runCommand(util.format(CMD.GIT_CHECKOUT.VALUE, target.ref),
+            { cwd: path.resolve(target.contentPath) }, CMD.GIT_CHECKOUT.NAME, target);
     },
 
     npmInstall: function(target) {
