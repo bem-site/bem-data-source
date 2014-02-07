@@ -1,21 +1,21 @@
 {
     "private": [
         {
-           "org": "lego",
-           "repositories": [
-               {
-                   "name": "islands-search",
-                   "targetDir": "islands-search",
-                   "tags": {
-                       "include": [],
-                       "exclude": []
-                   },
-                   "branches": {
-                       "include": [],
-                       "exclude": []
-                   }
-               }
-           ]
+            "org": "lego",
+            "repositories": [
+                {
+                    "name": "islands-search",
+                    "targetDir": "islands-search",
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
+                        "include": ["dev"],
+                        "exclude": []
+                    }
+                }
+            ]
         }
     ],
     "public": []
