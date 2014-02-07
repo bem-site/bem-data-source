@@ -67,6 +67,7 @@ var filterBranches = function(source, branches) {
             branchesExclude = source.branches.exclude;
 
         if(_.isArray(branchesInclude)) {
+
             //show errors in console log if invalid branches are presented in repositories configuration
             branchesInclude.forEach(function(branchInclude) {
                 if(branches.indexOf(branchInclude) === -1) {
