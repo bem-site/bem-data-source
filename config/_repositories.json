@@ -1,11 +1,11 @@
 {
     "private": [
         {
-            "org": "lego",
+            "org": "bemer",
             "repositories": [
                 {
-                    "name": "islands-search",
-                    "targetDir": "islands-search",
+                    "name": "islands-components",
+                    "targetDir": "islands-components",
                     "tags": {
                         "include": [],
                         "exclude": []

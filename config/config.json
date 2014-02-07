@@ -10,7 +10,7 @@
     "dataConfig": {
         "user": "tormozz48",
         "repo": "bem-data",
-        "ref": "dev1",
+        "ref": "master",
         "private": "false"
     },
     "gitAPI": {
