@@ -21,6 +21,9 @@ var MSG = {
     WARN: {
         CONF_NOT_FOUND: 'Configuration file was not found on github. Load local configuration file'
     },
+    INFO: {
+        START: '-- get configs start --'
+    },
     DEBUG: {
         LOCAL_TRUE: 'Local mode flag is set to true. Repositories list will be loaded from local filesystem',
         LOCAL_FALSE: 'Local mode flag is set to false. Repositories list will be loaded from remote github repository'
@@ -36,7 +39,7 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     run: function() {
-        logger.info('-- get configs start --');
+        logger.info(MSG.INFO.START);
 
         var localMode = config.get('localMode');
 
