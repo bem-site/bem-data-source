@@ -9,8 +9,15 @@ var q = require('q'),
     tasks = require('./tasks'),
     logger = libs.logger(module);
 
+var MSG = {
+    INFO: {
+        START: '---- data source start ----',
+        END: '---- data source end ----'
+    }
+};
+
 var make = (function() {
-    logger.info('--- data source start ---');
+    logger.info(MSG.INFO.START);
 
     tasks.init.run.apply(null)
     .then(tasks.getConfig.run)
@@ -22,7 +29,7 @@ var make = (function() {
     .then(tasks.updateConfig.run)
     .then(tasks.collectResults.run)
     .then(function() {
-        logger.info('--- data source end ---');
+        logger.info(MSG.INFO.END);
     });
 
 })();
