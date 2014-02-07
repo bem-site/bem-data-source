@@ -9,11 +9,18 @@ var util = require('util'),
 
     config = require('../config'),
     constants = require('../constants'),
-    logger = require('../libs/logger')(module),
-    api = require('../libs/api'),
-    util = require('../libs/util'),
+    libs = require('../libs'),
 
-    commands = require('./cmd');
+    u = libs.util,
+    api = libs.api,
+    commands = libs.cmd,
+    logger = libs.logger(module);
+
+var MSG = {
+    ERROR: {
+        DATA_REPO_NOT_FOUND: 'Data repository was not found. Application will be terminated'
+    }
+};
 
 module.exports = {
 
@@ -39,27 +46,27 @@ module.exports = {
                             return res.result.ssh_url;
                         },
                         function() {
-                            logger.error("Data repository was not found. Application will be terminated");
+                            logger.error(MSG.ERROR.DATA_REPO_NOT_FOUND);
                         }
                     );
             };
 
         return q.all([
-                util.createDirectory(constants.DIRECTORY.CONTENT),
-                util.createDirectory(constants.DIRECTORY.OUTPUT)
+                u.createDirectory(constants.DIRECTORY.CONTENT),
+                u.createDirectory(constants.DIRECTORY.OUTPUT)
             ])
             .then(function() {
-                q_io
-                    .isDirectory(path.resolve(constants.DIRECTORY.CONTENT, '.git'))
-                    .then(function(isDir) {
-                        if(!isDir) {
-                            return commands.gitInit(constants.DIRECTORY.CONTENT)
-                                .then(getUrlOfRemoteDataRepository)
-                                .then(function(remoteUrl) {
-                                    return commands.gitRemoteAdd(constants.DIRECTORY.CONTENT, 'origin', remoteUrl);
-                                });
-                        }
-                    });
+                if(!u.isDirectory(path.resolve(constants.DIRECTORY.OUTPUT, '.git'))) {
+                    return commands.gitInit(constants.DIRECTORY.OUTPUT)
+                        .then(getUrlOfRemoteDataRepository)
+                        .then(function(remoteUrl) {
+                            return commands.gitRemoteAdd(constants.DIRECTORY.OUTPUT, 'origin', remoteUrl);
+                        })
+                        .then(function() {
+                            return commands.gitCheckout(constants.DIRECTORY.OUTPUT, dataRepository.ref);
+                        });
+                }
+
             });
     }
 };
