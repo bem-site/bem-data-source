@@ -5,49 +5,56 @@ var util = require('util'),
     path = require('path'),
 
     q = require('q'),
-    q_io = require('q-io/fs'),
     _ = require('lodash'),
 
     //application modules
     config = require('../config'),
     constants = require('../constants'),
-    logger = require('../libs/logger')(module),
-    commands = require('./cmd'),
-    clear = require('./clear'),
-    collectSets = require('./collect_sets');
+    libs = require('../libs'),
 
+    u = libs.util,
+    commands = libs.cmd,
+    logger = libs.logger(module),
+
+    collectSets = require('./collect_sets'),
+    createOutput = require('./create_output');
+
+var MSG = {
+    INFO: {
+        START: '-- create targets start --',
+        END: '-- create targets end --'
+    },
+    DEBUG: {
+        CREATE_TARGET_FOR: 'create target for source: %s with ref %s into directory %s'
+    }
+};
 
 module.exports = {
 
     run: function(sources) {
-        logger.info('step5: - createTargets start');
+        logger.info(MSG.INFO.START);
 
         var def = q.defer(),
             targets = [];
 
         try{
-            q.allSettled(
-                sources.map(function(source) {
-                    var sourceDir = source.targetDir || source.name;
+            sources.forEach(function(source) {
+                var sourceDir = source.targetDir || source.name,
+                    existed = u.getDirs(path.join(constants.DIRECTORY.CONTENT, sourceDir));
 
-                    return q_io.list(path.join(constants.DIRECTORY.CONTENT, sourceDir)).finally(
-                        function(existed) {
-                            ['tags', 'branches'].forEach(function(type) {
-                                source[type].forEach(function(ref) {
-                                    targets.push(createTarget.apply(null, [source, ref, sourceDir, existed || [], type]));
-                                });
-                            });
-                        }
-                    );
-                })
-            ).then(function() {
-                def.resolve(targets);
+                ['tags', 'branches'].forEach(function(type) {
+                    source[type].forEach(function(ref) {
+                        targets.push(createTarget.apply(null, [source, ref, sourceDir, existed, type]));
+                    });
+                });
             });
+
+            def.resolve(targets);
         }catch(err) {
             logger.error(err.message);
             def.reject(err);
         }finally {
-            logger.info('step5: - createTargets end');
+            logger.info(MSG.INFO.END);
         }
         return def.promise;
     }
@@ -73,12 +80,18 @@ var createTarget = function() {
         target = {
             source: source,
             name: util.format('%s %s', source.name, ref),
-            path: path.join(constants.DIRECTORY.CONTENT, sourceDir, ref),
+            sourceDir: sourceDir,
+            contentPath: path.join(constants.DIRECTORY.CONTENT, sourceDir, ref),
+            outputPath: path.join(constants.DIRECTORY.OUTPUT, sourceDir, ref),
             url: source.url,
             ref: ref,
             type: type,
             tasks: []
         };
+
+    logger.debug('existed = %s ref = %s', existed.join(', '), ref);
+
+    target.tasks.push(createOutput);
 
     //check if directory for current ref and current source is not exist
     //in this case add git clone task to scenario
@@ -90,10 +103,12 @@ var createTarget = function() {
     target.tasks.push(commands.bemMakeLibs);
     target.tasks.push(commands.bemMakeSets);
 
-    //add collect sets task to scenario
-    //target.tasks.push(collectSets);
+    target.tasks.push(commands.gitMoveSets);
+    target.tasks.push(commands.gitMoveMd);
 
-    logger.debug('create target for source: %s with ref %s into directory %s',
+    target.tasks.push(collectSets);
+
+    logger.debug(MSG.DEBUG.CREATE_TARGET_FOR,
         source.name, ref, path.join(constants.DIRECTORY.CONTENT, sourceDir, ref));
 
     return target;
