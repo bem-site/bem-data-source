@@ -60,10 +60,10 @@ module.exports = {
                         .then(getUrlOfRemoteDataRepository)
                         .then(function(remoteUrl) {
                             return commands.gitRemoteAdd(constants.DIRECTORY.OUTPUT, 'origin', remoteUrl);
-                        })
-                        .then(function() {
-                            return commands.gitCheckout(constants.DIRECTORY.OUTPUT, dataRepository.ref);
                         });
+//                        .then(function() {
+//                            return commands.gitCheckout(constants.DIRECTORY.OUTPUT, dataRepository.ref);
+//                        });
                 }
 
             });

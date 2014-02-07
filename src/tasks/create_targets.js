@@ -93,10 +93,9 @@ var createTarget = function() {
 
     target.tasks.push(createOutput);
 
-    //check if directory for current ref and current source is not exist
-    //in this case add git clone task to scenario
     if(_.indexOf(existed, ref) === -1) {
         target.tasks.push(commands.gitClone);
+        target.tasks.push(commands.gitCheckout);
     }
 
     target.tasks.push(commands.npmInstall);
