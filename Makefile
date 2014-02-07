@@ -9,11 +9,12 @@ build: npm_deps
 
 .PHONY: restart
 restart: clean
-	node make.js
+	node src/make.js
 
 .PHONY: clean
 clean:
 	rm -rf content
+	rm -rf output
 	rm config/repositories.json
 	cp config/_repositories.json config/repositories.json
 
