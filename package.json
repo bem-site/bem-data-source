@@ -21,7 +21,9 @@
     "intel": "0.4.0",
     "github": "git://github.com/whentomanage/node-github.git",
     "rimraf": "~2.2.4",
-    "semver": "2.2.1"
+    "semver": "2.2.1",
+    "marked": "git://github.com/dab/marked.git",
+    "highlight.js": "7"
   },
   "devDependencies": {
     "jshint": "2.4.1",
