@@ -10,6 +10,13 @@ var util = require('util'),
     logger = require('../libs/logger')(module),
     u = require('../libs/util');
 
+var MSG = {
+    INFO: {
+        START: '-- run commands start --',
+        END: '-- run commands end --'
+    }
+};
+
 module.exports = {
 
     /**
@@ -19,7 +26,7 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     run: function(targets) {
-        logger.info('step6: - run commands start');
+        logger.info(MSG.INFO.START);
 
         var def = q.defer();
         try {
@@ -36,7 +43,7 @@ module.exports = {
                 .then(
                     function(result) {
                         def.resolve(u.filterAndMapFulfilledPromises(result, function(item) { return item.value; } ));
-                        logger.info('step6: - run commands end');
+                        logger.info(MSG.INFO.END);
                     }
                 );
         }catch(err) {
