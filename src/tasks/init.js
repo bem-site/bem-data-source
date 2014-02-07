@@ -5,7 +5,6 @@ var util = require('util'),
     path = require('path'),
 
     q = require('q'),
-    q_io = require('q-io/fs'),
 
     config = require('../config'),
     constants = require('../constants'),
