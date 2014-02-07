@@ -4,10 +4,13 @@
 var util = require('util'),
     path = require('path'),
     fs = require('fs'),
+    cp = require('child_process'),
 
     semver = require('semver'),
     q = require('q'),
     q_io = require('q-io/fs'),
+    md = require('marked'),
+    hl = require('highlight.js'),
 
     logger = require('./logger')(module),
     config = require('../config');
@@ -79,28 +82,26 @@ exports.filterFulfilledPromises = function(promises) {
  * Executes specified command with options.
  * @param {String} cmd  Command to execute.
  * @param {Object} options  Options to `child_process.exec()` function.
- * @param {Boolean} resolveWithOutput  Resolve returned promise with command output if true.
  * @return {Promise * String | Undefined}
  */
-exports.exec = function(cmd, options, resolveWithOutput) {
-
-    var cp = require('child_process').exec(cmd, options),
+exports.exec = function(cmd, options) {
+    var proc = cp.exec(cmd, options),
         d = q.defer(),
         output = '';
 
-    cp.on('exit', function(code) {
+    proc.on('exit', function(code) {
         if (code === 0) {
-            return d.resolve(resolveWithOutput && output ? output : null);
+            return d.resolve();
         }
         d.reject(new Error(util.format('%s failed: %s', cmd, output)));
     });
 
-    cp.stderr.on('data', function(data) {
+    proc.stderr.on('data', function(data) {
         logger.verbose(data);
         output += data;
     });
 
-    cp.stdout.on('data', function(data) {
+    proc.stdout.on('data', function(data) {
         logger.verbose(data);
         output += data;
     });
@@ -137,4 +138,61 @@ exports.getDirs = function(_path) {
     } catch (e) {
         return [];
     }
+};
+
+exports.getDirsAsync = function(_path) {
+    return q_io.list(_path).then(function(items) {
+        return q.all(items.map(function(i) {
+                return q_io.isDirectory(path.join(_path, i))
+                    .then(function(isDir){
+                        return {
+                            name: i,
+                            dir: isDir
+                        };
+                    }
+                );
+            }))
+            .then(function(items) {
+                return items
+                    .filter(function(item) {
+                        return item.dir;
+                    })
+                    .map(function(item) {
+                        return item.name;
+                    });
+            }
+        );
+    });
+};
+
+exports.mdToHtml = function(content) {
+    var languages = {};
+
+    return md(content, {
+            gfm: true,
+            pedantic: false,
+            sanitize: false,
+            highlight: function(code, lang) {
+                if (!lang) {
+                    return code;
+                }
+                var res = hl.highlight(function(alias) {
+                    return {
+                        'js' : 'javascript',
+                        'patch': 'diff',
+                        'md': 'markdown',
+                        'html': 'xml',
+                        'sh': 'bash'
+                    }[alias] || alias;
+                }(lang), code);
+
+                languages[lang] = res.language;
+                return res.value;
+            }
+        })
+        .replace(/<pre><code class="lang-(.+?)">([\s\S]+?)<\/code><\/pre>/gm,
+            function(m, lang, code) {
+                return '<pre class="highlight"><code class="highlight__code ' + languages[lang] + '">' + code + '</code></pre>';
+            }
+        );
 };
