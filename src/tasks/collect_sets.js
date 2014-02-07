@@ -111,12 +111,14 @@ var readLevelsForLibrary = function(target, result) {
  * @returns {*}
  */
 var readBlocksForLevel = function(target, result, level) {
+    var blockIgnores = ['.bem', 'index', 'catalogue', 'index', 'jscatalogue'];
+
     return u.getDirsAsync(path.resolve(target.outputPath, level.name))
         .then(function(blocks) {
             return q.allSettled(
                 blocks
                     .filter(function(block) {
-                        return block !== '.bem';
+                        return blockIgnores.indexOf(block) === -1;
                     })
                     .map(function(block) {
                         block = { name: block };
