@@ -19,7 +19,7 @@ var MSG = {
         END:  '-- collect sets end --'
     },
     DEBUG: {
-        READ_MARKDOWNS: 'read markdown files for library %s %s',
+        READ_MARKDOWNS: 'read markdown files fs.ReadStream(path, options);r library %s %s',
         READ_LEVELS: 'read level directories for library %s %s',
         WRITE_RESULT_TO_FILE: 'write result to file'
     }
