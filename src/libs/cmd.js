@@ -80,7 +80,7 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     bemMakeLibs: function(target) {
-        return runCommand('bem make libs -v error',
+        return runCommand('node_modules/bem/bin/bem make libs -v error',
             { cwd: path.resolve(target.contentPath) }, 'bem make libs', target);
     },
 
@@ -90,7 +90,7 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     bemMakeSets: function(target) {
-        return runCommand('bem make sets -v error',
+        return runCommand('node_modules/bem/bin/bem make sets -v error',
             { cwd: path.resolve(target.contentPath) }, 'bem make sets', target);
     },
 
