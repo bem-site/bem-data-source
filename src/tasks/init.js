@@ -59,11 +59,8 @@ module.exports = {
                     return commands.gitInit(constants.DIRECTORY.OUTPUT)
                         .then(getUrlOfRemoteDataRepository)
                         .then(function(remoteUrl) {
-                            return commands.gitRemoteAdd(constants.DIRECTORY.OUTPUT, 'origin', remoteUrl);
+                            return commands.gitRemoteAdd('origin', remoteUrl);
                         });
-//                        .then(function() {
-//                            return commands.gitCheckout(constants.DIRECTORY.OUTPUT, dataRepository.ref);
-//                        });
                 }
 
             });
