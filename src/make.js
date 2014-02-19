@@ -15,7 +15,7 @@ var MSG = {
         END: '---- data source end ----'
     }
 };
-
+    
 var make = (function() {
     logger.info(MSG.INFO.START);
 
