@@ -12,115 +12,133 @@ var util = require('util'),
     logger = require('./logger')(module),
     u = require('./util');
 
-var CMD = {
-    GIT_INIT: {
-        NAME: 'git init',
-        VALUE: 'git init'
-    },
-    GIT_REMOTE_ADD: {
-        NAME: 'git remote add',
-        VALUE: 'git remote add %s %s'
-    },
-    GIT_CLONE: {
-        NAME: 'git clone',
-        VALUE: 'git clone --progress %s %s'
-    },
-    GIT_CHECKOUT: {
-        NAME: 'git checkout',
-        VALUE: 'git checkout %s'
-    },
-    NPM_INSTALL: {
-        NAME: 'npm install',
-        VALUE: 'npm install --registry=http://npm.yandex-team.ru'
-    },
-    MAKE_LIBS: {
-        NAME: 'bem make libs',
-        VALUE: 'bem make libs -v error'
-    },
-    MAKE_SETS: {
-        NAME: 'bem make sets',
-        VALUE: 'bem make sets -v error'
-    },
-    GIT_MOVE_SETS: {
-        NAME: 'git move sets',
-        VALUE: 'cp -R %s/*.sets %s'
-    },
-    GIT_MOVE_MD: {
-        NAME: 'git move markdowns',
-        VALUE: 'cp -R %s/*.md %s'
-    },
-    GIT_ADD: {
-        NAME: 'git add',
-        VALUE: 'git add .'
-    },
-    GIT_COMMIT: {
-        NAME: 'git commit',
-        VALUE: 'git commit -a --allow-empty -m "%s"'
-    },
-    GIT_PUSH: {
-        NAME: 'git push',
-        VALUE: 'git push -f -u origin %s'
-    }
-};
-
 module.exports = {
 
-    gitInit: function(dir) {
-        return runCommand(CMD.GIT_INIT.VALUE,
-            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, CMD.GIT_INIT.NAME, null);
+    /**
+     * Initialize new git repository in output directory
+     * @returns {defer.promise|*}
+     */
+    gitInit: function() {
+        return runCommand('git init',
+            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git init', null);
     },
 
-    gitRemoteAdd: function(dir, name, _path) {
-        return runCommand(util.format(CMD.GIT_REMOTE_ADD.VALUE, name, _path),
-            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, CMD.GIT_REMOTE_ADD.NAME, null);
+    /**
+     * Add git remote repo url
+     * @param name - {Stirng} alias for remote git repository
+     * @param _path - {String} url for remote git repository
+     * @returns {defer.promise|*}
+     */
+    gitRemoteAdd: function(name, _path) {
+        return runCommand(util.format('git remote add %s %s', name, _path),
+            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git remote add', null);
     },
 
+    /**
+     * Executes git clone command
+     * @param target - {Object} target object
+     * @returns {defer.promise|*}
+     */
     gitClone: function(target) {
         return runCommand(
-            util.format(CMD.GIT_CLONE.VALUE, target.url, target.contentPath), {}, CMD.GIT_CLONE.NAME, target);
+            util.format('git clone --progress %s %s', target.url, target.contentPath), {}, 'git clone', target);
     },
 
+    /**
+     * Executes git checkout command
+     * @param target - {Object} target object
+     * @returns {defer.promise|*}
+     */
     gitCheckout: function(target) {
-        return runCommand(util.format(CMD.GIT_CHECKOUT.VALUE, target.ref),
-            { cwd: path.resolve(target.contentPath) }, CMD.GIT_CHECKOUT.NAME, target);
+        return runCommand(util.format('git checkout %s', target.ref),
+            { cwd: path.resolve(target.contentPath) }, 'git checkout', target);
     },
 
+    /**
+     * Executes npm install command
+     * @param target - {Object} target object
+     * @returns {defer.promise|*}
+     */
     npmInstall: function(target) {
-        return runCommand(CMD.NPM_INSTALL.VALUE,
-            { cwd: path.resolve(target.contentPath) }, CMD.NPM_INSTALL.NAME, target);
+        return runCommand('npm install --registry=http://npm.yandex-team.ru',
+            { cwd: path.resolve(target.contentPath) }, 'npm install', target);
     },
 
+    /**
+     * [bowerNpmInstall description]
+     * @param  {Object} target target object
+     * @return 
+     */
+    bowerNpmInstall: function(target) {
+        return runCommand('bower-npm-install --non-interactive',
+            { cwd: path.resolve(target.contentPath) }, 'bower npm install', target);        
+    },
+
+    /**
+     * Executes bem make libs command
+     * @param target - {Object} target object
+     * @returns {defer.promise|*}
+     */
     bemMakeLibs: function(target) {
-        return runCommand(CMD.MAKE_LIBS.VALUE,
-            { cwd: path.resolve(target.contentPath) }, CMD.MAKE_LIBS.NAME, target);
+        return runCommand('bem make libs -v error',
+            { cwd: path.resolve(target.contentPath) }, 'bem make libs', target);
     },
 
+    /**
+     * Executes bem make sets command
+     * @param target - {Object} target object
+     * @returns {defer.promise|*}
+     */
     bemMakeSets: function(target) {
-        return runCommand(CMD.MAKE_SETS.VALUE,
-            { cwd: path.resolve(target.contentPath) }, CMD.MAKE_SETS.NAME, target);
+        return runCommand('bem make sets -v error',
+            { cwd: path.resolve(target.contentPath) }, 'bem make sets', target);
     },
 
+    /**
+     * Executes copying sets folders
+     * @param target - {Object} target object
+     * @returns {defer.promise|*}
+     */
     gitMoveSets: function(target) {
-        return runCommand(util.format(CMD.GIT_MOVE_SETS.VALUE, target.contentPath, target.outputPath), {}, CMD.GIT_MOVE_SETS.NAME, null);
+        return runCommand(util.format('cp -R %s/*.sets %s', target.contentPath, target.outputPath), {}, 'git move sets', null);
     },
 
+    /**
+     * Executes copying markdown files
+     * @param target - {Object} target object
+     * @returns {defer.promise|*}
+     */
     gitMoveMd: function(target) {
-        return runCommand(util.format(CMD.GIT_MOVE_MD.VALUE, target.contentPath, target.outputPath), {}, CMD.GIT_MOVE_MD.NAME, null);
+        return runCommand(util.format('cp -R %s/*.md %s', target.contentPath, target.outputPath), {}, 'git move markdowns', null);
     },
 
+    /**
+     * Adds all files for commit
+     * @returns {defer.promise|*}
+     */
     gitAdd: function() {
-        return runCommand(CMD.GIT_ADD.VALUE,
-            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, CMD.GIT_ADD.NAME, null);
+        return runCommand('git add .',
+            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git add', null);
     },
 
+    /**
+     * Executes git commit command
+     * @param message - {String} commit message
+     * @returns {defer.promise|*}
+     */
     gitCommit: function(message) {
-        return runCommand(util.format(CMD.GIT_COMMIT.VALUE, message),
-            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, CMD.GIT_COMMIT.NAME, null);
+        return runCommand(util.format('git commit -a --allow-empty -m "%s"', message),
+            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git commit', null);
     },
 
+    /**
+     * Executes git push command
+     * @param ref {Stirng} of remote branch
+     * @returns {defer.promise|*}
+     */
     gitPush: function(ref) {
-        return runCommand(util.format(CMD.GIT_PUSH.VALUE, ref),
-            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, CMD.GIT_PUSH.NAME, null);
+        return runCommand(util.format('git push -f -u origin %s', ref),
+            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git push', null);
     }
 };
 
