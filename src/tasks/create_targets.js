@@ -99,7 +99,8 @@ var createTarget = function() {
     }
 
     target.tasks.push(commands.npmInstall);
-    target.tasks.push(commands.bowerNpmInstall);
+    target.tasks.push(commands.npmRunDeps);
+    //target.tasks.push(commands.bowerNpmInstall);
     //target.tasks.push(commands.bemMakeLibs);
     target.tasks.push(commands.bemMakeSets);
 
