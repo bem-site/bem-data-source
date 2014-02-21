@@ -11,10 +11,58 @@
                         "exclude": []
                     },
                     "branches": {
+                        "include": ["release/2.1.0"],
+                        "exclude": []
+                    }
+                },
+                {
+                    "name": "islands-user",
+                    "targetDir": "islands-user",
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
                         "include": ["dev"],
                         "exclude": []
                     }
-                }
+                },
+                {
+                    "name": "islands-page",
+                    "targetDir": "islands-page",
+                    "tags": {
+                        "include": [],
+                        "exclude": []
+                    },
+                    "branches": {
+                        "include": ["dev"],
+                        "exclude": []
+                    }
+               },
+               {
+                   "name": "islands-search",
+                   "targetDir": "islands-search",
+                   "tags": {
+                       "include": [],
+                       "exclude": []
+                   },
+                   "branches": {
+                       "include": ["dev"],
+                       "exclude": []
+                   }
+               },
+               {
+                   "name": "islands-services",
+                   "targetDir": "islands-services",
+                   "tags": {
+                       "include": [],
+                       "exclude": []
+                   },
+                   "branches": {
+                       "include": ["dev"],
+                       "exclude": []
+                   }
+               }
             ]
         }
     ],

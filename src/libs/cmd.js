@@ -79,20 +79,22 @@ module.exports = {
      * @param  {Object} target target object
      * @return 
      */
-//    bowerNpmInstall: function(target) {
-//        return runCommand('bower-npm-install --non-interactive',
-//            { cwd: path.resolve(target.contentPath) }, 'bower npm install', target);
-//    },
+    bowerNpmInstall: function(target) {
+        return runCommand('bower-npm-install --non-interactive',
+            { cwd: path.resolve(target.contentPath) }, 'bower npm install', target);
+    },
+
 
     /**
      * Executes bem make libs command
      * @param target - {Object} target object
      * @returns {defer.promise|*}
      */
-//    bemMakeLibs: function(target) {
-//        return runCommand('bem make libs -v error',
-//            { cwd: path.resolve(target.contentPath) }, 'bem make libs', target);
-//    },
+    bemMakeLibs: function(target) {
+        return runCommand('node_modules/bem/bin/bem make libs -v error',
+            { cwd: path.resolve(target.contentPath) }, 'bem make libs', target);
+    },
+
 
     /**
      * Executes bem make sets command
@@ -100,7 +102,7 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     bemMakeSets: function(target) {
-        return runCommand('bem make sets -v error',
+        return runCommand('node_modules/bem/bin/bem make sets -v error',
             { cwd: path.resolve(target.contentPath) }, 'bem make sets', target);
     },
 
