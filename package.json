@@ -21,6 +21,7 @@
     "intel": "0.4.0",
     "github": "git://github.com/whentomanage/node-github.git",
     "rimraf": "~2.2.4",
+    "mkdirp": "~0.3.5",
     "semver": "2.2.1",
     "marked": "git://github.com/dab/marked.git",
     "highlight.js": "7"
