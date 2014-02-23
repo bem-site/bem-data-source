@@ -149,7 +149,7 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     gitPush: function(ref) {
-        return runCommand(util.format('git push -f -u origin %s', ref),
+        return runCommand(util.format('git push -u origin %s', ref),
             { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git push', null);
     }
 };
@@ -172,7 +172,7 @@ var runCommand = function(cmd, opts, name, target) {
         target = {name: 'all'};
     }
 
-    logger.debug(cmd);
+    logger.debug('execute %s for target %s', cmd, target.name);
 
     u
         .exec(cmd, _.extend(opts, baseOpts))
@@ -184,7 +184,7 @@ var runCommand = function(cmd, opts, name, target) {
             function(error) {
                 logger.error(error);
                 logger.error('%s for target %s failed', name, target.name);
-                logger.error('execution of command %s failed', cmd);
+                logger.error('execution of command %s failed for target %s', cmd, target.name);
                 def.reject(error);
             }
         );
