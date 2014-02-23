@@ -82,8 +82,8 @@ var createOrUpdateFromLocal = function(targets, _path, o, file) {
         .then(function(content) {
             var updatedConfig =  JSON.stringify(markAsMade(targets, content), null, 4);
             return q.all([
-                q_io.write(_path, updatedConfig, { charset: 'utf8' }),
-                promise(updatedConfig)
+                q_io.write(_path, updatedConfig, { charset: 'utf8' })//,
+                //promise(updatedConfig)
             ]);
         });
 };
