@@ -11,6 +11,7 @@ var util = require('util'),
     q_io = require('q-io/fs'),
     md = require('marked'),
     hl = require('highlight.js'),
+    mkdirp = require('mkdirp'),
 
     logger = require('./logger')(module),
     config = require('../config');
@@ -20,17 +21,38 @@ var util = require('util'),
  * @param dirName - {String} name of directory
  * @returns {Promise|*|Promise.fail}
  */
+// exports.createDirectory = function(dirName) {
+//     return q_io
+//         .makeDirectory(dirName)
+//         .then(function() {
+//             logger.debug('%s directory has been created', dirName);
+//         })
+//         .fail(function(err) {
+//             if(err.code === 'EEXIST') {
+//                 logger.warn('%s directory already exist', dirName);
+//             }
+//         });
+// };
+
 exports.createDirectory = function(dirName) {
-    return q_io
-        .makeDirectory(dirName)
-        .then(function() {
+    var def = q.defer();
+
+    q.nfapply(mkdirp, [dirName])
+    .then(
+        function(result) {
+            def.resolve(dirName);
             logger.debug('%s directory has been created', dirName);
-        })
-        .fail(function(err) {
+        },
+        function(err) {
             if(err.code === 'EEXIST') {
+                def.resolve(dirName);
                 logger.warn('%s directory already exist', dirName);
+            }else {
+                def.reject(err.message);    
             }
-        });
+        }
+    );
+    return def.promise;
 };
 
 /**
