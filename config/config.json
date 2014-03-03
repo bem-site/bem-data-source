@@ -1,17 +1,17 @@
 {
     "logLevel": "debug",
-    "localMode": "true",
+    "localMode": true,
     "repoConfig": {
-        "user": "tormozz48",
-        "repo": "bem-data",
-        "ref": "master",
-        "private": "false"
+        "type": "private",
+        "user": "lego",
+        "repo": "lego-site-data",
+        "ref": "master"
     },
     "dataConfig": {
-        "user": "tormozz48",
-        "repo": "bem-data",
-        "ref": "master",
-        "private": "false"
+        "type": "private",
+        "user": "lego",
+        "repo": "lego-site-data",
+        "ref": "master"
     },
     "gitAPI": {
         "common": {
