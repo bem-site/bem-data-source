@@ -41,9 +41,7 @@ module.exports = {
     run: function() {
         logger.info(MSG.INFO.START);
 
-        var localMode = config.get('localMode');
-
-        if(localMode && localMode === 'true') {
+        if(config.get('localMode')) {
             logger.debug(MSG.DEBUG.LOCAL_TRUE);
             return readLocalConfig();
         } else {
@@ -98,6 +96,12 @@ var readLocalConfig = function() {
  * @returns {Array} - array with sources for processing on next steps
  */
 var createSources = function(sources) {
+    var priv = config.get('private'),
+        user = config.get('user'),
+        repo = config.get('repo'),
+        tag = config.get('tag'),
+        branch = config.get('branch');
+
     var result = [];
     _.keys(sources).forEach(function(key) {
         sources[key].forEach(function(source) {
@@ -114,6 +118,30 @@ var createSources = function(sources) {
             }
         });
     });
+
+    if(priv || user || repo || tag || branch) {
+        logger.info('Params for special library version were set')
+
+        if(!priv) {
+            logger.error('Private flag has not been set');
+        }
+
+        if(!user) {
+            logger.error('User or organization has not been set');
+        }
+
+        if(!repo) {
+            logger.error('Repository name has not been set');   
+        }
+
+        if(!tag) {
+            logger.error('Tag name has not been set');
+        }
+
+        if(!branch) {
+            logger.error('Branch name has not been set');    
+        }
+    }
 
     return result;
 };
