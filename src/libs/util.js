@@ -16,24 +16,6 @@ var util = require('util'),
     logger = require('./logger')(module),
     config = require('../config');
 
-/**
- * Creates directory with given name
- * @param dirName - {String} name of directory
- * @returns {Promise|*|Promise.fail}
- */
-// exports.createDirectory = function(dirName) {
-//     return q_io
-//         .makeDirectory(dirName)
-//         .then(function() {
-//             logger.debug('%s directory has been created', dirName);
-//         })
-//         .fail(function(err) {
-//             if(err.code === 'EEXIST') {
-//                 logger.warn('%s directory already exist', dirName);
-//             }
-//         });
-// };
-
 exports.createDirectory = function(dirName) {
     var def = q.defer();
 
