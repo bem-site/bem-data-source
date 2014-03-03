@@ -22,7 +22,6 @@ module.exports = {
         var def = q.defer(),
             _path = path.resolve('config', 'repositories') + '.json',
             repoConfig = config.get('repoConfig'),
-            localMode = config.get('localMode'),
             o = {
                 user: repoConfig.user || repoConfig.org,
                 repo: repoConfig.repo,
@@ -36,7 +35,7 @@ module.exports = {
             .getContent(repoConfig, constants.FILE.REPOSITORIES)
             .then(
                 function(file) {
-                    return (localMode && localMode === 'true') ?
+                    return (config.get('localMode')) ?
                         createOrUpdateFromLocal(targets, _path, o, file) :
                         updateFromRemote(targets, _path, o, file);
                 },
