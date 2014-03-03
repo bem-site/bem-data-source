@@ -29,7 +29,8 @@ module.exports = function(target) {
 
     var result = {
         repo: target.source.name,
-        ref: target.ref
+        ref: target.ref,
+        url: target.source.url.replace('git:', 'http:').replace('.git', '')
     };
 
     logger.info(MSG.INFO.START);
