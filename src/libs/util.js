@@ -16,19 +16,24 @@ var util = require('util'),
     logger = require('./logger')(module),
     config = require('../config');
 
-exports.createDirectory = function(dirName) {
+/**
+ * Creates directory
+ * @param name - {String} name of directory
+ * @returns {Promise<T>}
+ */
+exports.createDirectory = function(name) {
     var def = q.defer();
 
-    q.nfapply(mkdirp, [dirName])
+    q.nfapply(mkdirp, [name])
     .then(
-        function(result) {
-            def.resolve(dirName);
-            logger.debug('%s directory has been created', dirName);
+        function() {
+            def.resolve(name);
+            logger.debug('%s directory has been created', name);
         },
         function(err) {
             if(err.code === 'EEXIST') {
-                def.resolve(dirName);
-                logger.warn('%s directory already exist', dirName);
+                def.resolve(name);
+                logger.warn('%s directory already exist', name);
             }else {
                 def.reject(err.message);    
             }
@@ -144,6 +149,11 @@ exports.getDirs = function(_path) {
     }
 };
 
+/**
+ * Returns list of directories async
+ * @param _path - {String} path
+ * @returns {*|Q.IPromise<U>|Q.Promise<U>}
+ */
 exports.getDirsAsync = function(_path) {
     return q_io.list(_path).then(function(items) {
         return q.all(items.map(function(i) {
@@ -169,6 +179,11 @@ exports.getDirsAsync = function(_path) {
     });
 };
 
+/**
+ * Converts markdown content into html with marked module
+ * @param content - {String} markdown content
+ * @returns {String} - html string
+ */
 exports.mdToHtml = function(content) {
     var languages = {};
 
