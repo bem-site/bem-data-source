@@ -8,27 +8,27 @@ config.argv({
           demand: true,
           default: 'info'
         },
-        "private": {
+        "p": {
           alias: 'private',
           describe: 'Private flag for repository',
           demand: false
         },
-        "user": {
+        "u": {
           alias: 'user',
           describe: 'User or organization for repository',
           demand: false
         },
-        "repo": {
+        "r": {
           alias: 'repository',
           describe: 'Name of repository',
           demand: false
         },
-        "tag": {
+        "t": {
           alias: 'tag',
           describe: 'Name of tag for creation',
           demand: false
         },
-        "branch": {
+        "b": {
           alias: 'branch',
           describe: 'Name of branch for creation',
           demand: false

@@ -7,8 +7,8 @@ var util = require('util'),
     q = require('q'),
 
     constants = require('../constants'),
-    logger = require('../libs/logger')(module),
-    u = require('../libs/util');
+    libs = require('../libs'),
+    logger = libs.logger(module);
 
 var MSG = {
     INFO: {
@@ -20,10 +20,10 @@ var MSG = {
 module.exports = function(target) {
     logger.info(MSG.INFO.START);
 
-    return u
+    return libs.util
         .createDirectory(path.join(constants.DIRECTORY.OUTPUT, target.sourceDir))
         .then(function() {
-            return u.createDirectory(path.join(constants.DIRECTORY.OUTPUT, target.sourceDir, target.ref));
+            return libs.util.createDirectory(path.join(constants.DIRECTORY.OUTPUT, target.sourceDir, target.ref));
         })
         .then(function() {
             logger.info(MSG.INFO.END);

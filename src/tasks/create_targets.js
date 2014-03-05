@@ -11,11 +11,8 @@ var util = require('util'),
     config = require('../config'),
     constants = require('../constants'),
     libs = require('../libs'),
-
-    u = libs.util,
-    commands = libs.cmd,
     logger = libs.logger(module),
-
+    clear = require('./clear'),
     collectSets = require('./collect_sets'),
     createOutput = require('./create_output');
 
@@ -24,6 +21,9 @@ var MSG = {
         START: '-- create targets start --',
         END: '-- create targets end --'
     },
+    WARN: {
+        NO_TARGETS: 'no targets will be executed'
+    },
     DEBUG: {
         CREATE_TARGET_FOR: 'create target for source: %s with ref %s into directory %s'
     }
@@ -31,6 +31,11 @@ var MSG = {
 
 module.exports = {
 
+    /**
+     * Creates targets for each of sources
+     * @param sources - {Array} of sources
+     * @returns {Promise<T>}
+     */
     run: function(sources) {
         logger.info(MSG.INFO.START);
 
@@ -40,7 +45,7 @@ module.exports = {
         try{
             sources.forEach(function(source) {
                 var sourceDir = source.targetDir || source.name,
-                    existed = u.getDirs(path.join(constants.DIRECTORY.CONTENT, sourceDir));
+                    existed = libs.util.getDirs(path.join(constants.DIRECTORY.CONTENT, sourceDir));
 
                 ['tags', 'branches'].forEach(function(type) {
                     source[type].forEach(function(ref) {
@@ -48,6 +53,10 @@ module.exports = {
                     });
                 });
             });
+
+            if(targets.length === 0) {
+                logger.warn(MSG.WARN.NO_TARGETS);
+            }
 
             def.resolve(targets);
         }catch(err) {
@@ -93,21 +102,20 @@ var createTarget = function() {
 
     target.tasks.push(createOutput);
 
-    if(_.indexOf(existed, ref) === -1) {
-        target.tasks.push(commands.gitClone);
-        target.tasks.push(commands.gitCheckout);
+    //clear existed directory for target if it already exist on filesystem
+    if(_.indexOf(existed, ref) !== -1) {
+        target.tasks.push(clear);
     }
 
-    target.tasks.push(commands.npmInstall);
-    target.tasks.push(commands.npmRunDeps);
-    //target.tasks.push(commands.bowerNpmInstall);
-    //target.tasks.push(commands.bemMakeLibs);
-    target.tasks.push(commands.bemMakeSets);
+    target.tasks.push(libs.cmd.gitClone); //git clone
+    target.tasks.push(libs.cmd.gitCheckout); //git checkout
+    target.tasks.push(libs.cmd.npmInstall); //npm install
+    target.tasks.push(libs.cmd.npmRunDeps); //bower or bem make libs
+    target.tasks.push(libs.cmd.bemMakeSets); //bem make sets
+    target.tasks.push(libs.cmd.gitMoveSets); //move sets to output folder
+    target.tasks.push(libs.cmd.gitMoveMd); //mode md files to output folder
 
-    target.tasks.push(commands.gitMoveSets);
-    target.tasks.push(commands.gitMoveMd);
-
-    target.tasks.push(collectSets);
+    target.tasks.push(collectSets); //collect sets
 
     logger.debug(MSG.DEBUG.CREATE_TARGET_FOR,
         source.name, ref, path.join(constants.DIRECTORY.CONTENT, sourceDir, ref));

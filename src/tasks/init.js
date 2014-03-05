@@ -9,10 +9,6 @@ var util = require('util'),
     config = require('../config'),
     constants = require('../constants'),
     libs = require('../libs'),
-
-    u = libs.util,
-    api = libs.api,
-    commands = libs.cmd,
     logger = libs.logger(module);
 
 var MSG = {
@@ -34,7 +30,7 @@ module.exports = {
     run: function() {
         var dataRepository = config.get("dataConfig"),
             getUrlOfRemoteDataRepository = function() {
-                return api
+                return libs.api
                     .getRepository({
                         user: dataRepository.user,
                         name: dataRepository.repo,
@@ -51,15 +47,15 @@ module.exports = {
             };
 
         return q.all([
-                u.createDirectory(constants.DIRECTORY.CONTENT),
-                u.createDirectory(constants.DIRECTORY.OUTPUT)
+                libs.util.createDirectory(constants.DIRECTORY.CONTENT),
+                libs.util.createDirectory(constants.DIRECTORY.OUTPUT)
             ])
             .then(function() {
-                if(!u.isDirectory(path.resolve(constants.DIRECTORY.OUTPUT, '.git'))) {
-                    return commands.gitInit(constants.DIRECTORY.OUTPUT)
+                if(!libs.util.isDirectory(path.resolve(constants.DIRECTORY.OUTPUT, '.git'))) {
+                    return libs.commands.gitInit()
                         .then(getUrlOfRemoteDataRepository)
                         .then(function(remoteUrl) {
-                            return commands.gitRemoteAdd('origin', remoteUrl);
+                            return libs.commands.gitRemoteAdd('origin', remoteUrl);
                         });
                 }
 

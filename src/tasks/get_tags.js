@@ -8,9 +8,8 @@ var util = require('util'),
 
     //application modules
     config = require('../config'),
-    logger = require('../libs/logger')(module),
-    api = require('../libs/api'),
-    u = require('../libs/util');
+    libs = require('../libs'),
+    logger = libs.logger(module);
 
 var TAGS_ALL = 'all',
     TAGS_LAST = 'last';
@@ -49,12 +48,12 @@ module.exports = {
 
         return q.allSettled(
                 sources.map(function(item) {
-                    return api.getRepositoryTags(item);
+                    return libs.api.getRepositoryTags(item);
                 })
             ).then(function(res) {
 
                 //remove all rejected promises and map fulfilled promises
-                res = u.filterAndMapFulfilledPromises(res, function(item) {
+                res = libs.util.filterAndMapFulfilledPromises(res, function(item) {
                     item = item.value;
                     item.source.tags = filterTags(item.source, _.pluck(item.result, 'name'));
                     return item.source;

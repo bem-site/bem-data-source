@@ -6,7 +6,8 @@ var util = require('util'),
     rmrf = require('rimraf'),
     q = require('q'),
 
-    logger = require('../libs/logger')(module);
+    libs = require('../libs'),
+    logger = libs.logger(module);
 
 /**
  * Recursively removes source directories from filesystem
@@ -20,7 +21,7 @@ var util = require('util'),
 module.exports = function(target) {
     var def = q.defer();
 
-    q.nfapply(rmrf, [target.path])
+    q.nfapply(rmrf, [target.contentPath])
     .then(
         function(result) {
             logger.info('remove directory for target %s completed', target.name);
