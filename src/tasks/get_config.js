@@ -10,82 +10,49 @@ var util = require('util'),
 
     //application modules
     config = require('../config'),
-    constants = require('../constants'),
-    logger = require('../libs/logger')(module),
-    api = require('../libs/api');
+    libs = require('../libs'),
+    logger = libs.logger(module);
 
 var MSG = {
     ERR: {
-        CONF_NOT_FOUND: 'Configuration file was not found on local filesystem'
-    },
-    WARN: {
-        CONF_NOT_FOUND: 'Configuration file was not found on github. Load local configuration file'
+        CONF_NOT_FOUND: 'Configuration file was not found on local filesystem',
+        PRIVATE_NOT_SET: 'Private flag has not been set',
+        USER_NOT_SET: 'User or organization has not been set',
+        REPO_NOT_SET: 'Repository name has not been set',
+        TAG_OR_BRANCH_NOT_SET: 'Tag and Branch named have not been set'
     },
     INFO: {
-        START: '-- get configs start --'
-    },
-    DEBUG: {
-        LOCAL_TRUE: 'Local mode flag is set to true. Repositories list will be loaded from local filesystem',
-        LOCAL_FALSE: 'Local mode flag is set to false. Repositories list will be loaded from remote github repository'
+        START: '-- get configs start --',
+        END: '-- get configs end --'
     }
 };
 
 module.exports = {
 
     /**
-     * Retrieves sources configuration throught github API
-     * (with fallback to local configuration file)
+     * Retrieves sources from local configuration file)
      * and modify it for suitable github API calling
      * @returns {defer.promise|*}
      */
     run: function() {
         logger.info(MSG.INFO.START);
 
-        if(config.get('localMode')) {
-            logger.debug(MSG.DEBUG.LOCAL_TRUE);
-            return readLocalConfig();
-        } else {
-            logger.debug(MSG.DEBUG.LOCAL_FALSE);
-            return readRemoteConfig();
-        }
-    }
-};
-
-/**
- * Loads data from remote repositories.json configuration file
- * @returns {*}
- */
-var readRemoteConfig = function() {
-    return api
-        .getContent(config.get('repoConfig'), constants.FILE.REPOSITORIES)
-        .then(
-            function(file) {
-                return createSources(JSON.parse(new Buffer(file.content, 'base64')));
-            },
-            function(error) {
-                if(error.code === 404) {
-                    logger.warn(MSG.WARN.CONF_NOT_FOUND);
-                    return readLocalConfig();
+        return q_io.read(path.resolve('config', 'repositories') + '.json')
+            .then(
+                function(content) {
+                    return createSources(JSON.parse(content));
+                },
+                function() {
+                    logger.error(MSG.ERR.CONF_NOT_FOUND);
                 }
-            }
-        );
-};
-
-/**
- * Loads data from local repositories.json configuration file
- * Needs for local mode or for case when repositories.json file not existed yet
- * @returns {*}
- */
-var readLocalConfig = function() {
-    return q_io.read(path.resolve('config', 'repositories') + '.json')
-        .then(
-            function(content) {
-                return createSources(JSON.parse(content));
-            },
-            function() {
-                logger.error(MSG.ERR.CONF_NOT_FOUND);
-            }
-        );
+            )
+            .then(
+                function(sources) {
+                    logger.info(MSG.INFO.END);
+                    return sources;
+                }
+            );
+    }
 };
 
 /**
@@ -96,13 +63,17 @@ var readLocalConfig = function() {
  * @returns {Array} - array with sources for processing on next steps
  */
 var createSources = function(sources) {
-    var priv = config.get('private'),
+
+    //build of single library version by params
+    var priv = !!config.get('private'),
         user = config.get('user'),
-        repo = config.get('repo'),
+        repo = config.get('repository'),
         tag = config.get('tag'),
         branch = config.get('branch');
 
     var result = [];
+
+
     _.keys(sources).forEach(function(key) {
         sources[key].forEach(function(source) {
             var owner = source.org || source.user,
@@ -120,26 +91,49 @@ var createSources = function(sources) {
     });
 
     if(priv || user || repo || tag || branch) {
-        logger.info('Params for special library version were set')
+        logger.info('Params for special library version were set');
+        logger.info('Params private: %s user: %s repo: %s tag: %s branch: %s', priv, user, repo, tag, branch);
+
+        var err = false;
 
         if(!priv) {
-            logger.error('Private flag has not been set');
+            err = true;
+            logger.error(MSG.ERR.PRIVATE_NOT_SET);
         }
 
         if(!user) {
-            logger.error('User or organization has not been set');
+            err = true;
+            logger.error(MSG.ERR.USER_NOT_SET);
         }
 
         if(!repo) {
-            logger.error('Repository name has not been set');   
+            err = true;
+            logger.error(MSG.REPO_NOT_SET);
         }
 
-        if(!tag) {
-            logger.error('Tag name has not been set');
+        if(!tag && !branch) {
+            err = true;
+            logger.error(MSG.TAG_OR_BRANCH_NOT_SET);
         }
 
-        if(!branch) {
-            logger.error('Branch name has not been set');    
+        var exist = result.filter(function(item) {
+            return priv === item.isPrivate && user === item.user && repo === item.name;
+        })[0];
+
+        if(!err && exist) {
+            if(tag) {
+                if(exist.tags.include.indexOf(tag) === -1) {
+                    exist.tags.include.push(tag);
+                }
+                exist.tags.exclude = _.without(exist.tags.exclude, tag);
+            }
+
+            if(branch) {
+                if(exist.branches.include.indexOf(branch) === -1) {
+                    exist.branches.include.push(branch);
+                }
+                exist.branches.exclude = _.without(exist.branches.exclude, branch);
+            }
         }
     }
 

@@ -7,8 +7,8 @@ var util = require('util'),
     _ = require('lodash'),
 
     //application modules
-    logger = require('../libs/logger')(module),
-    u = require('../libs/util');
+    libs = require('../libs'),
+    logger = libs.logger(module);
 
 var MSG = {
     INFO: {
@@ -42,7 +42,7 @@ module.exports = {
                 )
                 .then(
                     function(result) {
-                        def.resolve(u.filterAndMapFulfilledPromises(result, function(item) { return item.value; } ));
+                        def.resolve(libs.util.filterAndMapFulfilledPromises(result, function(item) { return item.value; } ));
                         logger.info(MSG.INFO.END);
                     }
                 );

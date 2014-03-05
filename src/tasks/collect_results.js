@@ -8,9 +8,7 @@ var util = require('util'),
 
     config = require('../config'),
     libs = require('../libs'),
-
-    logger = libs.logger(module),
-    commands = libs.cmd;
+    logger = libs.logger(module);
 
 var MSG = {
     INFO: {
@@ -24,12 +22,12 @@ module.exports = {
     run: function() {
         logger.info(MSG.INFO.START);
 
-        return commands.gitAdd()
+        return libs.cmd.gitAdd()
             .then(function() {
-                return commands.gitCommit(util.format('Update data: %s', (new Date()).toString()));
+                return libs.cmd.gitCommit(util.format('Update data: %s', (new Date()).toString()));
             })
             .then(function() {
-                return commands.gitPush(config.get('dataConfig:ref'));
+                return libs.cmd.gitPush(config.get('dataConfig:ref'));
             })
             .then(function() {
                 logger.info(MSG.INFO.END);

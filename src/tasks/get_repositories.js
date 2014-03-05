@@ -6,7 +6,8 @@ var util = require('util'),
     q = require('q'),
     _ = require('lodash'),
 
-    logger = require('../libs/logger')(module);
+    libs = require('../libs'),
+    logger = libs.logger(module);
 
 var GITHUB = {
     INNER: 'github.yandex-team.ru',
@@ -15,8 +16,8 @@ var GITHUB = {
 
 var MSG = {
     INFO: {
-        START: '-- get reposittories start --',
-        END: '-- get reposittories end --'
+        START: '-- get repositories start --',
+        END: '-- get repositories end --'
     }
 };
 

@@ -1,12 +1,5 @@
 {
     "logLevel": "debug",
-    "localMode": true,
-    "repoConfig": {
-        "type": "private",
-        "user": "lego",
-        "repo": "lego-site-data",
-        "ref": "master"
-    },
     "dataConfig": {
         "type": "private",
         "user": "lego",
