@@ -57,7 +57,7 @@ module.exports = {
                     logger.info(MSG.INFO.CLONE_DATA_REPO_START);
                     return getUrlOfRemoteDataRepository()
                         .then(function(remoteUrl) {
-                            libs.cmd.gitClone({
+                            return libs.cmd.gitClone({
                                 url: remoteUrl,
                                 contentPath: constants.DIRECTORY.OUTPUT
                             });
