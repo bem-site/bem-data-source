@@ -12,6 +12,10 @@ var util = require('util'),
     logger = libs.logger(module);
 
 var MSG = {
+    INFO: {
+        CLONE_DATA_REPO_START: 'Start clone remote target data repository. Please wait ...',
+        CLONE_DATA_REPO_END: 'Remote target data repository has been cloned successfully'
+    },
     ERROR: {
         DATA_REPO_NOT_FOUND: 'Data repository was not found. Application will be terminated'
     }
@@ -46,19 +50,22 @@ module.exports = {
                     );
             };
 
-        return q.all([
-                libs.util.createDirectory(constants.DIRECTORY.CONTENT),
-                libs.util.createDirectory(constants.DIRECTORY.OUTPUT)
-            ])
+        return libs.util.createDirectory(constants.DIRECTORY.CONTENT)
             .then(function() {
-                if(!libs.util.isDirectory(path.resolve(constants.DIRECTORY.OUTPUT, '.git'))) {
-                    return libs.commands.gitInit()
-                        .then(getUrlOfRemoteDataRepository)
+                if(!libs.util.isDirectory(constants.DIRECTORY.OUTPUT)) {
+
+                    logger.info(MSG.INFO.CLONE_DATA_REPO_START);
+                    return getUrlOfRemoteDataRepository()
                         .then(function(remoteUrl) {
-                            return libs.commands.gitRemoteAdd('origin', remoteUrl);
+                            libs.cmd.gitClone({
+                                url: remoteUrl,
+                                contentPath: constants.DIRECTORY.OUTPUT
+                            });
+                        })
+                        .then(function() {
+                            logger.info(MSG.INFO.CLONE_DATA_REPO_END);
                         });
                 }
-
             });
     }
 };

@@ -15,26 +15,6 @@ var util = require('util'),
 module.exports = {
 
     /**
-     * Initialize new git repository in output directory
-     * @returns {defer.promise|*}
-     */
-    gitInit: function() {
-        return runCommand('git init',
-            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git init', null);
-    },
-
-    /**
-     * Add git remote repo url
-     * @param name - {Stirng} alias for remote git repository
-     * @param _path - {String} url for remote git repository
-     * @returns {defer.promise|*}
-     */
-    gitRemoteAdd: function(name, _path) {
-        return runCommand(util.format('git remote add %s %s', name, _path),
-            { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git remote add', null);
-    },
-
-    /**
      * Executes git clone command
      * @param target - {Object} target object
      * @returns {defer.promise|*}
@@ -73,28 +53,6 @@ module.exports = {
         return runCommand('npm run deps',
             { cwd: path.resolve(target.contentPath) }, 'npm run deps', target);
     },
-
-    /**
-     * [bowerNpmInstall description]
-     * @param  {Object} target target object
-     * @return 
-     */
-//    bowerNpmInstall: function(target) {
-//        return runCommand('bower-npm-install --non-interactive',
-//            { cwd: path.resolve(target.contentPath) }, 'bower npm install', target);
-//    },
-
-
-    /**
-     * Executes bem make libs command
-     * @param target - {Object} target object
-     * @returns {defer.promise|*}
-     */
-//    bemMakeLibs: function(target) {
-//        return runCommand('node_modules/bem/bin/bem make libs -v error',
-//            { cwd: path.resolve(target.contentPath) }, 'bem make libs', target);
-//    },
-
 
     /**
      * Executes bem make sets command
