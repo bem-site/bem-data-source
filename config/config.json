@@ -1,7 +1,7 @@
 {
     "logLevel": "debug",
     "dataConfig": {
-        "type": "private",
+        "private": "true",
         "user": "lego",
         "repo": "lego-site-data",
         "ref": "master"
