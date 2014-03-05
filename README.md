@@ -17,13 +17,13 @@ bem-data-source
 
 Конфигурация инструмента описывается в файлах `config/config.json`, `config/repositories.json`, `config/credentials.json`.
 
-#### `config/config.json`
+##### `config/config.json`
 
 * `logLevel` - флаг уровня логгирования.
 * `dataConfig` - конфигурация удаленного репозитория для выкладки собранных данных.
 * `gitAPI` - конфигурация github API для доступа к приватным и публичным репозиториям github.
 
-#### `config/repositories.json`
+##### `config/repositories.json`
 
 В файле `config/repositories.json` описываются репозитории участвующие в сборке.
 
@@ -69,7 +69,7 @@ bem-data-source
 `all` и `last`. `all` указывает на необходимость сборки всех существующих тегов, а `last` только последнего тега.
 (здесь предполагается что теги имеют структуру 0.0.0, что дает возможность их явной сортировки)
 
-#### `config/credentials.json`
+##### `config/credentials.json`
 
 Файл с токенами доступа к публичным и приватным репозиториям (github.com и github.yandex-team.ru соответственно)
 Необходимо сгенерировать токены доступа в настройках профиля пользователя на github.com и github.yandex.team.ru
