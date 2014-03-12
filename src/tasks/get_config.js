@@ -65,7 +65,7 @@ module.exports = {
 var createSources = function(sources) {
 
     //build of single library version by params
-    var priv = !!config.get('private'),
+    var priv = config.get('private') && config.get('private') === 'true',
         user = config.get('user'),
         repo = config.get('repository'),
         tag = config.get('tag'),
@@ -95,11 +95,13 @@ var createSources = function(sources) {
         logger.info('Params private: %s user: %s repo: %s tag: %s branch: %s', priv, user, repo, tag, branch);
 
         var err = false;
-
+	
+	/*
         if(!priv) {
             err = true;
             logger.error(MSG.ERR.PRIVATE_NOT_SET);
         }
+	*/
 
         if(!user) {
             err = true;
