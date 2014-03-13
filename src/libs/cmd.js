@@ -69,17 +69,8 @@ module.exports = {
      * @param target - {Object} target object
      * @returns {defer.promise|*}
      */
-    gitMoveSets: function(target) {
+    moveSets: function(target) {
         return runCommand(util.format('cp -R %s/*.sets %s', target.contentPath, target.outputPath), {}, 'git move sets', null);
-    },
-
-    /**
-     * Executes copying markdown files
-     * @param target - {Object} target object
-     * @returns {defer.promise|*}
-     */
-    gitMoveMd: function(target) {
-        return runCommand(util.format('cp -R %s/*.md %s', target.contentPath, target.outputPath), {}, 'git move markdowns', null);
     },
 
     /**

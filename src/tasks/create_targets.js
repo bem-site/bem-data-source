@@ -112,8 +112,7 @@ var createTarget = function() {
     target.tasks.push(libs.cmd.npmInstall); //npm install
     target.tasks.push(libs.cmd.npmRunDeps); //bower or bem make libs
     target.tasks.push(libs.cmd.bemMakeSets); //bem make sets
-    target.tasks.push(libs.cmd.gitMoveSets); //move sets to output folder
-    target.tasks.push(libs.cmd.gitMoveMd); //mode md files to output folder
+    target.tasks.push(libs.cmd.moveSets); //move sets to output folder
 
     target.tasks.push(collectSets); //collect sets
 
