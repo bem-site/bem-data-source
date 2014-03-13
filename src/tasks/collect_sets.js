@@ -57,30 +57,48 @@ module.exports = function(target) {
 var readMarkdownFilesForLibrary = function(target, result) {
     logger.debug(MSG.DEBUG.READ_MARKDOWNS, target.source.name, target.ref);
 
-    var mdTargets = {
-        changelog: 'changelog.md',
-        migration: 'MIGRATION.md',
-        readme: 'README.md'
-    };
+    var source = target.source,
+        mdTargets  = {
+            readme: 'README.md',
+            changelog: source.changelog || 'changelog.md',
+            migration: source.migration || 'MIGRATION.md'
+        };
 
-    return q.allSettled(Object.keys(mdTargets)
-        .map(function(key) {
-            return q_io
-                .read(path.join(target.outputPath, mdTargets[key]))
-                .then(
-                    function(content) {
+        return q.allSettled(Object.keys(mdTargets)
+            .map(function(key) {
+                var onReadFileSuccess = function(content) {
                         try {
                             result[key] = u.mdToHtml(content);
                         }catch(e) {
                             result[key] = null;
                         }
                     },
-                    function() {
+                    onReadFileError = function() {
                         result[key] = null;
-                    }
-                );
-        })
-    );
+                    };
+
+                if(_.isObject(mdTargets[key])) {
+                    return q_io
+                        .list(path.join(target.contentPath, mdTargets[key].folder))
+                        .then(function(files) {
+                            return files.filter(function(file) {
+                                return file.indexOf(mdTargets[key].pattern) !== -1;
+                            })[0];
+                        })
+                        .then(function(file) {
+                            return q_io
+                                .read(path.join(target.contentPath, mdTargets[key].folder, file))
+                                .then(onReadFileSuccess, onReadFileError);
+                        });
+                }else {
+                    return q_io
+                        .read(path.join(target.contentPath, mdTargets[key]))
+                        .then(onReadFileSuccess, onReadFileError);
+                }
+
+
+            })
+        );
 };
 
 /**
