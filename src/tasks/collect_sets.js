@@ -83,7 +83,7 @@ var readMarkdownFilesForLibrary = function(target, result) {
                         .then(function(files) {
                             return files.filter(function(file) {
                                 return file.indexOf(mdTargets[key].pattern) !== -1;
-                            })[0];
+                            }).pop();
                         })
                         .then(function(file) {
                             return q_io
