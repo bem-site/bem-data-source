@@ -11,16 +11,6 @@ var util = require('util'),
     libs = require('../libs'),
     logger = libs.logger(module);
 
-var MSG = {
-    INFO: {
-        CLONE_DATA_REPO_START: 'Start clone remote target data repository. Please wait ...',
-        CLONE_DATA_REPO_END: 'Remote target data repository has been cloned successfully'
-    },
-    ERROR: {
-        DATA_REPO_NOT_FOUND: 'Data repository was not found. Application will be terminated'
-    }
-};
-
 module.exports = {
 
     /**
@@ -45,7 +35,7 @@ module.exports = {
                             return res.result.ssh_url;
                         },
                         function() {
-                            logger.error(MSG.ERROR.DATA_REPO_NOT_FOUND);
+                            logger.error('Data repository was not found. Application will be terminated');
                         }
                     );
             };
@@ -54,7 +44,7 @@ module.exports = {
             .then(function() {
                 if(!libs.util.isDirectory(constants.DIRECTORY.OUTPUT)) {
 
-                    logger.info(MSG.INFO.CLONE_DATA_REPO_START);
+                    logger.info('Start clone remote target data repository. Please wait ...');
                     return getUrlOfRemoteDataRepository()
                         .then(function(remoteUrl) {
                             return libs.cmd.gitClone({
@@ -63,7 +53,7 @@ module.exports = {
                             });
                         })
                         .then(function() {
-                            logger.info(MSG.INFO.CLONE_DATA_REPO_END);
+                            logger.info('Remote target data repository has been cloned successfully');
                         });
                 }
             });
