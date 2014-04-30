@@ -42,20 +42,22 @@ module.exports = {
 
         return libs.util.createDirectory(constants.DIRECTORY.CONTENT)
             .then(function() {
-                if(!libs.util.isDirectory(constants.DIRECTORY.OUTPUT)) {
-
-                    logger.info('Start clone remote target data repository. Please wait ...');
-                    return getUrlOfRemoteDataRepository()
-                        .then(function(remoteUrl) {
-                            return libs.cmd.gitClone({
-                                url: remoteUrl,
-                                contentPath: constants.DIRECTORY.OUTPUT
-                            });
-                        })
-                        .then(function() {
-                            logger.info('Remote target data repository has been cloned successfully');
-                        });
+                if(libs.util.isDirectory(constants.DIRECTORY.OUTPUT)) {
+                    return;
                 }
+
+                logger.info('Start clone remote target data repository. Please wait ...');
+                return getUrlOfRemoteDataRepository()
+                    .then(function(remoteUrl) {
+                        return libs.cmd.gitClone({
+                            url: remoteUrl,
+                            contentPath: constants.DIRECTORY.OUTPUT
+                        });
+                    })
+                    .then(function() {
+                        logger.info('Remote target data repository has been cloned successfully');
+                    });
+
             });
     }
 };
