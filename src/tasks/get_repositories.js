@@ -17,8 +17,8 @@ var GITHUB = {
 module.exports = {
 
     /**
-     * Retrieves information about git repositories by their names
-     * @param sources - {Array} of objects with fields:
+     * Generates ssh url of repository
+     * @param sources - {Object} object with fields:
      * - isPrivate {Boolean} indicate if repository from private github
      * - name - {String} name of repository
      * - user {String} name of user or organization
@@ -26,19 +26,15 @@ module.exports = {
      * - branch - {String} name of branch
      * @returns {defer.promise|*}
      */
-    run: function(sources) {
+    run: function(source) {
         logger.info('-- get repositories start --');
 
-        sources = sources.map(function(source) {
+        var url = util.format('git://%s/%s/%s.git',
+                source.isPrivate ? GITHUB.INNER : GITHUB.OUTER , source.user, source.name);
 
-            var url = util.format('git://%s/%s/%s.git',
-                    source.isPrivate ? GITHUB.INNER : GITHUB.OUTER , source.user, source.name);
-
-            logger.debug('get repository with name %s and url %s', source.name, url);
-            return _.extend({ url: url }, source);
-        });
-
+        logger.debug('get repository with name %s and url %s', source.name, url);
         logger.info('-- get repositories end --');
-        return sources;
+
+        return _.extend({ url: url }, source);
     }
 };

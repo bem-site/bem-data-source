@@ -46,13 +46,13 @@ module.exports = {
         }
 
         if(!err) {
-            return [{
+            return {
                 isPrivate: isPrivate,
                 user: user,
                 name: repo,
                 tag: tag,
                 branch: branch
-            }];
+            };
         }
     }
 };
