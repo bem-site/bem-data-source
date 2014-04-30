@@ -24,7 +24,8 @@
     "mkdirp": "~0.3.5",
     "semver": "2.2.1",
     "marked": "git://github.com/dab/marked.git",
-    "highlight.js": "7"
+    "highlight.js": "7",
+    "borschik": "~1.0.4"
   },
   "devDependencies": {
     "jshint": "2.4.1",
