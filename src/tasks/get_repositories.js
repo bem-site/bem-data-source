@@ -14,41 +14,31 @@ var GITHUB = {
     OUTER: 'github.com'
 };
 
-var MSG = {
-    INFO: {
-        START: '-- get repositories start --',
-        END: '-- get repositories end --'
-    }
-};
-
 module.exports = {
 
     /**
      * Retrieves information about git repositories by their names
      * @param sources - {Array} of objects with fields:
-     * - user {String} name of user or organization
      * - isPrivate {Boolean} indicate if repository from private github
      * - name - {String} name of repository
-     * - targetDir - {String} target directory
-     * - docDirs - {Array} array of string path where docs are
-     * - type - {String} type of repository. Different engines should be used for different types
-     * - tags - {Object} object which holds arrays of tags which should be included or excluded from make process
-     * - branches - {Object} object which holds arrays of branches which should be included or excluded from make process
+     * - user {String} name of user or organization
+     * - tag - {String} name of tag
+     * - branch - {String} name of branch
      * @returns {defer.promise|*}
      */
     run: function(sources) {
-        logger.info(MSG.INFO.START);
+        logger.info('-- get repositories start --');
 
         sources = sources.map(function(source) {
 
-            var host = source.isPrivate ? GITHUB.INNER : GITHUB.OUTER,
-                gitUrl = util.format('git://%s/%s/%s.git', host , source.user, source.name);
+            var url = util.format('git://%s/%s/%s.git',
+                    source.isPrivate ? GITHUB.INNER : GITHUB.OUTER , source.user, source.name);
 
-            logger.debug('get repository with name %s and url %s', source.name, gitUrl);
-            return _.extend({ url: gitUrl }, source);
+            logger.debug('get repository with name %s and url %s', source.name, url);
+            return _.extend({ url: url }, source);
         });
 
-        logger.info(MSG.INFO.END);
+        logger.info('-- get repositories end --');
         return sources;
     }
 };
