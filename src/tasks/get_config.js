@@ -19,14 +19,14 @@ module.exports = {
         var isPrivate = config.get('private') && config.get('private') === 'true',
             user = config.get('user'),
             repo = config.get('repository'),
-            tag = config.get('tag'),
-            branch = config.get('branch');
+            tags = config.get('tags'),
+            branches = config.get('branches');
 
         logger.info('Try to build sets for:');
         logger.info('repository privacy: %s', isPrivate);
         logger.info('repository user or organization: %s', user);
         logger.info('repository name: %s', repo);
-        logger.info('repository ref %s', tag || branch);
+        logger.info('repository refs %s', tags || branches);
 
         var err = false;
 
@@ -40,9 +40,9 @@ module.exports = {
             logger.error('Repository name has not been set');
         }
 
-        if(!tag && !branch) {
+        if(!tags && !branches) {
             err = true;
-            logger.error('Tag and Branch named have not been set');
+            logger.error('Tags or branches have not been set');
         }
 
         if(!err) {
@@ -50,8 +50,8 @@ module.exports = {
                 isPrivate: isPrivate,
                 user: user,
                 name: repo,
-                tag: tag,
-                branch: branch
+                tags: tags,
+                branch: branches
             };
         }
     }
