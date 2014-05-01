@@ -14,15 +14,15 @@
     "node": ">= 0.8.0"
   },
   "dependencies": {
-    "q": "~1.0.0",
-    "q-io": "~1.10.6",
+    "vow": "~0.4.1",
+    "vow-fs": "~0.3.0",
     "nconf": "~0.6.8",
-    "lodash": "2.4.1",
-    "intel": "0.4.0",
-    "github": "git://github.com/whentomanage/node-github.git",
+    "lodash": "~2.4.1",
+    "intel": "~0.4.0",
     "rimraf": "~2.2.4",
     "mkdirp": "~0.3.5",
     "semver": "2.2.1",
+    "github": "git://github.com/whentomanage/node-github.git",
     "marked": "git://github.com/dab/marked.git",
     "highlight.js": "7",
     "borschik": "~1.0.4"
