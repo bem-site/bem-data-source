@@ -6,15 +6,14 @@ var util = require('util'),
 
     q = require('q'),
     _ = require('lodash'),
+    rmrf = require('rimraf'),
 
     //application modules
     config = require('../config'),
     constants = require('../constants'),
     libs = require('../libs'),
     logger = libs.logger(module),
-    clear = require('./clear'),
-    collectSets = require('./collect_sets'),
-    createOutput = require('./create_output');
+    collectSets = require('./collect_sets');
 
 var MSG = {
     INFO: {
@@ -100,13 +99,12 @@ var createTarget = function() {
 
     logger.debug('existed = %s ref = %s', existed.join(', '), ref);
 
-    target.tasks.push(createOutput);
-
     //clear existed directory for target if it already exist on filesystem
     if(_.indexOf(existed, ref) !== -1) {
         target.tasks.push(clear);
     }
 
+    target.tasks.push(createOutput);
     target.tasks.push(libs.cmd.gitClone); //git clone
     target.tasks.push(libs.cmd.gitCheckout); //git checkout
     target.tasks.push(libs.cmd.npmInstall); //npm install
@@ -120,5 +118,52 @@ var createTarget = function() {
         source.name, ref, path.join(constants.DIRECTORY.CONTENT, sourceDir, ref));
 
     return target;
+};
+
+/**
+ * Clear content directories
+ * @param target
+ * @returns {*}
+ */
+var clear = function(target) {
+    var def = q.defer();
+
+    q.nfapply(rmrf, [target.contentPath])
+        .then(
+            function(result) {
+                logger.info('remove directory for target %s completed', target.name);
+                def.resolve(result);
+            },
+            function(error) {
+                if(error.code === 'ENOENT') {
+                    logger.warn('remove directory target %s failed. Directory does not exist', target.name);
+                    return def.resolve();
+                }else {
+                    logger.error('remove directory for target %s failed with reason %s', target.name, error.message);
+                    return def.reject(error);
+                }
+
+            }
+        );  
+    return def.promise;
+};
+
+/**
+ * Create output directories
+ * @param target
+ * @returns {*}
+ */
+var createOutput = function(target) {
+    logger.info(MSG.INFO.START);
+
+    return libs.util
+        .createDirectory(path.join(constants.DIRECTORY.OUTPUT, target.sourceDir))
+        .then(function() {
+            return libs.util.createDirectory(path.join(constants.DIRECTORY.OUTPUT, target.sourceDir, target.ref));
+        })
+        .then(function() {
+            logger.info(MSG.INFO.END);
+            return target;
+        });
 };
 
