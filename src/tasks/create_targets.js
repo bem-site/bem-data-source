@@ -144,7 +144,7 @@ var clear = function(target) {
                 }
 
             }
-        );  
+        );
     return def.promise;
 };
 
