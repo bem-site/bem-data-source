@@ -18,11 +18,10 @@ var make = (function() {
     .then(tasks.getConfig.run)
     .then(retrieveSshUrl)
     .then(verifyRepositoryTags)
-    .then(tasks.getBranches.run)
+    .then(verifyRepositoryBranches)
     .then(tasks.createTargets.run)
     .then(tasks.executeTargets.run)
-    .then(tasks.updateConfig.run)
-    .then(tasks.collectResults.run)
+    .then(commitAndPushResults)
     .then(function() {
         logger.info('|| ---- data source end ---- ||');
     });
@@ -85,5 +84,58 @@ var verifyRepositoryTags = function(source) {
 
             logger.info('-- get tags end --');
             return source;
+        });
+};
+
+/**
+ * Retrieves information about repository branches and filter them according to config
+ * @param source - {Object} with fields:
+ * - isPrivate {Boolean} indicate if repository from private github
+ * - user {String} name of user or organization
+ * - name - {String} name of repository
+ * - tag - {String} tag name
+ * - branch - {String} branch name
+ * - url - {String} git url of repository
+ * @returns {defer.promise|*}
+ */
+var verifyRepositoryBranches = function(source) {
+    logger.info('-- get branches start --');
+
+    if(!source.branch) {
+        logger.info('-- get branches end --');
+        return source;
+    }
+
+    return libs.api.getRepositoryBranches(source)
+        .then(function(res) {
+            var branchNames = _.pluck(res.result, 'name');
+
+            if(branchNames.indexOf(source.branch) < 0) {
+                logger.warn("Branch %s does not actually present in repository %s", source.branch, source.name);
+                source.tag = null;
+            }
+
+            logger.info('-- get tags end --');
+            return source;
+        });
+};
+
+/**
+ * Commits and pushes collected data
+ * @returns {*}
+ */
+var commitAndPushResults = function() {
+
+    logger.info('-- commit and push results start --');
+
+    return libs.cmd.gitAdd()
+        .then(function() {
+            return libs.cmd.gitCommit(util.format('Update data: %s', (new Date()).toString()));
+        })
+        .then(function() {
+            return libs.cmd.gitPush(config.get('dataConfig:ref'));
+        })
+        .then(function() {
+            logger.info('-- commit and push results end --');
         });
 };
