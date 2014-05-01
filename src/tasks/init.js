@@ -1,10 +1,8 @@
 /* global toString: false */
 'use strict';
 
-var util = require('util'),
-    path = require('path'),
-
-    q = require('q'),
+var vow = require('vow'),
+    vowFs = require('vow-fs'),
 
     config = require('../config'),
     constants = require('../constants'),
@@ -22,32 +20,15 @@ module.exports = {
      * @returns {*|then}
      */
     run: function() {
-        var dataRepository = config.get("dataConfig"),
-            getUrlOfRemoteDataRepository = function() {
-                return libs.api
-                    .getRepository({
-                        user: dataRepository.user,
-                        name: dataRepository.repo,
-                        isPrivate: dataRepository.private
-                    })
-                    .then(
-                        function(res) {
-                            return res.result.ssh_url;
-                        },
-                        function() {
-                            logger.error('Data repository was not found. Application will be terminated');
-                        }
-                    );
-            };
 
-        return libs.util.createDirectory(constants.DIRECTORY.CONTENT)
-            .then(function() {
-                if(libs.util.isDirectory(constants.DIRECTORY.OUTPUT)) {
+        return vowFs.makeDir(constants.DIRECTORY.CONTENT).then(function() {
+            return vowFs.isDir(constants.DIRECTORY.OUTPUT).then(function(isDir) {
+                if(isDir) {
                     return;
                 }
 
                 logger.info('Start clone remote target data repository. Please wait ...');
-                return getUrlOfRemoteDataRepository()
+                return getUrl()
                     .then(function(remoteUrl) {
                         return libs.cmd.gitClone({
                             url: remoteUrl,
@@ -57,7 +38,26 @@ module.exports = {
                     .then(function() {
                         logger.info('Remote target data repository has been cloned successfully');
                     });
-
             });
+        });
     }
+};
+
+var getUrl = function() {
+    var dataRepository = config.get('dataConfig');
+
+    return libs.api
+        .getRepository({
+            user: dataRepository.user,
+            name: dataRepository.repo,
+            isPrivate: dataRepository.private
+        })
+        .then(
+            function(res) {
+                return res.result.ssh_url;
+            },
+            function() {
+                logger.error('Data repository was not found. Application will be terminated');
+            }
+        );
 };

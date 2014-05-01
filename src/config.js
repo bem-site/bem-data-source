@@ -24,13 +24,13 @@ config.argv({
           demand: false
         },
         "t": {
-          alias: 'tag',
-          describe: 'Name of tag for creation',
+          alias: 'tags',
+          describe: 'Name(s) of tags for creation',
           demand: false
         },
         "b": {
-          alias: 'branch',
-          describe: 'Name of branch for creation',
+          alias: 'branches',
+          describe: 'Name of branch(es) for creation',
           demand: false
         }
     })
