@@ -2,7 +2,7 @@
 'use strict';
 
 var api = require("github"),
-    q = require('q'),
+    vow = require('vow'),
     _ = require('lodash'),
 
     logger = require('./logger')(module),
@@ -40,7 +40,7 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     getRepository: function(source) {
-        var def = q.defer(),
+        var def = vow.defer(),
             git = (source.isPrivate && source.isPrivate === 'true')  ? gitPrivate : gitPublic;
 
         git.repos.get({ user: source.user, repo: source.name }, function(err, res) {
@@ -51,7 +51,7 @@ module.exports = {
             def.resolve({ source: source, result: res });
         });
 
-        return def.promise;
+        return def.promise();
     },
 
     /**
@@ -62,7 +62,7 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     getRepositoryTags: function(source) {
-        var def = q.defer(),
+        var def = vow.defer(),
             git = source.isPrivate ? gitPrivate : gitPublic;
 
         git.repos.getTags({ user: source.user, repo: source.name }, function(err, res) {
@@ -73,7 +73,7 @@ module.exports = {
             def.resolve({ source: source, result: res });
         });
 
-        return def.promise;
+        return def.promise();
     },
 
     /**
@@ -84,7 +84,7 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     getRepositoryBranches: function(source) {
-        var def = q.defer(),
+        var def = vow.defer(),
             git = source.isPrivate ? gitPrivate : gitPublic;
 
         git.repos.getBranches({ user: source.user, repo: source.name }, function(err, res) {
@@ -95,78 +95,6 @@ module.exports = {
             def.resolve({ source: source, result: res });
         });
 
-        return def.promise;
-    },
-
-    /**
-     * Retrieve content for the given path for repository
-     * @param repository - [Object] repository {user: user, repo: repo, ref: ref}
-     * @param path - [String] relative path from root of repository
-     * @returns {defer.promise|*|Function|promise|Q.promise}
-     */
-    getContent: function(repository, path) {
-        repository.path = path || '';
-
-        var def = q.defer(),
-            git = (repository.private && repository.private === 'true')  ? gitPrivate : gitPublic;
-
-        git.repos.getContent(repository, function(err, res) {
-            if (err) {
-                def.reject(err);
-            }
-            def.resolve(res);
-        });
-        return def.promise;
-    },
-
-    /**
-     * Creates file in the repository
-     * @param conf [Object] - configuration object with following fields:
-     *   - user [String] name of owner or organization
-     *   - repo [String] name of repository
-     *   - branch [String] branch (optional)
-     *   - path [String] relative path from root of repository
-     *   - message [String] commit message
-     *   - content [String] base64 encoded content of file
-     * @returns {defer.promise|*|Function|promise|Q.promise}
-     */
-    createFile: function(conf) {
-        var def = q.defer(),
-            git = (conf.private && conf.private === 'true') ? gitPrivate : gitPublic;
-
-        git.repos.createFile(conf, function(err, res) {
-            if(err || !res) {
-                def.reject(err);
-            } else {
-                def.resolve(res);
-            }
-        });
-        return def.promise;
-    },
-
-    /**
-     * Updates file in the repository
-     * @param conf [Object] - configuration object with following fields:
-     *   - user [String] name of owner or organization
-     *   - repo [String] name of repository
-     *   - branch [String] branch (optional)
-     *   - path [String] relative path from root of repository
-     *   - sha [String] sha sum of target file
-     *   - message [String] commit message
-     *   - content [String] base64 encoded content of file
-     * @returns {defer.promise|*|Function|promise|Q.promise}
-     */
-    updateFile: function(conf) {
-        var def = q.defer(),
-            git = (conf.private && conf.private === 'true') ? gitPrivate : gitPublic;
-
-        git.repos.updateFile(conf, function(err, res) {
-            if(err || !res) {
-                def.reject(err);
-            } else {
-                def.resolve(res);
-            }
-        });
-        return def.promise;
+        return def.promise();
     }
 };
