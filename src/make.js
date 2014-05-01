@@ -17,7 +17,7 @@ var make = (function() {
     tasks.init.run.apply(null)
     .then(tasks.getConfig.run)
     .then(retrieveSshUrl)
-    .then(tasks.getTags.run)
+    .then(verifyRepositoryTags)
     .then(tasks.getBranches.run)
     .then(tasks.createTargets.run)
     .then(tasks.executeTargets.run)
@@ -53,4 +53,37 @@ var retrieveSshUrl = function(source) {
     logger.info('-- get repositories end --');
 
     return _.extend({ url: url }, source);
+};
+
+/**
+ * Retrieves information about repository tags and filter them according to config
+ * @param source - {Object} with fields:
+ * - isPrivate {Boolean} indicate if repository from private github
+ * - user {String} name of user or organization
+ * - name - {String} name of repository
+ * - tag - {String} tag name
+ * - branch - {String} branch name
+ * - url - {String} git url of repository
+ * @returns {defer.promise|*}
+ */
+var verifyRepositoryTags = function(source) {
+    logger.info('-- get tags start --');
+
+    if(!source.tag) {
+        logger.info('-- get tags end --');
+        return source;
+    }
+
+    return libs.api.getRepositoryTags(source)
+        .then(function(res) {
+            var tagNames = _.pluck(res.result, 'name');
+
+            if(tagNames.indexOf(source.tag) < 0) {
+                logger.warn("Tag %s does not actually present in repository %s", source.tag, source.name);
+                source.tag = null;
+            }
+
+            logger.info('-- get tags end --');
+            return source;
+        });
 };
