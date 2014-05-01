@@ -11,7 +11,7 @@ var util = require('util'),
     tasks = require('./tasks'),
     logger = libs.logger(module);
 
-var make = (function() {
+(function() {
     logger.info('|| ---- data source start ---- ||');
 
     tasks.init.run.apply(null)
