@@ -5,7 +5,7 @@ var util = require('util'),
     path = require('path'),
 
     _ = require('lodash'),
-    q = require('q'),
+    vow = require('vow'),
 
     config = require('../config'),
     constants = require('../constants'),
@@ -111,7 +111,7 @@ module.exports = {
  * @returns {defer.promise|*}
  */
 var runCommand = function(cmd, opts, name, target) {
-    var def = q.defer(),
+    var def = vow.defer(),
         baseOpts = {
             encoding: 'utf8',
             maxBuffer: 1000000*1024
@@ -137,5 +137,5 @@ var runCommand = function(cmd, opts, name, target) {
                 def.reject(error);
             }
         );
-    return def.promise;
+    return def.promise();
 };
