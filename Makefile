@@ -5,7 +5,6 @@ JSCS = $(NPM_BIN)/jscs
 .PHONY: build
 build: npm_deps
 	cp config/_credentials.json config/credentials.json
-	cp config/_repositories.json config/repositories.json
 
 .PHONY: restart
 restart: clean
@@ -15,8 +14,6 @@ restart: clean
 clean:
 	rm -rf content
 	rm -rf output
-	rm config/repositories.json
-	cp config/_repositories.json config/repositories.json
 
 .PHONY: lint
 lint: npm_deps
