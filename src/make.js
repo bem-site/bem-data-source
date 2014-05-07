@@ -3,24 +3,25 @@
 
 var util = require('util'),
     _ = require('lodash'),
-    q = require('q'),
+    vow = require('vow'),
 
     //application modules
     config = require('./config'),
     libs = require('./libs'),
     tasks = require('./tasks'),
-    logger = libs.logger(module);
+    logger = libs.logger(module),
+    Target = require('./target');
 
 (function() {
     logger.info('|| ---- data source start ---- ||');
 
-    tasks.init.run.apply(null)
+    tasks.init.run()
     .then(tasks.getConfig.run)
     .then(retrieveSshUrl)
     .then(verifyRepositoryTags)
     .then(verifyRepositoryBranches)
-    .then(tasks.createTargets.run)
-    .then(tasks.executeTargets.run)
+    .then(createTargets)
+    .then(executeTargets)
     .then(commitAndPushResults)
     .then(function() {
         logger.info('|| ---- data source end ---- ||');
@@ -60,27 +61,39 @@ var retrieveSshUrl = function(source) {
  * - isPrivate {Boolean} indicate if repository from private github
  * - user {String} name of user or organization
  * - name - {String} name of repository
- * - tag - {String} tag name
- * - branch - {String} branch name
+ * - tags - {String} tag name
+ * - branches - {String} branch name
  * - url - {String} git url of repository
  * @returns {defer.promise|*}
  */
 var verifyRepositoryTags = function(source) {
     logger.info('-- get tags start --');
 
-    if(!source.tag) {
+    if(!source.tags) {
+        source.tags = [];
+
+        logger.debug('no tags have been set');
         logger.info('-- get tags end --');
+
         return source;
     }
 
     return libs.api.getRepositoryTags(source)
         .then(function(res) {
-            var tagNames = _.pluck(res.result, 'name');
+            var tagNames = res.result.map(function(item) {
+                return item.name;
+            });
 
-            if(tagNames.indexOf(source.tag) < 0) {
-                logger.warn("Tag %s does not actually present in repository %s", source.tag, source.name);
-                source.tag = null;
-            }
+            source.tags = source.tags.split(',');
+            source.tags = source.tags.filter(function(item) {
+                var exists = tagNames.indexOf(item) > -1;
+
+                if(!exists) {
+                    logger.warn("Tag %s does not actually present in repository %s", item, source.name);
+                }
+
+                return exists;
+            });
 
             logger.info('-- get tags end --');
             return source;
@@ -93,8 +106,8 @@ var verifyRepositoryTags = function(source) {
  * - isPrivate {Boolean} indicate if repository from private github
  * - user {String} name of user or organization
  * - name - {String} name of repository
- * - tag - {String} tag name
- * - branch - {String} branch name
+ * - tags - {String} tag name
+ * - branches - {String} branch name
  * - url - {String} git url of repository
  * @returns {defer.promise|*}
  */
@@ -108,16 +121,72 @@ var verifyRepositoryBranches = function(source) {
 
     return libs.api.getRepositoryBranches(source)
         .then(function(res) {
-            var branchNames = _.pluck(res.result, 'name');
+            var branchNames = res.result.map(function(item) {
+                return item.name;
+            });
 
-            if(branchNames.indexOf(source.branch) < 0) {
-                logger.warn("Branch %s does not actually present in repository %s", source.branch, source.name);
-                source.tag = null;
-            }
+            source.branches = source.branches.split(',');
+            source.branches = source.branches.filter(function(item) {
+                var exists = branchNames.indexOf(item) > -1;
+
+                if(!exists) {
+                    logger.warn("Tag %s does not actually present in repository %s", item, source.name);
+                }
+
+                return exists;
+            });
 
             logger.info('-- get tags end --');
             return source;
         });
+};
+
+/**
+ * Create targets for source
+ * @param source - {Object} with fields:
+ * - isPrivate {Boolean} indicate if repository from private github
+ * - user {String} name of user or organization
+ * - name - {String} name of repository
+ * - tags - {Array} array of tag names
+ * - branches - {Array} array branch names
+ * - url - {String} git url of repository
+ * @returns {Array}
+ */
+var createTargets = function(source) {
+    logger.info('-- create targets start --');
+
+    var targets = [];
+
+    ['tags', 'branches'].forEach(function(type) {
+        source[type].forEach(function(ref) {
+            var target = new Target(source, ref, type);
+            targets.push(target);
+
+            logger.debug('create target %s into directory %s', target.getName(), target.getContentPath());
+        });
+    });
+
+    if(!targets.length) {
+        logger.warn('no targets will be executed');
+    }
+
+    logger.info('-- create targets end --');
+    return targets;
+};
+
+var executeTargets = function(targets) {
+    logger.info('-- run commands start --');
+
+    return vow.allResolved(
+        targets.map(function(target) { target.execute(); })
+    )
+    .then(
+        function(result) {
+            logger.info('-- run commands end --');
+            return libs.util.filterAndMapFulfilledPromises(
+                result, function(item) { return item.value; } );
+        }
+    );
 };
 
 /**
