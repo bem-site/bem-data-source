@@ -47,38 +47,51 @@ Target.prototype = {
             .addTask(libs.cmd.npmRunDeps) //bower or bem make libs
             .addTask(libs.cmd.bemMakeSets) //bem make sets
             .addTask(libs.cmd.moveSets) //move sets to output folder
-            .addTask.push(collectSets); //collect sets
+            .addTask(collectSets); //collect sets
     },
 
+    /**
+     * Returns constructed name of task from source and ref names
+     * @returns {string}
+     */
     getName: function() {
         return util.format('%s %s', this.source.name, this.ref);
     },
 
-    getDir: function() {
+    getSourceName: function() {
         return this.source.name;
     },
 
+    /**
+     * Returns path to task subdirectory in content folder
+     * @returns {string}
+     */
     getContentPath: function() {
         return path.join(constants.DIRECTORY.CONTENT, this.source.name, this.ref);
     },
 
+    /**
+     * Returns path to task subdirectory in output folder
+     * @returns {string}
+     */
     getOutputPath: function() {
         return path.join(constants.DIRECTORY.OUTPUT, this.source.name, this.ref);
     },
 
-    getUrl: function() {
-        return this.source.url;
-    },
-
-    getType: function() {
-        return this.type;
-    },
-
+    /**
+     * Add task to execution stack
+     * @param task - {Function} - task function for execution
+     * @returns {Target}
+     */
     addTask: function(task) {
         this.tasks.push(task);
         return this;
     },
 
+    /**
+     * Make chained calls for all tasks for target and call them
+     * @returns {*}
+     */
     execute: function() {
         var initial = this.tasks.shift();
         return this.tasks.reduce(function(prev, item) {
@@ -86,6 +99,14 @@ Target.prototype = {
                 return item.call(null, this);
             });
         }, initial.call(null, this));
+    },
+
+    createSetsResultBase: function() {
+        return {
+            repo: this.source.name,
+            ref: this.ref,
+            url: this.source.url.replace('git:', 'http:').replace('.git', '')
+        };
     }
 };
 
