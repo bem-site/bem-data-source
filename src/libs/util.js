@@ -7,40 +7,11 @@ var util = require('util'),
     cp = require('child_process'),
 
     semver = require('semver'),
-    q = require('q'),
-    q_io = require('q-io/fs'),
+    vow = require('vow'),
     md = require('marked'),
-    hl = require('highlight.js'),
-    mkdirp = require('mkdirp'),
 
     logger = require('./logger')(module),
     config = require('../config');
-
-/**
- * Creates directory
- * @param name - {String} name of directory
- * @returns {Promise<T>}
- */
-exports.createDirectory = function(name) {
-    var def = q.defer();
-
-    q.nfapply(mkdirp, [name])
-    .then(
-        function() {
-            def.resolve(name);
-            logger.debug('%s directory has been created', name);
-        },
-        function(err) {
-            if(err.code === 'EEXIST') {
-                def.resolve(name);
-                logger.warn('%s directory already exist', name);
-            }else {
-                def.reject(err.message);    
-            }
-        }
-    );
-    return def.promise;
-};
 
 /**
  * Sort tags function
@@ -75,19 +46,6 @@ exports.filterAndMapFulfilledPromises = function(promises, mapCallback) {
 };
 
 /**
- * Filter promises collection by fulfilled criteria and post processing them
- * @param promises - {Array} array of promises
- * @returns {Array|*}
- */
-exports.filterFulfilledPromises = function(promises) {
-    return promises.filter(
-        function(item) {
-            return item.state === 'fulfilled';
-        }
-    );
-};
-
-/**
  * Executes specified command with options.
  * @param {String} cmd  Command to execute.
  * @param {Object} options  Options to `child_process.exec()` function.
@@ -95,7 +53,7 @@ exports.filterFulfilledPromises = function(promises) {
  */
 exports.exec = function(cmd, options) {
     var proc = cp.exec(cmd, options),
-        d = q.defer(),
+        d = vow.defer(),
         output = '';
 
     proc.on('exit', function(code) {
@@ -115,7 +73,7 @@ exports.exec = function(cmd, options) {
         output += data;
     });
 
-    return d.promise;
+    return d.promise();
 };
 
 /**
@@ -150,68 +108,14 @@ exports.getDirs = function(_path) {
 };
 
 /**
- * Returns list of directories async
- * @param _path - {String} path
- * @returns {*|Q.IPromise<U>|Q.Promise<U>}
- */
-exports.getDirsAsync = function(_path) {
-    return q_io.list(_path).then(function(items) {
-        return q.all(items.map(function(i) {
-                return q_io.isDirectory(path.join(_path, i))
-                    .then(function(isDir){
-                        return {
-                            name: i,
-                            dir: isDir
-                        };
-                    }
-                );
-            }))
-            .then(function(items) {
-                return items
-                    .filter(function(item) {
-                        return item.dir;
-                    })
-                    .map(function(item) {
-                        return item.name;
-                    });
-            }
-        );
-    });
-};
-
-/**
  * Converts markdown content into html with marked module
  * @param content - {String} markdown content
  * @returns {String} - html string
  */
 exports.mdToHtml = function(content) {
-    var languages = {};
-
     return md(content, {
-            gfm: true,
-            pedantic: false,
-            sanitize: false,
-            highlight: function(code, lang) {
-                if (!lang) {
-                    return code;
-                }
-                var res = hl.highlight(function(alias) {
-                    return {
-                        'js' : 'javascript',
-                        'patch': 'diff',
-                        'md': 'markdown',
-                        'html': 'xml',
-                        'sh': 'bash'
-                    }[alias] || alias;
-                }(lang), code);
-
-                languages[lang] = res.language;
-                return res.value;
-            }
-        })
-        .replace(/<pre><code class="lang-(.+?)">([\s\S]+?)<\/code><\/pre>/gm,
-            function(m, lang, code) {
-                return '<pre class="highlight"><code class="highlight__code ' + languages[lang] + '">' + code + '</code></pre>';
-            }
-        );
+        gfm: true,
+        pedantic: false,
+        sanitize: false
+    });
 };
