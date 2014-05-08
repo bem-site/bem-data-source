@@ -5,45 +5,26 @@ var util = require('util'),
     path = require('path'),
 
     _ = require('lodash'),
-    q = require('q'),
-    q_io = require('q-io/fs'),
+    vow = require('vow'),
+    vowFs = require('vow-fs'),
 
+    pattern = require('../../config/pattern'),
     constants = require('../constants'),
     libs = require('../libs'),
     logger = libs.logger(module),
     u = libs.util;
 
-var MSG = {
-    INFO: {
-        START:  '-- collect sets start --',
-        END:  '-- collect sets end --'
-    },
-    DEBUG: {
-        READ_MARKDOWNS: 'read markdown files fs.ReadStream(path, options);r library %s %s',
-        READ_LEVELS: 'read level directories for library %s %s',
-        WRITE_RESULT_TO_FILE: 'write result to file'
-    }
-};
-
 module.exports = function(target) {
 
-    var result = {
-        repo: target.source.name,
-        ref: target.ref,
-        url: target.source.url.replace('git:', 'http:').replace('.git', '')
-    };
+    var result = target.createSetsResultBase();
 
-    logger.info(MSG.INFO.START);
+    logger.info('-- collect sets start --');
 
     return readMarkdownFilesForLibrary(target, result)
+        .then(function() { return readLevelsForLibrary(target, result); })
+        .then(function() { return writeResultToFile(target, result); })
         .then(function() {
-            return readLevelsForLibrary(target, result);
-        })
-        .then(function() {
-            return writeResultToFile(target, result);
-        })
-        .then(function() {
-            logger.info(MSG.INFO.END);
+            logger.info('-- collect sets end --');
             return target;
         });
 };
@@ -55,16 +36,15 @@ module.exports = function(target) {
  * @returns {*}
  */
 var readMarkdownFilesForLibrary = function(target, result) {
-    logger.debug(MSG.DEBUG.READ_MARKDOWNS, target.source.name, target.ref);
+    logger.debug('read markdown files for library %s', target.getName());
 
-    var source = target.source,
-        mdTargets  = {
+    var mdTargets  = {
             readme: 'README.md',
-            changelog: source.changelog || 'changelog.md',
-            migration: source.migration || 'MIGRATION.md'
+            changelog: pattern.getChangelog()[target.getSourceName()] || 'changelog.md',
+            migration: pattern.getMigration()[target.getSourceName()] || 'MIGRATION.md'
         };
 
-        return q.allSettled(Object.keys(mdTargets)
+        return vow.allResolved(Object.keys(mdTargets)
             .map(function(key) {
                 var onReadFileSuccess = function(content) {
                         try {
@@ -78,21 +58,21 @@ var readMarkdownFilesForLibrary = function(target, result) {
                     };
 
                 if(_.isObject(mdTargets[key])) {
-                    return q_io
-                        .list(path.join(target.contentPath, mdTargets[key].folder))
+                    return vowFs
+                        .listDir(path.join(target.getContentPath(), mdTargets[key].folder))
                         .then(function(files) {
                             return files.filter(function(file) {
                                 return file.indexOf(mdTargets[key].pattern) !== -1;
                             }).pop();
                         })
                         .then(function(file) {
-                            return q_io
-                                .read(path.join(target.contentPath, mdTargets[key].folder, file))
+                            return vowFs
+                                .read(path.join(target.getContentPath(), mdTargets[key].folder, file))
                                 .then(onReadFileSuccess, onReadFileError);
                         });
                 }else {
-                    return q_io
-                        .read(path.join(target.contentPath, mdTargets[key]))
+                    return vowFs
+                        .read(path.join(target.getContentPath(), mdTargets[key]))
                         .then(onReadFileSuccess, onReadFileError);
                 }
 
@@ -108,11 +88,11 @@ var readMarkdownFilesForLibrary = function(target, result) {
  * @returns {*}
  */
 var readLevelsForLibrary = function(target, result) {
-    logger.debug(MSG.DEBUG.READ_LEVELS, target.source.name, target.ref);
+    logger.debug('read level directories for library %s', target.getName());
 
-    return u.getDirsAsync(path.resolve(target.outputPath))
+    return vowFs.listDir(path.resolve(target.getOutputPath()))
         .then(function(levels) {
-            return q.allSettled(levels.map(function(level) {
+            return vow.allResolved(levels.map(function(level) {
                 level = { name: level };
                 result.levels = result.levels || [];
                 result.levels.push(level);
@@ -132,9 +112,9 @@ var readLevelsForLibrary = function(target, result) {
 var readBlocksForLevel = function(target, result, level) {
     var blockIgnores = ['.bem', 'index', 'catalogue', 'index', 'jscatalogue'];
 
-    return u.getDirsAsync(path.resolve(target.outputPath, level.name))
+    return vowFs.listDir(path.resolve(target.getOutputPath(), level.name))
         .then(function(blocks) {
-            return q.allSettled(
+            return vow.allResolved(
                 blocks
                     .filter(function(block) {
                         return blockIgnores.indexOf(block) === -1;
@@ -164,31 +144,21 @@ var readDataForBlock = function(target, result, level, block) {
         jsdoc: '%s.jsdoc.json'
     };
 
-    return q.allSettled(Object.keys(blockTargets)
-        .map(function(key) {
-            return q_io
-                .read(
-                    path.resolve(
-                        target.outputPath,
-                        level.name,
-                        block.name,
-                        util.format(blockTargets[key], block.name)
-                    )
-                )
-                .then(
-                    function(content) {
-                        try {
-                            block[key] = JSON.parse(content);
-                        } catch(e) {
-                            block[key] = null;
-                        }
-                    },
-                    function() {
+    return vow.allResolved(Object.keys(blockTargets).map(function(key) {
+        return vowFs.read(path.resolve(target.getOutputPath(),
+            level.name, block.name, util.format(blockTargets[key], block.name))).then(
+                function(content) {
+                    try {
+                        block[key] = JSON.parse(content);
+                    } catch(e) {
                         block[key] = null;
                     }
-                );
-            }
-        )
+                },
+                function() {
+                    block[key] = null;
+                }
+            );
+        })
     );
 };
 
@@ -198,7 +168,9 @@ var readDataForBlock = function(target, result, level, block) {
  * @param result - {Object} result model
  * @returns {*}
  */
-var  writeResultToFile = function(target, result) {
-    logger.debug(MSG.DEBUG.WRITE_RESULT_TO_FILE);
-    return q_io.write(path.resolve(target.outputPath, constants.FILE.DATA), JSON.stringify(result, null, 4), { charset: 'utf8' });
+var writeResultToFile = function(target, result) {
+    logger.debug('write result of target %s to file %s', target.getName(),
+        path.resolve(target.getOutputPath(), constants.FILE.DATA));
+
+    return vowFs.write(path.resolve(target.getOutputPath(), constants.FILE.DATA), JSON.stringify(result, null, 4), { charset: 'utf8' });
 };
