@@ -1,8 +1,7 @@
 /* global toString: false */
 'use strict';
 
-var vow = require('vow'),
-    vowFs = require('vow-fs'),
+var vowFs = require('vow-fs'),
 
     config = require('../config'),
     constants = require('../constants'),
