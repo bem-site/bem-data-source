@@ -51,8 +51,10 @@ module.exports = {
                 user: user,
                 name: repo,
                 tags: tags,
-                branch: branches
+                branches: branches
             };
         }
+
+        return err;
     }
 };
