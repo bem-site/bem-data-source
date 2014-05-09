@@ -9,7 +9,7 @@ var util = require('util'),
 
     constants = require('./constants'),
     libs = require('./libs'),
-    collectSets = require('.tasks/collect_sets');
+    collectSets = require('./tasks/collect_sets');
 
 var Target = function(source, ref, type) {
     return this.init(source, ref, type);
