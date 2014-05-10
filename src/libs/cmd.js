@@ -21,7 +21,7 @@ module.exports = {
      */
     gitClone: function(target) {
         return runCommand(
-            util.format('git clone --progress %s %s', target.url, target.contentPath), {}, 'git clone', target);
+            util.format('git clone --progress %s %s', target.getUrl(), target.getContentPath()), {}, 'git clone', target);
     },
 
     /**
@@ -31,7 +31,7 @@ module.exports = {
      */
     gitCheckout: function(target) {
         return runCommand(util.format('git checkout %s', target.ref),
-            { cwd: path.resolve(target.contentPath) }, 'git checkout', target);
+            { cwd: path.resolve(target.getContentPath()) }, 'git checkout', target);
     },
 
     /**
@@ -41,7 +41,7 @@ module.exports = {
      */
     npmInstall: function(target) {
         return runCommand('npm install --registry=http://npm.yandex-team.ru',
-            { cwd: path.resolve(target.contentPath) }, 'npm install', target);
+            { cwd: path.resolve(target.getContentPath()) }, 'npm install', target);
     },
 
     /**
@@ -51,7 +51,7 @@ module.exports = {
      */
     npmRunDeps: function(target) {
         return runCommand('npm run deps',
-            { cwd: path.resolve(target.contentPath) }, 'npm run deps', target);
+            { cwd: path.resolve(target.getContentPath()) }, 'npm run deps', target);
     },
 
     /**
@@ -61,7 +61,7 @@ module.exports = {
      */
     bemMakeSets: function(target) {
         return runCommand('node_modules/bem/bin/bem make sets -v error',
-            { cwd: path.resolve(target.contentPath) }, 'bem make sets', target);
+            { cwd: path.resolve(target.getContentPath()) }, 'bem make sets', target);
     },
 
     /**
@@ -70,7 +70,8 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     moveSets: function(target) {
-        return runCommand(util.format('cp -R %s/*.sets %s', target.contentPath, target.outputPath), {}, 'git move sets', null);
+        return runCommand(util.format('cp -R %s/*.sets %s',
+            target.getContentPath(), target.getOutputPath()), {}, 'git move sets', target);
     },
 
     /**
@@ -121,21 +122,21 @@ var runCommand = function(cmd, opts, name, target) {
         target = {name: 'all'};
     }
 
-    logger.debug('execute %s for target %s', cmd, target.name);
+    var n = target.getName() || target.name;
 
-    u
-        .exec(cmd, _.extend(opts, baseOpts))
-        .then(
-            function() {
-                logger.debug('%s for target %s completed', name, target.name);
-                def.resolve(target);
-            },
-            function(error) {
-                logger.error(error);
-                logger.error('%s for target %s failed', name, target.name);
-                logger.error('execution of command %s failed for target %s', cmd, target.name);
-                def.reject(error);
-            }
-        );
+    logger.debug('execute %s for target %s', cmd, n);
+
+    u.exec(cmd, _.extend(opts, baseOpts)).then(
+        function() {
+            logger.debug('%s for target %s completed', name, n);
+            def.resolve(target);
+        },
+        function(error) {
+            logger.error(error);
+            logger.error('%s for target %s failed', name, n);
+            logger.error('execution of command %s failed for target %s', cmd, n);
+            def.reject(error);
+        }
+    );
     return def.promise();
 };

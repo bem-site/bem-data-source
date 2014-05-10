@@ -10,7 +10,6 @@ var util = require('util'),
     config = require('./config'),
     constants = require('./constants'),
     libs = require('./libs'),
-    tasks = require('./tasks'),
     logger = libs.logger(module),
     Target = require('./target');
 
@@ -66,8 +65,6 @@ var init = function() {
  * @returns {defer.promise|*}
  */
 var retrieveSshUrl = function(source) {
-    logger.info('-- get repositories start --');
-
     var GITHUB = {
         INNER: 'github.yandex-team.ru',
         OUTER: 'github.com'
@@ -77,8 +74,6 @@ var retrieveSshUrl = function(source) {
         source.isPrivate ? GITHUB.INNER : GITHUB.OUTER , source.user, source.name);
 
     logger.debug('get repository with name %s and url %s', source.name, url);
-    logger.info('-- get repositories end --');
-
     return _.extend({ url: url }, source);
 };
 
@@ -94,14 +89,8 @@ var retrieveSshUrl = function(source) {
  * @returns {defer.promise|*}
  */
 var verifyRepositoryTags = function(source) {
-    logger.info('-- get tags start --');
-
     if(!source.tags) {
         source.tags = [];
-
-        logger.debug('no tags have been set');
-        logger.info('-- get tags end --');
-
         return source;
     }
 
@@ -111,7 +100,6 @@ var verifyRepositoryTags = function(source) {
                 return item.name;
             });
 
-            source.tags = source.tags.split(',');
             source.tags = source.tags.filter(function(item) {
                 var exists = tagNames.indexOf(item) > -1;
 
@@ -122,7 +110,6 @@ var verifyRepositoryTags = function(source) {
                 return exists;
             });
 
-            logger.info('-- get tags end --');
             return source;
         });
 };
@@ -142,7 +129,7 @@ var verifyRepositoryBranches = function(source) {
     logger.info('-- get branches start --');
 
     if(!source.branches) {
-        logger.info('-- get branches end --');
+        source.branches = [];
         return source;
     }
 
@@ -152,7 +139,6 @@ var verifyRepositoryBranches = function(source) {
                 return item.name;
             });
 
-            source.branches = source.branches.split(',');
             source.branches = source.branches.filter(function(item) {
                 var exists = branchNames.indexOf(item) > -1;
 
@@ -163,7 +149,6 @@ var verifyRepositoryBranches = function(source) {
                 return exists;
             });
 
-            logger.info('-- get tags end --');
             return source;
         });
 };
@@ -180,8 +165,6 @@ var verifyRepositoryBranches = function(source) {
  * @returns {Array}
  */
 var createTargets = function(source) {
-    logger.info('-- create targets start --');
-
     var targets = [];
 
     ['tags', 'branches'].forEach(function(type) {
@@ -197,7 +180,6 @@ var createTargets = function(source) {
         logger.warn('no targets will be executed');
     }
 
-    logger.info('-- create targets end --');
     return targets;
 };
 
@@ -205,7 +187,7 @@ var executeTargets = function(targets) {
     logger.info('-- run commands start --');
 
     return vow.allResolved(
-        targets.map(function(target) { target.execute(); })
+        targets.map(function(target) { return target.execute(); })
     )
     .then(
         function(result) {
@@ -236,18 +218,15 @@ var commitAndPushResults = function() {
         });
 };
 
-(function() {
-    logger.info('|| ---- data source start ---- ||');
-
+exports.run = function(source) {
     init()
-        .then(tasks.getConfig.run, function(err) { console.log('error %s', err); })
-        .then(retrieveSshUrl)
+        .then(function() { return retrieveSshUrl(source); })
         .then(verifyRepositoryTags)
         .then(verifyRepositoryBranches)
         .then(createTargets)
         .then(executeTargets)
         //.then(commitAndPushResults)
         .then(function() {
-            logger.info('|| ---- data source end ---- ||');
+            logger.info('application has been finished');
         });
-})();
+};
