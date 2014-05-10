@@ -27,9 +27,9 @@ Target.prototype = {
         this.ref = ref;
         this.type = type;
 
-        return this
+        this
             .addTask(function(t) {
-                return vow.all([
+                return vow.allResolved([
                     vowFs.removeDir(t.getContentPath()),
                     vowFs.removeDir(t.getOutputPath())
                 ]).then(function() {
@@ -48,6 +48,8 @@ Target.prototype = {
             .addTask(libs.cmd.bemMakeSets) //bem make sets
             .addTask(libs.cmd.moveSets) //move sets to output folder
             .addTask(collectSets); //collect sets
+
+        return this;
     },
 
     /**
@@ -60,6 +62,10 @@ Target.prototype = {
 
     getSourceName: function() {
         return this.source.name;
+    },
+
+    getUrl: function() {
+        return this.source.url;
     },
 
     /**
@@ -93,12 +99,13 @@ Target.prototype = {
      * @returns {*}
      */
     execute: function() {
-        var initial = this.tasks.shift();
+        var self = this,
+            initial = this.tasks.shift();
         return this.tasks.reduce(function(prev, item) {
             return prev.then(function() {
-                return item.call(null, this);
+                return item.call(null, self);
             });
-        }, initial.call(null, this));
+        }, initial.call(null, self));
     },
 
     createSetsResultBase: function() {
