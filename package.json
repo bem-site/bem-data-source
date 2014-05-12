@@ -21,7 +21,8 @@
     "marked": "git://github.com/dab/marked.git",
     "highlight.js": "7",
     "borschik": "~1.0.4",
-    "coa": "~0.4.0"
+    "coa": "~0.4.0",
+    "fs-extra": "~0.8.1"
   },
   "devDependencies": {
     "jshint": "2.4.1",
