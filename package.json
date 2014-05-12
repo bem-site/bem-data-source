@@ -28,6 +28,9 @@
     "jshint": "2.4.1",
     "jscs": "1.2.2"
   },
+  "scripts": {
+    "start": "node bin/start.js"
+  },
   "author": "bemer@yandex-team.ru",
   "readmeFilename": "README.md",
   "private": true
