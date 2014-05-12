@@ -29,22 +29,6 @@ exports.sortTags = function(a, b) {
 };
 
 /**
- * Filter promises collection by fulfilled criteria and post processing them
- * @param promises - {Array} array of promises
- * @param mapCallback - {Function} callback function for map
- * @returns {Array|*}
- */
-exports.filterAndMapFulfilledPromises = function(promises, mapCallback) {
-    return promises
-        .filter(
-            function(item) {
-                return item.state === 'fulfilled';
-            }
-        )
-        .map(mapCallback);
-};
-
-/**
  * Executes specified command with options.
  * @param {String} cmd  Command to execute.
  * @param {Object} options  Options to `child_process.exec()` function.
@@ -88,6 +72,11 @@ exports.mdToHtml = function(content) {
     });
 };
 
+/**
+ * Removes directory with all files and subdirectories
+ * @param path - {String} path to directory on filesystem
+ * @returns {*}
+ */
 exports.removeDir = function(path) {
     var def = vow.defer();
     fs.remove(path, function(err){
@@ -99,4 +88,26 @@ exports.removeDir = function(path) {
     });
 
     return def.promise();
+};
+
+/**
+ * Retrieve github ssh url via github api
+ * @param repo - {Object} repo object
+ * @returns {*}
+ */
+exports.getSSHUrl = function(repo) {
+    return require('./api')
+        .getRepository({
+            user: repo.user,
+            name: repo.repo,
+            isPrivate: repo.private
+        })
+        .then(
+            function(res) {
+                return res.result.ssh_url;
+            },
+            function() {
+                logger.error('Data repository was not found. Application will be terminated');
+            }
+        );
 };
