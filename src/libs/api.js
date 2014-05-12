@@ -11,26 +11,25 @@ var api = require("github"),
 var gitPublic = null,
     gitPrivate = null;
 
-/**
- * initialize github API
- */
-(function() {
-
-    logger.info('Initialize github API');
-
-    var gitConfig = config.get('gitAPI'),
-        commonConfig = gitConfig.common,
-        publicConfig = gitConfig.public,
-        privateConfig = gitConfig.private;
-
-    gitPublic = new api(_.extend(publicConfig, commonConfig));
-    gitPrivate = new api(_.extend(privateConfig, commonConfig));
-
-    gitPublic.authenticate(config.get('credentials:public'));
-    gitPrivate.authenticate(config.get('credentials:private'));
-})();
-
 module.exports = {
+
+    /**
+     * initialize github API
+     */
+    init: function() {
+        logger.info('Initialize github API');
+
+        var gitConfig = config.get('gitAPI'),
+            commonConfig = gitConfig.common,
+            publicConfig = gitConfig.public,
+            privateConfig = gitConfig.private;
+
+        gitPublic = new api(_.extend(publicConfig, commonConfig));
+        gitPrivate = new api(_.extend(privateConfig, commonConfig));
+
+        gitPublic.authenticate(config.get('credentials:public'));
+        gitPrivate.authenticate(config.get('credentials:private'));
+    },
 
     /**
      * Return information about github repository
