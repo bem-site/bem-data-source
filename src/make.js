@@ -209,6 +209,8 @@ var commitAndPushResults = function() {
 };
 
 exports.run = function(source) {
+    libs.api.init();
+
     init()
         .then(function() { return retrieveSshUrl(source); })
         .then(verifyRepositoryTags)
