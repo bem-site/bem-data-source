@@ -30,8 +30,8 @@ Target.prototype = {
         this
             .addTask(function(t) {
                 return vow.allResolved([
-                    vowFs.removeDir(t.getContentPath()),
-                    vowFs.removeDir(t.getOutputPath())
+                    libs.util.removeDir(t.getContentPath()),
+                    libs.util.removeDir(t.getOutputPath())
                 ]).then(function() {
                     return t;
                 });
