@@ -2,10 +2,9 @@
 'use strict';
 
 var util = require('util'),
-    path = require('path'),
-    fs = require('fs'),
     cp = require('child_process'),
 
+    fs = require('fs-extra'),
     semver = require('semver'),
     vow = require('vow'),
     md = require('marked'),
@@ -77,37 +76,6 @@ exports.exec = function(cmd, options) {
 };
 
 /**
- * Check if current path is directory
- * @param path {String} path
- * @returns {Boolean}
- */
-exports.isDirectory = function(path) {
-    try {
-        return fs.statSync(path).isDirectory();
-    } catch(ignore) {}
-    return false;
-};
-
-/**
- * Returns list of directory names for _path
- * @param _path {String} path
- * @returns {Array} array of directory names, sorted alphabetically
- */
-exports.getDirs = function(_path) {
-    try {
-        return exports.isDirectory(_path)?
-            fs.readdirSync(_path)
-                .filter(function(d) {
-                    return !(/^\.svn$/.test(d)) && exports.isDirectory(path.join(_path, d));
-                })
-                .sort() :
-            [];
-    } catch (e) {
-        return [];
-    }
-};
-
-/**
  * Converts markdown content into html with marked module
  * @param content - {String} markdown content
  * @returns {String} - html string
@@ -118,4 +86,17 @@ exports.mdToHtml = function(content) {
         pedantic: false,
         sanitize: false
     });
+};
+
+exports.removeDir = function(path) {
+    var def = vow.defer();
+    fs.remove(path, function(err){
+        if(err) {
+            def.reject(err);
+        }
+
+        def.resolve();
+    });
+
+    return def.promise();
 };
