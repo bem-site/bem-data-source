@@ -67,12 +67,12 @@ var readMarkdownFilesForLibrary = function(target, result) {
                         })
                         .then(function(file) {
                             return vowFs
-                                .read(path.join(target.getContentPath(), mdTargets[key].folder, file))
+                                .read(path.join(target.getContentPath(), mdTargets[key].folder, file), 'utf-8')
                                 .then(onReadFileSuccess, onReadFileError);
                         });
                 }else {
                     return vowFs
-                        .read(path.join(target.getContentPath(), mdTargets[key]))
+                        .read(path.join(target.getContentPath(), mdTargets[key]), 'utf-8')
                         .then(onReadFileSuccess, onReadFileError);
                 }
 
@@ -92,6 +92,10 @@ var readLevelsForLibrary = function(target, result) {
 
     return vowFs.listDir(path.resolve(target.getOutputPath()))
         .then(function(levels) {
+            levels = levels.filter(function(item) {
+                return item.indexOf(".sets") !== -1;
+            });
+
             return vow.allResolved(levels.map(function(level) {
                 level = { name: level };
                 result.levels = result.levels || [];
@@ -146,7 +150,7 @@ var readDataForBlock = function(target, result, level, block) {
 
     return vow.allResolved(Object.keys(blockTargets).map(function(key) {
         return vowFs.read(path.resolve(target.getOutputPath(),
-            level.name, block.name, util.format(blockTargets[key], block.name))).then(
+            level.name, block.name, util.format(blockTargets[key], block.name)), 'utf-8').then(
                 function(content) {
                     try {
                         block[key] = JSON.parse(content);
@@ -172,5 +176,6 @@ var writeResultToFile = function(target, result) {
     logger.debug('write result of target %s to file %s', target.getName(),
         path.resolve(target.getOutputPath(), constants.FILE.DATA));
 
-    return vowFs.write(path.resolve(target.getOutputPath(), constants.FILE.DATA), JSON.stringify(result, null, 4), { charset: 'utf8' });
+    return vowFs.write(path.resolve(target.getOutputPath(), constants.FILE.DATA),
+        JSON.stringify(result, null, 4), { charset: 'utf8' });
 };
