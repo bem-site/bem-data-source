@@ -95,7 +95,7 @@ module.exports = {
 
     /**
      * Executes git push command
-     * @param ref {Stirng} of remote branch
+     * @param ref {String} of remote branch
      * @returns {defer.promise|*}
      */
     gitPush: function(ref) {
