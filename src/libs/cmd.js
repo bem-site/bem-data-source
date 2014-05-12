@@ -119,22 +119,24 @@ var runCommand = function(cmd, opts, name, target) {
         };
 
     if(!target) {
-        target = {name: 'all'};
+        target = {
+            getName: function() {
+                return 'all';
+            }
+        };
     }
 
-    var n = target.getName() || target.name;
-
-    logger.debug('execute %s for target %s', cmd, n);
+    logger.debug('execute %s for target %s', cmd, target.getName());
 
     u.exec(cmd, _.extend(opts, baseOpts)).then(
         function() {
-            logger.debug('%s for target %s completed', name, n);
+            logger.debug('%s for target %s completed', name, target.getName());
             def.resolve(target);
         },
         function(error) {
             logger.error(error);
-            logger.error('%s for target %s failed', name, n);
-            logger.error('execution of command %s failed for target %s', cmd, n);
+            logger.error('%s for target %s failed', name, target.getName());
+            logger.error('execution of command %s failed for target %s', cmd, target.getName());
             def.reject(error);
         }
     );

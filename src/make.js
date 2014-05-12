@@ -22,17 +22,18 @@ var util = require('util'),
  */
 var init = function() {
     return vowFs.makeDir(constants.DIRECTORY.CONTENT).then(function() {
-        return vowFs.isDir(constants.DIRECTORY.OUTPUT).then(function(isDir) {
-            if(isDir) {
+        return vowFs.exists(constants.DIRECTORY.OUTPUT).then(function(exists) {
+            if(exists) {
                 return;
             }
-
-            logger.info('Start clone remote target data repository. Please wait ...');
             return libs.util.getSSHUrl(config.get('dataConfig'))
-                .then(function(remoteUrl) {
+                .then(function(url) {
+                    logger.info('Start clone remote target data repository. Please wait ...');
+
                     return libs.cmd.gitClone({
-                        url: remoteUrl,
-                        contentPath: constants.DIRECTORY.OUTPUT
+                        getName: function() { return 'all'; },
+                        getUrl: function() { return url; },
+                        getContentPath: function() { return constants.DIRECTORY.OUTPUT; }
                     });
                 })
                 .then(function() {
