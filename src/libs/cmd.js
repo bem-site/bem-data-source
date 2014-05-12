@@ -70,8 +70,8 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     moveSets: function(target) {
-        return runCommand(util.format('cp -R %s/*.sets %s',
-            target.getContentPath(), target.getOutputPath()), {}, 'git move sets', target);
+        return runCommand(util.format('cp -R *.sets %s', path.resolve(target.getOutputPath())),
+            { cwd: path.resolve(target.getContentPath()) }, 'git move sets', target);
     },
 
     /**
