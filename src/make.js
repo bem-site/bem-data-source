@@ -13,6 +13,13 @@ var util = require('util'),
     logger = libs.logger(module),
     Target = require('./target');
 
+/**
+ * At first creates content repository
+ * Check if output directory is already exists
+ * If yes return
+ * Else clone remote github destination repository content in this output folder
+ * @returns {*}
+ */
 var init = function() {
     return vowFs.makeDir(constants.DIRECTORY.CONTENT).then(function() {
         return vowFs.isDir(constants.DIRECTORY.OUTPUT).then(function(isDir) {
@@ -20,27 +27,8 @@ var init = function() {
                 return;
             }
 
-            var getUrl = function() {
-                var dataRepository = config.get('dataConfig');
-
-                return libs.api
-                    .getRepository({
-                        user: dataRepository.user,
-                        name: dataRepository.repo,
-                        isPrivate: dataRepository.private
-                    })
-                    .then(
-                        function(res) {
-                            return res.result.ssh_url;
-                        },
-                        function() {
-                            logger.error('Data repository was not found. Application will be terminated');
-                        }
-                );
-            };
-
             logger.info('Start clone remote target data repository. Please wait ...');
-            return getUrl()
+            return libs.util.getSSHUrl(config.get('dataConfig'))
                 .then(function(remoteUrl) {
                     return libs.cmd.gitClone({
                         url: remoteUrl,
@@ -183,19 +171,20 @@ var createTargets = function(source) {
     return targets;
 };
 
+/**
+ * Executes all tasks for all targets
+ * @param targets - {Array} of {Target} objects
+ * @returns {*}
+ */
 var executeTargets = function(targets) {
     logger.info('-- run commands start --');
 
     return vow.allResolved(
         targets.map(function(target) { return target.execute(); })
     )
-    .then(
-        function(result) {
-            logger.info('-- run commands end --');
-            return libs.util.filterAndMapFulfilledPromises(
-                result, function(item) { return item.value; } );
-        }
-    );
+    .then(function() {
+        logger.info('-- run commands end --');
+    });
 };
 
 /**
@@ -225,7 +214,7 @@ exports.run = function(source) {
         .then(verifyRepositoryBranches)
         .then(createTargets)
         .then(executeTargets)
-        //.then(commitAndPushResults)
+        .then(commitAndPushResults)
         .then(function() {
             logger.info('application has been finished');
         });
