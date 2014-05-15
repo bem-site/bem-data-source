@@ -8,7 +8,6 @@ var util = require('util'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
 
-    pattern = require('../../config/pattern'),
     constants = require('../constants'),
     libs = require('../libs'),
     logger = libs.logger(module),
@@ -38,47 +37,41 @@ module.exports = function(target) {
 var readMarkdownFilesForLibrary = function(target, result) {
     logger.debug('read markdown files for library %s', target.getName());
 
-    var mdTargets  = {
-            readme: 'README.md',
-            changelog: pattern.getChangelog()[target.getSourceName()] || 'changelog.md',
-            migration: pattern.getMigration()[target.getSourceName()] || 'MIGRATION.md'
-        };
-
-        return vow.allResolved(Object.keys(mdTargets)
-            .map(function(key) {
-                var onReadFileSuccess = function(content) {
-                        try {
-                            result[key] = u.mdToHtml(content);
-                        }catch(e) {
-                            result[key] = null;
-                        }
-                    },
-                    onReadFileError = function() {
+    return vow.allResolved(Object.keys(target.getMdTargets())
+        .map(function(key) {
+            var onReadFileSuccess = function(content) {
+                    try {
+                        result[key] = u.mdToHtml(content);
+                    }catch(e) {
                         result[key] = null;
-                    };
+                    }
+                },
+                onReadFileError = function() {
+                    result[key] = null;
+                };
 
-                if(_.isObject(mdTargets[key])) {
-                    return vowFs
-                        .listDir(path.join(target.getContentPath(), mdTargets[key].folder))
-                        .then(function(files) {
-                            return files.filter(function(file) {
-                                return file.indexOf(mdTargets[key].pattern) !== -1;
-                            }).pop();
-                        })
-                        .then(function(file) {
-                            return vowFs
-                                .read(path.join(target.getContentPath(), mdTargets[key].folder, file), 'utf-8')
-                                .then(onReadFileSuccess, onReadFileError);
-                        });
-                }else {
-                    return vowFs
-                        .read(path.join(target.getContentPath(), mdTargets[key]), 'utf-8')
-                        .then(onReadFileSuccess, onReadFileError);
-                }
+            if(_.isObject(target.getMdTargets()[key])) {
+                return vowFs
+                    .listDir(path.join(target.getContentPath(), target.getMdTargets()[key].folder))
+                    .then(function(files) {
+                        return files.filter(function(file) {
+                            return file.indexOf(target.getMdTargets()[key].pattern) !== -1;
+                        }).pop();
+                    })
+                    .then(function(file) {
+                        return vowFs
+                            .read(path.join(target.getContentPath(), target.getMdTargets()[key].folder, file), 'utf-8')
+                            .then(onReadFileSuccess, onReadFileError);
+                    });
+            }else {
+                return vowFs
+                    .read(path.join(target.getContentPath(), target.getMdTargets()[key]), 'utf-8')
+                    .then(onReadFileSuccess, onReadFileError);
+            }
 
 
-            })
-        );
+        })
+    );
 };
 
 /**
@@ -143,14 +136,10 @@ var readBlocksForLevel = function(target, result, level) {
  * @returns {*}
  */
 var readDataForBlock = function(target, result, level, block) {
-    var blockTargets = {
-        data: '%s.data.json',
-        jsdoc: '%s.jsdoc.json'
-    };
 
-    return vow.allResolved(Object.keys(blockTargets).map(function(key) {
+    return vow.allResolved(Object.keys(target.getBlockTargets()).map(function(key) {
         return vowFs.read(path.resolve(target.getOutputPath(),
-            level.name, block.name, util.format(blockTargets[key], block.name)), 'utf-8').then(
+            level.name, block.name, util.format(target.getBlockTargets()[key], block.name)), 'utf-8').then(
                 function(content) {
                     try {
                         block[key] = JSON.parse(content);
