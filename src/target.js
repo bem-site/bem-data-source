@@ -57,6 +57,11 @@ Target.prototype = {
             .addTask(libs.cmd.gitCheckout) //git checkout
             .addTask(libs.cmd.npmInstall) //npm install
             .addTask(libs.cmd.npmRunDeps) //bower or bem make libs
+            .addTask(function(t) {
+                return vowFs.copy('.borschik', t.getContentPath()).then(function() {
+                    return t;
+                });
+            })
             .addTask(libs.cmd.npmRunBuild) //alias to make sets
             //.addTask(libs.cmd.bemMakeSets) //bem make sets
             .addTask(libs.cmd.moveSets) //move sets to output folder
