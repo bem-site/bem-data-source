@@ -1,9 +1,9 @@
 {
     "logLevel": "debug",
     "dataConfig": {
-        "private": "true",
+        "private": "false",
         "user": "lego",
-        "repo": "lego-site-data",
+        "repo": "bem-info-libs",
         "ref": "master"
     },
     "gitAPI": {
