@@ -34,6 +34,13 @@ Target.prototype = {
     type: null,
     tasks: [],
 
+    /**
+     * Initialize target for build
+     * @param source - {Object} source
+     * @param ref - {String} name of tag or branch
+     * @param type - {String} type of reference
+     * @returns {Target}
+     */
     init: function(source, ref, type) {
         this.source = source;
         this.ref = ref;
@@ -58,9 +65,12 @@ Target.prototype = {
             .addTask(libs.cmd.npmInstall) //npm install
             .addTask(libs.cmd.npmRunDeps) //bower or bem make libs
             .addTask(function(t) {
-                return vowFs.copy('.borschik', t.getContentPath()).then(function() {
-                    return t;
-                });
+                return vowFs
+                    .copy('.borschik', path.join(t.getContentPath(), '.borschik'))
+                    .then(function() {
+                        return t;
+                    }
+                );
             })
             .addTask(libs.cmd.npmRunBuild) //alias to make sets
             //.addTask(libs.cmd.bemMakeSets) //bem make sets
@@ -78,10 +88,18 @@ Target.prototype = {
         return util.format('%s %s', this.source.name, this.ref);
     },
 
+    /**
+     * Returns name of source repository
+     * @returns {*}
+     */
     getSourceName: function() {
         return this.source.name;
     },
 
+    /**
+     * Returns github url for source
+     * @returns {String} - url of source
+     */
     getUrl: function() {
         return this.source.url;
     },
@@ -91,7 +109,7 @@ Target.prototype = {
      * @returns {string}
      */
     getContentPath: function() {
-        return path.join(constants.DIRECTORY.CONTENT, this.source.name, this.ref);
+        return path.join(constants.DIRECTORY.CONTENT, this.getSourceName(), this.ref);
     },
 
     /**
@@ -99,7 +117,7 @@ Target.prototype = {
      * @returns {string}
      */
     getOutputPath: function() {
-        return path.join(constants.DIRECTORY.OUTPUT, this.source.name, this.ref);
+        return path.join(constants.DIRECTORY.OUTPUT, this.getSourceName(), this.ref);
     },
 
     /**
@@ -126,6 +144,10 @@ Target.prototype = {
         }, initial.call(null, self));
     },
 
+    /**
+     *
+     * @returns {{repo: *, ref: *, url: string}}
+     */
     createSetsResultBase: function() {
         return {
             repo: this.source.name,
@@ -134,6 +156,10 @@ Target.prototype = {
         };
     },
 
+    /**
+     * Returns pattern for markdown files
+     * @returns {{readme: string, changelog: (*|string), migration: (*|string)}}
+     */
     getMdTargets: function() {
         return {
             readme: this.MD.README,
@@ -142,6 +168,12 @@ Target.prototype = {
         };
     },
 
+    /**
+     * Returns pattern for output files
+     * @returns {Object} with fields:
+     * - data {String} pattern for data file
+     * - jsdoc {String} pattern for jsdoc file
+     */
     getBlockTargets: function() {
         return pattern.getPattern()[this.getSourceName()] || this.BLOCK_DEFAULT;
     }
