@@ -1,5 +1,5 @@
 {
     "freeze_paths": {
-        "**": "output/freeze"
+        "**": "../../../output/freeze"
     }
 }
