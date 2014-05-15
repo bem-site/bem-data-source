@@ -55,6 +55,16 @@ module.exports = {
     },
 
     /**
+     * Executes npm run deps command
+     * @param target - {Object} target object
+     * @returns {defer.promise|*}
+     */
+    npmRunBuild: function(target) {
+        return runCommand('npm run build',
+                { cwd: path.resolve(target.getContentPath()) }, 'npm run build', target);
+    },
+
+    /**
      * Executes bem make sets command
      * @param target - {Object} target object
      * @returns {defer.promise|*}
