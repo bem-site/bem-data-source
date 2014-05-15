@@ -9,13 +9,25 @@ var util = require('util'),
 
     constants = require('./constants'),
     libs = require('./libs'),
-    collectSets = require('./tasks/collect_sets');
+    collectSets = require('./tasks/collect_sets'),
+    pattern = require('../config/pattern');
 
 var Target = function(source, ref, type) {
     return this.init(source, ref, type);
 };
 
 Target.prototype = {
+
+    BLOCK_DEFAULT: {
+        data: '%s.data.json',
+        jsdoc: '%s.jsdoc.json'
+    },
+
+    MD: {
+        README: 'README.md',
+        CHANGELOG: 'changelog.md',
+        MIGRATION: 'MIGRATION.md'
+    },
 
     source: null,
     ref: null,
@@ -45,7 +57,8 @@ Target.prototype = {
             .addTask(libs.cmd.gitCheckout) //git checkout
             .addTask(libs.cmd.npmInstall) //npm install
             .addTask(libs.cmd.npmRunDeps) //bower or bem make libs
-            .addTask(libs.cmd.bemMakeSets) //bem make sets
+            .addTask(libs.cmd.npmRunBuild) //alias to make sets
+            //.addTask(libs.cmd.bemMakeSets) //bem make sets
             .addTask(libs.cmd.moveSets) //move sets to output folder
             .addTask(collectSets); //collect sets
 
@@ -114,6 +127,18 @@ Target.prototype = {
             ref: this.ref,
             url: this.source.url.replace('git:', 'http:').replace('.git', '')
         };
+    },
+
+    getMdTargets: function() {
+        return {
+            readme: this.MD.README,
+            changelog: pattern.getChangelog()[this.getSourceName()] || this.MD.CHANGELOG,
+            migration: pattern.getMigration()[this.getSourceName()] || this.MD.MIGRATION
+        };
+    },
+
+    getBlockTargets: function() {
+        return pattern.getPattern()[this.getSourceName()] || this.BLOCK_DEFAULT;
     }
 };
 
