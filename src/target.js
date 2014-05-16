@@ -96,6 +96,10 @@ Target.prototype = {
         return this.source.name;
     },
 
+    getSourcePrivacy: function() {
+        return this.source.isPrivate;
+    },
+
     /**
      * Returns github url for source
      * @returns {String} - url of source
