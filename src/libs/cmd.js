@@ -42,7 +42,7 @@ module.exports = {
      */
     npmInstall: function(target) {
         return runCommand(util.format('npm install --registry=%s',
-                pattern.getRegistry()[target.getSourceName()] || 'https://registry.npmjs.org'),
+                target.getSourcePrivacy() ? constants.NPM_REGISTRY.PRIVATE : constants.NPM_REGISTRY.PUBLIC),
             { cwd: path.resolve(target.getContentPath()) }, 'npm install', target);
     },
 
