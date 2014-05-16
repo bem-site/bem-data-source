@@ -54,7 +54,7 @@ module.exports = require('coa').Cmd()
         }
 
         require('./make.js').run({
-            isPrivate: opts.private,
+            isPrivate: !!opts.private,
             user: opts.user,
             name: opts.repo,
             tags: opts.tags || [],
