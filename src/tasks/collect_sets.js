@@ -107,7 +107,7 @@ var readLevelsForLibrary = function(target, result) {
  * @returns {*}
  */
 var readBlocksForLevel = function(target, result, level) {
-    var blockIgnores = ['.bem', 'index', 'catalogue', 'index', 'jscatalogue'];
+    var blockIgnores = ['.dist', '.bem', 'index', 'catalogue', 'index', 'jscatalogue'];
 
     return vowFs.listDir(path.resolve(target.getOutputPath(), level.name))
         .then(function(blocks) {
