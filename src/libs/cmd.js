@@ -40,7 +40,8 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     npmInstall: function(target) {
-        return runCommand('npm install --registry=http://npm.yandex-team.ru',
+        return runCommand(util.format('npm install --registry=%s',
+                pattern.getRegistry()[target.getSourceName()] || 'https://registry.npmjs.org'),
             { cwd: path.resolve(target.getContentPath()) }, 'npm install', target);
     },
 
