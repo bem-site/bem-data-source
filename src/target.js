@@ -109,7 +109,7 @@ Target.prototype = {
      * @returns {string}
      */
     getContentPath: function() {
-        return path.join(constants.DIRECTORY.CONTENT, this.getSourceName(), this.ref);
+        return path.join(constants.DIRECTORY.CONTENT, this.getSourceName(), this.ref.replace(/\//g, '-'));
     },
 
     /**
@@ -117,7 +117,7 @@ Target.prototype = {
      * @returns {string}
      */
     getOutputPath: function() {
-        return path.join(constants.DIRECTORY.OUTPUT, this.getSourceName(), this.ref);
+        return path.join(constants.DIRECTORY.OUTPUT, this.getSourceName(), this.ref.replace(/\//g, '-'));
     },
 
     /**
