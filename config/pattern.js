@@ -9,12 +9,60 @@ exports.getChangelog = function() {
         'bem-components': {
             folder: '',
             pattern: 'CHANGELOG.md'
+        },
+        'islands-components': {
+            folder: "releases",
+            pattern: "changelog.md"
+        },
+        'islands-user': {
+            folder: "releases",
+            pattern: "changelog.md"
+        },
+        'islands-page': {
+            folder: "releases",
+            pattern: "changelog.md"
+        },
+        'islands-services': {
+            folder: "releases",
+            pattern: "changelog.md"
+        },
+        'islands-search': {
+            folder: "releases",
+            pattern: "changelog.md"
+        },
+        'islands-icons': {
+            folder: "releases",
+            pattern: "changelog.md"
         }
     };
 };
 
 exports.getMigration = function() {
-    return {};
+    return {
+        'islands-components': {
+            folder: "releases",
+            pattern: "MIGRATION.md"
+        },
+        'islands-user': {
+            folder: "releases",
+            pattern: "MIGRATION.md"
+        },
+        'islands-page': {
+            folder: "releases",
+            pattern: "MIGRATION.md"
+        },
+        'islands-services': {
+            folder: "releases",
+            pattern: "MIGRATION.md"
+        },
+        'islands-search': {
+            folder: "releases",
+            pattern: "MIGRATION.md"
+        },
+        'islands-icons': {
+            folder: "releases",
+            pattern: "MIGRATION.md"
+        }};
 };
 
 exports.getPattern = function() {
@@ -31,14 +79,5 @@ exports.getPattern = function() {
             "data": "%s.data.json",
             "jsdoc": "%s.js-doc.html"
         }
-    };
-};
-
-exports.getRegistry = function() {
-    return {
-        'bem-mvc': 'https://registry.npmjs.org',
-        'bem-core': 'https://registry.npmjs.org',
-        'bem-components': 'https://registry.npmjs.org',
-        'bem-bl': 'https://registry.npmjs.org'
     };
 };
