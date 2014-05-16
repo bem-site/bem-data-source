@@ -10,6 +10,7 @@ var util = require('util'),
     config = require('../config'),
     constants = require('../constants'),
     logger = require('./logger')(module),
+    pattern = require('../../config/pattern'),
     u = require('./util');
 
 module.exports = {
