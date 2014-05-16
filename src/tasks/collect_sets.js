@@ -144,7 +144,7 @@ var readDataForBlock = function(target, result, level, block) {
                     try {
                         block[key] = JSON.parse(content);
                     } catch(e) {
-                        block[key] = null;
+                        block[key] = content;   
                     }
                 },
                 function() {
