@@ -77,7 +77,7 @@ exports.mdToHtml = function(content) {
  */
 exports.removeDir = function(path) {
     var def = vow.defer();
-    fs.remove(path, function(err){
+    fs.remove(path, function(err) {
         if(err) {
             def.reject(err);
         }

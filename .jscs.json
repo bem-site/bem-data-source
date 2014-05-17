@@ -97,7 +97,6 @@
         "<="
     ],
     "disallowImplicitTypeConversion": [
-        "boolean",
         "string",
         "numeric",
         "binary"

@@ -1,6 +1,6 @@
 'use strict';
 
-var Api = require("github"),
+var Api = require('github'),
     vow = require('vow'),
     _ = require('lodash'),
 
