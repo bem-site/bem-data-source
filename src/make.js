@@ -9,16 +9,16 @@ var util = require('util'),
     constants = require('./constants'),
     libs = require('./libs'),
     logger = libs.logger(module),
-    Target = require('./target');
+    Target = require('./target'),
 
-/**
- * At first creates content repository
- * Check if output directory is already exists
- * If yes return
- * Else clone remote github destination repository content in this output folder
- * @returns {*}
- */
-var init = function() {
+    /**
+     * At first creates content repository
+     * Check if output directory is already exists
+     * If yes return
+     * Else clone remote github destination repository content in this output folder
+     * @returns {*}
+     */
+    init = function() {
         return vowFs.makeDir(constants.DIRECTORY.CONTENT).then(function() {
             return vowFs.exists(constants.DIRECTORY.OUTPUT).then(function(exists) {
                 if(exists) {
@@ -53,7 +53,7 @@ var init = function() {
      */
     retrieveSshUrl = function(source) {
         var url = util.format('git://%s/%s/%s.git',
-            source.isPrivate ? constants.GITHUB.PRIVATE : constants.GITHUB.PUBLIC , source.user, source.name);
+            source.isPrivate ? constants.GITHUB.PRIVATE : constants.GITHUB.PUBLIC, source.user, source.name);
 
         logger.debug('get repository with name %s and url %s', source.name, url);
 
@@ -91,7 +91,7 @@ var init = function() {
                     var exists = refNames.indexOf(item) > -1;
 
                     if(!exists) {
-                        logger.warn("Ref %s does not actually present in repository %s", item, source.name);
+                        logger.warn('Ref %s does not actually present in repository %s', item, source.name);
                     }
 
                     return exists;
