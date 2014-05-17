@@ -54,53 +54,13 @@ var init = function() {
  * @returns {defer.promise|*}
  */
 var retrieveSshUrl = function(source) {
-    var GITHUB = {
-        INNER: 'github.yandex-team.ru',
-        OUTER: 'github.com'
-    };
-
     var url = util.format('git://%s/%s/%s.git',
-        source.isPrivate ? GITHUB.INNER : GITHUB.OUTER , source.user, source.name);
+        source.isPrivate ? constants.GITHUB.PRIVATE : constants.GITHUB.PUBLIC , source.user, source.name);
 
     logger.debug('get repository with name %s and url %s', source.name, url);
-    return _.extend({ url: url }, source);
-};
 
-/**
- * Retrieves information about repository tags and filter them according to config
- * @param source - {Object} with fields:
- * - isPrivate {Boolean} indicate if repository from private github
- * - user {String} name of user or organization
- * - name - {String} name of repository
- * - tags - {String} tag name
- * - branches - {String} branch name
- * - url - {String} git url of repository
- * @returns {defer.promise|*}
- */
-var verifyRepositoryTags = function(source) {
-    if(!source.tags) {
-        source.tags = [];
-        return source;
-    }
-
-    return libs.api.getRepositoryTags(source)
-        .then(function(res) {
-            var tagNames = res.result.map(function(item) {
-                return item.name;
-            });
-
-            source.tags = source.tags.filter(function(item) {
-                var exists = tagNames.indexOf(item) > -1;
-
-                if(!exists) {
-                    logger.warn("Tag %s does not actually present in repository %s", item, source.name);
-                }
-
-                return exists;
-            });
-
-            return source;
-        });
+    source.url = url;
+    return source;
 };
 
 /**
@@ -112,27 +72,28 @@ var verifyRepositoryTags = function(source) {
  * - tags - {String} tag name
  * - branches - {String} branch name
  * - url - {String} git url of repository
+ * @param conf - {Object} with fields:
+ * - field - {String} name of reference
+ * - apiFunction - {Function} api function to retrieve reference information
  * @returns {defer.promise|*}
  */
-var verifyRepositoryBranches = function(source) {
-    logger.info('-- get branches start --');
-
-    if(!source.branches) {
-        source.branches = [];
+var verifyRepositoryReferences = function(source, conf) {
+    if(!source[conf.field]) {
+        source[conf.field] = [];
         return source;
     }
 
-    return libs.api.getRepositoryBranches(source)
+    return conf.apiFunction.call(null, source)
         .then(function(res) {
-            var branchNames = res.result.map(function(item) {
+            var refNames = res.result.map(function(item) {
                 return item.name;
             });
 
-            source.branches = source.branches.filter(function(item) {
-                var exists = branchNames.indexOf(item) > -1;
+            source[conf.field] = source[conf.field].filter(function(item) {
+                var exists = refNames.indexOf(item) > -1;
 
                 if(!exists) {
-                    logger.warn("Tag %s does not actually present in repository %s", item, source.name);
+                    logger.warn("Ref %s does not actually present in repository %s", item, source.name);
                 }
 
                 return exists;
@@ -178,14 +139,7 @@ var createTargets = function(source) {
  * @returns {*}
  */
 var executeTargets = function(targets) {
-    logger.info('-- run commands start --');
-
-    return vow.allResolved(
-        targets.map(function(target) { return target.execute(); })
-    )
-    .then(function() {
-        logger.info('-- run commands end --');
-    });
+    return vow.allResolved(targets.map(function(target) { return target.execute(); }));
 };
 
 /**
@@ -193,18 +147,12 @@ var executeTargets = function(targets) {
  * @returns {*}
  */
 var commitAndPushResults = function() {
-
-    logger.info('-- commit and push results start --');
-
     return libs.cmd.gitAdd()
         .then(function() {
             return libs.cmd.gitCommit(util.format('Update data: %s', (new Date()).toString()));
         })
         .then(function() {
             return libs.cmd.gitPush(config.get('dataConfig:ref'));
-        })
-        .then(function() {
-            logger.info('-- commit and push results end --');
         });
 };
 
@@ -212,9 +160,21 @@ exports.run = function(source) {
     libs.api.init();
 
     init()
-        .then(function() { return retrieveSshUrl(source); })
-        .then(verifyRepositoryTags)
-        .then(verifyRepositoryBranches)
+        .then(function() {
+            return retrieveSshUrl(source);
+        })
+        .then(function(source) {
+            return verifyRepositoryReferences(source, {
+                field: 'tags',
+                apiFunction: libs.api.getRepositoryTags
+            });
+        })
+        .then(function(source) {
+            return verifyRepositoryReferences(source, {
+                field: 'branches',
+                apiFunction: libs.api.getRepositoryBranches
+            });
+        })
         .then(createTargets)
         .then(executeTargets)
         .then(commitAndPushResults)
