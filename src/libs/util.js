@@ -1,4 +1,3 @@
-/* global toString: false */
 'use strict';
 
 var util = require('util'),
@@ -9,8 +8,7 @@ var util = require('util'),
     vow = require('vow'),
     md = require('marked'),
 
-    logger = require('./logger')(module),
-    config = require('../config');
+    logger = require('./logger')(module);
 
 /**
  * Sort tags function
