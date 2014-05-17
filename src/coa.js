@@ -41,7 +41,7 @@ module.exports = require('coa').Cmd()
         .short('b').long('branches')
         .arr()
         .end()
-    .act(function(opts, args) {
+    .act(function(opts) {
         logger.info('Try to build sets for:');
         logger.info('repository privacy: %s', !!opts.private);
         logger.info('repository user or organization: %s', opts.user);

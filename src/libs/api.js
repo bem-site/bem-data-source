@@ -1,14 +1,13 @@
-/* global toString: false */
 'use strict';
 
-var api = require("github"),
+var Api = require("github"),
     vow = require('vow'),
     _ = require('lodash'),
 
     logger = require('./logger')(module),
-    config = require('../config.js');
+    config = require('../config.js'),
 
-var gitPublic = null,
+    gitPublic = null,
     gitPrivate = null;
 
 module.exports = {
@@ -24,8 +23,8 @@ module.exports = {
             publicConfig = gitConfig.public,
             privateConfig = gitConfig.private;
 
-        gitPublic = new api(_.extend(publicConfig, commonConfig));
-        gitPrivate = new api(_.extend(privateConfig, commonConfig));
+        gitPublic = new Api(_.extend(publicConfig, commonConfig));
+        gitPrivate = new Api(_.extend(privateConfig, commonConfig));
 
         gitPublic.authenticate(config.get('credentials:public'));
         gitPrivate.authenticate(config.get('credentials:private'));

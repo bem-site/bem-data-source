@@ -1,4 +1,3 @@
-/* global toString: false */
 'use strict';
 
 var util = require('util'),
@@ -7,10 +6,8 @@ var util = require('util'),
     _ = require('lodash'),
     vow = require('vow'),
 
-    config = require('../config'),
     constants = require('../constants'),
     logger = require('./logger')(module),
-    pattern = require('../../config/pattern'),
     u = require('./util');
 
 module.exports = {
