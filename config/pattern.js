@@ -1,5 +1,24 @@
 'use strict';
 
+exports.getReadme = function() {
+    return {
+        'bem-mvc': {
+            folder: '',
+            pattern: {
+                en: 'README.md',
+                ru: 'README.ru.md'
+            }
+        },
+        'bem-bl': {
+            folder: '',
+            pattern: {
+                en: 'README.md',
+                ru: 'README.ru.md'
+            }
+        }
+    }
+};
+
 exports.getChangelog = function() {
     return {
         'bem-core': {
@@ -9,6 +28,13 @@ exports.getChangelog = function() {
         'bem-components': {
             folder: '',
             pattern: 'CHANGELOG.md'
+        },
+        'bem-mvc': {
+            folder: '',
+            pattern: {
+                en: 'CHANGELOG.md',
+                ru: 'CHANGELOG.ru.md'
+            }
         },
         'islands-components': {
             folder: "releases",
@@ -76,6 +102,10 @@ exports.getPattern = function() {
             "jsdoc": "%s.js-doc.html"
         },
         'bem-components': {
+            "data": "%s.data.json",
+            "jsdoc": "%s.js-doc.html"
+        },
+        'bem-mvc': {
             "data": "%s.data.json",
             "jsdoc": "%s.js-doc.html"
         }

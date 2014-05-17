@@ -24,9 +24,18 @@ Target.prototype = {
     },
 
     MD: {
-        README: 'README.md',
-        CHANGELOG: 'changelog.md',
-        MIGRATION: 'MIGRATION.md'
+        README: {
+            folder: '',
+            patter: 'README.md'
+        },
+        CHANGELOG: {
+            folder: '',
+            pattern: 'changelog.md'
+        },
+        MIGRATION: {
+            folder: '',
+            pattern: 'MIGRATION.md'
+        }
     },
 
     source: null,
@@ -166,7 +175,7 @@ Target.prototype = {
      */
     getMdTargets: function() {
         return {
-            readme: this.MD.README,
+            readme: pattern.getReadme()[this.getSourceName()] || this.MD.README,
             changelog: pattern.getChangelog()[this.getSourceName()] || this.MD.CHANGELOG,
             migration: pattern.getMigration()[this.getSourceName()] || this.MD.MIGRATION
         };
