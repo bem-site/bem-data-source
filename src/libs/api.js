@@ -64,7 +64,7 @@ module.exports = {
         var def = vow.defer(),
             git = source.isPrivate ? gitPrivate : gitPublic;
 
-        git.repos.getTags({ user: source.user, repo: source.name }, function(err, res) {
+        git.repos.getTags({ user: source.user, repo: source.name, per_page: 100 }, function(err, res) {
             if (err) {
                 logger.error(err.message);
                 def.reject(err);
@@ -86,7 +86,7 @@ module.exports = {
         var def = vow.defer(),
             git = source.isPrivate ? gitPrivate : gitPublic;
 
-        git.repos.getBranches({ user: source.user, repo: source.name }, function(err, res) {
+        git.repos.getBranches({ user: source.user, repo: source.name, per_page: 100 }, function(err, res) {
             if (err) {
                 logger.error(err.message);
                 def.reject(err);
