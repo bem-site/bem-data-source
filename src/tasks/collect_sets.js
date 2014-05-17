@@ -1,4 +1,3 @@
-/* global toString: false */
 'use strict';
 
 var util = require('util'),
@@ -54,26 +53,26 @@ var readMarkdownFilesForLibrary = function(target, result) {
                     result[key] = null;
 
                     return vow.allResolved(Object.keys(pattern).map(function(lang) {
-                        var file  = files.filter(function (file) {
+                        var file  = files.filter(function(file) {
                             return file.indexOf(pattern[lang]) !== -1;
-                        }).pop()
+                        }).pop();
 
                         return vowFs
                             .read(path.join(target.getContentPath(), target.getMdTargets()[key].folder, file), 'utf-8')
                             .then(
-                                function (content) {
+                                function(content) {
                                     try {
                                         result[key] = result[key] || {};
                                         result[key][lang] = u.mdToHtml(content);
-                                    } catch (e) {}
+                                    } catch(e) {}
                                 },
-                                function () {}
+                                function() {}
                             );
                     }));
-                })
+                });
         })
     );
-};
+},
 
 /**
  * Scan level directories for library
@@ -81,13 +80,13 @@ var readMarkdownFilesForLibrary = function(target, result) {
  * @param result - {Object} result model
  * @returns {*}
  */
-var readLevelsForLibrary = function(target, result) {
+readLevelsForLibrary = function(target, result) {
     logger.debug('read level directories for library %s', target.getName());
 
     return vowFs.listDir(path.resolve(target.getOutputPath()))
         .then(function(levels) {
             levels = levels.filter(function(item) {
-                return item.indexOf(".sets") !== -1;
+                return item.indexOf('.sets') !== -1;
             });
 
             return vow.allResolved(levels.map(function(level) {
@@ -98,7 +97,7 @@ var readLevelsForLibrary = function(target, result) {
                 return readBlocksForLevel(target, result, level);
             }));
         });
-};
+},
 
 /**
  * Scan block directories for level
@@ -107,7 +106,7 @@ var readLevelsForLibrary = function(target, result) {
  * @param level - {Object} level
  * @returns {*}
  */
-var readBlocksForLevel = function(target, result, level) {
+readBlocksForLevel = function(target, result, level) {
     var blockIgnores = ['.dist', '.bem', 'index', 'catalogue', 'index', 'jscatalogue'];
 
     return vowFs.listDir(path.resolve(target.getOutputPath(), level.name))
@@ -126,7 +125,7 @@ var readBlocksForLevel = function(target, result, level) {
                     })
             );
         });
-};
+},
 
 /**
  * Read data files for single block
@@ -136,7 +135,7 @@ var readBlocksForLevel = function(target, result, level) {
  * @param block - {Object} block
  * @returns {*}
  */
-var readDataForBlock = function(target, result, level, block) {
+readDataForBlock = function(target, result, level, block) {
 
     return vow.allResolved(Object.keys(target.getBlockTargets()).map(function(key) {
         return vowFs.read(path.resolve(target.getOutputPath(),
@@ -144,8 +143,8 @@ var readDataForBlock = function(target, result, level, block) {
                 function(content) {
                     try {
                         block[key] = JSON.parse(content);
-                    } catch(e) {
-                        block[key] = content;   
+                    }catch(e) {
+                        block[key] = content;
                     }
                 },
                 function() {
@@ -154,7 +153,7 @@ var readDataForBlock = function(target, result, level, block) {
             );
         })
     );
-};
+},
 
 /**
  * Save result model into json file
@@ -162,7 +161,7 @@ var readDataForBlock = function(target, result, level, block) {
  * @param result - {Object} result model
  * @returns {*}
  */
-var writeResultToFile = function(target, result) {
+writeResultToFile = function(target, result) {
     logger.debug('write result of target %s to file %s', target.getName(),
         path.resolve(target.getOutputPath(), constants.FILE.DATA));
 

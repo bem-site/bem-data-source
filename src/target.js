@@ -1,4 +1,3 @@
-/* global toString: false */
 'use strict';
 
 var util = require('util'),
@@ -10,11 +9,11 @@ var util = require('util'),
     constants = require('./constants'),
     libs = require('./libs'),
     collectSets = require('./tasks/collect_sets'),
-    pattern = require('../config/pattern');
+    pattern = require('../config/pattern'),
 
-var Target = function(source, ref, type) {
-    return this.init(source, ref, type);
-};
+    Target = function(source, ref, type) {
+        return this.init(source, ref, type);
+    };
 
 Target.prototype = {
 
@@ -148,13 +147,13 @@ Target.prototype = {
      * @returns {*}
      */
     execute: function() {
-        var self = this,
+        var _this = this,
             initial = this.tasks.shift();
         return this.tasks.reduce(function(prev, item) {
             return prev.then(function() {
-                return item.call(null, self);
+                return item.call(null, _this);
             });
-        }, initial.call(null, self));
+        }, initial.call(null, _this));
     },
 
     /**
