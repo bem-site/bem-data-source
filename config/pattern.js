@@ -15,6 +15,10 @@ exports.getReadme = function() {
                 en: 'README.md',
                 ru: 'README.ru.md'
             }
+        },
+        'bem-components': {
+            folder: '',
+            pattern: 'README.md'
         }
     }
 };
@@ -88,7 +92,12 @@ exports.getMigration = function() {
         'islands-icons': {
             folder: "releases",
             pattern: "MIGRATION.md"
-        }};
+        },
+        'bem-components': {
+            folder: '',
+            pattern: 'MIGRATION.md'
+        },
+    };
 };
 
 exports.getPattern = function() {
