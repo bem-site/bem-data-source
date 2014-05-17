@@ -127,33 +127,10 @@ var createTargets = function(source) {
     });
 
     if(!targets.length) {
-        logger.warn('no targets will be executed');
+        return vow.reject('no targets will be executed');
     }
 
     return targets;
-};
-
-/**
- * Executes all tasks for all targets
- * @param targets - {Array} of {Target} objects
- * @returns {*}
- */
-var executeTargets = function(targets) {
-    return vow.allResolved(targets.map(function(target) { return target.execute(); }));
-};
-
-/**
- * Commits and pushes collected data
- * @returns {*}
- */
-var commitAndPushResults = function() {
-    return libs.cmd.gitAdd()
-        .then(function() {
-            return libs.cmd.gitCommit(util.format('Update data: %s', (new Date()).toString()));
-        })
-        .then(function() {
-            return libs.cmd.gitPush(config.get('dataConfig:ref'));
-        });
 };
 
 exports.run = function(source) {
@@ -176,9 +153,28 @@ exports.run = function(source) {
             });
         })
         .then(createTargets)
-        .then(executeTargets)
-        .then(commitAndPushResults)
+        .then(function(targets) {
+            return vow.allResolved(targets.map(function(target) {
+                return target.execute();
+            }));
+        })
         .then(function() {
-            logger.info('application has been finished');
-        });
+            return libs.cmd.gitAdd();
+        })
+        .then(function() {
+            var cMsg = util.format('Update data: %s', (new Date()).toString());
+            return libs.cmd.gitCommit(cMsg);
+        })
+        .then(function() {
+            return libs.cmd.gitPush(config.get('dataConfig:ref'));
+        })
+        .then(
+            function() {
+                logger.info('application has been finished');
+            },
+            function(err) {
+                logger.error(err);
+                logger.error('application failed with error');
+            }
+        );
 };
