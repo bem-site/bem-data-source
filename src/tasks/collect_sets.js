@@ -39,7 +39,8 @@ var readMarkdownFilesForLibrary = function(target, result) {
 
     return vow.allResolved(Object.keys(target.getMdTargets())
         .map(function(key) {
-            return vowFs.listDir(path.join(target.getContentPath(), target.getMdTargets()[key].folder))
+            return vowFs
+                .listDir(path.join(target.getContentPath(), target.getMdTargets()[key].folder))
                 .then(function(files) {
                     var pattern = target.getMdTargets()[key].pattern;
 
@@ -50,7 +51,7 @@ var readMarkdownFilesForLibrary = function(target, result) {
                         };
                     }
 
-                    result[key] = {};
+                    result[key] = null;
 
                     return vow.allResolved(Object.keys(pattern).map(function(lang) {
                         var file  = files.filter(function (file) {
@@ -62,44 +63,17 @@ var readMarkdownFilesForLibrary = function(target, result) {
                             .then(
                                 function (content) {
                                     try {
+                                        result[key] = result[key] || {};
                                         result[key][lang] = u.mdToHtml(content);
-                                    } catch (e) {
-                                        result[key][lang] = null;
-                                    }
+                                    } catch (e) {}
                                 },
-                                function () {
-                                    result[key][lang] = null;
-                                }
+                                function () {}
                             );
                     }));
                 })
         })
     );
 };
-
-/*
- .then(function (files) {
- return files.filter(function (file) {
- return file.indexOf(target.getMdTargets()[key].pattern) !== -1;
- }).pop();
- })
- .then(function (file) {
- return vowFs
- .read(path.join(target.getContentPath(), target.getMdTargets()[key].folder, file), 'utf-8')
- .then(
- function (content) {
- try {
- result[key] = u.mdToHtml(content);
- } catch (e) {
- result[key] = null;
- }
- },
- function () {
- result[key] = null;
- }
- );
- })
-*/
 
 /**
  * Scan level directories for library
