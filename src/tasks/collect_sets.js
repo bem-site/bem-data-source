@@ -39,40 +39,67 @@ var readMarkdownFilesForLibrary = function(target, result) {
 
     return vow.allResolved(Object.keys(target.getMdTargets())
         .map(function(key) {
-            var onReadFileSuccess = function(content) {
-                    try {
-                        result[key] = u.mdToHtml(content);
-                    }catch(e) {
-                        result[key] = null;
-                    }
-                },
-                onReadFileError = function() {
-                    result[key] = null;
-                };
+            return vowFs.listDir(path.join(target.getContentPath(), target.getMdTargets()[key].folder))
+                .then(function(files) {
+                    var pattern = target.getMdTargets()[key].pattern;
 
-            if(_.isObject(target.getMdTargets()[key])) {
-                return vowFs
-                    .listDir(path.join(target.getContentPath(), target.getMdTargets()[key].folder))
-                    .then(function(files) {
-                        return files.filter(function(file) {
-                            return file.indexOf(target.getMdTargets()[key].pattern) !== -1;
-                        }).pop();
-                    })
-                    .then(function(file) {
+                    if(!_.isObject(pattern)) {
+                        pattern = {
+                            en: pattern,
+                            ru: pattern
+                        };
+                    }
+
+                    result[key] = {};
+
+                    return vow.allResolved(Object.keys(pattern).map(function(lang) {
+                        var file  = files.filter(function (file) {
+                            return file.indexOf(pattern[lang]) !== -1;
+                        }).pop()
+
                         return vowFs
                             .read(path.join(target.getContentPath(), target.getMdTargets()[key].folder, file), 'utf-8')
-                            .then(onReadFileSuccess, onReadFileError);
-                    });
-            }else {
-                return vowFs
-                    .read(path.join(target.getContentPath(), target.getMdTargets()[key]), 'utf-8')
-                    .then(onReadFileSuccess, onReadFileError);
-            }
-
-
+                            .then(
+                                function (content) {
+                                    try {
+                                        result[key][lang] = u.mdToHtml(content);
+                                    } catch (e) {
+                                        result[key][lang] = null;
+                                    }
+                                },
+                                function () {
+                                    result[key][lang] = null;
+                                }
+                            );
+                    }));
+                })
         })
     );
 };
+
+/*
+ .then(function (files) {
+ return files.filter(function (file) {
+ return file.indexOf(target.getMdTargets()[key].pattern) !== -1;
+ }).pop();
+ })
+ .then(function (file) {
+ return vowFs
+ .read(path.join(target.getContentPath(), target.getMdTargets()[key].folder, file), 'utf-8')
+ .then(
+ function (content) {
+ try {
+ result[key] = u.mdToHtml(content);
+ } catch (e) {
+ result[key] = null;
+ }
+ },
+ function () {
+ result[key] = null;
+ }
+ );
+ })
+*/
 
 /**
  * Scan level directories for library
