@@ -65,8 +65,7 @@ var readMarkdownFilesForLibrary = function(target, result) {
                                         result[key] = result[key] || {};
                                         result[key][lang] = u.mdToHtml(content);
                                     } catch(e) {}
-                                },
-                                function() {}
+                                }
                             );
                     }));
                 });

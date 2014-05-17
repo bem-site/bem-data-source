@@ -19,7 +19,8 @@ module.exports = {
      */
     gitClone: function(target) {
         return runCommand(
-            util.format('git clone --progress %s %s', target.getUrl(), target.getContentPath()), {}, 'git clone', target);
+            util.format('git clone --progress %s %s',
+                target.getUrl(), target.getContentPath()), {}, 'git clone', target);
     },
 
     /**
@@ -116,6 +117,7 @@ module.exports = {
 /**
  * Run command in child process
  * @param cmd - {String} command to run
+ * @param opts - {Object} options for command execution
  * @param name - {String} command name for log
  * @param target - {Object} target
  * @returns {defer.promise|*}
@@ -124,7 +126,7 @@ var runCommand = function(cmd, opts, name, target) {
     var def = vow.defer(),
         baseOpts = {
             encoding: 'utf8',
-            maxBuffer: 1000000*1024
+            maxBuffer: 1000000 * 1024
         };
 
     if(!target) {
