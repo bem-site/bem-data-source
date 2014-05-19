@@ -44,6 +44,12 @@ module.exports = {
             { cwd: path.resolve(target.getContentPath()) }, 'npm install', target);
     },
 
+    npmInstallBem: function(target) {
+        return runCommand(util.format('npm install --registry=%s bem@~0.8' ,
+                target.getSourcePrivacy() ? constants.NPM_REGISTRY.PRIVATE : constants.NPM_REGISTRY.PUBLIC),
+            { cwd: path.resolve(target.getContentPath()) }, 'npm install bem', target);
+    },
+
     /**
      * Executes npm run deps command
      * @param target - {Object} target object
