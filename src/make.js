@@ -1,6 +1,7 @@
 'use strict';
 
 var util = require('util'),
+    path =require('path'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
 
@@ -135,6 +136,16 @@ exports.run = function(source) {
     libs.api.init();
 
     init()
+        .then(function() {
+            return vowFs.listDir(constants.DIRECTORY.CONTENT).then(function(dirs) {
+                return vow.all(dirs.map(function(dir) {
+                    var p = path.join(constants.DIRECTORY.CONTENT, dir);
+
+                    logger.debug('remove directory %s', p);
+                    return libs.util.removeDir(p);
+                }));
+            });
+        })
         .then(function() {
             return retrieveSshUrl(source);
         })

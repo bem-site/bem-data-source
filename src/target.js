@@ -8,6 +8,7 @@ var util = require('util'),
 
     constants = require('./constants'),
     libs = require('./libs'),
+    logger = libs.logger(module),
     collectSets = require('./tasks/collect_sets'),
     pattern = require('../config/pattern'),
 
@@ -56,14 +57,15 @@ Target.prototype = {
 
         this
             .addTask(function(t) {
-                return vow.allResolved([
-                    libs.util.removeDir(t.getContentPath()),
-                    libs.util.removeDir(t.getOutputPath())
-                ]).then(function() {
+                logger.debug('remove output folder for target %s', t.getName());
+
+                return libs.util.removeDir(t.getOutputPath()).then(function() {
                     return t;
                 });
             })
             .addTask(function(t) {
+                logger.debug('create output folder for target %s', t.getName());
+
                 return vowFs.makeDir(t.getOutputPath()).then(function() {
                     return t;
                 });
@@ -75,6 +77,8 @@ Target.prototype = {
             .addTask(libs.cmd.npmInstallBem) //update bem-tools version
             .addTask(libs.cmd.npmRunDeps) //bower or bem make libs
             .addTask(function(t) {
+                logger.debug('copy borschik configuration for target %s', t.getName());
+
                 return vowFs
                     .copy('.borschik', path.join(t.getContentPath(), '.borschik'))
                     .then(function() {
