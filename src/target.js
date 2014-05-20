@@ -25,7 +25,7 @@ Target.prototype = {
     MD: {
         README: {
             folder: '',
-            patter: 'README.md'
+            pattern: 'README.md'
         },
         CHANGELOG: {
             folder: '',
