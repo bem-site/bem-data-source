@@ -25,7 +25,7 @@ module.exports = {
 
     /**
      * Executes git checkout command
-     * @param target - {Object} target object
+     * @param target - {Target} target object
      * @returns {defer.promise|*}
      */
     gitCheckout: function(target) {
@@ -35,7 +35,7 @@ module.exports = {
 
     /**
      * Executes npm install command
-     * @param target - {Object} target object
+     * @param target - {Target} target object
      * @returns {defer.promise|*}
      */
     npmInstall: function(target) {
@@ -44,15 +44,30 @@ module.exports = {
             { cwd: path.resolve(target.getContentPath()) }, 'npm install', target);
     },
 
-    npmInstallBem: function(target) {
-        return runCommand(util.format('npm install --registry=%s bem@~0.8' ,
+    /**
+     * Updates bem sets version
+     * @param target - {Target} target object
+     * @returns {defer.promise|*}
+     */
+    npmInstallBemSets: function(target) {
+        return runCommand(util.format('npm install --registry=%s bem-sets@x bem@0.x',
                 target.getSourcePrivacy() ? constants.NPM_REGISTRY.PRIVATE : constants.NPM_REGISTRY.PUBLIC),
+            { cwd: path.resolve(target.getContentPath()) }, 'npm install bem-sets', target);
+    },
+
+    /**
+     * Updates bem tools version
+     * @param target - {Target} target object
+     * @returns {defer.promise|*}
+     */
+    npmInstallBem: function(target) {
+        return runCommand(util.format('npm install --registry=%s bem@~0.8' , constants.NPM_REGISTRY.PUBLIC),
             { cwd: path.resolve(target.getContentPath()) }, 'npm install bem', target);
     },
 
     /**
      * Executes npm run deps command
-     * @param target - {Object} target object
+     * @param target - {Target} target object
      * @returns {defer.promise|*}
      */
     npmRunDeps: function(target) {
@@ -62,7 +77,7 @@ module.exports = {
 
     /**
      * Executes npm run deps command
-     * @param target - {Object} target object
+     * @param target - {Target} target object
      * @returns {defer.promise|*}
      */
     npmRunBuild: function(target) {
@@ -75,14 +90,14 @@ module.exports = {
      * @param target - {Object} target object
      * @returns {defer.promise|*}
      */
-    bemMakeSets: function(target) {
-        return runCommand('node_modules/bem/bin/bem make sets -v error',
-            { cwd: path.resolve(target.getContentPath()) }, 'bem make sets', target);
-    },
+//    bemMakeSets: function(target) {
+//        return runCommand('node_modules/bem/bin/bem make sets -v error',
+//            { cwd: path.resolve(target.getContentPath()) }, 'bem make sets', target);
+//    },
 
     /**
      * Executes copying sets folders
-     * @param target - {Object} target object
+     * @param target - {Target} target object
      * @returns {defer.promise|*}
      */
     moveSets: function(target) {
