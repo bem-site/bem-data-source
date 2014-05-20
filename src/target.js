@@ -71,6 +71,7 @@ Target.prototype = {
             .addTask(libs.cmd.gitClone) //git clone
             .addTask(libs.cmd.gitCheckout) //git checkout
             .addTask(libs.cmd.npmInstall) //npm install
+            .addTask(libs.cmd.npmInstallBemSets) //update bem-sets version
             .addTask(libs.cmd.npmInstallBem) //update bem-tools version
             .addTask(libs.cmd.npmRunDeps) //bower or bem make libs
             .addTask(function(t) {
