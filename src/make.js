@@ -163,7 +163,7 @@ exports.run = function(source) {
         })
         .then(createTargets)
         .then(function(targets) {
-            return vow.allResolved(targets.map(function(target) {
+            return vow.all(targets.map(function(target) {
                 return target.execute();
             }));
         })
