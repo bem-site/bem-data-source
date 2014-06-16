@@ -120,3 +120,11 @@ exports.getPattern = function() {
         }
     };
 };
+
+exports.getBuildCommand = function() {
+    return {
+        'bem-bl': "enb make examples && enb make docs",
+        'bem-core': "enb make examples && enb make docs",
+        'bem-components': "enb make examples && enb make docs"
+    }
+};
