@@ -22,7 +22,7 @@ Target.prototype = {
         data: '%s.data.json',
         jsdoc: '%s.jsdoc.json'
     },
-
+    BUILD_COMMAND: 'npm run build',
     MD: {
         README: {
             folder: '',
@@ -194,6 +194,14 @@ Target.prototype = {
      */
     getBlockTargets: function() {
         return pattern.getPattern()[this.getSourceName()] || this.BLOCK_DEFAULT;
+    },
+
+    /**
+     * Returns name of build command
+     * @returns {*|string}
+     */
+    getBuildCommand: function() {
+        return pattern.getBuildCommand()[this.getSourceName()] || this.BUILD_COMMAND;
     }
 };
 
