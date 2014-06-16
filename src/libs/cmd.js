@@ -81,19 +81,9 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     npmRunBuild: function(target) {
-        return runCommand('npm run build',
-                { cwd: path.resolve(target.getContentPath()) }, 'npm run build', target);
+        return runCommand(target.getBuildCommand(),
+                { cwd: path.resolve(target.getContentPath()) }, target.getBuildCommand(), target);
     },
-
-    /**
-     * Executes bem make sets command
-     * @param target - {Object} target object
-     * @returns {defer.promise|*}
-     */
-//    bemMakeSets: function(target) {
-//        return runCommand('node_modules/bem/bin/bem make sets -v error',
-//            { cwd: path.resolve(target.getContentPath()) }, 'bem make sets', target);
-//    },
 
     /**
      * Executes copying sets folders
