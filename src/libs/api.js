@@ -18,10 +18,19 @@ module.exports = {
     init: function() {
         logger.info('Initialize github API');
 
-        var gitConfig = config.get('gitAPI'),
-            commonConfig = gitConfig.common,
-            publicConfig = gitConfig.public,
-            privateConfig = gitConfig.private;
+        var commonConfig = {
+                version: '3.0.0',
+                debug: false,
+                protocol: 'https',
+                timeout: 50000
+            },
+            publicConfig = {
+                host: 'api.github.com'
+            },
+            privateConfig = {
+                host: 'github.yandex-team.ru',
+                url: '/api/v3'
+            };
 
         gitPublic = new Api(_.extend(publicConfig, commonConfig));
         gitPrivate = new Api(_.extend(privateConfig, commonConfig));

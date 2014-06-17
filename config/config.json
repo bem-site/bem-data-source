@@ -1,18 +1,3 @@
 {
-    "logLevel": "debug",
-    "gitAPI": {
-        "common": {
-            "version": "3.0.0",
-            "debug": "false",
-            "protocol": "https",
-            "timeout": "50000"
-        },
-        "public": {
-            "host": "api.github.com"
-        },
-        "private": {
-            "host": "github.yandex-team.ru",
-            "url": "/api/v3"
-        }
-    }
+    "logLevel": "debug"
 }
