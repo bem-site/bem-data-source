@@ -15,5 +15,4 @@ output
 npm-debug.log
 node_modules
 
-config/repositories.json
 config/credentials.json
