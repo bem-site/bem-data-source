@@ -90,9 +90,11 @@ module.exports = {
      * @param target - {Target} target object
      * @returns {defer.promise|*}
      */
-    moveSets: function(target) {
-        return runCommand(util.format('cp -R *.sets %s', path.resolve(target.getOutputPath())),
-            { cwd: path.resolve(target.getContentPath()) }, 'git move sets', target);
+    copySets: function(target) {
+        return vow.all(target.getCopyPatterns().map(function(item) {
+            return runCommand(util.format('cp -R %s %s', item, path.resolve(target.getOutputPath())),
+                { cwd: path.resolve(target.getContentPath()) }, util.format('copy folders %s', item), target);
+        }));
     },
 
     /**

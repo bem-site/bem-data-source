@@ -104,15 +104,15 @@ exports.getPattern = function() {
     return {
         'bem-bl': {
             data: '%s.data.json',
-            jsdoc: '%s.js-doc.html'
+            jsdoc: '%s.jsdoc.html'
         },
         'bem-core': {
             data: '%s.data.json',
-            jsdoc: '%s.js-doc.html'
+            jsdoc: '%s.jsdoc.html'
         },
         'bem-components': {
             data: '%s.data.json',
-            jsdoc: '%s.js-doc.html'
+            jsdoc: '%s.jsdoc.html'
         },
         'bem-mvc': {
             data: '%s.data.json',
@@ -126,5 +126,13 @@ exports.getBuildCommand = function() {
         'bem-bl': "enb make examples && enb make docs",
         'bem-core': "enb make examples && enb make docs",
         'bem-components': "enb make examples && enb make docs"
-    }
+    };
+};
+
+exports.getCopyPatterns = function() {
+    return {
+        'bem-components': ['*.docs', '*.examples'],
+        'bem-core': ['*.docs', '*.examples'],
+        'bem-bl': ['*.docs', '*.examples']
+    };
 };
