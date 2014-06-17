@@ -23,6 +23,7 @@ Target.prototype = {
         jsdoc: '%s.jsdoc.json'
     },
     BUILD_COMMAND: 'npm run build',
+    COPY_PATTERN: '*.sets',
     MD: {
         README: {
             folder: '',
@@ -87,8 +88,7 @@ Target.prototype = {
                 );
             })
             .addTask(libs.cmd.npmRunBuild) //alias to make sets
-            //.addTask(libs.cmd.bemMakeSets) //bem make sets
-            .addTask(libs.cmd.moveSets) //move sets to output folder
+            .addTask(libs.cmd.copySets) //move sets to output folder
             .addTask(collectSets); //collect sets
 
         return this;
@@ -202,6 +202,22 @@ Target.prototype = {
      */
     getBuildCommand: function() {
         return pattern.getBuildCommand()[this.getSourceName()] || this.BUILD_COMMAND;
+    },
+
+    /**
+     * Returns pattern for folders that should be copied to output folder
+     * @returns {*|string[]}
+     */
+    getCopyPatterns: function() {
+        return pattern.getCopyPatterns()[this.getSourceName()] || [this.COPY_PATTERN];
+    },
+
+    /**
+     * Return pattern of folders that should be viewed for docs
+     * @returns {*}
+     */
+    getDocPatterns: function() {
+        return this.getCopyPatterns()[0];
     }
 };
 
