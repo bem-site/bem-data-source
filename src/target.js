@@ -18,24 +18,25 @@ var util = require('util'),
 
 Target.prototype = {
 
-    BLOCK_DEFAULT: {
-        data: '%s.data.json',
-        jsdoc: '%s.jsdoc.json'
-    },
-    BUILD_COMMAND: 'npm run build',
-    COPY_PATTERN: '*.sets',
-    MD: {
-        README: {
+    def: {
+        builder: 'bem-tools',
+        command: 'npm run build',
+        copy: ['*.sets'],
+        readme: {
             folder: '',
             pattern: 'README.md'
         },
-        CHANGELOG: {
+        changelog: {
             folder: '',
             pattern: 'changelog.md'
         },
-        MIGRATION: {
+        migration: {
             folder: '',
             pattern: 'MIGRATION.md'
+        },
+        pattern: {
+            data: '%s.data.json',
+            jsdoc: '%s.jsdoc.json'
         }
     },
 
@@ -55,6 +56,8 @@ Target.prototype = {
         this.source = source;
         this.ref = ref;
         this.type = type;
+        
+        pattern[this.getSourceName()] = pattern[this.getSourceName()] || this.def;
 
         this
             .addTask(function(t) {
@@ -170,6 +173,7 @@ Target.prototype = {
         return {
             repo: this.source.name,
             ref: this.ref,
+            enb: this.getBuilderName() === 'enb',
             url: this.source.url.replace('git:', 'http:').replace('.git', '')
         };
     },
@@ -180,9 +184,9 @@ Target.prototype = {
      */
     getMdTargets: function() {
         return {
-            readme: pattern.getReadme()[this.getSourceName()] || this.MD.README,
-            changelog: pattern.getChangelog()[this.getSourceName()] || this.MD.CHANGELOG,
-            migration: pattern.getMigration()[this.getSourceName()] || this.MD.MIGRATION
+            readme:    pattern[this.getSourceName()].readme,
+            changelog: pattern[this.getSourceName()].changelog,
+            migration: pattern[this.getSourceName()].migration
         };
     },
 
@@ -193,7 +197,7 @@ Target.prototype = {
      * - jsdoc {String} pattern for jsdoc file
      */
     getBlockTargets: function() {
-        return pattern.getPattern()[this.getSourceName()] || this.BLOCK_DEFAULT;
+        return pattern[this.getSourceName()].pattern;
     },
 
     /**
@@ -201,7 +205,7 @@ Target.prototype = {
      * @returns {*|string}
      */
     getBuildCommand: function() {
-        return pattern.getBuildCommand()[this.getSourceName()] || this.BUILD_COMMAND;
+        return pattern[this.getSourceName()].command;
     },
 
     /**
@@ -209,7 +213,7 @@ Target.prototype = {
      * @returns {*|string[]}
      */
     getCopyPatterns: function() {
-        return pattern.getCopyPatterns()[this.getSourceName()] || [this.COPY_PATTERN];
+        return pattern[this.getSourceName()].copy;
     },
 
     /**
@@ -218,6 +222,14 @@ Target.prototype = {
      */
     getDocPatterns: function() {
         return this.getCopyPatterns()[0];
+    },
+
+    /**
+     * Return name of
+     * @returns {exports.builder|*|string}
+     */
+    getBuilderName: function() {
+        return pattern[this.getSourceName()].builder;
     }
 };
 
