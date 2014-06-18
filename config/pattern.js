@@ -123,15 +123,15 @@ exports.getPattern = function() {
 
 exports.getBuildCommand = function() {
     return {
-        'bem-bl': "enb make examples && enb make docs",
-        'bem-core': "enb make examples && enb make docs",
-        'bem-components': "enb make examples && enb make docs"
+        'bem-bl': "YENV=production enb make examples && enb make docs",
+        'bem-core': "YENV=production enb make examples && enb make docs",
+        'bem-components': "YENV=production enb make tests && enb make docs"
     };
 };
 
 exports.getCopyPatterns = function() {
     return {
-        'bem-components': ['*.docs', '*.examples'],
+        'bem-components': ['*.docs', '*.tests'],
         'bem-core': ['*.docs', '*.examples'],
         'bem-bl': ['*.docs', '*.examples']
     };
