@@ -56,7 +56,7 @@ Target.prototype = {
         this.source = source;
         this.ref = ref;
         this.type = type;
-        
+
         pattern[this.getSourceName()] = pattern[this.getSourceName()] || this.def;
 
         this
@@ -184,9 +184,9 @@ Target.prototype = {
      */
     getMdTargets: function() {
         return {
-            readme:    pattern[this.getSourceName()].readme,
-            changelog: pattern[this.getSourceName()].changelog,
-            migration: pattern[this.getSourceName()].migration
+            readme:    pattern[this.getSourceName()].readme || this.def.readme,
+            changelog: pattern[this.getSourceName()].changelog || this.def.changelog,
+            migration: pattern[this.getSourceName()].migration || this.def.migration
         };
     },
 
@@ -197,7 +197,7 @@ Target.prototype = {
      * - jsdoc {String} pattern for jsdoc file
      */
     getBlockTargets: function() {
-        return pattern[this.getSourceName()].pattern;
+        return pattern[this.getSourceName()].pattern || this.def.pattern;
     },
 
     /**
@@ -205,7 +205,7 @@ Target.prototype = {
      * @returns {*|string}
      */
     getBuildCommand: function() {
-        return pattern[this.getSourceName()].command;
+        return pattern[this.getSourceName()].command || this.def.command;
     },
 
     /**
@@ -213,7 +213,7 @@ Target.prototype = {
      * @returns {*|string[]}
      */
     getCopyPatterns: function() {
-        return pattern[this.getSourceName()].copy;
+        return pattern[this.getSourceName()].copy || this.def.copy;
     },
 
     /**
@@ -229,7 +229,7 @@ Target.prototype = {
      * @returns {exports.builder|*|string}
      */
     getBuilderName: function() {
-        return pattern[this.getSourceName()].builder;
+        return pattern[this.getSourceName()].builder || this.def.builder;
     }
 };
 
