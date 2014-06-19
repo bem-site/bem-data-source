@@ -25,7 +25,8 @@
     "jscs": "1.2.2"
   },
   "scripts": {
-    "start": "node bin/start.js"
+    "start": "node bin/start.js",
+    "test": "make lint"
   },
   "author": "bemer@yandex-team.ru",
   "readmeFilename": "README.md",
