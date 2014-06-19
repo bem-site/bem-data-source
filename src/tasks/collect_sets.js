@@ -85,9 +85,9 @@ readDependencies = function(target, result) {
         .then(function(content) {
             try {
                 content = JSON.parse(content);
-                result.deps = content['dependencies'];
+                result.deps = content.dependencies;
             }catch(e) {
-                result.deps = null;;
+                result.deps = null;
             }
         })
         .fail(function() {
