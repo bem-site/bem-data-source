@@ -19,6 +19,7 @@ module.exports = function(target) {
     logger.info('-- collect sets start --');
 
     return readMarkdownFilesForLibrary(target, result)
+        .then(function() { return readDependencies(target, result); })
         .then(function() { return readLevelsForLibrary(target, result); })
         .then(function() { return writeResultToFile(target, result); })
         .then(function() {
@@ -71,6 +72,27 @@ var readMarkdownFilesForLibrary = function(target, result) {
                 });
         })
     );
+},
+
+/**
+ * Reads library dependencies from bower.json file
+ * @param target - {Object} target object
+ * @param result - {Object} result model
+ * @returns {*}
+ */
+readDependencies = function(target, result) {
+    return vowFs.read(path.resolve(target.getContentPath(), 'bower.json'),'utf-8')
+        .then(function(content) {
+            try {
+                content = JSON.parse(content);
+                result.deps = content['dependencies'];
+            }catch(e) {
+                result.deps = null;;
+            }
+        })
+        .fail(function() {
+            result.deps = null;
+        });
 },
 
 /**
