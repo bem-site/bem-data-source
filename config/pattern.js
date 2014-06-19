@@ -129,6 +129,7 @@ module.exports = {
     },
     'islands-icons': {
         builder: 'bem-tools',
+        command: 'ulimit -n 8192 && npm run build',
         changelog: {
             folder: 'releases',
             pattern: 'changelog.md'
@@ -136,6 +137,21 @@ module.exports = {
         migration: {
             folder: 'releases',
             pattern: 'MIGRATION.md'
+        }
+    },
+    'islands-romochka': {
+        builder: 'bem-tools',
+        changelog: {
+            folder: 'releases',
+            pattern: 'changelog.md'
+        },
+        migration: {
+            folder: 'releases',
+            pattern: 'MIGRATION.md'
+        },
+        notes: {
+            folder: 'releases',
+            pattern: 'release-notes.md'
         }
     }
 };
