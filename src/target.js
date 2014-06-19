@@ -37,6 +37,10 @@ Target.prototype = {
         pattern: {
             data: '%s.data.json',
             jsdoc: '%s.jsdoc.json'
+        },
+        notes: {
+            folder: '',
+            pattern: 'release-notes.md'
         }
     },
 
@@ -186,7 +190,8 @@ Target.prototype = {
         return {
             readme:    pattern[this.getSourceName()].readme || this.def.readme,
             changelog: pattern[this.getSourceName()].changelog || this.def.changelog,
-            migration: pattern[this.getSourceName()].migration || this.def.migration
+            migration: pattern[this.getSourceName()].migration || this.def.migration,
+            notes:     pattern[this.getSourceName()].notes || this.def.notes
         };
     },
 
