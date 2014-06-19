@@ -61,7 +61,7 @@ module.exports = {
      * @returns {defer.promise|*}
      */
     npmInstallBem: function(target) {
-        return runCommand(util.format('npm install --registry=%s bem@~0.8' , constants.NPM_REGISTRY.PUBLIC),
+        return runCommand(util.format('npm install --registry=%s bem@~0.8', constants.NPM_REGISTRY.PUBLIC),
             { cwd: path.resolve(target.getContentPath()) }, 'npm install bem', target);
     },
 
