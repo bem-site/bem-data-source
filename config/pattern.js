@@ -72,6 +72,21 @@ module.exports = {
             jsdoc: '%s.jsdoc.html'
         }
     },
+    'islands': {
+        builder: 'bem-tools',
+        changelog: {
+            folder: 'releases',
+            pattern: 'changelog.md'
+        },
+        migration: {
+            folder: 'releases',
+            pattern: 'migration.md'
+        },
+        notes: {
+            folder: 'releases',
+            pattern: 'release-notes.md'
+        }
+    },
     'islands-components': {
         builder: 'bem-tools',
         changelog: {
@@ -80,7 +95,11 @@ module.exports = {
         },
         migration: {
             folder: 'releases',
-            pattern: 'MIGRATION.md'
+            pattern: 'migration.md'
+        },
+        notes: {
+            folder: 'releases',
+            pattern: 'release-notes.md'
         }
     },
     'islands-user': {
@@ -91,7 +110,11 @@ module.exports = {
         },
         migration: {
             folder: 'releases',
-            pattern: 'MIGRATION.md'
+            pattern: 'migration.md'
+        },
+        notes: {
+            folder: 'releases',
+            pattern: 'release-notes.md'
         }
     },
     'islands-page': {
@@ -102,7 +125,11 @@ module.exports = {
         },
         migration: {
             folder: 'releases',
-            pattern: 'MIGRATION.md'
+            pattern: 'migration.md'
+        },
+        notes: {
+            folder: 'releases',
+            pattern: 'release-notes.md'
         }
     },
     'islands-services': {
@@ -113,7 +140,11 @@ module.exports = {
         },
         migration: {
             folder: 'releases',
-            pattern: 'MIGRATION.md'
+            pattern: 'migration.md'
+        },
+        notes: {
+            folder: 'releases',
+            pattern: 'release-notes.md'
         }
     },
     'islands-search': {
@@ -124,7 +155,11 @@ module.exports = {
         },
         migration: {
             folder: 'releases',
-            pattern: 'MIGRATION.md'
+            pattern: 'migration.md'
+        },
+        notes: {
+            folder: 'releases',
+            pattern: 'release-notes.md'
         }
     },
     'islands-icons': {
@@ -136,7 +171,11 @@ module.exports = {
         },
         migration: {
             folder: 'releases',
-            pattern: 'MIGRATION.md'
+            pattern: 'migration.md'
+        },
+        notes: {
+            folder: 'releases',
+            pattern: 'release-notes.md'
         }
     },
     'islands-romochka': {
@@ -147,7 +186,7 @@ module.exports = {
         },
         migration: {
             folder: 'releases',
-            pattern: 'MIGRATION.md'
+            pattern: 'migration.md'
         },
         notes: {
             folder: 'releases',
