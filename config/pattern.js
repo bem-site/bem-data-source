@@ -32,6 +32,7 @@ module.exports = {
                 en: 'README.md',
                 ru: 'README.ru.md'
             }
+            //pattern: 'https://github.com/bem/bem-bl/blob/dev/README.ru.md'
         },
         pattern: {
             data: '%s.data.json',
