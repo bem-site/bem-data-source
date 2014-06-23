@@ -15,7 +15,7 @@
     "lodash": "~2.4.1",
     "intel": "~0.4.0",
     "semver": "2.2.1",
-    "github": "git://github.com/whentomanage/node-github.git",
+    "github": "*",
     "marked": "git://github.com/dab/marked.git",
     "coa": "~0.4.0",
     "fs-extra": "~0.8.1"
