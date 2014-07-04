@@ -193,5 +193,17 @@ module.exports = {
             folder: 'releases',
             pattern: 'release-notes.md'
         }
+    },
+    'assistant-iframe': {
+        readme: {
+            folder: '',
+            pattern: 'README.md'
+        },
+        changelog: {
+            folder: '',
+            pattern: 'CHANGELOG.md'
+        },
+        skip: ['npmInstall', 'npmInstallBemSets', 'npmInstallBem',
+            'npmRunDeps', 'copyBorschik', 'npmRunBuild', 'copySets']
     }
 };
