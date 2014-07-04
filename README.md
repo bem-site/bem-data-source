@@ -79,7 +79,8 @@ bem-data-source
     pattern: {
         data: '%s.data.json',
         jsdoc: '%s.jsdoc.html'
-    }
+    },
+    skip: []
 }
 ```
 
@@ -133,6 +134,11 @@ pattern: {
     jsdoc: '%s.jsdoc.json'
 }
 ```
+
+* `skip` - массив с именами шагов сборки которые не должны быть выполнены для текущей библиотеки. 
+Допустимые элементы массива: 'npmInstall', 'npmInstallBemSets', 'npmInstallBem', 'npmRunDeps', 'copyBorschik', 'npmRunBuild',
+'copySets', 'collectSets'.
+
 
 ### Запуск
 
