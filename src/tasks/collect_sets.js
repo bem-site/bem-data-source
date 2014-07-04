@@ -39,39 +39,94 @@ var readMarkdownFilesForLibrary = function(target, result) {
 
     return vow.allResolved(Object.keys(target.getMdTargets())
         .map(function(key) {
-            return vowFs
-                .listDir(path.join(target.getContentPath(), target.getMdTargets()[key].folder))
-                .then(function(files) {
-                    var pattern = target.getMdTargets()[key].pattern;
-
-                    if(!_.isObject(pattern)) {
-                        pattern = {
-                            en: pattern,
-                            ru: pattern
-                        };
-                    }
-
-                    result[key] = null;
-
-                    return vow.allResolved(Object.keys(pattern).map(function(lang) {
-                        var file  = files.filter(function(file) {
-                            return file.indexOf(pattern[lang]) !== -1;
-                        }).pop();
-
-                        return vowFs
-                            .read(path.join(target.getContentPath(), target.getMdTargets()[key].folder, file), 'utf-8')
-                            .then(
-                                function(content) {
-                                    try {
-                                        result[key] = result[key] || {};
-                                        result[key][lang] = u.mdToHtml(content);
-                                    } catch(e) {}
-                                }
-                            );
-                    }));
-                });
+            var folder = target.getMdTargets()[key].folder,
+                fn = _.isUndefined(folder) ? loadFromRemote : loadFromFile;
+            return fn.call(null, target, result, key);
         })
     );
+},
+
+/**
+ * Reads markdown files from filesystem
+ * @param target - {Object} target object
+ * @param result - {Object} result model
+ * @param key - {String} key with name of markdown doc
+ * @returns {*}
+ */
+loadFromFile = function(target, result, key) {
+    return vowFs
+        .listDir(path.join(target.getContentPath(), target.getMdTargets()[key].folder))
+        .then(function(files) {
+            var pattern = target.getMdTargets()[key].pattern;
+
+            if(!_.isObject(pattern)) {
+                pattern = {
+                    en: pattern,
+                    ru: pattern
+                };
+            }
+
+            result[key] = null;
+
+            return vow.allResolved(Object.keys(pattern).map(function(lang) {
+                var file  = files.filter(function(file) {
+                    return file.indexOf(pattern[lang]) !== -1;
+                }).pop();
+
+                return vowFs
+                    .read(path.join(target.getContentPath(), target.getMdTargets()[key].folder, file), 'utf-8')
+                    .then(function(content) {
+                        try {
+                            result[key] = result[key] || {};
+                            result[key][lang] = u.mdToHtml(content);
+                        } catch(e) {}
+                    });
+            }));
+        });
+},
+
+/**
+ * Reads markdown files from remote github repo via Github API
+ * @param target - {Object} target object
+ * @param result - {Object} result model
+ * @param key - {String} key with name of markdown doc
+ * @returns {*}
+ */
+loadFromRemote = function(target, result, key) {
+    var pattern = target.getMdTargets()[key].pattern;
+
+    if(!_.isObject(pattern)) {
+        pattern = {
+            en: pattern,
+            ru: pattern
+        };
+    }
+
+    result[key] = null;
+
+    return vow.allResolved(Object.keys(pattern).map(function(lang) {
+        var repo = (function(s) {
+            var ps = s.match(/^https?:\/\/(.+?)\/(.+?)\/(.+?)\/(tree|blob)\/(.+?)\/(.+)/);
+            return {
+                isPrivate: ps[1].indexOf('yandex') > -1,
+                user: ps[2],
+                repo: ps[3],
+                ref:  ps[5],
+                path: ps[6]
+            };
+        })(pattern[lang]);
+
+        return libs.api.getContent(repo)
+            .then(function(data) {
+                if(data.res) {
+                    try {
+                        result[key] = result[key] || {};
+                        result[key][lang] = u.mdToHtml((new Buffer(data.res.content, 'base64')).toString());
+                    } catch(err) {}
+                }
+            })
+            .fail(function(err) {})
+    }));
 },
 
 /**

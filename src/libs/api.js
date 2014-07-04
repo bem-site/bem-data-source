@@ -103,5 +103,32 @@ module.exports = {
         });
 
         return def.promise();
+    },
+
+    /**
+     * Returns content of repository directory or file loaded by github api
+     * @param repository - {Object} with fields:
+     * - user {String} name of user or organization which this repository is belong to
+     * - repo {String} name of repository
+     * - ref {String} name of branch
+     * - path {String} relative path from the root of repository
+     * @returns {*}
+     */
+    getContent: function(source) {
+        var def = vow.defer(),
+            git = source.isPrivate ? gitPrivate : gitPublic;
+        git.repos.getContent({
+            user: source.user,
+            repo: source.repo,
+            ref:  source.ref,
+            path: source.path
+        }, function(err, res) {
+            if (err || !res) {
+                def.reject({res: null, repo: source});
+            }else {
+                def.resolve({res: res, repo: source});
+            }
+        });
+        return def.promise();
     }
 };
