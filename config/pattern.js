@@ -75,6 +75,7 @@ module.exports = {
     },
     'islands': {
         builder: 'bem-tools',
+        command: 'ulimit -n 8192 && npm run build',
         changelog: {
             folder: 'releases',
             pattern: 'changelog.md'
