@@ -11,9 +11,29 @@ var util = require('util'),
     collectSets = require('./tasks/collect_sets'),
     pattern = require('../config/pattern'),
 
+    COMMANDS = {
+        NPM_INSTALL: 'npmInstall',
+        NPM_INSTALL_BEM_SETS: 'npmInstallBemSets',
+        NPM_INSTALL_BEM: 'npmInstallBem',
+        NPM_RUN_DEPS: 'npmRunDeps',
+        COPY_BORSCHIK: 'copyBorschik',
+        NPM_RUN_BUILD: 'npmRunBuild',
+        COPY_SETS: 'copySets'
+    },
+
     Target = function(source, ref, type) {
         return this.init(source, ref, type);
     };
+
+COMMANDS.SKIP_FOR_DOCS_ONLY = [
+    COMMANDS.NPM_INSTALL,
+    COMMANDS.NPM_INSTALL_BEM_SETS,
+    COMMANDS.NPM_INSTALL_BEM,
+    COMMANDS.NPM_RUN_DEPS,
+    COMMANDS.COPY_BORSCHIK,
+    COMMANDS.NPM_RUN_BUILD,
+    COMMANDS.COPY_SETS
+];
 
 Target.prototype = {
 
@@ -80,10 +100,10 @@ Target.prototype = {
             }, 'createOutput')
             .addTask(libs.cmd.gitClone, 'gitClone') //git clone
             .addTask(libs.cmd.gitCheckout, 'gitCheckout') //git checkout
-            .addTask(libs.cmd.npmInstall, 'npmInstall') //npm install
-            .addTask(libs.cmd.npmInstallBemSets, 'npmInstallBemSets') //update bem-sets version
-            .addTask(libs.cmd.npmInstallBem, 'npmInstallBem') //update bem-tools version
-            .addTask(libs.cmd.npmRunDeps, 'npmRunDeps') //bower or bem make libs
+            .addTask(libs.cmd.npmInstall, COMMANDS.NPM_INSTALL) //npm install
+            .addTask(libs.cmd.npmInstallBemSets, COMMANDS.NPM_INSTALL_BEM_SETS) //update bem-sets version
+            .addTask(libs.cmd.npmInstallBem, COMMANDS.NPM_INSTALL_BEM) //update bem-tools version
+            .addTask(libs.cmd.npmRunDeps, COMMANDS.NPM_RUN_DEPS) //bower or bem make libs
             .addTask(function(t) {
                 logger.debug('copy borschik configuration for target %s', t.getName());
 
@@ -93,9 +113,9 @@ Target.prototype = {
                         return t;
                     }
                 );
-            }, 'copyBorschik')
-            .addTask(libs.cmd.npmRunBuild, 'npmRunBuild') //alias to make sets
-            .addTask(libs.cmd.copySets, 'copySets') //move sets to output folder
+            }, COMMANDS.COPY_BORSCHIK)
+            .addTask(libs.cmd.npmRunBuild, COMMANDS.NPM_RUN_BUILD) //alias to make sets
+            .addTask(libs.cmd.copySets, COMMANDS.COPY_SETS) //move sets to output folder
             .addTask(collectSets, 'collectSets'); //collect sets
 
         return this;
@@ -254,6 +274,10 @@ Target.prototype = {
      * @returns {boolean}
      */
     isNeedToPerform: function(step) {
+        if(this.source.docsOnly && COMMANDS.SKIP_FOR_DOCS_ONLY.indexOf(step) > -1) {
+            return false;
+        }
+
         if(!this.getSkippedActions().length) {
             return true;
         }
