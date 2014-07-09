@@ -11,31 +11,26 @@ var util = require('util'),
     collectSets = require('./tasks/collect_sets'),
     pattern = require('../config/pattern'),
 
-    COMMANDS = {
+    Target = function(source, ref, type) {
+        return this.init(source, ref, type);
+    };
+
+Target.prototype = {
+
+    COMMANDS: {
+        REMOVE_OUTPUT: 'removeOutput',
+        CREATE_OUTPUT: 'createOutput',
+        GIT_CLONE: 'gitClone',
+        GIT_CHECKOUT: 'gitCheckout',
         NPM_INSTALL: 'npmInstall',
         NPM_INSTALL_BEM_SETS: 'npmInstallBemSets',
         NPM_INSTALL_BEM: 'npmInstallBem',
         NPM_RUN_DEPS: 'npmRunDeps',
         COPY_BORSCHIK: 'copyBorschik',
         NPM_RUN_BUILD: 'npmRunBuild',
-        COPY_SETS: 'copySets'
+        COPY_SETS: 'copySets',
+        COLLECT_SETS: 'collectSets'
     },
-
-    Target = function(source, ref, type) {
-        return this.init(source, ref, type);
-    };
-
-COMMANDS.SKIP_FOR_DOCS_ONLY = [
-    COMMANDS.NPM_INSTALL,
-    COMMANDS.NPM_INSTALL_BEM_SETS,
-    COMMANDS.NPM_INSTALL_BEM,
-    COMMANDS.NPM_RUN_DEPS,
-    COMMANDS.COPY_BORSCHIK,
-    COMMANDS.NPM_RUN_BUILD,
-    COMMANDS.COPY_SETS
-];
-
-Target.prototype = {
 
     def: {
         builder: 'bem-tools',
@@ -90,20 +85,20 @@ Target.prototype = {
                 return libs.util.removeDir(t.getOutputPath()).then(function() {
                     return t;
                 });
-            }, 'removeOutput')
+            }, this.COMMANDS.REMOVE_OUTPUT)
             .addTask(function(t) {
                 logger.debug('create output folder for target %s', t.getName());
 
                 return vowFs.makeDir(t.getOutputPath()).then(function() {
                     return t;
                 });
-            }, 'createOutput')
-            .addTask(libs.cmd.gitClone, 'gitClone') //git clone
-            .addTask(libs.cmd.gitCheckout, 'gitCheckout') //git checkout
-            .addTask(libs.cmd.npmInstall, COMMANDS.NPM_INSTALL) //npm install
-            .addTask(libs.cmd.npmInstallBemSets, COMMANDS.NPM_INSTALL_BEM_SETS) //update bem-sets version
-            .addTask(libs.cmd.npmInstallBem, COMMANDS.NPM_INSTALL_BEM) //update bem-tools version
-            .addTask(libs.cmd.npmRunDeps, COMMANDS.NPM_RUN_DEPS) //bower or bem make libs
+            }, this.COMMANDS.CREATE_OUTPUT)
+            .addTask(libs.cmd.gitClone, this.COMMANDS.GIT_CLONE) //git clone
+            .addTask(libs.cmd.gitCheckout, this.COMMANDS.GIT_CHECKOUT) //git checkout
+            .addTask(libs.cmd.npmInstall, this.COMMANDS.NPM_INSTALL) //npm install
+            .addTask(libs.cmd.npmInstallBemSets, this.COMMANDS.NPM_INSTALL_BEM_SETS) //update bem-sets version
+            .addTask(libs.cmd.npmInstallBem, this.COMMANDS.NPM_INSTALL_BEM) //update bem-tools version
+            .addTask(libs.cmd.npmRunDeps, this.COMMANDS.NPM_RUN_DEPS) //bower or bem make libs
             .addTask(function(t) {
                 logger.debug('copy borschik configuration for target %s', t.getName());
 
@@ -113,10 +108,10 @@ Target.prototype = {
                         return t;
                     }
                 );
-            }, COMMANDS.COPY_BORSCHIK)
-            .addTask(libs.cmd.npmRunBuild, COMMANDS.NPM_RUN_BUILD) //alias to make sets
-            .addTask(libs.cmd.copySets, COMMANDS.COPY_SETS) //move sets to output folder
-            .addTask(collectSets, 'collectSets'); //collect sets
+            }, this.COMMANDS.COPY_BORSCHIK)
+            .addTask(libs.cmd.npmRunBuild, this.COMMANDS.NPM_RUN_BUILD) //alias to make sets
+            .addTask(libs.cmd.copySets, this.COMMANDS.COPY_SETS) //move sets to output folder
+            .addTask(collectSets, this.COMMANDS.COLLECT_SETS); //collect sets
 
         return this;
     },
@@ -274,7 +269,7 @@ Target.prototype = {
      * @returns {boolean}
      */
     isNeedToPerform: function(step) {
-        if(this.source.docsOnly && COMMANDS.SKIP_FOR_DOCS_ONLY.indexOf(step) > -1) {
+        if(this.source.docsOnly && this.getIgnoredCommandsForDocsOnlyMode().indexOf(step) > -1) {
             return false;
         }
 
@@ -283,6 +278,22 @@ Target.prototype = {
         }
 
         return this.getSkippedActions().indexOf(step) === -1;
+    },
+
+    /**
+     * Returns array of commands that should be skipped for --docs-only mode
+     * @returns {*[]}
+     */
+    getIgnoredCommandsForDocsOnlyMode: function() {
+        return [
+            this.COMMANDS.NPM_INSTALL,
+            this.COMMANDS.NPM_INSTALL_BEM_SETS,
+            this.COMMANDS.NPM_INSTALL_BEM,
+            this.COMMANDS.NPM_RUN_DEPS,
+            this.COMMANDS.COPY_BORSCHIK,
+            this.COMMANDS.NPM_RUN_BUILD,
+            this.COMMANDS.COPY_SETS
+        ]
     }
 };
 
