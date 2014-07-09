@@ -171,19 +171,16 @@ exports.run = function(source) {
             return libs.cmd.gitAdd();
         })
         .then(function() {
-            var cMsg = util.format('Update data: %s', (new Date()).toString());
-            return libs.cmd.gitCommit(cMsg);
+            return libs.cmd.gitCommit(util.format('Update data: %s', (new Date()).toString()));
         })
         .then(function() {
             return libs.cmd.gitPush(config.get('dataConfig:ref'));
         })
-        .then(
-            function() {
-                logger.info('application has been finished');
-            },
-            function(err) {
-                logger.error(err);
-                logger.error('application failed with error');
-            }
-        );
+        .then(function() {
+                logger.info(''.toUpperCase().apply('application has been finished'));
+        })
+        .fail(function(err) {
+            logger.error(err);
+            logger.error(''.toUpperCase().apply('application failed with error'));
+        });
 };
