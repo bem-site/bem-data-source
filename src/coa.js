@@ -47,7 +47,8 @@ module.exports = require('coa').Cmd()
         .flag()
         .end()
     .act(function(opts) {
-        logger.info('Try to build sets for:');
+        logger.info(''.toUpperCase().apply('Try to build sets for:'));
+        
         logger.info('repository privacy: %s', !!opts.private);
         logger.info('repository user or organization: %s', opts.user);
         logger.info('repository name: %s', opts.repo);
