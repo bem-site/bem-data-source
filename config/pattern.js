@@ -64,9 +64,26 @@ module.exports = {
         builder: 'enb',
         command: 'YENV=production enb make examples && enb make docs',
         copy: ['*.docs', '*.examples'],
+        readme: {
+            folder: '',
+            pattern: {
+                en: 'README.md',
+                ru: 'README.ru.md'
+            }
+        },
         changelog: {
             folder: '',
-            pattern: 'CHANGELOG.md'
+            pattern: {
+                en: 'CHANGELOG.md',
+                ru: 'CHANGELOG.ru.md'
+            }
+        },
+        migration: {
+            folder: '',
+            pattern: {
+                en: 'MIGRATION.md',
+                ru: 'MIGRATION.ru.md'
+            }
         },
         pattern: {
             data: '%s.data.json',
