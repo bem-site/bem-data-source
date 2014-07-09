@@ -17,7 +17,7 @@ module.exports = require('coa').Cmd()
         })
         .end()
     .opt()
-        .name('private').title('privacy of repository')
+        .name('private').title('Privacy of repository')
         .short('p').long('private')
         .flag()
         .end()
@@ -41,12 +41,18 @@ module.exports = require('coa').Cmd()
         .short('b').long('branches')
         .arr()
         .end()
+    .opt()
+        .name('docsOnly').title('Indicates that only docs should be collected')
+        .short('docs-only').long('docs-only')
+        .flag()
+        .end()
     .act(function(opts) {
         logger.info('Try to build sets for:');
         logger.info('repository privacy: %s', !!opts.private);
         logger.info('repository user or organization: %s', opts.user);
         logger.info('repository name: %s', opts.repo);
         logger.info('repository refs %s', opts.tags || opts.branches);
+        logger.info('only docs %s', !!opts.docsOnly);
 
         if(!opts.tags && !opts.branches) {
             logger.error('Tags or branches have not been set');
@@ -58,6 +64,7 @@ module.exports = require('coa').Cmd()
             user: opts.user,
             name: opts.repo,
             tags: opts.tags || [],
-            branches: opts.branches || []
+            branches: opts.branches || [],
+            docsOnly    : !!opts.docsOnly
         });
     });
