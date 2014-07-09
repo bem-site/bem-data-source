@@ -4,10 +4,7 @@ module.exports = {
         OUTPUT: 'output'
     },
     FILE: {
-        TARGET: '__data.json',
-        DATA: 'data.json',
-        DATA_MIN: 'data_min',
-        REPOSITORIES: 'repositories.json'
+        DATA: 'data.json'
     },
     NPM_REGISTRY: {
         PRIVATE: 'http://npm.yandex-team.ru',
