@@ -293,7 +293,7 @@ Target.prototype = {
             this.COMMANDS.COPY_BORSCHIK,
             this.COMMANDS.NPM_RUN_BUILD,
             this.COMMANDS.COPY_SETS
-        ]
+        ];
     }
 };
 
