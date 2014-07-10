@@ -124,9 +124,9 @@ module.exports = {
             path: source.path
         }, function(err, res) {
             if (err || !res) {
-                def.reject({res: null, repo: source});
+                def.reject({ res: null, repo: source });
             }else {
-                def.resolve({res: res, repo: source});
+                def.resolve({ res: res, repo: source });
             }
         });
         return def.promise();
