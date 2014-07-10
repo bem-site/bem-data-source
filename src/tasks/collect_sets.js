@@ -125,7 +125,7 @@ loadFromRemote = function(target, result, key) {
                     } catch(err) {}
                 }
             })
-            .fail(function(err) {});
+            .fail(function() {});
     }));
 },
 
