@@ -181,6 +181,6 @@ exports.run = function(source) {
         })
         .fail(function(err) {
             logger.error(err);
-            logger.error(''.toUpperCase().apply('application failed with error'));
+            logger.error(''.toUpperCase.apply('application failed with error'));
         });
 };
