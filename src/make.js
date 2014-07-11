@@ -177,7 +177,7 @@ exports.run = function(source) {
             return libs.cmd.gitPush(config.get('dataConfig:ref'));
         })
         .then(function() {
-                logger.info(''.toUpperCase().apply('application has been finished'));
+                logger.info(''.toUpperCase.apply('application has been finished'));
         })
         .fail(function(err) {
             logger.error(err);
