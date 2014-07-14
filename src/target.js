@@ -4,6 +4,7 @@ var util = require('util'),
     path = require('path'),
 
     vowFs = require('vow-fs'),
+    _ = require('lodash'),
 
     constants = require('./constants'),
     libs = require('./libs'),
@@ -36,27 +37,18 @@ Target.prototype = {
         builder: 'bem-tools',
         command: 'npm run build',
         copy: ['*.sets'],
-        readme: {
-            folder: '',
-            pattern: 'README.md'
-        },
-        changelog: {
-            folder: '',
-            pattern: 'changelog.md'
-        },
-        migration: {
-            folder: '',
-            pattern: 'MIGRATION.md'
+        docs: {
+            readme: { folder: '', pattern: 'README.md' },
+            changelog: { folder: 'releases', pattern: 'changelog.md' },
+            migration: { folder: 'releases', pattern: 'migration.md' },
+            notes: { folder: 'releases', pattern: 'release-notes.md' }
         },
         pattern: {
             data: '%s.data.json',
             jsdoc: '%s.jsdoc.json'
         },
-        notes: {
-            folder: '',
-            pattern: 'release-notes.md'
-        },
-        skip: []
+        skip: [],
+        custom: []
     },
 
     source: null,
@@ -196,7 +188,8 @@ Target.prototype = {
             repo: this.source.name,
             ref: this.ref,
             enb: this.getBuilderName() === 'enb',
-            url: this.source.url.replace('git:', 'http:').replace('.git', '')
+            url: this.source.url.replace('git:', 'http:').replace('.git', ''),
+            custom: this.getCustom()
         };
     },
 
@@ -205,12 +198,7 @@ Target.prototype = {
      * @returns {{readme: string, changelog: (*|string), migration: (*|string)}}
      */
     getMdTargets: function() {
-        return {
-            readme:    pattern[this.getSourceName()].readme || this.def.readme,
-            changelog: pattern[this.getSourceName()].changelog || this.def.changelog,
-            migration: pattern[this.getSourceName()].migration || this.def.migration,
-            notes:     pattern[this.getSourceName()].notes || this.def.notes
-        };
+        return _.extend(this.def.docs, pattern[this.getSourceName()].docs || {});
     },
 
     /**
@@ -294,6 +282,18 @@ Target.prototype = {
             this.COMMANDS.NPM_RUN_BUILD,
             this.COMMANDS.COPY_SETS
         ];
+    },
+
+    getCustom: function() {
+        var custom = pattern[this.getSourceName()].custom || this.def.custom;
+        return custom.map(function(item) {
+            if(item.url) {
+                item.url = item.url
+                    .replace('{lib}', this.getSourceName())
+                    .replace('{ref}', this.ref);
+            }
+            return item;
+        }, this);
     }
 };
 
