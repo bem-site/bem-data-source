@@ -11,6 +11,7 @@ var util = require('util'),
     logger = libs.logger(module),
     collectSets = require('./tasks/collect_sets'),
     pattern = require('../config/pattern'),
+    titles = require('../config/titles'),
 
     Target = function(source, ref, type) {
         return this.init(source, ref, type);
@@ -189,7 +190,8 @@ Target.prototype = {
             ref: this.ref,
             enb: this.getBuilderName() === 'enb',
             url: this.source.url.replace('git:', 'http:').replace('.git', ''),
-            custom: this.getCustom()
+            custom: this.getCustom(),
+            docs: {}
         };
     },
 
@@ -257,8 +259,18 @@ Target.prototype = {
      * @returns {boolean}
      */
     isNeedToPerform: function(step) {
-        if(this.source.docsOnly && this.getIgnoredCommandsForDocsOnlyMode().indexOf(step) > -1) {
-            return false;
+        if(this.source.docsOnly) {
+            if([
+                this.COMMANDS.NPM_INSTALL,
+                this.COMMANDS.NPM_INSTALL_BEM_SETS,
+                this.COMMANDS.NPM_INSTALL_BEM,
+                this.COMMANDS.NPM_RUN_DEPS,
+                this.COMMANDS.COPY_BORSCHIK,
+                this.COMMANDS.NPM_RUN_BUILD,
+                this.COMMANDS.COPY_SETS
+            ].indexOf(step) > -1) {
+                return false;
+            }
         }
 
         if(!this.getSkippedActions().length) {
@@ -269,21 +281,10 @@ Target.prototype = {
     },
 
     /**
-     * Returns array of commands that should be skipped for --docs-only mode
-     * @returns {*[]}
+     * Add custom pseudo-nodes to library version
+     * and set actual library name and version to url pattern
+     * @returns {*}
      */
-    getIgnoredCommandsForDocsOnlyMode: function() {
-        return [
-            this.COMMANDS.NPM_INSTALL,
-            this.COMMANDS.NPM_INSTALL_BEM_SETS,
-            this.COMMANDS.NPM_INSTALL_BEM,
-            this.COMMANDS.NPM_RUN_DEPS,
-            this.COMMANDS.COPY_BORSCHIK,
-            this.COMMANDS.NPM_RUN_BUILD,
-            this.COMMANDS.COPY_SETS
-        ];
-    },
-
     getCustom: function() {
         var custom = pattern[this.getSourceName()].custom || this.def.custom;
         return custom.map(function(item) {
@@ -294,6 +295,10 @@ Target.prototype = {
             }
             return item;
         }, this);
+    },
+
+    getTitles: function() {
+        return titles;
     }
 };
 

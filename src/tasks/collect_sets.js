@@ -8,6 +8,7 @@ var util = require('util'),
     vowFs = require('vow-fs'),
 
     constants = require('../constants'),
+    config = require('../config'),
     libs = require('../libs'),
     logger = libs.logger(module),
     u = libs.util;
@@ -36,12 +37,11 @@ module.exports = function(target) {
  */
 var readMarkdownFilesForLibrary = function(target, result) {
     logger.debug('read markdown files for library %s', target.getName());
-
     return vow.allResolved(Object.keys(target.getMdTargets())
         .map(function(key) {
             var folder = target.getMdTargets()[key].folder,
                 fn = _.isUndefined(folder) ? loadFromRemote : loadFromFile;
-            return fn.call(null, target, result, key);
+            return fn.call(null, target, result.docs, key);
         })
     );
 },
@@ -57,16 +57,20 @@ loadFromFile = function(target, result, key) {
     return vowFs
         .listDir(path.join(target.getContentPath(), target.getMdTargets()[key].folder))
         .then(function(files) {
-            var pattern = target.getMdTargets()[key].pattern;
+            var languages = config.get('languages') || ['en'],
+                pattern = target.getMdTargets()[key].pattern;
 
             if(!_.isObject(pattern)) {
-                pattern = {
-                    en: pattern,
-                    ru: pattern
-                };
+                pattern = languages.reduce(function(prev, lang) {
+                    prev[lang] = pattern;
+                    return prev;
+                }, {});
             }
 
-            result[key] = null;
+            result[key] = {
+                title: target.getTitles()[key],
+                content: null
+            };
 
             return vow.allResolved(Object.keys(pattern).map(function(lang) {
                 var file  = files.filter(function(file) {
@@ -77,8 +81,8 @@ loadFromFile = function(target, result, key) {
                     .read(path.join(target.getContentPath(), target.getMdTargets()[key].folder, file), 'utf-8')
                     .then(function(content) {
                         try {
-                            result[key] = result[key] || {};
-                            result[key][lang] = u.mdToHtml(content);
+                            result[key].content = result[key].content || {};
+                            result[key].content[lang] = u.mdToHtml(content);
                         } catch(e) {}
                     });
             }));
@@ -93,16 +97,20 @@ loadFromFile = function(target, result, key) {
  * @returns {*}
  */
 loadFromRemote = function(target, result, key) {
-    var pattern = target.getMdTargets()[key].pattern;
+    var languages = config.get('languages') || ['en'],
+        pattern = target.getMdTargets()[key].pattern;
 
     if(!_.isObject(pattern)) {
-        pattern = {
-            en: pattern,
-            ru: pattern
-        };
+        pattern = languages.reduce(function(prev, lang) {
+            prev[lang] = pattern;
+            return prev;
+        }, {});
     }
 
-    result[key] = null;
+    result[key] = {
+        title: target.getTitles()[key],
+        content: null
+    };
 
     return vow.allResolved(Object.keys(pattern).map(function(lang) {
         var repo = (function(s) {
@@ -120,7 +128,7 @@ loadFromRemote = function(target, result, key) {
             .then(function(data) {
                 if(data.res) {
                     try {
-                        result[key] = result[key] || {};
+                        result[key].content = result[key].content || {};
                         result[key][lang] = u.mdToHtml((new Buffer(data.res.content, 'base64')).toString());
                     } catch(err) {}
                 }
