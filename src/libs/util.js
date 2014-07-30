@@ -8,6 +8,7 @@ var util = require('util'),
     vow = require('vow'),
     md = require('marked'),
 
+    renderer = require('./renderer'),
     logger = require('./logger')(module);
 
 /**
@@ -66,7 +67,8 @@ exports.mdToHtml = function(content) {
     return md(content, {
         gfm: true,
         pedantic: false,
-        sanitize: false
+        sanitize: false,
+        renderer: renderer.getRenderer()
     });
 };
 
