@@ -52,16 +52,14 @@
 
 <p>Конфигурация инструмента описывается в файлах <code>config/config.json</code>, <code>config/credentials.json</code>.</p>
 
-<h5>
-<a name="configconfigjson" class="anchor" href="#configconfigjson"><span class="octicon octicon-link"></span></a><code>config/config.json</code>
-</h5>
+<h4>
+<a name="%D0%A4%D0%B0%D0%B9%D0%BB-configconfigjson" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configconfigjson"><span class="octicon octicon-link"></span></a>Файл config/config.json</h4>
 
 <ul>
 <li>
 <code>logLevel</code> - флаг уровня логгирования.</li>
-</ul><h5>
-<a name="configcredentialsjson" class="anchor" href="#configcredentialsjson"><span class="octicon octicon-link"></span></a><code>config/credentials.json</code>
-</h5>
+</ul><h4>
+<a name="%D0%A4%D0%B0%D0%B9%D0%BB-configcredentialsjson" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configcredentialsjson"><span class="octicon octicon-link"></span></a>Файл config/credentials.json</h4>
 
 <p>Файл с токенами доступа к публичным и приватным репозиториям (github.com и github.yandex-team.ru соответственно)
 Необходимо сгенерировать токены доступа в настройках профиля пользователя на github.com и github.yandex.team.ru
@@ -90,9 +88,8 @@
 }
 </code></pre>
 
-<h5>
-<a name="%D0%A4%D0%B0%D0%B9%D0%BB-configpatternjs" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configpatternjs"><span class="octicon octicon-link"></span></a>Файл <code>config/pattern.js</code>
-</h5>
+<h4>
+<a name="%D0%A4%D0%B0%D0%B9%D0%BB-configpatternjs" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configpatternjs"><span class="octicon octicon-link"></span></a>Файл config/pattern.js</h4>
 
 <p>В этом файле описываются для каждой библиотеки можно переопределить дефолтные настройки сборки, например:</p>
 
@@ -100,83 +97,120 @@
     builder: 'enb',
     command: 'YENV=production enb make tests &amp;&amp; enb make docs',
     copy: ['*.docs', '*.tests'],
-    readme: {
-        folder: '',
-        pattern: 'README.md'
-    },
-    changelog: {
-        folder: '',
-        pattern: 'CHANGELOG.md'
-    },
-    migration: {
-        folder: '',
-        pattern: 'MIGRATION.md'
-    },
-    notes: {
-        folder: '',
-        pattern: 'MIGRATION.md'
-    }
-    pattern: {
-        data: '%s.data.json',
-        jsdoc: '%s.jsdoc.html'
-    },
+    docs: {
+        readme: {
+            folder: '',
+            pattern: 'README.md'
+        },
+        changelog: {
+            folder: '',
+            pattern: 'CHANGELOG.md'
+        },
+        migration: {
+            folder: '',
+            pattern: 'MIGRATION.md'
+        },
+        notes: {
+            folder: '',
+            pattern: 'MIGRATION.md'
+        }
+        pattern: {
+            data: '%s.data.json',
+            jsdoc: '%s.jsdoc.html'
+        },
+    },    
     skip: []
 }
 </code></pre>
 
 <p>Здесь:</p>
 
-<ul>
-<li><p><code>builder</code> - название инструмента с помощью которого будет выполняться сборка документации и примеров.
-Допустимые значения <code>enb</code> и <code>bem-tools</code>. 
-Значение по умолчанию <code>bem-tools</code>.</p></li>
-<li><p><code>command</code> - строка с названием команды для запуска сборки. 
-Значение по умолчанию <code>npm run build</code></p></li>
-<li><p><code>copy</code> - массив с шаблонами названий директорий с файлами документации и примеров, 
-которые должны попасть в финальный результат сборки. Первым элементом данного массива должен быть шаблон директорий
-которые содержат файлы с документацией по блокам.
-Значение по умолчанию <code>['*.sets']</code></p></li>
-<li><p><code>readme</code> - объект с полями <code>folder</code> и <code>pattern</code>, по которым сборщик может определить метоположение
-и имя актуального readme файла для библиотеки. При этом поле <code>pattern</code> может быть объектом c ключами
-локализации, например: </p></li>
-</ul><pre><code>pattern: {
-    en: '...',
-    ru: '...'
-}
+<h5>
+<a name="builder" class="anchor" href="#builder"><span class="octicon octicon-link"></span></a>builder</h5>
+
+<p>Название инструмента с помощью которого будет выполняться сборка документации и примеров.</p>
+
+<p>Допустимые значения <code>enb</code> и <code>bem-tools</code>. 
+Значение по умолчанию <code>bem-tools</code>.</p>
+
+<h5>
+<a name="command" class="anchor" href="#command"><span class="octicon octicon-link"></span></a>command</h5>
+
+<p>Cтрока с названием команды для запуска сборки. 
+Значение по умолчанию <code>npm run build</code></p>
+
+<h5>
+<a name="copy" class="anchor" href="#copy"><span class="octicon octicon-link"></span></a>copy</h5>
+
+<p>Массив с шаблонами названий директорий с файлами документации и примеров, 
+которые должны попасть в финальный результат сборки. 
+Первым элементом данного массива должен быть шаблон директорий
+которые содержат файлы с документацией по блокам.</p>
+
+<p>Значение по умолчанию <code>['*.sets']</code></p>
+
+<h5>
+<a name="docs" class="anchor" href="#docs"><span class="octicon octicon-link"></span></a>docs</h5>
+
+<p>Объект с полями, которые в свою очередь также являются объектами.
+Позволяет задавать произвольный набор документов которые должны попасть в сборку библиотеки</p>
+
+<pre><code>docs: {
+    readme: {
+        folder: '',
+        pattern: 'README.md'
+    },
+    changelog: {
+        folder: 'docs',
+        pattern: {
+            en: 'CHANGELOG.en.md',
+            ru: 'CHANGELOG.en.md'
+        }
+    },
+    migration: {
+        pattern: 'https://github.com/bem/bem-core/tree/v2/MIGRATION.md'
+    }
+    ...
+}    
 </code></pre>
 
-<p>Это позволяет задавать различные файлы для разных локализаций. </p>
+<p>Здесь 'README.md' - загружается из корня проекта. Файлы changelog-ов будут загружены из директории 'docs',
+по маске 'CHANGELOG.en.md' и 'CHANGELOG.ru.md' соответственно. При этом будут выбраны последние версии таких файлов,
+в случае когда в данной директории хранится несколько changelog - файлов и их названия содержат номер версии библиотеки.
+Файл миграции напрямую загружается с гитхаба с помощью github API с указанного адреса.</p>
 
-<p>Кроме того, конфигурация позволяет указывать путь к  произвольному файлу доументации на github.
-Для этого необходимо убрать поле folder а значением поля pattern указать путь (как в браузере)
-к искомому файлу друментации на github, например:</p>
+<p>Из данного примера видно, что можно задавать разные файлы для различных языков, а также указывать
+произвольный url к файлу как адрес данного файла в браузере.</p>
 
-<pre><code>readme: {
-    pattern: 'https://github.com/bem/bem-bl/blob/dev/README.ru.md'
-},
-</code></pre>
+<h5>
+<a name="pattern" class="anchor" href="#pattern"><span class="octicon octicon-link"></span></a>pattern</h5>
 
-<ul>
-<li>
-<code>changelog</code> - аналогично <code>readme</code>
-</li>
-<li>
-<code>migration</code> - аналогично <code>readme</code>
-</li>
-<li><p><code>notes</code> - аналогично <code>readme</code></p></li>
-<li><p><code>pattern</code> - объект с полями <code>data</code> и <code>jsdoc</code> в котором можно указать шаблоны файлов с документацией
-и js документацией к блокам. Значение по умолчанию:</p></li>
-</ul><pre><code>pattern: {
+<p>Объект с полями <code>data</code> и <code>jsdoc</code> в котором можно указать шаблоны файлов с документацией и js документацией к блокам. </p>
+
+<p>Значение по умолчанию:</p>
+
+<pre><code>pattern: {
     data: '%s.data.json',
     jsdoc: '%s.jsdoc.json'
 }
 </code></pre>
 
+<h5>
+<a name="skip" class="anchor" href="#skip"><span class="octicon octicon-link"></span></a>skip</h5>
+
+<p>Массив с именами шагов сборки которые не должны быть выполнены для текущей библиотеки. </p>
+
+<p>Допустимые элементы массива: </p>
+
 <ul>
-<li>
-<code>skip</code> - массив с именами шагов сборки которые не должны быть выполнены для текущей библиотеки. 
-Допустимые элементы массива: 'npmInstall', 'npmInstallBemSets', 'npmInstallBem', 'npmRunDeps', 'copyBorschik', 'npmRunBuild',
-'copySets', 'collectSets'.</li>
+<li>'npmInstall' </li>
+<li>'npmInstallBemSets' </li>
+<li>'npmInstallBem' </li>
+<li>'npmRunDeps'</li>
+<li>'copyBorschik' </li>
+<li>'npmRunBuild'</li>
+<li>'copySets'</li>
+<li>'collectSets'.</li>
 </ul><h3>
 <a name="%D0%97%D0%B0%D0%BF%D1%83%D1%81%D0%BA" class="anchor" href="#%D0%97%D0%B0%D0%BF%D1%83%D1%81%D0%BA"><span class="octicon octicon-link"></span></a>Запуск</h3>
 
