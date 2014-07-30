@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>Bem-data-source by bem</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Bem-data-source</h1>
+        <h2>Tool for collect documentation and exaples from libraries and common sources for bem-info and legoa</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/bem/bem-data-source/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/bem/bem-data-source/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/bem/bem-data-source" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a name="bem-data-source" class="anchor" href="#bem-data-source"><span class="octicon octicon-link"></span></a>bem-data-source</h1>
+
+<p>Инструмент для версионированной сборки документации и примеров библиотек для проектов bem-info legoa-www.</p>
+
+<h3>
+<a name="%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0" class="anchor" href="#%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0"><span class="octicon octicon-link"></span></a>Установка</h3>
+
+<ul>
+<li>клонировать репозиотрий <code>git clone git://github.com/bem/bem-data-source.git</code>
+</li>
+<li>перейти в директорию с выкачанным проектом <code>cd bem-data-source</code>
+</li>
+<li>запустить команду <code>make</code>
+</li>
+</ul><p>Команда <code>make</code> устанавливает зависимости для проекта и генерирует конфигурационный файл:</p>
+
+<ul>
+<li><code>config/credentials.json</code></li>
+</ul><h3>
+<a name="%D0%9A%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5" class="anchor" href="#%D0%9A%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5"><span class="octicon octicon-link"></span></a>Конфигурирование</h3>
+
+<p>Конфигурация инструмента описывается в файлах <code>config/config.json</code>, <code>config/credentials.json</code>.</p>
+
+<h5>
+<a name="configconfigjson" class="anchor" href="#configconfigjson"><span class="octicon octicon-link"></span></a><code>config/config.json</code>
+</h5>
+
+<ul>
+<li>
+<code>logLevel</code> - флаг уровня логгирования.</li>
+</ul><h5>
+<a name="configcredentialsjson" class="anchor" href="#configcredentialsjson"><span class="octicon octicon-link"></span></a><code>config/credentials.json</code>
+</h5>
+
+<p>Файл с токенами доступа к публичным и приватным репозиториям (github.com и github.yandex-team.ru соответственно)
+Необходимо сгенерировать токены доступа в настройках профиля пользователя на github.com и github.yandex.team.ru
+и вставить как значения соответствующих token-полей в данном файле.</p>
+
+<pre><code>"credentials": {
+    "public": {
+        "type": "oauth",
+        "token": ""
+    },
+    "private": {
+        "type": "oauth",
+        "token": ""
+    }
+}
+</code></pre>
+
+<p>Также в этом файле настраивается конфигурация для доступа целевому репозиторию
+в который будет помещен результат сборки, например:</p>
+
+<pre><code>"dataConfig": {
+    "private": "false",
+    "user": "bem",
+    "repo": "bem-info-libs",
+    "ref": "master"
+}
+</code></pre>
+
+<h5>
+<a name="%D0%A4%D0%B0%D0%B9%D0%BB-configpatternjs" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configpatternjs"><span class="octicon octicon-link"></span></a>Файл <code>config/pattern.js</code>
+</h5>
+
+<p>В этом файле описываются для каждой библиотеки можно переопределить дефолтные настройки сборки, например:</p>
+
+<pre><code>'bem-components': {
+    builder: 'enb',
+    command: 'YENV=production enb make tests &amp;&amp; enb make docs',
+    copy: ['*.docs', '*.tests'],
+    readme: {
+        folder: '',
+        pattern: 'README.md'
+    },
+    changelog: {
+        folder: '',
+        pattern: 'CHANGELOG.md'
+    },
+    migration: {
+        folder: '',
+        pattern: 'MIGRATION.md'
+    },
+    notes: {
+        folder: '',
+        pattern: 'MIGRATION.md'
+    }
+    pattern: {
+        data: '%s.data.json',
+        jsdoc: '%s.jsdoc.html'
+    },
+    skip: []
+}
+</code></pre>
+
+<p>Здесь:</p>
+
+<ul>
+<li><p><code>builder</code> - название инструмента с помощью которого будет выполняться сборка документации и примеров.
+Допустимые значения <code>enb</code> и <code>bem-tools</code>. 
+Значение по умолчанию <code>bem-tools</code>.</p></li>
+<li><p><code>command</code> - строка с названием команды для запуска сборки. 
+Значение по умолчанию <code>npm run build</code></p></li>
+<li><p><code>copy</code> - массив с шаблонами названий директорий с файлами документации и примеров, 
+которые должны попасть в финальный результат сборки. Первым элементом данного массива должен быть шаблон директорий
+которые содержат файлы с документацией по блокам.
+Значение по умолчанию <code>['*.sets']</code></p></li>
+<li><p><code>readme</code> - объект с полями <code>folder</code> и <code>pattern</code>, по которым сборщик может определить метоположение
+и имя актуального readme файла для библиотеки. При этом поле <code>pattern</code> может быть объектом c ключами
+локализации, например: </p></li>
+</ul><pre><code>pattern: {
+    en: '...',
+    ru: '...'
+}
+</code></pre>
+
+<p>Это позволяет задавать различные файлы для разных локализаций. </p>
+
+<p>Кроме того, конфигурация позволяет указывать путь к  произвольному файлу доументации на github.
+Для этого необходимо убрать поле folder а значением поля pattern указать путь (как в браузере)
+к искомому файлу друментации на github, например:</p>
+
+<pre><code>readme: {
+    pattern: 'https://github.com/bem/bem-bl/blob/dev/README.ru.md'
+},
+</code></pre>
+
+<ul>
+<li>
+<code>changelog</code> - аналогично <code>readme</code>
+</li>
+<li>
+<code>migration</code> - аналогично <code>readme</code>
+</li>
+<li><p><code>notes</code> - аналогично <code>readme</code></p></li>
+<li><p><code>pattern</code> - объект с полями <code>data</code> и <code>jsdoc</code> в котором можно указать шаблоны файлов с документацией
+и js документацией к блокам. Значение по умолчанию:</p></li>
+</ul><pre><code>pattern: {
+    data: '%s.data.json',
+    jsdoc: '%s.jsdoc.json'
+}
+</code></pre>
+
+<ul>
+<li>
+<code>skip</code> - массив с именами шагов сборки которые не должны быть выполнены для текущей библиотеки. 
+Допустимые элементы массива: 'npmInstall', 'npmInstallBemSets', 'npmInstallBem', 'npmRunDeps', 'copyBorschik', 'npmRunBuild',
+'copySets', 'collectSets'.</li>
+</ul><h3>
+<a name="%D0%97%D0%B0%D0%BF%D1%83%D1%81%D0%BA" class="anchor" href="#%D0%97%D0%B0%D0%BF%D1%83%D1%81%D0%BA"><span class="octicon octicon-link"></span></a>Запуск</h3>
+
+<p>Запуск выполняется командой <code>node bin/start.js</code> с указанием дополнительных опций:</p>
+
+<ul>
+<li>
+<code>-p</code> или <code>--private</code>, если репозиторий внутренний</li>
+<li>
+<code>-u</code> или <code>--user</code> - имя пользователя или название организации (обязательный параметр)</li>
+<li>
+<code>-r</code> или <code>--repo</code> - название репозитория (обязательный параметр)</li>
+<li>
+<code>-t</code> или <code>--tags</code> - название версии (тега) библиотеки</li>
+<li>
+<code>-b</code> или <code>--branches</code> - название ветки библиотеки</li>
+</ul><p>Ответственный за разработку @bemer</p>
+
+<p>Вопросы и пожелания присылать по адресу: <a href="mailto:bemer@yandex-team.ru">bemer@yandex-team.ru</a></p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
