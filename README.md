@@ -3,7 +3,7 @@ bem-data-source
 
 Инструмент для версионированной сборки документации и примеров библиотек для проектов bem-info legoa-www.
 
-## Установка
+### Установка
 
 * клонировать репозиотрий `git clone git://github.com/bem/bem-data-source.git`
 * перейти в директорию с выкачанным проектом `cd bem-data-source`
@@ -12,15 +12,15 @@ bem-data-source
 Команда `make` устанавливает зависимости для проекта и генерирует конфигурационный файл:
 * `config/credentials.json`
 
-## Конфигурирование
+### Конфигурирование
 
 Конфигурация инструмента описывается в файлах `config/config.json`, `config/credentials.json`.
 
-#### `config/config.json`
+#### Файл config/config.json
 
 * `logLevel` - флаг уровня логгирования.
 
-#### `config/credentials.json`
+#### Файл config/credentials.json
 
 Файл с токенами доступа к публичным и приватным репозиториям (github.com и github.yandex-team.ru соответственно)
 Необходимо сгенерировать токены доступа в настройках профиля пользователя на github.com и github.yandex.team.ru
@@ -51,7 +51,7 @@ bem-data-source
 }
 ```
 
-#### Файл `config/pattern.js`
+#### Файл config/pattern.js
 
 В этом файле описываются для каждой библиотеки можно переопределить дефолтные настройки сборки, например:
 
@@ -164,7 +164,7 @@ pattern: {
 * 'collectSets'.
 
 
-## Запуск
+### Запуск
 
 Запуск выполняется командой `node bin/start.js` с указанием дополнительных опций:
 
