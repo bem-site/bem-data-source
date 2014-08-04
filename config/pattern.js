@@ -131,5 +131,15 @@ module.exports = {
         },
         skip: ['npmInstall', 'npmInstallBemSets', 'npmInstallBem',
             'npmRunDeps', 'copyBorschik', 'npmRunBuild', 'copySets']
+    },
+    'tableau-iframe': {
+        docs: {
+            readme: {
+                folder: '',
+                pattern: 'README.md'
+            }
+        },
+        skip: ['npmInstall', 'npmInstallBemSets', 'npmInstallBem',
+            'npmRunDeps', 'copyBorschik', 'npmRunBuild', 'copySets']
     }
 };
