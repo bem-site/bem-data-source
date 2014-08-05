@@ -24,6 +24,7 @@ Target.prototype = {
         CREATE_OUTPUT: 'createOutput',
         GIT_CLONE: 'gitClone',
         GIT_CHECKOUT: 'gitCheckout',
+        NPM_CACHE_CLEAN: 'npmCacheClean',
         NPM_INSTALL: 'npmInstall',
         NPM_INSTALL_BEM_SETS: 'npmInstallBemSets',
         NPM_INSTALL_BEM: 'npmInstallBem',
@@ -74,27 +75,21 @@ Target.prototype = {
         this
             .addTask(function(t) {
                 logger.debug('remove output folder for target %s', t.getName());
-
-                return libs.util.removeDir(t.getOutputPath()).then(function() {
-                    return t;
-                });
+                return libs.util.removeDir(t.getOutputPath()).then(function() { return t; });
             }, this.COMMANDS.REMOVE_OUTPUT)
             .addTask(function(t) {
                 logger.debug('create output folder for target %s', t.getName());
-
-                return vowFs.makeDir(t.getOutputPath()).then(function() {
-                    return t;
-                });
+                return vowFs.makeDir(t.getOutputPath()).then(function() { return t; });
             }, this.COMMANDS.CREATE_OUTPUT)
-            .addTask(libs.cmd.gitClone, this.COMMANDS.GIT_CLONE) //git clone
-            .addTask(libs.cmd.gitCheckout, this.COMMANDS.GIT_CHECKOUT) //git checkout
-            .addTask(libs.cmd.npmInstall, this.COMMANDS.NPM_INSTALL) //npm install
-            .addTask(libs.cmd.npmInstallBemSets, this.COMMANDS.NPM_INSTALL_BEM_SETS) //update bem-sets version
-            .addTask(libs.cmd.npmInstallBem, this.COMMANDS.NPM_INSTALL_BEM) //update bem-tools version
-            .addTask(libs.cmd.npmRunDeps, this.COMMANDS.NPM_RUN_DEPS) //bower or bem make libs
+            .addTask(this.COMMANDS.GIT_CLONE) //git clone
+            .addTask(this.COMMANDS.GIT_CHECKOUT) //git checkout
+            .addTask(this.COMMANDS.NPM_CACHE_CLEAN) //npm cache clean
+            .addTask(this.COMMANDS.NPM_INSTALL) //npm install
+            .addTask(this.COMMANDS.NPM_INSTALL_BEM_SETS) //update bem-sets version
+            .addTask(this.COMMANDS.NPM_INSTALL_BEM) //update bem-tools version
+            .addTask(this.COMMANDS.NPM_RUN_DEPS) //bower or bem make libs
             .addTask(function(t) {
                 logger.debug('copy borschik configuration for target %s', t.getName());
-
                 return vowFs
                     .copy('.borschik', path.join(t.getContentPath(), '.borschik'))
                     .then(function() {
@@ -102,8 +97,8 @@ Target.prototype = {
                     }
                 );
             }, this.COMMANDS.COPY_BORSCHIK)
-            .addTask(libs.cmd.npmRunBuild, this.COMMANDS.NPM_RUN_BUILD) //alias to make sets
-            .addTask(libs.cmd.copySets, this.COMMANDS.COPY_SETS) //move sets to output folder
+            .addTask(this.COMMANDS.NPM_RUN_BUILD) //alias to make sets
+            .addTask(this.COMMANDS.COPY_SETS) //move sets to output folder
             .addTask(collectSets, this.COMMANDS.COLLECT_SETS); //collect sets
 
         return this;
@@ -160,6 +155,11 @@ Target.prototype = {
      * @returns {Target}
      */
     addTask: function(task, alias) {
+        if(arguments.length === 1) {
+            alias = task;
+            task = libs.cmd[alias];
+        }
+
         if(alias && this.isNeedToPerform(alias)) {
             this.tasks.push(task);
         }
@@ -261,6 +261,7 @@ Target.prototype = {
     isNeedToPerform: function(step) {
         if(this.source.docsOnly) {
             if([
+                this.COMMANDS.NPM_CACHE_CLEAN,
                 this.COMMANDS.NPM_INSTALL,
                 this.COMMANDS.NPM_INSTALL_BEM_SETS,
                 this.COMMANDS.NPM_INSTALL_BEM,
@@ -297,6 +298,10 @@ Target.prototype = {
         }, this);
     },
 
+    /**
+     * Returns titles
+     * @returns {*|exports}
+     */
     getTitles: function() {
         return titles;
     }
