@@ -109,7 +109,13 @@ module.exports = {
     'islands': {
         command: 'ulimit -n 8192 && npm run build'
     },
-    'islands-components': {},
+    'islands-components': {
+        builder: 'enb',
+        pattern: {
+            data: '%s.data.json',
+            jsdoc: '%s.ru.doc.html'
+        }
+    },
     'islands-user': {},
     'islands-page': {},
     'islands-services': {},
