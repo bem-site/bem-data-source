@@ -34,12 +34,22 @@ module.exports = {
     },
 
     /**
+     * Cleans npm cache
+     * @param target - {Target} target object
+     * @returns {defer.promise|*}
+     */
+    npmCacheClean: function(target) {
+        return runCommand('npm cache clean',
+            { cwd: path.resolve(target.getContentPath()) }, 'npm cache clean', target);
+    },
+
+    /**
      * Executes npm install command
      * @param target - {Target} target object
      * @returns {defer.promise|*}
      */
     npmInstall: function(target) {
-        return runCommand(util.format('npm install --registry=%s',
+        return runCommand(util.format('npm install --registry="%s"',
                 target.getSourcePrivacy() ? constants.NPM_REGISTRY.PRIVATE : constants.NPM_REGISTRY.PUBLIC),
             { cwd: path.resolve(target.getContentPath()) }, 'npm install', target);
     },
