@@ -5,12 +5,34 @@ var util = require('util'),
 
     _ = require('lodash'),
     vow = require('vow'),
+    vowFs = require('vow-fs'),
 
     constants = require('../constants'),
-    logger = require('./logger')(module),
-    u = require('./util');
+    collectSets = require('../tasks/collect_sets'),
+    libs = require('../libs'),
+    logger = libs.logger(module);
 
 module.exports = {
+
+    /**
+     * Remove target folder in output directory
+     * @param target - {Object} target object
+     * @returns {defer.promise|*}
+     */
+    removeOutput: function(target) {
+        logger.debug('remove output folder for target %s', target.getName());
+        return libs.util.removeDir(target.getOutputPath()).then(function() { return target; });
+    },
+
+    /**
+     * Create target folder in output directory
+     * @param target - {Object} target object
+     * @returns {defer.promise|*}
+     */
+    createOutput: function(target) {
+        logger.debug('create output folder for target %s', target.getName());
+        return vowFs.makeDir(target.getOutputPath()).then(function() { return target; });
+    },
 
     /**
      * Executes git clone command
@@ -85,6 +107,16 @@ module.exports = {
             { cwd: path.resolve(target.getContentPath()) }, 'npm run deps', target);
     },
 
+    copyBorschik: function(target) {
+        logger.debug('copy borschik configuration for target %s', target.getName());
+        return vowFs
+            .copy('.borschik', path.join(t.getContentPath(), '.borschik'))
+            .then(function() {
+                return target;
+            }
+        );
+    },
+
     /**
      * Executes npm run deps command
      * @param target - {Target} target object
@@ -106,6 +138,8 @@ module.exports = {
                 { cwd: path.resolve(target.getContentPath()) }, util.format('copy folders %s', item), target);
         }));
     },
+
+    collectSets: collectSets,
 
     /**
      * Adds all files for commit
@@ -162,7 +196,7 @@ var runCommand = function(cmd, opts, name, target) {
 
     logger.debug('execute %s for target %s', cmd, target.getName());
 
-    u.exec(cmd, _.extend(opts, baseOpts)).then(
+    libs.util.exec(cmd, _.extend(opts, baseOpts)).then(
         function() {
             logger.debug('%s for target %s completed', name, target.getName());
             def.resolve(target);

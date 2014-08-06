@@ -1,5 +1,7 @@
 'use strict';
 
+var tasks = require('../src/constants').TASKS;
+
 module.exports = {
     'bem-mvc': {
         builder: 'enb',
@@ -40,7 +42,20 @@ module.exports = {
         pattern: {
             data: '%s.data.json',
             jsdoc: '%s.jsdoc.html'
-        }
+        },
+        tasks: [
+            tasks.REMOVE_OUTPUT,
+            tasks.CREATE_OUTPUT,
+            tasks.GIT_CLONE,
+            tasks.GIT_CHECKOUT,
+            tasks.NPM_CACHE_CLEAN,
+            tasks.NPM_INSTALL,
+            tasks.NPM_RUN_DEPS,
+            tasks.COPY_BORSCHIK,
+            tasks.NPM_RUN_BUILD,
+            tasks.COPY_SETS,
+            tasks.COLLECT_SETS
+        ]
     },
     'bem-components': {
         builder: 'enb',
@@ -63,7 +78,20 @@ module.exports = {
         pattern: {
             data: '%s.data.json',
             jsdoc: '%s.jsdoc.html'
-        }
+        },
+        tasks: [
+            tasks.REMOVE_OUTPUT,
+            tasks.CREATE_OUTPUT,
+            tasks.GIT_CLONE,
+            tasks.GIT_CHECKOUT,
+            tasks.NPM_CACHE_CLEAN,
+            tasks.NPM_INSTALL,
+            tasks.NPM_RUN_DEPS,
+            tasks.COPY_BORSCHIK,
+            tasks.NPM_RUN_BUILD,
+            tasks.COPY_SETS,
+            tasks.COLLECT_SETS
+        ]
     },
     'bem-core': {
         builder: 'enb',
@@ -104,6 +132,19 @@ module.exports = {
                 },
                 url: '/tags/{lib}-{ref}'
             }
+        ],
+        tasks: [
+            tasks.REMOVE_OUTPUT,
+            tasks.CREATE_OUTPUT,
+            tasks.GIT_CLONE,
+            tasks.GIT_CHECKOUT,
+            tasks.NPM_CACHE_CLEAN,
+            tasks.NPM_INSTALL,
+            tasks.NPM_RUN_DEPS,
+            tasks.COPY_BORSCHIK,
+            tasks.NPM_RUN_BUILD,
+            tasks.COPY_SETS,
+            tasks.COLLECT_SETS
         ]
     },
     'islands': {
@@ -135,8 +176,13 @@ module.exports = {
                 pattern: 'CHANGELOG.md'
             }
         },
-        skip: ['npmInstall', 'npmInstallBemSets', 'npmInstallBem',
-            'npmRunDeps', 'copyBorschik', 'npmRunBuild', 'copySets']
+        tasks: [
+            tasks.REMOVE_OUTPUT,
+            tasks.CREATE_OUTPUT,
+            tasks.GIT_CLONE,
+            tasks.GIT_CHECKOUT,
+            tasks.COLLECT_SETS
+        ]
     },
     'tableau-iframe': {
         docs: {
@@ -145,7 +191,12 @@ module.exports = {
                 pattern: 'README.md'
             }
         },
-        skip: ['npmInstall', 'npmInstallBemSets', 'npmInstallBem',
-            'npmRunDeps', 'copyBorschik', 'npmRunBuild', 'copySets']
+        tasks: [
+            tasks.REMOVE_OUTPUT,
+            tasks.CREATE_OUTPUT,
+            tasks.GIT_CLONE,
+            tasks.GIT_CHECKOUT,
+            tasks.COLLECT_SETS
+        ]
     }
 };
