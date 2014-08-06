@@ -3,13 +3,10 @@
 var util = require('util'),
     path = require('path'),
 
-    vowFs = require('vow-fs'),
     _ = require('lodash'),
 
-    constants = require('./constants'),
     libs = require('./libs'),
-    logger = libs.logger(module),
-    collectSets = require('./tasks/collect_sets'),
+    constants = require('./constants'),
     pattern = require('../config/pattern'),
     titles = require('../config/titles'),
 
@@ -18,22 +15,6 @@ var util = require('util'),
     };
 
 Target.prototype = {
-
-    COMMANDS: {
-        REMOVE_OUTPUT: 'removeOutput',
-        CREATE_OUTPUT: 'createOutput',
-        GIT_CLONE: 'gitClone',
-        GIT_CHECKOUT: 'gitCheckout',
-        NPM_CACHE_CLEAN: 'npmCacheClean',
-        NPM_INSTALL: 'npmInstall',
-        NPM_INSTALL_BEM_SETS: 'npmInstallBemSets',
-        NPM_INSTALL_BEM: 'npmInstallBem',
-        NPM_RUN_DEPS: 'npmRunDeps',
-        COPY_BORSCHIK: 'copyBorschik',
-        NPM_RUN_BUILD: 'npmRunBuild',
-        COPY_SETS: 'copySets',
-        COLLECT_SETS: 'collectSets'
-    },
 
     def: {
         builder: 'bem-tools',
@@ -49,10 +30,9 @@ Target.prototype = {
             data: '%s.data.json',
             jsdoc: '%s.jsdoc.json'
         },
-        skip: [],
+        tasks: constants.TASKS,
         custom: []
     },
-
     source: null,
     ref: null,
     type: null,
@@ -72,98 +52,101 @@ Target.prototype = {
 
         pattern[this.getSourceName()] = pattern[this.getSourceName()] || this.def;
 
-        this
-            .addTask(function(t) {
-                logger.debug('remove output folder for target %s', t.getName());
-                return libs.util.removeDir(t.getOutputPath()).then(function() { return t; });
-            }, this.COMMANDS.REMOVE_OUTPUT)
-            .addTask(function(t) {
-                logger.debug('create output folder for target %s', t.getName());
-                return vowFs.makeDir(t.getOutputPath()).then(function() { return t; });
-            }, this.COMMANDS.CREATE_OUTPUT)
-            .addTask(this.COMMANDS.GIT_CLONE) //git clone
-            .addTask(this.COMMANDS.GIT_CHECKOUT) //git checkout
-            .addTask(this.COMMANDS.NPM_CACHE_CLEAN) //npm cache clean
-            .addTask(this.COMMANDS.NPM_INSTALL) //npm install
-            .addTask(this.COMMANDS.NPM_INSTALL_BEM_SETS) //update bem-sets version
-            .addTask(this.COMMANDS.NPM_INSTALL_BEM) //update bem-tools version
-            .addTask(this.COMMANDS.NPM_RUN_DEPS) //bower or bem make libs
-            .addTask(function(t) {
-                logger.debug('copy borschik configuration for target %s', t.getName());
-                return vowFs
-                    .copy('.borschik', path.join(t.getContentPath(), '.borschik'))
-                    .then(function() {
-                        return t;
-                    }
-                );
-            }, this.COMMANDS.COPY_BORSCHIK)
-            .addTask(this.COMMANDS.NPM_RUN_BUILD) //alias to make sets
-            .addTask(this.COMMANDS.COPY_SETS) //move sets to output folder
-            .addTask(collectSets, this.COMMANDS.COLLECT_SETS); //collect sets
+        this.tasks = this.getTasks().map(function(item) {
+            return libs.cmd[item];
+        });
 
         return this;
     },
 
     /**
-     * Returns constructed name of task from source and ref names
-     * @returns {string}
+     * Returns human readable name for target
+     * @returns {String}
      */
     getName: function() {
         return util.format('%s %s', this.source.name, this.ref);
     },
 
     /**
-     * Returns name of source repository
-     * @returns {*}
+     * Returns name of library
+     * @returns {String}
      */
     getSourceName: function() {
         return this.source.name;
     },
 
+    /**
+     * Returns source privacy flag
+     * @returns {boolean}
+     */
     getSourcePrivacy: function() {
         return this.source.isPrivate;
     },
 
     /**
-     * Returns github url for source
-     * @returns {String} - url of source
+     * Return gh url for library
+     * @returns {String}
      */
     getUrl: function() {
         return this.source.url;
     },
 
+    getMdTargets: function() {
+        return _.extend(this.def.docs, pattern[this.getSourceName()].docs || {});
+    },
+
+    getBlockTargets: function() {
+        return pattern[this.getSourceName()].pattern || this.def.pattern;
+    },
+
+    getBuildCommand: function() {
+        return pattern[this.getSourceName()].command || this.def.command;
+    },
+
+    getCopyPatterns: function() {
+        return pattern[this.getSourceName()].copy || this.def.copy;
+    },
+
+    getDocPatterns: function() {
+        return this.getCopyPatterns()[0];
+    },
+
+    getBuilderName: function() {
+        return pattern[this.getSourceName()].builder || this.def.builder;
+    },
+
+    getTitles: function() {
+        return titles;
+    },
+
+    getTasks: function() {
+        if(this.source.docsOnly) {
+            return  [
+                constants.TASKS.REMOVE_OUTPUT,
+                constants.TASKS.CREATE_OUTPUT,
+                constants.TASKS.GIT_CLONE,
+                constants.TASKS.GIT_CHECKOUT,
+                constants.TASKS.COLLECT_SETS
+            ];
+        }
+
+        return pattern[this.getSourceName()].tasks || this.def.tasks;
+    },
+
     /**
-     * Returns path to task subdirectory in content folder
-     * @returns {string}
+     * Returns path of library in output folder
+     * @returns {String}
      */
     getContentPath: function() {
-        return path.join(constants.DIRECTORY.CONTENT, this.getSourceName(), this.ref.replace(/\//g, '-'));
+        return path.join(constants.DIRECTORY.CONTENT, this.source.name, this.ref.replace(/\//g, '-'));
     },
 
     /**
-     * Returns path to task subdirectory in output folder
-     * @returns {string}
+     * Returns path of library in output folder
+     * @returns {String}
      */
     getOutputPath: function() {
-        return path.join(constants.DIRECTORY.OUTPUT, this.getSourceName(), this.ref.replace(/\//g, '-'));
-    },
-
-    /**
-     * Add task to execution stack
-     * @param task - {Function} - task function for execution
-     * @param alias - {String} - name of command
-     * @returns {Target}
-     */
-    addTask: function(task, alias) {
-        if(arguments.length === 1) {
-            alias = task;
-            task = libs.cmd[alias];
-        }
-
-        if(alias && this.isNeedToPerform(alias)) {
-            this.tasks.push(task);
-        }
-        return this;
+        return path.join(constants.DIRECTORY.OUTPUT, this.source.name, this.ref.replace(/\//g, '-'));
     },
 
     /**
@@ -196,99 +179,12 @@ Target.prototype = {
     },
 
     /**
-     * Returns pattern for markdown files
-     * @returns {{readme: string, changelog: (*|string), migration: (*|string)}}
-     */
-    getMdTargets: function() {
-        return _.extend(this.def.docs, pattern[this.getSourceName()].docs || {});
-    },
-
-    /**
-     * Returns pattern for output files
-     * @returns {Object} with fields:
-     * - data {String} pattern for data file
-     * - jsdoc {String} pattern for jsdoc file
-     */
-    getBlockTargets: function() {
-        return pattern[this.getSourceName()].pattern || this.def.pattern;
-    },
-
-    /**
-     * Returns name of build command
-     * @returns {*|string}
-     */
-    getBuildCommand: function() {
-        return pattern[this.getSourceName()].command || this.def.command;
-    },
-
-    /**
-     * Returns pattern for folders that should be copied to output folder
-     * @returns {*|string[]}
-     */
-    getCopyPatterns: function() {
-        return pattern[this.getSourceName()].copy || this.def.copy;
-    },
-
-    /**
-     * Return pattern of folders that should be viewed for docs
-     * @returns {*}
-     */
-    getDocPatterns: function() {
-        return this.getCopyPatterns()[0];
-    },
-
-    /**
-     * Return name of
-     * @returns {exports.builder|*|string}
-     */
-    getBuilderName: function() {
-        return pattern[this.getSourceName()].builder || this.def.builder;
-    },
-
-    /**
-     * Returns array of command names which must be skipped for current library
-     * @returns {*|exports.skip|skip|MAP.skip}
-     */
-    getSkippedActions: function() {
-        return pattern[this.getSourceName()].skip || this.def.skip;
-    },
-
-    /**
-     * Returns boolean value that indicates that current step must be performed
-     * @param step - {String} name of step
-     * @returns {boolean}
-     */
-    isNeedToPerform: function(step) {
-        if(this.source.docsOnly) {
-            if([
-                this.COMMANDS.NPM_CACHE_CLEAN,
-                this.COMMANDS.NPM_INSTALL,
-                this.COMMANDS.NPM_INSTALL_BEM_SETS,
-                this.COMMANDS.NPM_INSTALL_BEM,
-                this.COMMANDS.NPM_RUN_DEPS,
-                this.COMMANDS.COPY_BORSCHIK,
-                this.COMMANDS.NPM_RUN_BUILD,
-                this.COMMANDS.COPY_SETS
-            ].indexOf(step) > -1) {
-                return false;
-            }
-        }
-
-        if(!this.getSkippedActions().length) {
-            return true;
-        }
-
-        return this.getSkippedActions().indexOf(step) === -1;
-    },
-
-    /**
      * Add custom pseudo-nodes to library version
      * and set actual library name and version to url pattern
      * @returns {*}
      */
     getCustom: function() {
-        var custom = pattern[this.getSourceName()].custom || this.def.custom;
-        return custom.map(function(item) {
+        return (pattern[this.getSourceName()].custom || this.def.custom).map(function(item) {
             if(item.url) {
                 item.url = item.url
                     .replace('{lib}', this.getSourceName())
@@ -296,14 +192,6 @@ Target.prototype = {
             }
             return item;
         }, this);
-    },
-
-    /**
-     * Returns titles
-     * @returns {*|exports}
-     */
-    getTitles: function() {
-        return titles;
     }
 };
 

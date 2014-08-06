@@ -66,6 +66,6 @@ module.exports = require('coa').Cmd()
             name: opts.repo,
             tags: opts.tags || [],
             branches: opts.branches || [],
-            docsOnly    : !!opts.docsOnly
+            docsOnly: !!opts.docsOnly
         });
     });
