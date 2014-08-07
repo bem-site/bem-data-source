@@ -135,7 +135,7 @@ Target.prototype = {
             ];
         }
 
-        return pattern[this.getSourceName()].tasks || this.def.tasks;
+        return pattern[this.getSourceName()].tasks || _.values(this.def.tasks);
     },
 
     /**
