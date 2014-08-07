@@ -8,9 +8,8 @@ var util = require('util'),
     vowFs = require('vow-fs'),
 
     constants = require('../constants'),
-    collectSets = require('../tasks/collect_sets'),
-    libs = require('../libs'),
-    logger = libs.logger(module);
+    logger = require('./logger')(module),
+    collectSets = require('../tasks/collect_sets');
 
 module.exports = {
 
