@@ -133,54 +133,58 @@ var util = require('util'),
     };
 
 exports.run = function(source) {
-    libs.api.init();
+    try {
+        libs.api.init();
 
-    init()
-        .then(function() {
-            return vowFs.listDir(constants.DIRECTORY.CONTENT).then(function(dirs) {
-                return vow.all(dirs.map(function(dir) {
-                    var p = path.join(constants.DIRECTORY.CONTENT, dir);
+        init()
+            .then(function () {
+                return vowFs.listDir(constants.DIRECTORY.CONTENT).then(function (dirs) {
+                    return vow.all(dirs.map(function (dir) {
+                        var p = path.join(constants.DIRECTORY.CONTENT, dir);
 
-                    logger.debug('remove directory %s', p);
-                    return libs.util.removeDir(p);
+                        logger.debug('remove directory %s', p);
+                        return libs.util.removeDir(p);
+                    }));
+                });
+            })
+            .then(function () {
+                return retrieveSshUrl(source);
+            })
+            .then(function (source) {
+                return verifyRepositoryReferences(source, {
+                    field: 'tags',
+                    apiFunction: libs.api.getRepositoryTags
+                });
+            })
+            .then(function (source) {
+                return verifyRepositoryReferences(source, {
+                    field: 'branches',
+                    apiFunction: libs.api.getRepositoryBranches
+                });
+            })
+            .then(createTargets)
+            .then(function (targets) {
+                return vow.all(targets.map(function (target) {
+                    return target.execute();
                 }));
-            });
-        })
-        .then(function() {
-            return retrieveSshUrl(source);
-        })
-        .then(function(source) {
-            return verifyRepositoryReferences(source, {
-                field: 'tags',
-                apiFunction: libs.api.getRepositoryTags
-            });
-        })
-        .then(function(source) {
-            return verifyRepositoryReferences(source, {
-                field: 'branches',
-                apiFunction: libs.api.getRepositoryBranches
-            });
-        })
-        .then(createTargets)
-        .then(function(targets) {
-            return vow.all(targets.map(function(target) {
-                return target.execute();
-            }));
-        })
-        .then(function() {
-            return libs.cmd.gitAdd();
-        })
-        .then(function() {
-            return libs.cmd.gitCommit(util.format('Update data: %s', (new Date()).toString()));
-        })
-        .then(function() {
-            return libs.cmd.gitPush(config.get('dataConfig:ref'));
-        })
-        .then(function() {
+            })
+            .then(function () {
+                return libs.cmd.gitAdd();
+            })
+            .then(function () {
+                return libs.cmd.gitCommit(util.format('Update data: %s', (new Date()).toString()));
+            })
+            .then(function () {
+                return libs.cmd.gitPush(config.get('dataConfig:ref'));
+            })
+            .then(function () {
                 logger.info(''.toUpperCase.apply('application has been finished'));
-        })
-        .fail(function(err) {
-            logger.error(err);
-            logger.error(''.toUpperCase.apply('application failed with error'));
-        });
+            })
+            .fail(function (err) {
+                logger.error(err);
+                logger.error(''.toUpperCase.apply('application failed with error'));
+            });
+    }catch(err) {
+        logger.error(err.message);
+    }
 };

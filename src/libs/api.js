@@ -30,13 +30,29 @@ module.exports = {
             privateConfig = {
                 host: 'github.yandex-team.ru',
                 url: '/api/v3'
-            };
+            },
+            publicCredentials = config.get('credentials:public'),
+            privateCredentials = config.get('credentials:private');
 
-        gitPublic = new Api(_.extend(publicConfig, commonConfig));
-        gitPrivate = new Api(_.extend(privateConfig, commonConfig));
+        if(!publicCredentials) {
+            throw new Error('public credentials are not settled');
+        }else {
+            gitPublic = new Api(_.extend(publicConfig, commonConfig));
+            gitPublic.authenticate({
+                type: 'oauth',
+                token: publicCredentials
+            });
+        }
 
-        gitPublic.authenticate(config.get('credentials:public'));
-        gitPrivate.authenticate(config.get('credentials:private'));
+        if(!privateCredentials) {
+            throw new Error('private credentials are not settled');
+        }else {
+            gitPrivate = new Api(_.extend(privateConfig, commonConfig));
+            gitPrivate.authenticate({
+                type: 'oauth',
+                token: privateCredentials
+            });
+        }
     },
 
     /**
