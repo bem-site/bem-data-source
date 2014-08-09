@@ -147,7 +147,7 @@ module.exports = {
             tasks.COLLECT_SETS
         ]
     },
-    'islands': {
+    islands: {
         command: 'ulimit -n 8192 && npm run build'
     },
     'islands-components': {

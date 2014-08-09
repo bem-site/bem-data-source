@@ -1,1 +1,1 @@
-require('../src/coa').run();
+require('../src/make').run();
