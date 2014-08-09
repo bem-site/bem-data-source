@@ -5,7 +5,7 @@ var Api = require('github'),
     _ = require('lodash'),
 
     logger = require('./logger')(module),
-    config = require('../config.js'),
+    config = require('./config.js'),
 
     gitPublic = null,
     gitPrivate = null;
