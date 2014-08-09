@@ -1,6 +1,6 @@
 {
   "name": "bem-data-source",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "repository": {
     "type": "git",
     "url": "git://github.com/bem/bem-data-source.git"
@@ -14,7 +14,6 @@
     "nconf": "~0.6.8",
     "lodash": "~2.4.1",
     "intel": "~0.4.0",
-    "semver": "2.2.1",
     "github": "*",
     "marked": "git://github.com/dab/marked.git",
     "coa": "~0.4.0",
