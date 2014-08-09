@@ -151,11 +151,28 @@ module.exports = {
         command: 'ulimit -n 8192 && npm run build'
     },
     'islands-components': {
-        builder: 'enb',
-        pattern: {
-            data: '%s.data.json',
-            jsdoc: '%s.ru.doc.html'
-        }
+//        builder: 'enb',
+          command: 'ulimit -n 8192 && npm run build',
+//        pattern: {
+//            data: '%s.data.json',
+//            jsdoc: '%s.ru.doc.html'
+//        },
+        tasks: [
+            tasks.REMOVE_OUTPUT,
+            tasks.CREATE_OUTPUT,
+            tasks.GIT_CLONE,
+            tasks.GIT_CHECKOUT,
+            tasks.NPM_CACHE_CLEAN,
+            tasks.NPM_INSTALL,
+            tasks.NPM_INSTALL_BEM_SETS,
+            tasks.NPM_INSTALL_BEM,
+            tasks.NPM_RUN_DEPS,
+            tasks.COPY_BORSCHIK,
+            tasks.NPM_RUN_BUILD,
+            tasks.COPY_SETS,
+            tasks.COLLECT_SETS
+        ]
+
     },
     'islands-user': {},
     'islands-page': {},
