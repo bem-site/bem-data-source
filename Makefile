@@ -6,10 +6,6 @@ JSCS = $(NPM_BIN)/jscs
 build: npm_deps
 	cp config/_credentials.json config/credentials.json
 
-.PHONY: restart
-restart: clean
-	node src/make.js
-
 .PHONY: clean
 clean:
 	rm -rf content
