@@ -1,6 +1,6 @@
 'use strict';
 
-var logger = require('./libs').logger(module);
+var logger = require('./logger')(module);
 
 module.exports = require('coa').Cmd()
     .name(process.argv[1])

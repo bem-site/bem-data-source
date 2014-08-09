@@ -2,15 +2,82 @@
 
 var util = require('util'),
     path =require('path'),
+    cp = require('child_process'),
+
+    _ = require('lodash'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
+    fs = require('fs-extra'),
+    semver = require('semver'),
+    md = require('marked'),
 
     //application modules
+    api = require('./api'),
     config = require('./config'),
-    constants = require('./constants'),
-    libs = require('./libs'),
-    logger = libs.logger(module),
-    Target = require('./target'),
+    pattern = require('../config/pattern'),
+    titles = require('../config/titles'),
+    logger = require('./logger')(module),
+
+    constants = {
+        DIRECTORY: {
+            CONTENT: 'content',
+            OUTPUT: 'output'
+        },
+        FILE: {
+            DATA: 'data.json'
+        },
+        NPM_REGISTRY: {
+            PRIVATE: 'http://npm.yandex-team.ru',
+            PUBLIC: 'https://registry.npmjs.org'
+        },
+        GITHUB: {
+            PRIVATE: 'github.yandex-team.ru',
+            PUBLIC: 'github.com'
+        },
+        TASKS: {
+            REMOVE_OUTPUT: 'removeOutput',
+            CREATE_OUTPUT: 'createOutput',
+            GIT_CLONE: 'gitClone',
+            GIT_CHECKOUT: 'gitCheckout',
+            NPM_CACHE_CLEAN: 'npmCacheClean',
+            NPM_INSTALL: 'npmInstall',
+            NPM_INSTALL_BEM_SETS: 'npmInstallBemSets',
+            NPM_INSTALL_BEM: 'npmInstallBem',
+            NPM_RUN_DEPS: 'npmRunDeps',
+            COPY_BORSCHIK: 'copyBorschik',
+            NPM_RUN_BUILD: 'npmRunBuild',
+            COPY_SETS: 'copySets',
+            COLLECT_SETS: 'collectSets'
+        }
+    },
+
+    renderer = (function() {
+        var renderer = new md.Renderer();
+
+        /**
+         * Fix marked issue with cyrillic symbols replacing
+         * @param text - {String} test of header
+         * @param level - {Number} index of header
+         * @param raw
+         * @param options - {Object} options
+         * @returns {String} - result header string
+         */
+        renderer.heading = function(text, level, raw, options) {
+            var specials = ['-','[',']','/','{','}','(',')','*','+','?','.','\\','^','$','|','s','\'','\"'];
+
+            options = options || {};
+            options.headerPrefix = options.headerPrefix || '';
+
+            return '<h' + level + ' id="' + options.headerPrefix +
+                raw.replace(new RegExp('[' + specials.join('\\') + ']', 'g'), '-') + '">' +
+                text + '</h' + level + '>\n';
+        };
+
+
+        return function get() {
+            return renderer;
+        };
+    })(),
 
     /**
      * At first creates content repository
@@ -25,11 +92,11 @@ var util = require('util'),
                 if(exists) {
                     return;
                 }
-                return libs.util.getSSHUrl(config.get('dataConfig'))
+                return getUtil().getSSHUrl(config.get('dataConfig'))
                     .then(function(url) {
                         logger.info('Start clone remote target data repository. Please wait ...');
 
-                        return libs.cmd.gitClone({
+                        return getCmd().gitClone({
                             getName: function() { return 'all'; },
                             getUrl: function() { return url; },
                             getContentPath: function() { return constants.DIRECTORY.OUTPUT; }
@@ -130,11 +197,707 @@ var util = require('util'),
         }
 
         return targets;
+    },
+
+    getCmd = function() {
+        return {
+            /**
+             * Adds all files for commit
+             * @returns {defer.promise|*}
+             */
+            gitAdd: function () {
+                return this.runCommand('git add .',
+                    { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git add', null);
+            },
+
+            /**
+             * Executes git commit command
+             * @param message - {String} commit message
+             * @returns {defer.promise|*}
+             */
+            gitCommit: function (message) {
+                return this.runCommand(util.format('git commit -a --allow-empty -m "%s"', message),
+                    { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git commit', null);
+            },
+
+            /**
+             * Executes git push command
+             * @param ref {String} of remote branch
+             * @returns {defer.promise|*}
+             */
+            gitPush: function (ref) {
+                return this.runCommand(util.format('git push -u origin %s', ref),
+                    { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git push', null);
+            },
+
+            /**
+             * Run command in child process
+             * @param cmd - {String} command to run
+             * @param opts - {Object} options for command execution
+             * @param name - {String} command name for log
+             * @param target - {Object} target
+             * @returns {defer.promise|*}
+             */
+            runCommand: function (cmd, opts, name, target) {
+                var baseOpts = {
+                    encoding: 'utf8',
+                    maxBuffer: 1000000 * 1024
+                };
+
+                if (!target) {
+                    target = {
+                        getName: function () {
+                            return 'all';
+                        }
+                    };
+                }
+
+                logger.debug('execute %s for target %s', cmd, target.getName());
+
+                return getUtil().exec(cmd, _.extend(opts, baseOpts))
+                    .then(function () {
+                        logger.info('%s for target %s completed', name, target.getName());
+                        return vow.resolve(target);
+                    })
+                    .fail(function (error) {
+                        logger.error(error);
+                        logger.error('execution of command %s failed for target %s', cmd, target.getName());
+                        return vow.reject(error);
+                    });
+            }
+        };
+    },
+
+    getUtil = function() {
+        return {
+            /**
+             * Executes specified command with options.
+             * @param {String} cmd  Command to execute.
+             * @param {Object} options  Options to `child_process.exec()` function.
+             * @return {Promise}
+             */
+            exec: function(cmd, options) {
+                var proc = cp.exec(cmd, options),
+                    d = vow.defer(),
+                    output = '';
+
+                proc.on('exit', function(code) {
+                    if (code === 0) {
+                        return d.resolve();
+                    }
+                    d.reject(new Error(util.format('%s failed: %s', cmd, output)));
+                });
+
+                proc.stderr.on('data', function(data) {
+                    logger.verbose(data);
+                    output += data;
+                });
+
+                proc.stdout.on('data', function(data) {
+                    logger.verbose(data);
+                    output += data;
+                });
+
+                return d.promise();
+            },
+
+            /**
+             * Converts markdown content into html with marked module
+             * @param content - {String} markdown content
+             * @returns {String} - html string
+             */
+            mdToHtml: function(content) {
+                return md(content, {
+                    gfm: true,
+                    pedantic: false,
+                    sanitize: false,
+                    renderer: renderer.get()
+                });
+            },
+
+            /**
+             * Removes directory with all files and subdirectories
+             * @param path - {String} path to directory on filesystem
+             * @returns {*}
+             */
+            removeDir: function(path) {
+                var def = vow.defer();
+                fs.remove(path, function(err) {
+                    if(err) {
+                        def.reject(err);
+                    }
+
+                    def.resolve();
+                });
+
+                return def.promise();
+            },
+
+            /**
+             * Retrieve github ssh url via github api
+             * @param repo - {Object} repo object
+             * @returns {*}
+             */
+            getSSHUrl: function(repo) {
+                return api
+                    .getRepository({
+                        user: repo.user,
+                        name: repo.repo,
+                        isPrivate: repo.private
+                    })
+                    .then(function(res) {
+                        return res.result.ssh_url;
+                    })
+                    .fail(function() {
+                        logger.error('Data repository was not found. Application will be terminated');
+                    });
+            }
+        };
+    },
+
+    Target = function(source, ref, type) {
+        return this.init(source, ref, type);
     };
+
+Target.prototype = {
+
+    def: {
+        builder: 'bem-tools',
+        command: 'npm run build',
+        copy: ['*.sets'],
+        docs: {
+            readme: { folder: '', pattern: 'README.md' },
+            changelog: { folder: 'releases', pattern: 'changelog.md' },
+            migration: { folder: 'releases', pattern: 'migration.md' },
+            notes: { folder: 'releases', pattern: 'release-notes.md' }
+        },
+        pattern: {
+            data: '%s.data.json',
+            jsdoc: '%s.jsdoc.json'
+        },
+        tasks: constants.TASKS,
+        custom: []
+    },
+    source: null,
+    ref: null,
+    type: null,
+    tasks: [],
+
+    /**
+     * Initialize target for build
+     * @param source - {Object} source
+     * @param ref - {String} name of tag or branch
+     * @param type - {String} type of reference
+     * @returns {Target}
+     */
+    init: function(source, ref, type) {
+        this.source = source;
+        this.ref = ref;
+        this.type = type;
+
+        pattern[this.getSourceName()] = pattern[this.getSourceName()] || this.def;
+
+        this.tasks = this.getTasks().map(function(item) {
+            return this[item];
+        }, this);
+
+        return this;
+    },
+
+    /**
+     * Returns human readable name for target
+     * @returns {String}
+     */
+    getName: function() {
+        return util.format('%s %s', this.source.name, this.ref);
+    },
+
+    /**
+     * Returns name of library
+     * @returns {String}
+     */
+    getSourceName: function() {
+        return this.source.name;
+    },
+
+    /**
+     * Returns source privacy flag
+     * @returns {boolean}
+     */
+    getSourcePrivacy: function() {
+        return this.source.isPrivate;
+    },
+
+    /**
+     * Return gh url for library
+     * @returns {String}
+     */
+    getUrl: function() {
+        return this.source.url;
+    },
+
+    getMdTargets: function() {
+        return _.extend(this.def.docs, pattern[this.getSourceName()].docs || {});
+    },
+
+    getBlockTargets: function() {
+        return pattern[this.getSourceName()].pattern || this.def.pattern;
+    },
+
+    getBuildCommand: function() {
+        return pattern[this.getSourceName()].command || this.def.command;
+    },
+
+    getCopyPatterns: function() {
+        return pattern[this.getSourceName()].copy || this.def.copy;
+    },
+
+    getDocPatterns: function() {
+        return this.getCopyPatterns()[0];
+    },
+
+    getBuilderName: function() {
+        return pattern[this.getSourceName()].builder || this.def.builder;
+    },
+
+    getTitles: function() {
+        return titles;
+    },
+
+    getTasks: function() {
+        if(this.source.docsOnly) {
+            return  [
+                constants.TASKS.REMOVE_OUTPUT,
+                constants.TASKS.CREATE_OUTPUT,
+                constants.TASKS.GIT_CLONE,
+                constants.TASKS.GIT_CHECKOUT,
+                constants.TASKS.COLLECT_SETS
+            ];
+        }
+
+        return pattern[this.getSourceName()].tasks || _.values(this.def.tasks);
+    },
+
+    /**
+     * Returns path of library in output folder
+     * @returns {String}
+     */
+    getContentPath: function() {
+        return path.join(constants.DIRECTORY.CONTENT, this.source.name, this.ref.replace(/\//g, '-'));
+    },
+
+    /**
+     * Returns path of library in output folder
+     * @returns {String}
+     */
+    getOutputPath: function() {
+        return path.join(constants.DIRECTORY.OUTPUT, this.source.name, this.ref.replace(/\//g, '-'));
+    },
+
+    /**
+     * Make chained calls for all tasks for target and call them
+     * @returns {*}
+     */
+    execute: function() {
+        var self = this,
+            initial = this.tasks.shift();
+        return this.tasks.reduce(function(prev, item) {
+            return prev.then(function() {
+                return item.apply(self);
+            });
+        }, initial.apply(this));
+    },
+
+    /**
+     *
+     * @returns {{repo: *, ref: *, url: string}}
+     */
+    createSetsResultBase: function() {
+        return {
+            repo: this.source.name,
+            ref: this.ref,
+            enb: this.getBuilderName() === 'enb',
+            url: this.source.url.replace('git:', 'http:').replace('.git', ''),
+            custom: this.getCustom(),
+            docs: {}
+        };
+    },
+
+    /**
+     * Add custom pseudo-nodes to library version
+     * and set actual library name and version to url pattern
+     * @returns {*}
+     */
+    getCustom: function() {
+        return (pattern[this.getSourceName()].custom || this.def.custom).map(function(item) {
+            if(item.url) {
+                item.url = item.url
+                    .replace('{lib}', this.getSourceName())
+                    .replace('{ref}', this.ref);
+            }
+            return item;
+        }, this);
+    },
+
+
+    /** ------------ commands ------------- **/
+
+    /**
+     * Remove target folder in output directory
+     * @returns {defer.promise|*}
+     */
+    removeOutput: function() {
+        logger.debug('remove output folder for target %s', this.getName());
+        return getUtil().removeDir(this.getOutputPath()).then(function() { return this; });
+    },
+
+    /**
+     * Create target folder in output directory
+     * @returns {defer.promise|*}
+     */
+    createOutput: function() {
+        logger.debug('create output folder for target %s', this.getName());
+        return vowFs.makeDir(this.getOutputPath()).then(function() { return this; });
+    },
+
+    /**
+     * Executes git clone command
+     * @returns {defer.promise|*}
+     */
+    gitClone: function() {
+        return getCmd().runCommand(
+            util.format('git clone --progress %s %s', this.getUrl(), this.getContentPath()), {}, 'git clone', this);
+    },
+
+    /**
+     * Executes git checkout command
+     * @returns {defer.promise|*}
+     */
+    gitCheckout: function() {
+        return getCmd().runCommand(util.format('git checkout %s', this.ref),
+            { cwd: path.resolve(this.getContentPath()) }, 'git checkout', this);
+    },
+
+    /**
+     * Cleans npm cache
+     * @returns {defer.promise|*}
+     */
+    npmCacheClean: function() {
+        return getCmd().runCommand('npm cache clean',
+            { cwd: path.resolve(this.getContentPath()) }, 'npm cache clean', this);
+    },
+
+    /**
+     * Executes npm install command
+     * @returns {defer.promise|*}
+     */
+    npmInstall: function() {
+        return getCmd().runCommand(util.format('npm install --registry="%s"',
+                this.getSourcePrivacy() ? constants.NPM_REGISTRY.PRIVATE : constants.NPM_REGISTRY.PUBLIC),
+            { cwd: path.resolve(this.getContentPath()) }, 'npm install', this);
+    },
+
+    /**
+     * Updates bem sets version
+     * @returns {defer.promise|*}
+     */
+    npmInstallBemSets: function() {
+        return getCmd().runCommand(util.format('npm install --registry=%s bem-sets@x bem@0.x',
+                this.getSourcePrivacy() ? constants.NPM_REGISTRY.PRIVATE : constants.NPM_REGISTRY.PUBLIC),
+            { cwd: path.resolve(this.getContentPath()) }, 'npm install bem-sets', this);
+    },
+
+    /**
+     * Updates bem tools version
+     * @returns {defer.promise|*}
+     */
+    npmInstallBem: function() {
+        return getCmd().runCommand(util.format('npm install --registry=%s bem@~0.8', constants.NPM_REGISTRY.PUBLIC),
+            { cwd: path.resolve(this.getContentPath()) }, 'npm install bem', this);
+    },
+
+    /**
+     * Executes npm run deps command
+     * @returns {defer.promise|*}
+     */
+    npmRunDeps: function() {
+        return getCmd().runCommand('npm run deps',
+            { cwd: path.resolve(this.getContentPath()) }, 'npm run deps', this);
+    },
+
+    /**
+     * Copy borschik file to library directory
+     * @returns {defer.promise|*}
+     */
+    copyBorschik: function() {
+        logger.debug('copy borschik configuration for target %s', this.getName());
+        return vowFs
+            .copy('.borschik', path.join(this.getContentPath(), '.borschik'))
+            .then(function() {
+                return this;
+            }
+        );
+    },
+
+    /**
+     * Executes npm run deps command
+     * @returns {defer.promise|*}
+     */
+    npmRunBuild: function() {
+        var command = this.getBuildCommand();
+        return getCmd().runCommand(command, { cwd: path.resolve(this.getContentPath()) }, command, this);
+    },
+
+    /**
+     * Executes copying sets folders
+     * @returns {defer.promise|*}
+     */
+    copySets: function() {
+        return vow.all(this.getCopyPatterns().map(function(item) {
+            return getCmd().runCommand(util.format('cp -R %s %s', item, path.resolve(this.getOutputPath())),
+                { cwd: path.resolve(this.getContentPath()) }, util.format('copy folders %s', item), this);
+        }, this));
+    },
+
+    collectSets: function() {
+        logger.info('-- collect sets start --');
+
+        var result = this.createSetsResultBase();
+        return this._readMDFilesForLibrary(result)
+            .then(function() { return this._readDependencies(result); }, this)
+            .then(function() { return this._readLevelsForLibrary(result); }, this)
+            .then(function() { return this._writeResultToFile(result); }, this)
+            .then(function() {
+                logger.info('-- collect sets end --');
+                return this;
+            }, this);
+    },
+
+    /** ----- collect sets private methods ------- **/
+
+    /**
+     * Read markdown files for library and compile them into html
+     * @param result - {Object} result model
+     * @returns {*}
+     */
+    _readMDFilesForLibrary: function(result) {
+        logger.debug('read markdown files for library %s', this.getName());
+        return vow.allResolved(Object.keys(this.getMdTargets())
+                .map(function(key) {
+                    //TODO change this code!
+                    var folder = this.getMdTargets()[key].folder,
+                        fn = _.isUndefined(folder) ? this._loadMDFromRemote : this._loadMDFromFile;
+                    return fn.call(this, result.docs, key);
+                }, this)
+        );
+    },
+
+    /**
+     * Reads markdown files from filesystem
+     * @param result - {Object} result model
+     * @param key - {String} key with name of markdown doc
+     * @returns {*}
+     */
+    _loadMDFromFile: function(result, key) {
+        return vowFs
+            .listDir(path.join(this.getContentPath(), this.getMdTargets()[key].folder))
+            .then(function(files) {
+                var languages = config.get('languages') || ['en'],
+                    pattern = this.getMdTargets()[key].pattern;
+
+                if(!_.isObject(pattern)) {
+                    pattern = languages.reduce(function(prev, lang) {
+                        prev[lang] = pattern;
+                        return prev;
+                    }, {});
+                }
+
+                result[key] = {
+                    title: this.getTitles()[key],
+                    content: null
+                };
+
+                return vow.allResolved(Object.keys(pattern).map(function(lang) {
+                    var file  = files.filter(function(file) {
+                        return file.indexOf(pattern[lang]) !== -1;
+                    }).pop();
+
+                    return vowFs
+                        .read(path.join(this.getContentPath(), this.getMdTargets()[key].folder, file), 'utf-8')
+                        .then(function(content) {
+                            try {
+                                result[key].content = result[key].content || {};
+                                result[key].content[lang] = getUtil().mdToHtml(content);
+                            } catch(e) {}
+                        });
+                }, this));
+            }, this);
+    },
+
+    /**
+     * Reads markdown files from remote github repo via Github API
+     * @param result - {Object} result model
+     * @param key - {String} key with name of markdown doc
+     * @returns {*}
+     */
+    _loadMDFromRemote: function(result, key) {
+        var languages = config.get('languages') || ['en'],
+            pattern = this.getMdTargets()[key].pattern;
+
+        if(!_.isObject(pattern)) {
+            pattern = languages.reduce(function(prev, lang) {
+                prev[lang] = pattern;
+                return prev;
+            }, {});
+        }
+
+        result[key] = {
+            title: this.getTitles()[key],
+            content: null
+        };
+
+        return vow.allResolved(Object.keys(pattern).map(function(lang) {
+            var repo = (function(s) {
+                var ps = s.match(/^https?:\/\/(.+?)\/(.+?)\/(.+?)\/(tree|blob)\/(.+?)\/(.+)/);
+                return {
+                    isPrivate: ps[1].indexOf('yandex') > -1,
+                    user: ps[2],
+                    repo: ps[3],
+                    ref:  ps[5],
+                    path: ps[6]
+                };
+            })(pattern[lang]);
+
+            return api.getContent(repo)
+                .then(function(data) {
+                    if(data.res) {
+                        try {
+                            result[key].content = result[key].content || {};
+                            result[key][lang] = getUtil().mdToHtml((new Buffer(data.res.content, 'base64')).toString());
+                        } catch(err) {}
+                    }
+                })
+                .fail(function() {});
+        }));
+    },
+
+    /**
+     * Reads library dependencies from bower.json file
+     * @param result - {Object} result model
+     * @returns {*}
+     */
+    _readDependencies: function(result) {
+        return vowFs.read(path.resolve(this.getContentPath(), 'bower.json'),'utf-8')
+            .then(function(content) {
+                try {
+                    content = JSON.parse(content);
+                    result.deps = content.dependencies;
+                }catch(e) {
+                    result.deps = null;
+                }
+            })
+            .fail(function() {
+                result.deps = null;
+            });
+    },
+
+    /**
+     * Scan level directories for library
+     * @param result - {Object} result model
+     * @returns {*}
+     */
+    _readLevelsForLibrary: function(result) {
+        logger.debug('read level directories for library %s', this.getName());
+
+        return vowFs.listDir(path.resolve(this.getOutputPath()))
+            .then(function(levels) {
+                var levelNames = ['desktop', 'touch-pad', 'touch-phone'].map(function(item) {
+                    return item + this.getDocPatterns().replace('*', '');
+                }, this);
+
+                levels = levels.filter(function(item) {
+                    return levelNames.indexOf(item) !== -1;
+                });
+
+                return vow.allResolved(levels.map(function(level) {
+                    level = { name: level };
+                    result.levels = result.levels || [];
+                    result.levels.push(level);
+
+                    return this._readBlocksForLevel(result, level);
+                }, this));
+            }, this);
+    },
+
+    /**
+     * Scan block directories for level
+     * @param result - {Object} result model
+     * @param level - {Object} level
+     * @returns {*}
+     */
+    _readBlocksForLevel: function(result, level) {
+        var blockIgnores = ['.dist', '.bem', 'index', 'catalogue', 'index', 'jscatalogue'];
+
+        return vowFs.listDir(path.resolve(this.getOutputPath(), level.name))
+            .then(function(blocks) {
+                return vow.allResolved(
+                    blocks
+                        .filter(function(block) {
+                            return blockIgnores.indexOf(block) === -1;
+                        })
+                        .map(function(block) {
+                            block = { name: block };
+                            level.blocks = level.blocks || [];
+                            level.blocks.push(block);
+
+                            return this._readDataForBlock(result, level, block);
+                        }, this)
+                );
+            }, this);
+    },
+
+    /**
+     * Read data files for single block
+     * @param result - {Object} result model
+     * @param level - {Object} level
+     * @param block - {Object} block
+     * @returns {*}
+     */
+    _readDataForBlock: function(result, level, block) {
+        return vow.allResolved(Object.keys(this.getBlockTargets()).map(function(key) {
+                return vowFs.read(path.resolve(this.getOutputPath(),level.name, block.name,
+                    util.format(this.getBlockTargets()[key], block.name)), 'utf-8')
+                    .then(function(content) {
+                        try {
+                            block[key] = JSON.parse(content);
+                        }catch(e) {
+                            block[key] = content;
+                        }
+                    })
+                    .fail(function() {
+                        block[key] = null;
+                    });
+            }, this)
+        );
+    },
+
+    /**
+     * Save result model into json file
+     * @param result - {Object} result model
+     * @returns {*}
+     */
+    _writeResultToFile: function(result) {
+        logger.debug('write result of target %s to file %s', this.getName(),
+            path.resolve(this.getOutputPath(), constants.FILE.DATA));
+
+        return vowFs.write(path.resolve(this.getOutputPath(), constants.FILE.DATA),
+            JSON.stringify(result, null, 4), { charset: 'utf8' });
+    }
+};
 
 exports.run = function(source) {
     try {
-        libs.api.init();
+        api.init();
 
         init()
             .then(function () {
@@ -143,7 +906,7 @@ exports.run = function(source) {
                         var p = path.join(constants.DIRECTORY.CONTENT, dir);
 
                         logger.debug('remove directory %s', p);
-                        return libs.util.removeDir(p);
+                        return getUtil().removeDir(p);
                     }));
                 });
             })
@@ -153,13 +916,13 @@ exports.run = function(source) {
             .then(function (source) {
                 return verifyRepositoryReferences(source, {
                     field: 'tags',
-                    apiFunction: libs.api.getRepositoryTags
+                    apiFunction: api.getRepositoryTags
                 });
             })
             .then(function (source) {
                 return verifyRepositoryReferences(source, {
                     field: 'branches',
-                    apiFunction: libs.api.getRepositoryBranches
+                    apiFunction: api.getRepositoryBranches
                 });
             })
             .then(createTargets)
@@ -169,13 +932,13 @@ exports.run = function(source) {
                 }));
             })
             .then(function () {
-                return libs.cmd.gitAdd();
+                return getCmd().gitAdd();
             })
             .then(function () {
-                return libs.cmd.gitCommit(util.format('Update data: %s', (new Date()).toString()));
+                return getCmd().gitCommit(util.format('Update data: %s', (new Date()).toString()));
             })
             .then(function () {
-                return libs.cmd.gitPush(config.get('dataConfig:ref'));
+                return getCmd().gitPush(config.get('dataConfig:ref'));
             })
             .then(function () {
                 logger.info(''.toUpperCase.apply('application has been finished'));
