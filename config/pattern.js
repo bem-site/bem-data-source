@@ -1,6 +1,6 @@
 'use strict';
 
-var tasks = require('../src/constants').TASKS;
+var tasks = require('./constants').TASKS;
 
 module.exports = {
     'bem-mvc': {

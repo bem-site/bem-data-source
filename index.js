@@ -14,10 +14,13 @@ var util = require('util'),
     intel = require('intel'),
 
     //application modules
-    pattern = require('../config/pattern'),
-    titles = require('../config/titles'),
-    constants = require('./constants'),
+    pattern = require('./config/pattern'),
+    titles = require('./config/titles'),
+    constants = require('./config/constants'),
 
+    /**
+     * Application configuration module based on nconf library
+     */
     config = (function() {
         nconf
             .env()
@@ -31,6 +34,9 @@ var util = require('util'),
         return nconf;
     })(),
 
+    /**
+     * Application logger module based on intel library
+     */
     logger = (function(_module) {
         intel.setLevel(config.get('logLevel'));
         intel.addHandler(
@@ -43,17 +49,12 @@ var util = require('util'),
             })
         );
 
-        var name = _module ? _module.filename.split('/').slice(-2).join('/') : '',
-            log = intel.getLogger(name);
-        return {
-            verbose: function() { return log.verbose(arguments); },
-            debug: function() { return log.debug(arguments); },
-            info: function() { return log.info(arguments); },
-            warn: function() { return log.warn(arguments); },
-            error: function() { return log.error(arguments); }
-        };
+        return intel.getLogger(_module ? _module.filename.split('/').slice(-2).join('/') : '');
     })(module),
 
+    /**
+     * Custom renderer for marked parser
+     */
     renderer = (function() {
         var renderer = new md.Renderer();
 
@@ -80,6 +81,9 @@ var util = require('util'),
         };
     })(),
 
+    /**
+     * Github API module based on github library
+     */
     api = (function() {
 
         logger.info('Initialize github API');
@@ -218,6 +222,10 @@ var util = require('util'),
         };
     })(),
 
+    /**
+     * Returns interface for command execution
+     * @returns {{gitAdd: gitAdd, gitCommit: gitCommit, gitPush: gitPush, runCommand: runCommand}}
+     */
     getCmd = function() {
         return {
             /**
@@ -288,6 +296,10 @@ var util = require('util'),
         };
     },
 
+    /**
+     * Returns interface for uril methods
+     * @returns {{exec: exec, mdToHtml: mdToHtml, removeDir: removeDir, getSSHUrl: getSSHUrl}}
+     */
     getUtil = function() {
         return {
             /**
@@ -456,34 +468,68 @@ Target.prototype = {
         return this.source.url;
     },
 
+    /**
+     *
+     * @returns {*}
+     */
     getMdTargets: function() {
         return _.extend(this.def.docs, pattern[this.getSourceName()].docs || {});
     },
 
+    /**
+     *
+     * @returns {*}
+     */
     getBlockTargets: function() {
         return pattern[this.getSourceName()].pattern || this.def.pattern;
     },
 
+    /**
+     *
+     * @returns {String}
+     */
     getBuildCommand: function() {
         return pattern[this.getSourceName()].command || this.def.command;
     },
 
+    /**
+     * Returns array of masks for folder names that shoud be copied
+     * from content to output directory
+     * @returns {Array}
+     */
     getCopyPatterns: function() {
         return pattern[this.getSourceName()].copy || this.def.copy;
     },
 
+    /**
+     *
+     * @returns {*}
+     */
     getDocPatterns: function() {
         return this.getCopyPatterns()[0];
     },
 
+    /**
+     * Returns name of builder
+     * @returns {String}
+     */
     getBuilderName: function() {
         return pattern[this.getSourceName()].builder || this.def.builder;
     },
 
+    /**
+     *
+     * @returns {*|exports}
+     */
     getTitles: function() {
         return titles;
     },
 
+    /**
+     * Returns array of tasks that should be executed for target
+     * in the same order as they were written
+     * @returns {Array}
+     */
     getTasks: function() {
         if(this.source.docsOnly) {
             return  [
@@ -1031,7 +1077,7 @@ function createTargets(source) {
     return targets;
 }
 
-function execute(source) {
+function make(source) {
     try {
         api.init();
 
@@ -1088,70 +1134,75 @@ function execute(source) {
     }
 }
 
-module.exports = require('coa').Cmd()
-    .name(process.argv[1])
+function command() {
+    return require('coa').Cmd()
+        .name(process.argv[1])
         .title('Library data builder')
         .helpful()
-    .opt()
-        .name('version').title('Show version')
-        .short('v').long('version')
-        .flag()
-        .only()
-        .act(function() {
-            var p = require('../package.json');
-            return p.name + ' ' + p.version;
-        })
-        .end()
-    .opt()
-        .name('private').title('Privacy of repository')
-        .short('p').long('private')
-        .flag()
-        .end()
-    .opt()
-        .name('user').title('User or organization for repository')
-        .short('u').long('user')
-        .req()
-        .end()
-    .opt()
-        .name('repo').title('Name of repository')
-        .short('r').long('repo')
-        .req()
-        .end()
-    .opt()
-        .name('tags').title('Name(s) of tags')
-        .short('t').long('tags')
-        .arr()
-        .end()
-    .opt()
-        .name('branches').title('Name(s) of branches')
-        .short('b').long('branches')
-        .arr()
-        .end()
-    .opt()
-        .name('docsOnly').title('Indicates that only docs should be collected')
-        .short('docs-only').long('docs-only')
-        .flag()
-        .end()
-    .act(function(opts) {
-        logger.info(''.toUpperCase.apply('Try to build sets for:'));
+        .opt()
+            .name('version').title('Show version')
+            .short('v').long('version')
+            .flag()
+            .only()
+            .act(function() {
+                var p = require('./package.json');
+                logger.info('application name: %s version %s', p.name, p.version);
+                return '';
+            })
+            .end()
+        .opt()
+            .name('private').title('Privacy of repository')
+            .short('p').long('private')
+            .flag()
+            .end()
+        .opt()
+            .name('user').title('User or organization for repository')
+            .short('u').long('user')
+            .req()
+            .end()
+        .opt()
+            .name('repo').title('Name of repository')
+            .short('r').long('repo')
+            .req()
+            .end()
+        .opt()
+            .name('tags').title('Name(s) of tags')
+            .short('t').long('tags')
+            .arr()
+            .end()
+        .opt()
+            .name('branches').title('Name(s) of branches')
+            .short('b').long('branches')
+            .arr()
+            .end()
+        .opt()
+            .name('docsOnly').title('Indicates that only docs should be collected')
+            .short('docs-only').long('docs-only')
+            .flag()
+            .end()
+        .act(function(opts) {
+            logger.info(''.toUpperCase.apply('Try to build sets for:'));
 
-        logger.info('repository privacy: %s', !!opts.private);
-        logger.info('repository user or organization: %s', opts.user);
-        logger.info('repository name: %s', opts.repo);
-        logger.info('repository refs %s', opts.tags || opts.branches);
-        logger.info('only docs %s', !!opts.docsOnly);
+            logger.info('repository privacy: %s', !!opts.private);
+            logger.info('repository user or organization: %s', opts.user);
+            logger.info('repository name: %s', opts.repo);
+            logger.info('repository refs %s', opts.tags || opts.branches);
+            logger.info('only docs %s', !!opts.docsOnly);
 
-        if(!opts.tags && !opts.branches) {
-            logger.error('Tags or branches have not been set');
-            return;
-        }
+            if (!opts.tags && !opts.branches) {
+                logger.error('Tags or branches have not been set');
+                return;
+            }
 
-        execute({
-            isPrivate: !!opts.private,
-            user: opts.user,
-            name: opts.repo,
-            tags: opts.tags || [],
-            branches: opts.branches || [],
-            docsOnly: !!opts.docsOnly
+            make({
+                isPrivate: !!opts.private,
+                user: opts.user,
+                name: opts.repo,
+                tags: opts.tags || [],
+                branches: opts.branches || [],
+                docsOnly: !!opts.docsOnly
+            });
         });
-    });
+}
+
+module.exports = command().run();
