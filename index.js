@@ -1079,8 +1079,6 @@ function createTargets(source) {
 
 function make(source) {
     try {
-        api.init();
-
         init()
             .then(function() {
                 return vowFs.listDir(constants.DIRECTORY.CONTENT).then(function(dirs) {
