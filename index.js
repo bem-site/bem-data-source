@@ -56,7 +56,7 @@ var util = require('util'),
      * Custom renderer for marked parser
      */
     renderer = (function() {
-        var renderer = new md.Renderer();
+        var r = new md.Renderer();
 
         /**
          * Fix marked issue with cyrillic symbols replacing
@@ -66,7 +66,7 @@ var util = require('util'),
          * @param options - {Object} options
          * @returns {String} - result header string
          */
-        renderer.heading = function(text, level, raw, options) {
+        r.heading = function(text, level, raw, options) {
             var specials = ['-','[',']','/','{','}','(',')','*','+','?','.','\\','^','$','|','s','\'','\"'];
 
             options = options || {};
@@ -76,8 +76,10 @@ var util = require('util'),
                 raw.replace(new RegExp('[' + specials.join('\\') + ']', 'g'), '-'), text, level);
         };
 
-        return function get() {
-            return renderer;
+        return {
+            get: function() {
+                return r;
+            }
         };
     })(),
 
@@ -792,8 +794,8 @@ Target.prototype = {
                             try {
                                 result[key].content = result[key].content || {};
                                 result[key].content[lang] = getUtil().mdToHtml(content);
-                            } catch(e) {}
-                        });
+                            }catch(e) {};
+                        }, this)
                 }, this));
             }, this);
     },
