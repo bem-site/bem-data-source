@@ -217,6 +217,17 @@ var util = require('util'),
     getCmd = function() {
         return {
             /**
+             * Clone repository from url to folder
+             * @param url - {String} - url of git repository
+             * @param folder - {String} path to target folder
+             * @returns {defer.promise|*}
+             */
+            gitClone: function(url, folder) {
+              return this.runCommand(
+                  util.format('git clone --progress %s %s', url, folder), {}, 'git clone', null)
+            },
+
+            /**
              * Adds all files for commit
              * @returns {defer.promise|*}
              */
@@ -962,11 +973,7 @@ function init() {
             return getUtil().getSSHUrl(config.get('dataConfig'))
                 .then(function(url) {
                     logger.info('Start clone remote target data repository. Please wait ...');
-                    return Target.prototype.gitClone().apply({
-                        getName: function() { return 'all'; },
-                        getUrl: function() { return url; },
-                        getContentPath: function() { return constants.DIRECTORY.OUTPUT; }
-                    });
+                    return getCmd().gitClone(url, constants.DIRECTORY.OUTPUT);
                 })
                 .then(function() {
                     logger.info('Remote target data repository has been cloned successfully');
