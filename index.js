@@ -37,7 +37,7 @@ var util = require('util'),
     /**
      * Application logger module based on intel library
      */
-    logger = (function(_module) {
+    logger = (function() {
         intel.setLevel(config.get('logLevel'));
         intel.addHandler(
             new intel.handlers.Console({
@@ -49,8 +49,8 @@ var util = require('util'),
             })
         );
 
-        return intel.getLogger(_module ? _module.filename.split('/').slice(-2).join('/') : '');
-    })(module),
+        return intel.getLogger('');
+    })(),
 
     /**
      * Custom renderer for marked parser
