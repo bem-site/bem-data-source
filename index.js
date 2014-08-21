@@ -108,21 +108,11 @@ var util = require('util'),
             publicCredentials = config.get('credentials:public'),
             privateCredentials = config.get('credentials:private');
 
-        if(publicCredentials) {
-            gitPublic = new Api(_.extend(publicConfig, commonConfig));
-            gitPublic.authenticate({
-                type: 'oauth',
-                token: publicCredentials
-            });
-        }
+        gitPublic = new Api(_.extend(publicConfig, commonConfig));
+        publicCredentials && gitPublic.authenticate({ type: 'oauth', token: publicCredentials });
 
-        if(privateCredentials) {
-            gitPrivate = new Api(_.extend(privateConfig, commonConfig));
-            gitPrivate.authenticate({
-                type: 'oauth',
-                token: privateCredentials
-            });
-        }
+        gitPrivate = new Api(_.extend(privateConfig, commonConfig));
+        privateCredentials && gitPrivate.authenticate({ type: 'oauth', token: privateCredentials });
 
         return {
             /**
