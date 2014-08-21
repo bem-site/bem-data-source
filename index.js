@@ -108,9 +108,7 @@ var util = require('util'),
             publicCredentials = config.get('credentials:public'),
             privateCredentials = config.get('credentials:private');
 
-        if(!publicCredentials) {
-            throw new Error('public credentials are not settled');
-        }else {
+        if(publicCredentials) {
             gitPublic = new Api(_.extend(publicConfig, commonConfig));
             gitPublic.authenticate({
                 type: 'oauth',
@@ -118,9 +116,7 @@ var util = require('util'),
             });
         }
 
-        if(!privateCredentials) {
-            throw new Error('private credentials are not settled');
-        }else {
+        if(privateCredentials) {
             gitPrivate = new Api(_.extend(privateConfig, commonConfig));
             gitPrivate.authenticate({
                 type: 'oauth',
