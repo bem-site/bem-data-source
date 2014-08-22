@@ -671,6 +671,12 @@ Target.prototype = {
             { cwd: path.resolve(this.getContentPath()) }, 'npm install bem-sets', this);
     },
 
+    /*temporary method for install submodules*/
+    gitSubmoduleUpdate: function() {
+        return getCmd().runCommand(util.format('git submodule update —init'),
+            { cwd: path.resolve(path.join(this.getContentPath(), 'node_modules/bem-sets')) }, 'git submodule update', this);
+    },
+
     /**
      * Updates bem tools version
      * @returns {defer.promise|*}
