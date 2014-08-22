@@ -59,7 +59,7 @@ module.exports = {
     },
     'bem-components': {
         builder: 'enb',
-        command: 'enb make __magic__ desktop.examples desktop.tests desktop.docs touch-pad.examples touch-pad.tests touch-pad.docs touch-phone.examples touch-phone.tests touch-phone.docs && enb make *.pages/*',
+        command: 'YENV=production enb make __magic__ desktop.examples desktop.tests desktop.docs touch-pad.examples touch-pad.tests touch-pad.docs touch-phone.examples touch-phone.tests touch-phone.docs && enb make *.pages/*',
         copy: ['*.docs', '*.tests', '*.examples'],
         docs: {
             readme: {
