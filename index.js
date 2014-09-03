@@ -666,7 +666,7 @@ Target.prototype = {
      * @returns {defer.promise|*}
      */
     npmInstallBemSets: function() {
-        return getCmd().runCommand(util.format('npm install --registry=%s bem-sets@x bem@0.x',
+        return getCmd().runCommand(util.format('npm install --registry=%s bem-sets@x bem@^0.8.0',
                 this.getSourcePrivacy() ? constants.NPM_REGISTRY.PRIVATE : constants.NPM_REGISTRY.PUBLIC),
             { cwd: path.resolve(this.getContentPath()) }, 'npm install bem-sets', this);
     },
