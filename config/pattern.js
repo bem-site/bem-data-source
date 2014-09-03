@@ -148,15 +148,16 @@ module.exports = {
         ]
     },
     islands: {
-        command: 'ulimit -n 8192 && npm run build'
+        command: 'npm run build'
     },
     'islands-components': {
-//        builder: 'enb',
-          command: 'ulimit -n 8192 && npm run build',
-//        pattern: {
-//            data: '%s.data.json',
-//            jsdoc: '%s.ru.doc.html'
-//        },
+        builder: 'enb',
+        command: 'npm run build',
+        pattern: {
+            data: '%s.data.json',            
+	    jsdoc: '%s.jsdoc.json'
+        },
+	copy: ['*.docs', '*.tests', '*.examples'],
         tasks: [
             tasks.REMOVE_OUTPUT,
             tasks.CREATE_OUTPUT,
@@ -165,7 +166,7 @@ module.exports = {
             tasks.NPM_CACHE_CLEAN,
             tasks.NPM_INSTALL,
             tasks.NPM_INSTALL_BEM_SETS,
-            tasks.NPM_INSTALL_BEM,
+	    tasks.NPM_INSTALL_BEM,
             tasks.NPM_RUN_DEPS,
             tasks.COPY_BORSCHIK,
             tasks.NPM_RUN_BUILD,
