@@ -2,389 +2,21 @@
 
 var util = require('util'),
     path =require('path'),
-    cp = require('child_process'),
 
     _ = require('lodash'),
-    nconf = require('nconf'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
-    fs = require('fs-extra'),
-    md = require('marked'),
-    Api = require('github'),
-    intel = require('intel'),
 
     //application modules
     pattern = require('./config/pattern'),
     titles = require('./config/titles'),
     constants = require('./config/constants'),
 
-    /**
-     * Application configuration module based on nconf library
-     */
-    config = (function() {
-        nconf
-            .env()
-            .file({ file: path.join('config', 'config.json') });
-
-        nconf.add('credentials', {
-            type: 'file',
-            file: path.join('config', 'credentials.json')
-        });
-
-        return nconf;
-    })(),
-
-    /**
-     * Application logger module based on intel library
-     */
-    logger = (function() {
-        intel.setLevel(config.get('logLevel'));
-        intel.addHandler(
-            new intel.handlers.Console({
-                level: intel.VERBOSE,
-                formatter: new intel.Formatter({
-                    format: '[%(date)s] %(levelname)s %(name)s: %(message)s',
-                    colorize: true
-                })
-            })
-        );
-
-        return intel.getLogger('');
-    })(),
-
-    /**
-     * Custom renderer for marked parser
-     */
-    renderer = (function() {
-        var r = new md.Renderer();
-
-        /**
-         * Fix marked issue with cyrillic symbols replacing
-         * @param text - {String} test of header
-         * @param level - {Number} index of header
-         * @param raw
-         * @param options - {Object} options
-         * @returns {String} - result header string
-         */
-        r.heading = function(text, level, raw, options) {
-            var specials = ['-','[',']','/','{','}','(',')','*','+','?','.','\\','^','$','|','s','\'','\"'];
-
-            options = options || {};
-            options.headerPrefix = options.headerPrefix || '';
-
-            return util.format('<h%s id="%s%s">%s</h%s>\n', level, options.headerPrefix,
-                raw.replace(new RegExp('[' + specials.join('\\') + ']', 'g'), '-'), text, level);
-        };
-
-        return {
-            get: function() {
-                return r;
-            }
-        };
-    })(),
-
-    /**
-     * Github API module based on github library
-     */
-    api = (function() {
-
-        logger.info('Initialize github API');
-
-        var gitPublic,
-            gitPrivate,
-            commonConfig = {
-                version: '3.0.0',
-                debug: false,
-                protocol: 'https',
-                timeout: 50000
-            },
-            publicConfig = {
-                host: 'api.github.com'
-            },
-            privateConfig = {
-                host: 'github.yandex-team.ru',
-                url: '/api/v3'
-            },
-            publicCredentials = config.get('credentials:public'),
-            privateCredentials = config.get('credentials:private');
-
-        gitPublic = new Api(_.extend(publicConfig, commonConfig));
-        publicCredentials && gitPublic.authenticate({ type: 'oauth', token: publicCredentials });
-
-        gitPrivate = new Api(_.extend(privateConfig, commonConfig));
-        privateCredentials && gitPrivate.authenticate({ type: 'oauth', token: privateCredentials });
-
-        return {
-            /**
-             * Return information about github repository
-             * @param source - {Object} configuration object with fields:
-             * - user {String} owner of repository
-             * - name {String} name of repository
-             * @returns {defer.promise|*}
-             */
-            getRepository: function(source) {
-                var def = vow.defer(),
-                    git = (source.isPrivate && source.isPrivate === 'true')  ? gitPrivate : gitPublic;
-
-                git.repos.get({ user: source.user, repo: source.name }, function(err, res) {
-                    if (err) {
-                        logger.error(err.message);
-                        def.reject(err);
-                    }
-                    def.resolve({ source: source, result: res });
-                });
-
-                return def.promise();
-            },
-
-            /**
-             * Returns information about tags of github repository
-             * @param source - {Object} configuration object with fields:
-             * - user {String} owner of repository
-             * - name {String} name of repository
-             * @returns {defer.promise|*}
-             */
-            getRepositoryTags: function(source) {
-                var def = vow.defer(),
-                    git = source.isPrivate ? gitPrivate : gitPublic;
-
-                git.repos.getTags({ user: source.user, repo: source.name, per_page: 100 }, function(err, res) {
-                    if (err) {
-                        logger.error(err.message);
-                        def.reject(err);
-                    }
-                    def.resolve({ source: source, result: res });
-                });
-
-                return def.promise();
-            },
-
-            /**
-             * Return information about branches of github repository
-             * @param source - {Object} configuration object with fields:
-             * - user {String} owner of repository
-             * - name {String} name of repository
-             * @returns {defer.promise|*}
-             */
-            getRepositoryBranches: function(source) {
-                var def = vow.defer(),
-                    git = source.isPrivate ? gitPrivate : gitPublic;
-
-                git.repos.getBranches({ user: source.user, repo: source.name, per_page: 100 }, function(err, res) {
-                    if (err) {
-                        logger.error(err.message);
-                        def.reject(err);
-                    }
-                    def.resolve({ source: source, result: res });
-                });
-
-                return def.promise();
-            },
-
-            /**
-             * Returns content of repository directory or file loaded by github api
-             * @param source - {Object} with fields:
-             * - user {String} name of user or organization which this repository is belong to
-             * - repo {String} name of repository
-             * - ref {String} name of branch
-             * - path {String} relative path from the root of repository
-             * @returns {*}
-             */
-            getContent: function(source) {
-                var def = vow.defer(),
-                    git = source.isPrivate ? gitPrivate : gitPublic;
-                git.repos.getContent({
-                    user: source.user,
-                    repo: source.repo,
-                    ref:  source.ref,
-                    path: source.path
-                }, function(err, res) {
-                    if (err || !res) {
-                        def.reject({ res: null, repo: source });
-                    }else {
-                        def.resolve({ res: res, repo: source });
-                    }
-                });
-                return def.promise();
-            }
-        };
-    })(),
-
-    /**
-     * Returns interface for command execution
-     * @returns {{gitAdd: gitAdd, gitCommit: gitCommit, gitPush: gitPush, runCommand: runCommand}}
-     */
-    getCmd = function() {
-        return {
-            /**
-             * Clone repository from url to folder
-             * @param url - {String} - url of git repository
-             * @param folder - {String} path to target folder
-             * @returns {defer.promise|*}
-             */
-            gitClone: function(url, folder) {
-              return this.runCommand(
-                  util.format('git clone --progress %s %s', url, folder), {}, 'git clone', null)
-            },
-
-            /**
-             * Adds all files for commit
-             * @returns {defer.promise|*}
-             */
-            gitAdd: function() {
-                return this.runCommand('git add .',
-                    { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git add', null);
-            },
-
-            /**
-             * Executes git commit command
-             * @param message - {String} commit message
-             * @returns {defer.promise|*}
-             */
-            gitCommit: function(message) {
-                return this.runCommand(util.format('git commit -a --allow-empty -m "%s"', message),
-                    { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git commit', null);
-            },
-
-            /**
-             * Executes git push command
-             * @param ref {String} of remote branch
-             * @returns {defer.promise|*}
-             */
-            gitPush: function(ref) {
-                return this.runCommand(util.format('git push -u origin %s', ref),
-                    { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git push', null);
-            },
-
-            /**
-             * Run command in child process
-             * @param cmd - {String} command to run
-             * @param opts - {Object} options for command execution
-             * @param name - {String} command name for log
-             * @param target - {Object} target
-             * @returns {defer.promise|*}
-             */
-            runCommand: function(cmd, opts, name, target) {
-                var baseOpts = {
-                    encoding: 'utf8',
-                    maxBuffer: 1000000 * 1024
-                };
-
-                if (!target) {
-                    target = {
-                        getName: function() {
-                            return 'all';
-                        }
-                    };
-                }
-
-                //logger.debug('execute %s for target %s', cmd, target.getName());
-                logger.debug('execute command: %s', cmd);
-
-                return getUtil().exec(cmd, _.extend(opts, baseOpts))
-                    .then(function() {
-                        logger.info('%s for target %s completed', name, target.getName());
-                        return vow.resolve(target);
-                    })
-                    .fail(function(error) {
-                        logger.error(error);
-                        logger.error('execution of command: %s failed', cmd);
-                        return vow.reject(error);
-                    });
-            }
-        };
-    },
-
-    /**
-     * Returns interface for uril methods
-     * @returns {{exec: exec, mdToHtml: mdToHtml, removeDir: removeDir, getSSHUrl: getSSHUrl}}
-     */
-    getUtil = function() {
-        return {
-            /**
-             * Executes specified command with options.
-             * @param {String} cmd  Command to execute.
-             * @param {Object} options  Options to `child_process.exec()` function.
-             * @return {Promise}
-             */
-            exec: function(cmd, options) {
-                var proc = cp.exec(cmd, options),
-                    d = vow.defer(),
-                    output = '';
-
-                proc.on('exit', function(code) {
-                    if (code === 0) {
-                        return d.resolve();
-                    }
-                    d.reject(new Error(util.format('%s failed: %s', cmd, output)));
-                });
-
-                proc.stderr.on('data', function(data) {
-                    logger.verbose(data);
-                    output += data;
-                });
-
-                proc.stdout.on('data', function(data) {
-                    logger.verbose(data);
-                    output += data;
-                });
-
-                return d.promise();
-            },
-
-            /**
-             * Converts markdown content into html with marked module
-             * @param content - {String} markdown content
-             * @returns {String} - html string
-             */
-            mdToHtml: function(content) {
-                return md(content, {
-                    gfm: true,
-                    pedantic: false,
-                    sanitize: false,
-                    renderer: renderer.get()
-                });
-            },
-
-            /**
-             * Removes directory with all files and subdirectories
-             * @param path - {String} path to directory on filesystem
-             * @returns {*}
-             */
-            removeDir: function(path) {
-                var def = vow.defer();
-                fs.remove(path, function(err) {
-                    if(err) {
-                        def.reject(err);
-                    }
-
-                    def.resolve();
-                });
-
-                return def.promise();
-            },
-
-            /**
-             * Retrieve github ssh url via github api
-             * @param repo - {Object} repo object
-             * @returns {*}
-             */
-            getSSHUrl: function(repo) {
-                return api
-                    .getRepository({
-                        user: repo.user,
-                        name: repo.repo,
-                        isPrivate: repo.private
-                    })
-                    .then(function(res) {
-                        return res.result.ssh_url;
-                    })
-                    .fail(function() {
-                        logger.error('Data repository was not found. Application will be terminated');
-                    });
-            }
-        };
-    },
+    config = require('./src/config'),
+    logger = require('./src/logger'),
+    api = require('./src/gh-api'),
+    commander = require('./src/commander'),
+    utility = require('.src/util'),
 
     Target = function(source, ref, type) {
         return this.init(source, ref, type);
@@ -612,7 +244,7 @@ Target.prototype = {
      */
     removeOutput: function() {
         logger.debug('remove output folder for target %s', this.getName());
-        return getUtil().removeDir(this.getOutputPath()).then(function() { return this; });
+        return utility.removeDir(this.getOutputPath()).then(function() { return this; });
     },
 
     /**
@@ -629,7 +261,7 @@ Target.prototype = {
      * @returns {defer.promise|*}
      */
     gitClone: function() {
-        return getCmd().runCommand(
+        return commander.runCommand(
             util.format('git clone --progress %s %s', this.getUrl(), this.getContentPath()), {}, 'git clone', this);
     },
 
@@ -638,7 +270,7 @@ Target.prototype = {
      * @returns {defer.promise|*}
      */
     gitCheckout: function() {
-        return getCmd().runCommand(util.format('git checkout %s', this.ref),
+        return commander.runCommand(util.format('git checkout %s', this.ref),
             { cwd: path.resolve(this.getContentPath()) }, 'git checkout', this);
     },
 
@@ -647,7 +279,7 @@ Target.prototype = {
      * @returns {defer.promise|*}
      */
     npmCacheClean: function() {
-        return getCmd().runCommand('npm cache clean',
+        return commander.runCommand('npm cache clean',
             { cwd: path.resolve(this.getContentPath()) }, 'npm cache clean', this);
     },
 
@@ -656,7 +288,7 @@ Target.prototype = {
      * @returns {defer.promise|*}
      */
     npmInstall: function() {
-        return getCmd().runCommand(util.format('npm install --registry="%s"',
+        return commander.runCommand(util.format('npm install --registry="%s"',
                 this.getSourcePrivacy() ? constants.NPM_REGISTRY.PRIVATE : constants.NPM_REGISTRY.PUBLIC),
             { cwd: path.resolve(this.getContentPath()) }, 'npm install', this);
     },
@@ -666,15 +298,9 @@ Target.prototype = {
      * @returns {defer.promise|*}
      */
     npmInstallBemSets: function() {
-        return getCmd().runCommand(util.format('npm install --registry=%s bem-sets@x bem@^0.8.0',
+        return commander.runCommand(util.format('npm install --registry=%s bem-sets@x bem@^0.8.0',
                 this.getSourcePrivacy() ? constants.NPM_REGISTRY.PRIVATE : constants.NPM_REGISTRY.PUBLIC),
             { cwd: path.resolve(this.getContentPath()) }, 'npm install bem-sets', this);
-    },
-
-    /*temporary method for install submodules*/
-    gitSubmoduleUpdate: function() {
-        return getCmd().runCommand(util.format('git submodule update —init'),
-            { cwd: path.resolve(path.join(this.getContentPath(), 'node_modules/bem-sets')) }, 'git submodule update', this);
     },
 
     /**
@@ -682,7 +308,7 @@ Target.prototype = {
      * @returns {defer.promise|*}
      */
     npmInstallBem: function() {
-        return getCmd().runCommand(util.format('npm install --registry=%s bem@~0.8', constants.NPM_REGISTRY.PUBLIC),
+        return commander.runCommand(util.format('npm install --registry=%s bem@~0.8', constants.NPM_REGISTRY.PUBLIC),
             { cwd: path.resolve(this.getContentPath()) }, 'npm install bem', this);
     },
 
@@ -691,7 +317,7 @@ Target.prototype = {
      * @returns {defer.promise|*}
      */
     npmRunDeps: function() {
-        return getCmd().runCommand('npm run deps',
+        return commander.runCommand('npm run deps',
             { cwd: path.resolve(this.getContentPath()) }, 'npm run deps', this);
     },
 
@@ -715,7 +341,7 @@ Target.prototype = {
      */
     npmRunBuild: function() {
         var command = this.getBuildCommand();
-        return getCmd().runCommand(command, { cwd: path.resolve(this.getContentPath()) }, command, this);
+        return commander.runCommand(command, { cwd: path.resolve(this.getContentPath()) }, command, this);
     },
 
     /**
@@ -724,7 +350,7 @@ Target.prototype = {
      */
     copySets: function() {
         return vow.all(this.getCopyPatterns().map(function(item) {
-            return getCmd().runCommand(util.format('cp -R %s %s', item, path.resolve(this.getOutputPath())),
+            return commander.runCommand(util.format('cp -R %s %s', item, path.resolve(this.getOutputPath())),
                 { cwd: path.resolve(this.getContentPath()) }, util.format('copy folders %s', item), this);
         }, this));
     },
@@ -796,9 +422,9 @@ Target.prototype = {
                         .then(function(content) {
                             try {
                                 result[key].content = result[key].content || {};
-                                result[key].content[lang] = getUtil().mdToHtml(content);
-                            }catch(e) {};
-                        }, this)
+                                result[key].content[lang] = utility.mdToHtml(content);
+                            }catch(e) {}
+                        }, this);
                 }, this));
             }, this);
     },
@@ -842,7 +468,7 @@ Target.prototype = {
                     if(data.res) {
                         try {
                             result[key].content = result[key].content || {};
-                            result[key][lang] = getUtil().mdToHtml((new Buffer(data.res.content, 'base64')).toString());
+                            result[key][lang] = utility.mdToHtml((new Buffer(data.res.content, 'base64')).toString());
                         } catch(err) {}
                     }
                 });
@@ -976,10 +602,10 @@ function init() {
             if(exists) {
                 return;
             }
-            return getUtil().getSSHUrl(config.get('dataConfig'))
+            return utility.getSSHUrl(config.get('dataConfig'))
                 .then(function(url) {
                     logger.info('Start clone remote target data repository. Please wait ...');
-                    return getCmd().gitClone(url, constants.DIRECTORY.OUTPUT);
+                    return commander.gitClone(url, constants.DIRECTORY.OUTPUT);
                 })
                 .then(function() {
                     logger.info('Remote target data repository has been cloned successfully');
@@ -1087,7 +713,7 @@ function make(source) {
                         var p = path.join(constants.DIRECTORY.CONTENT, dir);
 
                         logger.debug('remove directory %s', p);
-                        return getUtil().removeDir(p);
+                        return utility.removeDir(p);
                     }));
                 });
             })
@@ -1113,13 +739,13 @@ function make(source) {
                 }));
             })
             .then(function() {
-                return getCmd().gitAdd();
+                return commander.gitAdd();
             })
             .then(function() {
-                return getCmd().gitCommit(util.format('Update data: %s', (new Date()).toString()));
+                return commander.gitCommit(util.format('Update data: %s', (new Date()).toString()));
             })
             .then(function() {
-                return getCmd().gitPush(config.get('dataConfig:ref'));
+                return commander.gitPush(config.get('dataConfig:ref'));
             })
             .then(function() {
                 logger.info(''.toUpperCase.apply('application has been finished'));

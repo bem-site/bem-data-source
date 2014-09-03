@@ -155,7 +155,7 @@ module.exports = {
         command: 'npm run build',
         pattern: {
             data: '%s.data.json',            
-	    jsdoc: '%s.jsdoc.json'
+            jsdoc: '%s.jsdoc.json'
         },
 	copy: ['*.docs', '*.tests', '*.examples'],
         tasks: [
@@ -166,7 +166,7 @@ module.exports = {
             tasks.NPM_CACHE_CLEAN,
             tasks.NPM_INSTALL,
             tasks.NPM_INSTALL_BEM_SETS,
-	    tasks.NPM_INSTALL_BEM,
+            tasks.NPM_INSTALL_BEM,
             tasks.NPM_RUN_DEPS,
             tasks.COPY_BORSCHIK,
             tasks.NPM_RUN_BUILD,
