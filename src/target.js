@@ -5,7 +5,6 @@ var util = require('util'),
 
     _ = require('lodash'),
 
-    pattern = require('../config/pattern'),
     titles = require('./titles'),
     constants = require('./constants'),
 
@@ -14,27 +13,10 @@ var util = require('util'),
     };
 
 Target.prototype = {
-
-    def: {
-        builder: 'bem-tools',
-        command: 'npm run build',
-        copy: ['*.sets'],
-        docs: {
-            readme: { folder: '', pattern: 'README.md' },
-            changelog: { folder: 'releases', pattern: 'changelog.md' },
-            migration: { folder: 'releases', pattern: 'migration.md' },
-            notes: { folder: 'releases', pattern: 'release-notes.md' }
-        },
-        pattern: {
-            data: '%s.data.json',
-            jsdoc: '%s.jsdoc.json'
-        },
-        tasks: constants.TASKS,
-        custom: []
-    },
     source: null,
     ref: null,
     type: null,
+    declaration: null,
     tasks: [],
 
     /**
@@ -48,14 +30,25 @@ Target.prototype = {
         this.source = source;
         this.ref = ref;
         this.type = type;
-
-        pattern[this.getSourceName()] = pattern[this.getSourceName()] || this.def;
-
-        this.tasks = this.getTasks().map(function(item) {
-            return this[item];
-        }, this);
-
+        this.declaration = this.makeDeclaration();
         return this;
+    },
+
+    makeDeclaration: function(){
+        var base = require('../declarations/base'),
+            lib;
+
+        try {
+            lib = require('../declarations/' + this.getSourceName());
+        }catch(err) {
+            lib = { default: {} };
+        }
+
+        var declaration = _.extend(base.default, lib.default);
+        if(lib.default.docs && _.isObject(lib.default.docs)) {
+            declaration.docs = _.extend(base.default.docs, lib.default.docs);
+        }
+        return declaration;
     },
 
     /**
@@ -63,7 +56,7 @@ Target.prototype = {
      * @returns {String}
      */
     getName: function() {
-        return util.format('%s %s', this.source.name, this.ref);
+        return util.format('%s %s', this.getSourceName(), this.ref);
     },
 
     /**
@@ -95,7 +88,7 @@ Target.prototype = {
      * @returns {*}
      */
     getMdTargets: function() {
-        return _.extend(this.def.docs, pattern[this.getSourceName()].docs || {});
+        return this.declaration.docs;
     },
 
     /**
@@ -103,7 +96,7 @@ Target.prototype = {
      * @returns {*}
      */
     getBlockTargets: function() {
-        return pattern[this.getSourceName()].pattern || this.def.pattern;
+        return this.declaration.pattern;
     },
 
     /**
@@ -111,7 +104,7 @@ Target.prototype = {
      * @returns {String}
      */
     getBuildCommand: function() {
-        return pattern[this.getSourceName()].command || this.def.command;
+        return this.declaration.command;
     },
 
     /**
@@ -120,7 +113,7 @@ Target.prototype = {
      * @returns {Array}
      */
     getCopyPatterns: function() {
-        return pattern[this.getSourceName()].copy || this.def.copy;
+        return this.declaration.copy;
     },
 
     /**
@@ -136,7 +129,7 @@ Target.prototype = {
      * @returns {String}
      */
     getBuilderName: function() {
-        return pattern[this.getSourceName()].builder || this.def.builder;
+        return this.declaration.builder;
     },
 
     /**
@@ -163,7 +156,7 @@ Target.prototype = {
             ];
         }
 
-        return pattern[this.getSourceName()].tasks || _.values(this.def.tasks);
+        return this.declaration.tasks;
     },
 
     /**
@@ -171,7 +164,7 @@ Target.prototype = {
      * @returns {String}
      */
     getContentPath: function() {
-        return path.join(path.join(constants.DIRECTORY.CONTENT, this.source.name), this.ref.replace(/\//g, '-'));
+        return path.join(path.join(constants.DIRECTORY.CONTENT, this.getSourceName()), this.ref.replace(/\//g, '-'));
     },
 
     /**
@@ -179,7 +172,7 @@ Target.prototype = {
      * @returns {String}
      */
     getOutputPath: function() {
-        return path.join(path.join(constants.DIRECTORY.OUTPUT, this.source.name), this.ref.replace(/\//g, '-'));
+        return path.join(path.join(constants.DIRECTORY.OUTPUT, this.getSourceName()), this.ref.replace(/\//g, '-'));
     },
 
     /**
@@ -188,8 +181,8 @@ Target.prototype = {
      */
     execute: function() {
         var _this = this,
-            initial = this.tasks.shift();
-        return this.tasks.reduce(function(prev, item) {
+            initial = this.getTasks().shift();
+        return this.getTasks().reduce(function(prev, item) {
             return prev.then(function() {
                 return item.apply(_this);
             });
@@ -202,10 +195,10 @@ Target.prototype = {
      */
     createSetsResultBase: function() {
         return {
-            repo: this.source.name,
+            repo: this.getSourceName(),
             ref: this.ref,
             enb: this.getBuilderName() === 'enb',
-            url: this.source.url.replace('git:', 'http:').replace('.git', ''),
+            url: this.getUrl().replace('git:', 'http:').replace('.git', ''),
             custom: this.getCustom(),
             docs: {}
         };
@@ -217,7 +210,7 @@ Target.prototype = {
      * @returns {*}
      */
     getCustom: function() {
-        return (pattern[this.getSourceName()].custom || this.def.custom).map(function(item) {
+        return (this.declaration.custom).map(function(item) {
             if(item.url) {
                 item.url = item.url
                     .replace('{lib}', this.getSourceName())

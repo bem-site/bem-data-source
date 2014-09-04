@@ -17,17 +17,16 @@ module.exports = {
             jsdoc: '%s.jsdoc.html'
         },
         tasks: [
-            tasks.REMOVE_OUTPUT,
-            tasks.CREATE_OUTPUT,
-            tasks.GIT_CLONE,
-            tasks.GIT_CHECKOUT,
-            tasks.NPM_CACHE_CLEAN,
-            tasks.NPM_INSTALL,
-            tasks.NPM_RUN_DEPS,
-            tasks.COPY_BORSCHIK,
-            tasks.NPM_RUN_BUILD,
-            tasks.COPY_SETS,
-            tasks.COLLECT_SETS
+            require('../src/commands/remove-output'),
+            require('../src/commands/create-output'),
+            require('../src/commands/git-clone'),
+            require('../src/commands/git-checkout'),
+            require('../src/commands/npm-install'),
+            require('../src/commands/npm-run-deps'),
+            require('../src/commands/copy-borschik'),
+            require('../src/commands/npm-run-build'),
+            require('../src/commands/copy-sets'),
+            require('../src/commands/collect-sets')
         ]
     }
 };

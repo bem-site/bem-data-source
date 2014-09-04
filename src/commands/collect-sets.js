@@ -168,8 +168,8 @@ function readLevelsForLibrary(target, result) {
     return vowFs.listDir(path.resolve(target.getOutputPath()))
         .then(function(levels) {
             var levelNames = ['desktop', 'touch-pad', 'touch-phone'].map(function(item) {
-                return item + this.getDocPatterns().replace('*', '');
-            }, target);
+                return item + target.getDocPatterns().replace('*', '');
+            });
 
             levels = levels.filter(function(item) {
                 return levelNames.indexOf(item) !== -1;
