@@ -6,14 +6,14 @@ var util = require('util'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
 
-    constants = require('./constants'),
+    constants = require('../constants'),
 
-    config = require('./config'),
-    logger = require('./logger'),
-    api = require('./gh-api'),
-    commander = require('./commander'),
-    utility = require('./util'),
-    Target = require('./target');
+    config = require('../config'),
+    logger = require('../logger'),
+    api = require('../gh-api'),
+    commander = require('../commander'),
+    utility = require('../util'),
+    Target = require('../target');
 
 /**
  * At first creates content repository
