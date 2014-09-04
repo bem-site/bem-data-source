@@ -28,26 +28,13 @@ module.exports = function() {
             .req()
             .end()
         .act(function(opts) {
-            logger.info(''.toUpperCase.apply('Try to build sets for:'));
+            logger.info(''.toUpperCase.apply('Try to replace documentation for:'));
 
-            logger.info('repository privacy: %s', !!opts.private);
-            logger.info('repository user or organization: %s', opts.user);
             logger.info('repository name: %s', opts.repo);
-            logger.info('repository refs %s', opts.tags || opts.branches);
-            logger.info('only docs %s', !!opts.docsOnly);
+            logger.info('repository version %s', opts.version);
+            logger.info('documentation key %s', opts.doc);
+            logger.info('replacement documentation url %s', opts.url);
 
-            if (!opts.tags && !opts.branches) {
-                logger.error('Tags or branches have not been set');
-                return;
-            }
-
-            require('./make')({
-                isPrivate: !!opts.private,
-                user: opts.user,
-                name: opts.repo,
-                tags: opts.tags || [],
-                branches: opts.branches || [],
-                docsOnly: !!opts.docsOnly
-            });
+            require('./replace-doc')(opts.repo, opts.version, opts.doc, opts.url);
         });
 };
