@@ -1,0 +1,14 @@
+'use strict';
+
+var path = require('path'),
+    util = require('util'),
+    commander = require('../commander');
+
+/**
+ * Executes npm run build or any custom build command
+ * @returns {defer.promise|*}
+ */
+module.exports = function(target) {
+    var command = target.getBuildCommand();
+    return commander.runCommand(command, { cwd: path.resolve(target.getContentPath()) }, command, target);
+};

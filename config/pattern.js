@@ -1,31 +1,6 @@
 'use strict';
-
-var tasks = require('./constants').TASKS;
-
 module.exports = {
-    'bem-mvc': {
-        builder: 'enb',
-        docs: {
-            readme: {
-                folder: '',
-                pattern: {
-                    en: 'README.md',
-                    ru: 'README.ru.md'
-                }
-            },
-            changelog: {
-                folder: '',
-                pattern: {
-                    en: 'CHANGELOG.md',
-                    ru: 'CHANGELOG.ru.md'
-                }
-            }
-        },
-        pattern: {
-            data: '%s.data.json',
-            jsdoc: '%s.js-doc.html'
-        }
-    },
+
     'bem-bl': {
         builder: 'enb',
         command: 'YENV=production enb make examples && enb make docs',
@@ -174,47 +149,5 @@ module.exports = {
             tasks.COLLECT_SETS
         ]
 
-    },
-    'islands-user': {},
-    'islands-page': {},
-    'islands-services': {},
-    'islands-search': {},
-    'islands-icons': {
-        command: 'ulimit -n 8192 && npm run build'
-    },
-    'islands-romochka': {},
-    'assistant-iframe': {
-        docs: {
-            readme: {
-                folder: '',
-                pattern: 'README.md'
-            },
-            changelog: {
-                folder: '',
-                pattern: 'CHANGELOG.md'
-            }
-        },
-        tasks: [
-            tasks.REMOVE_OUTPUT,
-            tasks.CREATE_OUTPUT,
-            tasks.GIT_CLONE,
-            tasks.GIT_CHECKOUT,
-            tasks.COLLECT_SETS
-        ]
-    },
-    'tableau-iframe': {
-        docs: {
-            readme: {
-                folder: '',
-                pattern: 'README.md'
-            }
-        },
-        tasks: [
-            tasks.REMOVE_OUTPUT,
-            tasks.CREATE_OUTPUT,
-            tasks.GIT_CLONE,
-            tasks.GIT_CHECKOUT,
-            tasks.COLLECT_SETS
-        ]
     }
 };
