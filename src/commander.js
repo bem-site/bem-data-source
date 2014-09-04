@@ -7,7 +7,7 @@ var path = require('path'),
     vow = require('vow'),
 
     logger = require('./logger'),
-    constants = require('../config/constants'),
+    constants = require('./constants'),
 
     utility = require('./util');
 
