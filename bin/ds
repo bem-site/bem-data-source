@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+
+// Do not limit stack trace
+Error.stackTraceLimit = Infinity;
+
+require('../src/coa').run();
