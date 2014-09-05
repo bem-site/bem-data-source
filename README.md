@@ -1,16 +1,15 @@
 bem-data-source
 ===============
 
-Инструмент для версионированной сборки документации и примеров библиотек для проектов bem-info legoa-www.
+Инструмент для версионированной сборки документации и примеров библиотек для проектов bem-info.
 
 ## Установка
 
-* клонировать репозиотрий `git clone git://github.com/bem/bem-data-source.git`
-* перейти в директорию с выкачанным проектом `cd bem-data-source`
-* запустить команду `make`
+* клонировать репозиторий `git clone git://github.com/bem/bem-data-source.git`
+* перейти в директорию со скаченным проектом `cd bem-data-source`
+* установить npm зависимости коммандой `npm install`
 
-Команда `make` устанавливает зависимости для проекта и генерирует конфигурационный файл:
-* `config/credentials.json`
+После установки зависимостей конфигурационный файл `config/credentials.json`.
 
 ## Конфигурирование
 
@@ -47,46 +46,73 @@ bem-data-source
 ```
 Здесь: 
 
-* `private` - обозначает github хост на котором хранитс репозиторий. `false` - для публичного гитхаба
-`github.com` и `true` - для корпоративного гитхаба.
+* `private` - обозначает приватность github хоста на котором хранится репозиторий. 
+
+`false` - для публичного гитхаба `github.com`
+`true` - для корпоративного гитхаба.
+
 * `user` - имя пользователя или название организации.
 * `repo` - название рапозитория
 * `ref` - название ветки (по умолчанию "master")
 
-### Файл config/pattern.js
+### Декларации для сборки библиотеки
 
-В этом файле описываются для каждой библиотеки можно переопределить дефолтные настройки сборки, например:
+Для каждой библиотеки можно указать ее собственные персональные настройки для сборки.
+
+Для этого в папке 'declaration' необходимо создать js файл, 
+название которого совпадает с названием библиотеки которую необходимо собрать, например `bem-components.js`.
+
+Простейшая структура такого файла должна иметь вид:
 
 ```
-'bem-components': {
-    builder: 'enb',
-    command: 'YENV=production enb make tests && enb make docs',
-    copy: ['*.docs', '*.tests'],
-    docs: {
-        readme: {
-            folder: '',
-            pattern: 'README.md'
+module.exports = {
+    default: {}
+};
+```
+
+Для библиотеки bem-components:
+ 
+```
+module.exports = {
+    default: {
+        builder: 'enb',
+        command: 'YENV=production enb make __magic__ desktop.examples desktop.tests desktop.docs touch-pad.examples touch-pad.tests touch-pad.docs touch-phone.examples touch-phone.tests touch-phone.docs && enb make *.pages/*',
+        copy: ['*.docs', '*.tests', '*.examples'],
+        docs: {
+            readme: {
+                folder: '',
+                pattern: 'README.md'
+            },
+            changelog: {
+                folder: '',
+                pattern: 'CHANGELOG.md'
+            },
+            migration: {
+                folder: '',
+                pattern: 'MIGRATION.md'
+            }
         },
-        changelog: {
-            folder: '',
-            pattern: 'CHANGELOG.md'
-        },
-        migration: {
-            folder: '',
-            pattern: 'MIGRATION.md'
-        },
-        notes: {
-            folder: '',
-            pattern: 'MIGRATION.md'
-        }
         pattern: {
             data: '%s.data.json',
             jsdoc: '%s.jsdoc.html'
         },
-    },    
-    tasks: []
+        tasks: [
+            require('../src/tasks/remove-output'),
+            require('../src/tasks/create-output'),
+            require('../src/tasks/git-clone'),
+            require('../src/tasks/git-checkout'),
+            require('../src/tasks/npm-install'),
+            require('../src/tasks/npm-run-deps'),
+            require('../src/tasks/copy-borschik'),
+            require('../src/tasks/npm-run-build'),
+            require('../src/tasks/copy-sets'),
+            require('../src/tasks/collect-sets')
+        ]
+    }
 }
 ```
+
+
 
 Здесь:
 
@@ -154,37 +180,57 @@ pattern: {
 
 #### tasks 
 
-Массив с коммандами которые будут выполнены для данной цели сборки 
-в таком же порядке в каком они указаны в массиве.
+Массив с модулями код которых будет выполнен для данной цели сборки 
+в таком же порядке в каком  подключение этих модулей указано в массиве. 
 
-### Описание комманд для сборки:
+### Описание модулей для сборки:
 
 Примечание: `{lib}` - название библиотеки, `{ref}` - тег или ветка.
 
-* 'removeOutput' - удаляет папку `/output/{lib}/{ref}`.
-* 'createOutput' - создает папку `/output/{lib}/{ref}`.
-* 'gitClone' - клонирует проект из гитхаба в директорию `/content/{lib}/{ref}`. 
-* 'gitCheckout' - переключает git на ветку или тег `{ref}`. 
-* 'npmCacheClean' - отчищает кеш npm.
-* 'npmInstall' - устанавливает npm зависимости.
-* 'npmInstallBemSets' - устанавливает актуальную версию bem-sets.
-* 'npmInstallBem' - устанавливает актуальную версию bem-tools.
-* 'npmRunDeps' - запускает скрипт с алиасом 'npm run deps' в `package.json` файле.
-* 'copyBorschik' - копирует файл `.borschik` в `/content/{lib}/{ref}`.
-* 'npmRunBuild' - запускает скрипт указанный в параметре `command` для данной библотеки.
+* `require('../src/tasks/remove-output')` - удаляет папку `/output/{lib}/{ref}`.
+* `require('../src/tasks/create-output')` - создает папку `/output/{lib}/{ref}`.
+* `require('../src/tasks/git-clone')` - клонирует проект из гитхаба в директорию `/content/{lib}/{ref}`. 
+* `require('../src/tasks/git-checkout')` - переключает git на ветку или тег `{ref}`. 
+* `require('../src/tasks/npm-cache-clean')` - отчищает кеш npm.
+* `require('../src/tasks/npm-install')` - устанавливает npm зависимости.
+* `require('../src/tasks/npm-run-bem-sets')` - устанавливает актуальную версию bem-sets.
+* `require('../src/tasks/npm-install-bem')` - устанавливает актуальную версию bem-tools.
+* `require('../src/tasks/npm-run-deps')` - запускает скрипт с алиасом 'npm run deps' в `package.json` файле.
+* `require('../src/tasks/copy-borschik')` - копирует файл `.borschik` в `/content/{lib}/{ref}`.
+* `require('../src/tasks/npm-run-build')` - запускает скрипт указанный в параметре `command` декларации для данной библотеки.
 По умолчанию запускает скрипт с алиасом 'npm run build' в `package.json` файле.
-* 'copySets' - копирует папки с собранными файлами в `/output/{lib}/{ref}`
-* 'collectSets' - собирает данные в единый файл `/output/{lib}/{ref}/data.json`
+* `require('../src/tasks/copy-sets')` - копирует папки с собранными файлами в `/output/{lib}/{ref}`
+* `require('../src/tasks/collect-sets')` - собирает данные в единый файл `/output/{lib}/{ref}/data.json`
 
 ## Запуск
 
-Запуск выполняется командой `node index.js` с указанием дополнительных опций:
+Запуск выполняется командой `ds make` с указанием дополнительных опций:
 
 * `-p` или `--private`, если репозиторий внутренний
 * `-u` или `--user` - имя пользователя или название организации (обязательный параметр)
 * `-r` или `--repo` - название репозитория (обязательный параметр)
 * `-t` или `--tags` - название версии (тега) библиотеки
 * `-b` или `--branches` - название ветки библиотеки
+
+## Дополнительные комманды
+
+### Замена документа в собранных данных библиотеки
+
+Выполняется командой `ds replace-doc` с указанием дополнительных опций:
+
+* `-r` или `--repo` - название репозитория (обязательный параметр)
+* `-v` или `--version` - название версии (тега или ветки) библиотеки (обязательный параметр)
+* `-d` или `--doc` - ключ документа в сборки библиотеки ('readme', 'changelog', 'migration', ...) (обязательный параметр)
+* `-l` или `--lang` - языковая версия заменяемого документа. Если этот параметр неуказан, то будут заменены
+все яызковые версии документа, указанного в параметре `-d`.
+* `-u` или `--url` - url для `*.md` файла источника замены на github, например: 
+
+### Удаление версии библиотеки из репозитория с собранными данными
+
+Выполняется командой `ds remove` с указанием дополнительных опций:
+
+* `-r` или `--repo` - название репозитория (обязательный параметр)
+* `-v` или `--version` - название версии (тега или ветки) библиотеки (обязательный параметр)
 
 Посмотреть текущую версию приложения можно выполнив команду: `node index.js -v`
 
