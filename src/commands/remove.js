@@ -4,11 +4,9 @@ var path = require('path'),
     util = require('util'),
 
     utility = require('../util'),
-    config = require('../config'),
     logger = require('../logger'),
     common = require('./common'),
-    constants = require('../constants'),
-    commander = require('../commander');
+    constants = require('../constants');
 
 module.exports = function() {
 

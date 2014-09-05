@@ -86,10 +86,10 @@ exports.getSSHUrl = function(repo) {
             name: repo.repo,
             isPrivate: repo.private
         })
-        .then(function (res) {
+        .then(function(res) {
             return res.result.ssh_url;
         })
-        .fail(function () {
+        .fail(function() {
             logger.error('Data repository was not found. Application will be terminated');
         });
 };

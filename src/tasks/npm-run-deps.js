@@ -1,7 +1,6 @@
 'use strict';
 
 var path = require('path'),
-    util = require('util'),
     commander = require('../commander');
 
 /**
