@@ -34,7 +34,7 @@ Target.prototype = {
         return this;
     },
 
-    makeDeclaration: function(){
+    makeDeclaration: function() {
         var base = require('../declarations/base'),
             lib;
 

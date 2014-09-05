@@ -7,12 +7,10 @@ var path = require('path'),
     vowFs = require('vow-fs'),
 
     api = require('../gh-api'),
-    config = require('../config'),
     logger = require('../logger'),
     common = require('./common'),
     utility = require('../util'),
-    constants = require('../constants'),
-    commander = require('../commander');
+    constants = require('../constants');
 
 /**
  * This method needs for check if file data.json
@@ -59,7 +57,7 @@ function replaceDoc(repo, version, doc, lang, url) {
         try {
             content = JSON.parse(content);
         }catch(err) {
-            return vow.reject('File %s can not be parsed', dataPath);
+            return vow.reject('Target library version file can not be parsed');
         }
 
         if(!content.docs || !content.docs[doc]) {
@@ -146,10 +144,10 @@ module.exports = function() {
             logger.info('replacement documentation url %s', opts.url);
 
             return replaceDoc(opts.repo, opts.version, opts.doc, opts.lang, opts.url).then(common({
-                commitMessage: util.format('Replace doc %s for version %s of lib %s', opts.doc, opts.version, opts.repo),
+                commitMessage: util.format('Replace doc %s for version %s of lib %s',
+                    opts.doc, opts.version, opts.repo),
                 successMessage: 'REPLACE DOC COMMAND HAS BEEN FINISHED SUCCESSFULLY',
                 errorMessage: 'REPLACE DOC COMMAND FAILED WITH ERROR %s'
             }));
         });
 };
-

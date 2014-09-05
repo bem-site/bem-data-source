@@ -1,9 +1,6 @@
 'use strict';
 
-var path = require('path'),
-    util = require('util'),
-
-    config = require('../config'),
+var config = require('../config'),
     logger = require('../logger'),
     commander = require('../commander');
 

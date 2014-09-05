@@ -11,7 +11,6 @@ var util = require('util'),
     logger = require('../logger'),
     api = require('../gh-api'),
     constants = require('../constants'),
-    commander = require('../commander'),
     utility = require('../util');
 
 module.exports = function(target) {
@@ -77,7 +76,8 @@ function loadMDFromFile(target, result, key) {
                 }).pop();
 
                 return vowFs
-                    .read(path.join(path.join(target.getContentPath(), target.getMdTargets()[key].folder), file), 'utf-8')
+                    .read(path.join(path.join(target.getContentPath(),
+                        target.getMdTargets()[key].folder), file), 'utf-8')
                     .then(function(content) {
                         try {
                             result[key].content = result[key].content || {};
