@@ -8,9 +8,10 @@ var util = require('util'),
 
     constants = require('../constants'),
 
+    api = require('../gh-api'),
+    common = require('./common'),
     config = require('../config'),
     logger = require('../logger'),
-    api = require('../gh-api'),
     commander = require('../commander'),
     utility = require('../util'),
     Target = require('../target');
@@ -130,57 +131,104 @@ function createTargets(source) {
     return targets;
 }
 
-module.exports = function(source) {
-    try {
-        init()
-            .then(function() {
-                return vowFs.listDir(constants.DIRECTORY.CONTENT).then(function(dirs) {
-                    return vow.all(dirs.map(function(dir) {
-                        var p = path.join(constants.DIRECTORY.CONTENT, dir);
+function make(source) {
 
-                        logger.debug('remove directory %s', p);
-                        return utility.removeDir(p);
-                    }));
-                });
-            })
-            .then(function() {
-                return retrieveSshUrl(source);
-            })
-            .then(function(source) {
-                return verifyRepositoryReferences(source, {
-                    field: 'tags',
-                    apiFunction: api.getRepositoryTags
-                });
-            })
-            .then(function(source) {
-                return verifyRepositoryReferences(source, {
-                    field: 'branches',
-                    apiFunction: api.getRepositoryBranches
-                });
-            })
-            .then(createTargets)
-            .then(function(targets) {
-                return vow.all(targets.map(function(target) {
-                    return target.execute();
+    return init()
+        .then(function() {
+            return vowFs.listDir(constants.DIRECTORY.CONTENT).then(function(dirs) {
+                return vow.all(dirs.map(function(dir) {
+                    var p = path.join(constants.DIRECTORY.CONTENT, dir);
+
+                    logger.debug('remove directory %s', p);
+                    return utility.removeDir(p);
                 }));
-            })
-            .then(function() {
-                return commander.gitAdd();
-            })
-            .then(function() {
-                return commander.gitCommit(util.format('Update data: %s', (new Date()).toString()));
-            })
-            .then(function() {
-                return commander.gitPush(config.get('dataConfig:ref'));
-            })
-            .then(function() {
-                logger.info(''.toUpperCase.apply('application has been finished'));
-            })
-            .fail(function(err) {
-                logger.error(err);
-                logger.error(''.toUpperCase.apply('application failed with error'));
             });
-    }catch(err) {
-        logger.error(err.message);
-    }
+        })
+        .then(function() {
+            return retrieveSshUrl(source);
+        })
+        .then(function(source) {
+            return verifyRepositoryReferences(source, {
+                field: 'tags',
+                apiFunction: api.getRepositoryTags
+            });
+        })
+        .then(function(source) {
+            return verifyRepositoryReferences(source, {
+                field: 'branches',
+                apiFunction: api.getRepositoryBranches
+            });
+        })
+        .then(createTargets)
+        .then(function(targets) {
+            return vow.all(targets.map(function(target) {
+                return target.execute();
+            }));
+        })
+        .then(common({
+            commitMessage: util.format('Update data: %s', (new Date()).toString()),
+            successMessage: 'MAKE COMMAND HAS BEEN FINISHED SUCCESSFULLY',
+            errorMessage: 'MAKE COMMAND FAILED WITH ERROR %s'
+        }));
+}
+
+module.exports = function() {
+
+    return this
+        .title('make command')
+        .helpful()
+        .opt()
+            .name('private').title('Privacy of repository')
+            .short('p').long('private')
+            .flag()
+            .end()
+        .opt()
+            .name('user').title('User or organization for repository')
+            .short('u').long('user')
+            .req()
+            .end()
+        .opt()
+            .name('repo').title('Name of repository')
+            .short('r').long('repo')
+            .req()
+            .end()
+        .opt()
+            .name('tags').title('Name(s) of tags')
+            .short('t').long('tags')
+            .arr()
+            .end()
+        .opt()
+            .name('branches').title('Name(s) of branches')
+            .short('b').long('branches')
+            .arr()
+            .end()
+        .opt()
+            .name('docsOnly').title('Indicates that only docs should be collected')
+            .short('docs-only').long('docs-only')
+            .flag()
+            .end()
+        .act(function(opts) {
+            logger.info('TRY TO MAKE FOR:');
+
+            logger.info('repository privacy: %s', !!opts.private);
+            logger.info('repository user or organization: %s', opts.user);
+            logger.info('repository name: %s', opts.repo);
+            logger.info('repository refs %s', opts.tags || opts.branches);
+            logger.info('only docs %s', !!opts.docsOnly);
+
+            if (!opts.tags && !opts.branches) {
+                logger.error('Tags or branches have not been set');
+                return;
+            }
+
+            return make({
+                isPrivate: !!opts.private,
+                user: opts.user,
+                name: opts.repo,
+                tags: opts.tags || [],
+                branches: opts.branches || [],
+                docsOnly: !!opts.docsOnly
+            });
+        });
+
 };

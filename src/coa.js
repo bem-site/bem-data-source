@@ -1,6 +1,6 @@
 'use strict';
 
-var logger = require('./src/logger');
+var logger = require('./logger');
 
 function command() {
     return require('coa').Cmd()
@@ -13,14 +13,14 @@ function command() {
             .flag()
             .only()
             .act(function() {
-                var p = require('./package.json');
+                var p = require('./../package.json');
                 logger.info('application name: %s version %s', p.name, p.version);
                 return '';
             })
             .end()
-        .cmd().name('make').apply(require('./src/commands/make')).end()
-        .cmd().name('replace-doc').apply(require('./src/commands/replace-doc')).end()
-        .cmd().name('remove').apply(require('./src/commands/remove')).end()
+        .cmd().name('make').apply(require('./commands/make')).end()
+        .cmd().name('replace-doc').apply(require('./commands/replace-doc')).end()
+        .cmd().name('remove').apply(require('./commands/remove')).end()
         .completable();
 }
 
