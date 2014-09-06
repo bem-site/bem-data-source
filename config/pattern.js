@@ -3,6 +3,32 @@
 var tasks = require('./constants').TASKS;
 
 module.exports = {
+    'bem-history': {
+        builder: 'enb',
+        command: 'YENV=production enb make docs && enb make examples',
+        copy: ['*.docs', '*.examples'],
+        docs: {
+            readme: {
+                folder: '',
+                pattern: {
+                    en: 'README.md',
+                    ru: 'README.ru.md'
+                }
+            }
+        },
+        tasks: [
+            tasks.REMOVE_OUTPUT,
+            tasks.CREATE_OUTPUT,
+            tasks.GIT_CLONE,
+            tasks.GIT_CHECKOUT,
+            tasks.NPM_INSTALL,
+            tasks.NPM_RUN_DEPS,
+            tasks.COPY_BORSCHIK,
+            tasks.NPM_RUN_BUILD,
+            tasks.COPY_SETS,
+            tasks.COLLECT_SETS
+        ]
+    },
     'bem-mvc': {
         builder: 'enb',
         docs: {
@@ -28,7 +54,7 @@ module.exports = {
     },
     'bem-bl': {
         builder: 'enb',
-        command: 'YENV=production enb make examples && enb make docs',
+        command: 'enb make __magic__ desktop.examples desktop.docs touch-pad.examples touch-pad.docs touch-phone.examples touch-phone.docs',
         copy: ['*.docs', '*.examples'],
         docs: {
             readme: {
@@ -48,9 +74,7 @@ module.exports = {
             tasks.CREATE_OUTPUT,
             tasks.GIT_CLONE,
             tasks.GIT_CHECKOUT,
-            tasks.NPM_CACHE_CLEAN,
             tasks.NPM_INSTALL,
-            tasks.NPM_RUN_DEPS,
             tasks.COPY_BORSCHIK,
             tasks.NPM_RUN_BUILD,
             tasks.COPY_SETS,
@@ -95,8 +119,10 @@ module.exports = {
     },
     'bem-core': {
         builder: 'enb',
-        command: 'YENV=production enb make examples && enb make docs',
-        copy: ['*.docs', '*.examples'],
+        command: 'YENV=production bower install && npm run libs && enb make __magic__ desktop.examples ' +
+            'desktop.tests desktop.docs touch-pad.examples touch-pad.tests touch-pad.docs ' +
+            'touch-phone.examples touch-phone.tests touch-phone.docs',
+        copy: ['*.docs', '*.tests', '*.examples'],
         docs: {
             readme: {
                 folder: '',
@@ -130,7 +156,7 @@ module.exports = {
                     en: 'Documentation',
                     ru: 'Документация'
                 },
-                url: '/tags/{lib}-{ref}'
+                url: '/tags/{lib}-v2.3.0'
             }
         ],
         tasks: [
@@ -138,10 +164,8 @@ module.exports = {
             tasks.CREATE_OUTPUT,
             tasks.GIT_CLONE,
             tasks.GIT_CHECKOUT,
-            tasks.NPM_CACHE_CLEAN,
-            tasks.NPM_INSTALL,
-            tasks.NPM_RUN_DEPS,
             tasks.COPY_BORSCHIK,
+            tasks.NPM_INSTALL,
             tasks.NPM_RUN_BUILD,
             tasks.COPY_SETS,
             tasks.COLLECT_SETS
