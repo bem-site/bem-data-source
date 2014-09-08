@@ -25,4 +25,4 @@ function command() {
         .completable();
 }
 
-module.exports = command().run();
+module.exports = command();
