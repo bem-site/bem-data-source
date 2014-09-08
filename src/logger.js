@@ -17,7 +17,7 @@ intel.addHandler(
 /**
  * Returns logger by it name
  * If first arguments is module then add part of module file path to log string
- * @param args - {Arguments}
+ * @param module - {Object}
  * @returns {*}
  */
 function getLogger(module) {
