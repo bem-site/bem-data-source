@@ -24,16 +24,23 @@ var util = require('util'),
  * @returns {*}
  */
 function init() {
+    function checkout() {
+        var branch = config.get('dataConfig:ref');
+        logger.info(util.format('Checkout to branch %s', branch), module);
+        return commander.gitCheckout(branch);
+    }
+
     return vowFs.makeDir(constants.DIRECTORY.CONTENT).then(function() {
         return vowFs.exists(constants.DIRECTORY.OUTPUT).then(function(exists) {
             if(exists) {
-                return;
+                return checkout();
             }
             return utility.getSSHUrl(config.get('dataConfig'))
                 .then(function(url) {
                     logger.info('Start clone remote target data repository. Please wait ...', module);
                     return commander.gitClone(url, constants.DIRECTORY.OUTPUT);
                 })
+                .then(checkout)
                 .then(function() {
                     logger.info('Remote target data repository has been cloned successfully', module);
                 });
