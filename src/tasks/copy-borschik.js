@@ -9,7 +9,7 @@ var path = require('path'),
  * @returns {defer.promise|*}
  */
 module.exports = function(target) {
-    logger.debug('copy borschik configuration');
+    logger.debug('copy borschik configuration', module);
     return vowFs
         .copy('.borschik', path.join(target.getContentPath(), '.borschik'))
         .then(function() {

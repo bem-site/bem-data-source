@@ -1,6 +1,7 @@
 'use strict';
 
-var config = require('../config'),
+var util = require('util'),
+    config = require('../config'),
     logger = require('../logger'),
     commander = require('../commander');
 
@@ -14,10 +15,10 @@ module.exports = function(conf) {
                 return commander.gitPush(config.get('dataConfig:ref'));
             })
             .then(function() {
-                logger.info(conf.successMessage);
+                logger.info(conf.successMessage, module);
             })
             .fail(function(err) {
-                logger.error(conf.errorMessage, err);
+                logger.error(util.format(conf.errorMessage, err), module);
             });
     };
 };

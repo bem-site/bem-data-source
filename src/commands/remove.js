@@ -24,13 +24,13 @@ module.exports = function() {
             .req()
             .end()
         .act(function(opts) {
-            logger.info('TRY TO REMOVE FOR:');
+            logger.info('TRY TO REMOVE FOR:', module);
 
-            logger.info('repository name: %s', opts.repo);
-            logger.info('repository version %s', opts.version);
+            logger.info(util.format('repository name: %s', opts.repo), module);
+            logger.info(util.format('repository version %s', opts.version), module);
 
             var p = path.join(path.join(constants.DIRECTORY.OUTPUT, opts.repo), opts.version);
-            logger.debug('remove directory: %s', p);
+            logger.debug(util.format('remove directory: %s', p), module);
 
             return utility.removeDir(p).then(common({
                 commitMessage: util.format('Remove version %s from lib %s', opts.version, opts.repo),

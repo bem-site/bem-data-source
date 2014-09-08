@@ -1,6 +1,7 @@
 'use strict';
 
-var logger = require('../logger'),
+var util = require('util'),
+    logger = require('../logger'),
     utility = require('../util');
 
 /**
@@ -8,6 +9,6 @@ var logger = require('../logger'),
  * @returns {defer.promise|*}
  */
 module.exports = function(target) {
-    logger.debug('remove output folder for target %s', target.getName());
+    logger.debug(util.format('remove output folder for target %s', target.getName()), module);
     return utility.removeDir(target.getOutputPath()).then(function() { return target; });
 };

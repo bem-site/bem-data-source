@@ -1,6 +1,7 @@
 'use strict';
 
-var vowFs = require('vow-fs'),
+var util = require('util'),
+    vowFs = require('vow-fs'),
     logger = require('../logger');
 
 /**
@@ -8,6 +9,6 @@ var vowFs = require('vow-fs'),
  * @returns {defer.promise|*}
  */
 module.exports = function(target) {
-    logger.debug('create output folder for target %s', target.getName());
+    logger.debug(util.format('create output folder for target %s', target.getName()), module);
     return vowFs.makeDir(target.getOutputPath()).then(function() { return target; });
 };

@@ -33,12 +33,14 @@ module.exports = (function() {
         privateCredentials = config.get('credentials:private');
 
     gitPublic = new Api(_.extend(publicConfig, commonConfig));
-    if(publicCredentials) {
+    if(publicCredentials && publicCredentials.length) {
         gitPublic.authenticate({ type: 'oauth', token: publicCredentials });
+    }else {
+        logger.warn('It would be better if you were input you public credential oauth token', module);
     }
 
     gitPrivate = new Api(_.extend(privateConfig, commonConfig));
-    if(privateCredentials) {
+    if(privateCredentials && privateCredentials.length) {
         gitPrivate.authenticate({ type: 'oauth', token: privateCredentials });
     }
 
@@ -56,7 +58,7 @@ module.exports = (function() {
 
             git.repos.get({ user: source.user, repo: source.name }, function(err, res) {
                 if (err) {
-                    logger.error(err.message);
+                    logger.error(err.message, module);
                     def.reject(err);
                 }
                 def.resolve({ source: source, result: res });
@@ -78,7 +80,7 @@ module.exports = (function() {
 
             git.repos.getTags({ user: source.user, repo: source.name, per_page: 100 }, function(err, res) {
                 if (err) {
-                    logger.error(err.message);
+                    logger.error(err.message, module);
                     def.reject(err);
                 }
                 def.resolve({ source: source, result: res });
@@ -100,7 +102,7 @@ module.exports = (function() {
 
             git.repos.getBranches({ user: source.user, repo: source.name, per_page: 100 }, function(err, res) {
                 if (err) {
-                    logger.error(err.message);
+                    logger.error(err.message, module);
                     def.reject(err);
                 }
                 def.resolve({ source: source, result: res });
