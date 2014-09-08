@@ -5,6 +5,8 @@ var util = require('util'),
 
 /**
  * Executes git clone command
+ *
+ * @param {Target} target for building
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {

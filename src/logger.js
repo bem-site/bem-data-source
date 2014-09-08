@@ -17,7 +17,7 @@ intel.addHandler(
 /**
  * Returns logger by it name
  * If first arguments is module then add part of module file path to log string
- * @param module - {Object}
+ * @param {Object} module
  * @returns {*}
  */
 function getLogger(module) {
@@ -26,8 +26,8 @@ function getLogger(module) {
 
 /**
  * Alias for logging verbose messages
- * @param str - {String} string for logging
- * @param module - {Object} module object
+ * @param {String} str (string) for logging
+ * @param {Object} module object
  * @returns {*}
  */
 exports.verbose = function (str, module) {
@@ -36,8 +36,8 @@ exports.verbose = function (str, module) {
 
 /**
  * Alias for logging debug messages
- * @param str - {String} string for logging
- * @param module - {Object} module object
+ * @param {String} str (string) for logging
+ * @param {Object} module object
  * @returns {*}
  */
 exports.debug = function (str, module) {
@@ -46,8 +46,8 @@ exports.debug = function (str, module) {
 
 /**
  * Alias for logging info messages
- * @param str - {String} string for logging
- * @param module - {Object} module object
+ * @param {String} str (string) for logging
+ * @param {Object} module object
  * @returns {*}
  */
 exports.info = function (str, module) {
@@ -56,8 +56,8 @@ exports.info = function (str, module) {
 
 /**
  * Alias for logging warn messages
- * @param str - {String} string for logging
- * @param module - {Object} module object
+ * @param {String} str (string) for logging
+ * @param {Object} module object
  * @returns {*}
  */
 exports.warn = function (str, module) {
@@ -66,8 +66,8 @@ exports.warn = function (str, module) {
 
 /**
  * Alias for logging error messages
- * @param str - {String} string for logging
- * @param module - {Object} module object
+ * @param {String} str (string) for logging
+ * @param {Object} module object
  * @returns {*}
  */
 exports.error = function (str, module) {

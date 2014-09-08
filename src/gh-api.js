@@ -11,7 +11,6 @@ var Api = require('github'),
  * Github API module based on github library
  */
 module.exports = (function () {
-
     logger.info('Initialize github API', module);
 
     var gitPublic,
@@ -47,7 +46,7 @@ module.exports = (function () {
     return {
         /**
          * Return information about github repository
-         * @param source - {Object} configuration object with fields:
+         * @param {Object} source configuration object with fields:
          * - user {String} owner of repository
          * - name {String} name of repository
          * @returns {defer.promise|*}
@@ -69,7 +68,7 @@ module.exports = (function () {
 
         /**
          * Returns information about tags of github repository
-         * @param source - {Object} configuration object with fields:
+         * @param {Object} source configuration object with fields:
          * - user {String} owner of repository
          * - name {String} name of repository
          * @returns {defer.promise|*}
@@ -91,7 +90,7 @@ module.exports = (function () {
 
         /**
          * Return information about branches of github repository
-         * @param source - {Object} configuration object with fields:
+         * @param {Object} source configuration object with fields:
          * - user {String} owner of repository
          * - name {String} name of repository
          * @returns {defer.promise|*}
@@ -113,7 +112,7 @@ module.exports = (function () {
 
         /**
          * Returns content of repository directory or file loaded by github api
-         * @param source - {Object} with fields:
+         * @param {Object} source configuration object with fields:
          * - user {String} name of user or organization which this repository is belong to
          * - repo {String} name of repository
          * - ref {String} name of branch

@@ -6,6 +6,8 @@ var util = require('util'),
 
 /**
  * Remove target folder in output directory
+ *
+ * @param {Target} target for building
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {

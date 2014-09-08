@@ -7,6 +7,8 @@ var path = require('path'),
 
 /**
  * Updates bem tools version
+ *
+ * @param {Target} target for building
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {

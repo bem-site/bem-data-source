@@ -5,6 +5,8 @@ var path = require('path'),
 
 /**
  * Cleans npm cache
+ *
+ * @param {Target} target for building
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {

@@ -13,8 +13,8 @@ var fs = require('fs-extra'),
 
 /**
  * Executes specified command with options.
- * @param {String} cmd  Command to execute.
- * @param {Object} options  Options to `child_process.exec()` function.
+ * @param {String} cmd (command) to execute.
+ * @param {Object} options to `child_process.exec()` function.
  * @return {Promise}
  */
 exports.exec = function (cmd, options) {
@@ -44,7 +44,7 @@ exports.exec = function (cmd, options) {
 
 /**
  * Converts markdown content into html with marked module
- * @param content - {String} markdown content
+ * @param {String} content of markdown file
  * @returns {String} - html string
  */
 exports.mdToHtml = function (content) {
@@ -58,7 +58,7 @@ exports.mdToHtml = function (content) {
 
 /**
  * Removes directory with all files and subdirectories
- * @param path - {String} path to directory on filesystem
+ * @param {String} path to directory on filesystem
  * @returns {*}
  */
 exports.removeDir = function (path) {
@@ -76,7 +76,8 @@ exports.removeDir = function (path) {
 
 /**
  * Retrieve github ssh url via github api
- * @param repo - {Object} repo object
+ *
+ * @param {Object} repo object
  * @returns {*}
  */
 exports.getSSHUrl = function (repo) {
@@ -87,7 +88,7 @@ exports.getSSHUrl = function (repo) {
             isPrivate: repo.private
         })
         .then(function (res) {
-            return res.result.ssh_url;
+            return res.result['ssh_url'];
         })
         .fail(function () {
             logger.error('Data repository was not found. Application will be terminated', module);
