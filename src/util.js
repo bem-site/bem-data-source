@@ -30,12 +30,12 @@ exports.exec = function(cmd, options) {
     });
 
     proc.stderr.on('data', function(data) {
-        logger.verbose(data);
+        logger.verbose(data, module);
         output += data;
     });
 
     proc.stdout.on('data', function(data) {
-        logger.verbose(data);
+        logger.verbose(data, module);
         output += data;
     });
 
@@ -90,6 +90,6 @@ exports.getSSHUrl = function(repo) {
             return res.result.ssh_url;
         })
         .fail(function() {
-            logger.error('Data repository was not found. Application will be terminated');
+            logger.error('Data repository was not found. Application will be terminated', module);
         });
 };

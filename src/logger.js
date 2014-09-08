@@ -14,22 +14,62 @@ intel.addHandler(
     })
 );
 
-exports.verbose = function(args) {
-    return intel.getLogger('').verbose.apply(null, args);
+/**
+ * Returns logger by it name
+ * If first arguments is module then add part of module file path to log string
+ * @param args - {Arguments}
+ * @returns {*}
+ */
+function getLogger(module) {
+    return intel.getLogger(module ? module.filename.split('/').slice(-2).join('/') : '');
+}
+
+/**
+ * Alias for logging verbose messages
+ * @param str - {String} string for logging
+ * @param module - {Object} module object
+ * @returns {*}
+ */
+exports.verbose = function(str, module) {
+    return getLogger(module).verbose.apply(null, str);
 };
 
-exports.debug = function(args) {
-    return intel.getLogger('').debug.apply(null, args);
+/**
+ * Alias for logging debug messages
+ * @param str - {String} string for logging
+ * @param module - {Object} module object
+ * @returns {*}
+ */
+exports.debug = function(str, module) {
+    return getLogger(module).debug.apply(null, str);
 };
 
-exports.info = function(args) {
-  return intel.getLogger('').info.apply(null, args);
+/**
+ * Alias for logging info messages
+ * @param str - {String} string for logging
+ * @param module - {Object} module object
+ * @returns {*}
+ */
+exports.info = function(str, module) {
+  return getLogger(module).info.apply(null, str);
 };
 
-exports.warn = function(args) {
-    return intel.getLogger('').warn.apply(null, args);
+/**
+ * Alias for logging warn messages
+ * @param str - {String} string for logging
+ * @param module - {Object} module object
+ * @returns {*}
+ */
+exports.warn = function(str, module) {
+    return getLogger(module).warn.apply(null, str);
 };
 
-exports.error = function(args) {
-    return intel.getLogger('').error.apply(null, args);
+/**
+ * Alias for logging error messages
+ * @param str - {String} string for logging
+ * @param module - {Object} module object
+ * @returns {*}
+ */
+exports.error = function(str, module) {
+    return getLogger(module).error.apply(null, str);
 };

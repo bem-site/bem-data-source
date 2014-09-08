@@ -1,6 +1,7 @@
 'use strict';
 
-var logger = require('./logger');
+var util = require('util'),
+    logger = require('./logger');
 
 function command() {
     return require('coa').Cmd()
@@ -14,7 +15,7 @@ function command() {
             .only()
             .act(function() {
                 var p = require('./../package.json');
-                logger.info('application name: %s version %s', p.name, p.version);
+                logger.info(util.format('application name: %s version %s', p.name, p.version), module);
                 return '';
             })
             .end()

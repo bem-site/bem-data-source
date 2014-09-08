@@ -135,13 +135,13 @@ module.exports = function() {
             .req()
             .end()
         .act(function(opts) {
-            logger.info('TRY TO REPLACE DOCUMENTATION FOR:');
+            logger.info('TRY TO REPLACE DOCUMENTATION FOR:', module);
 
-            logger.info('repository name: %s', opts.repo);
-            logger.info('repository version %s', opts.version);
-            logger.info('documentation key %s', opts.doc);
-            logger.info('documentation language %s', opts.lang || 'all');
-            logger.info('replacement documentation url %s', opts.url);
+            logger.info(util.format('repository name: %s', opts.repo), module);
+            logger.info(util.format('repository version %s', opts.version), module);
+            logger.info(util.format('documentation key %s', opts.doc), module);
+            logger.info(util.format('documentation language %s', opts.lang || 'all'), module);
+            logger.info(util.format('replacement documentation url %s', opts.url), module);
 
             return replaceDoc(opts.repo, opts.version, opts.doc, opts.lang, opts.url).then(common({
                 commitMessage: util.format('Replace doc %s for version %s of lib %s',

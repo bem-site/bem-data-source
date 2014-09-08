@@ -74,16 +74,16 @@ exports.runCommand = function(cmd, opts, name, target) {
     }
 
     //logger.debug('execute %s for target %s', cmd, target.getName());
-    logger.debug('execute command: %s', cmd);
+    logger.debug(util.format('execute command: %s', cmd), module);
 
     return utility.exec(cmd, _.extend(opts, baseOpts))
         .then(function() {
-            logger.info('%s for target %s completed', name, target.getName());
+            logger.info(util.format('%s for target %s completed', name, target.getName()), module);
             return vow.resolve(target);
         })
         .fail(function(error) {
-            logger.error(error);
-            logger.error('execution of command: %s failed', cmd);
+            logger.error(error, module);
+            logger.error(util.format('execution of command: %s failed', cmd), module);
             return vow.reject(error);
         });
 };

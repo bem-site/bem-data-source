@@ -31,11 +31,11 @@ function init() {
             }
             return utility.getSSHUrl(config.get('dataConfig'))
                 .then(function(url) {
-                    logger.info('Start clone remote target data repository. Please wait ...');
+                    logger.info('Start clone remote target data repository. Please wait ...', module);
                     return commander.gitClone(url, constants.DIRECTORY.OUTPUT);
                 })
                 .then(function() {
-                    logger.info('Remote target data repository has been cloned successfully');
+                    logger.info('Remote target data repository has been cloned successfully', module);
                 });
         });
     });
@@ -55,7 +55,7 @@ function retrieveSshUrl(source) {
     var url = util.format('git://%s/%s/%s.git',
         source.isPrivate ? constants.GITHUB.PRIVATE : constants.GITHUB.PUBLIC, source.user, source.name);
 
-    logger.debug('get repository with name %s and url %s', source.name, url);
+    logger.debug(util.format('get repository with name %s and url %s', source.name, url), module);
 
     source.url = url;
     return source;
@@ -91,7 +91,8 @@ function verifyRepositoryReferences(source, conf) {
                 var exists = refNames.indexOf(item) > -1;
 
                 if(!exists) {
-                    logger.warn('Ref %s does not actually present in repository %s', item, source.name);
+                    logger.warn(util.format('Ref %s does not actually present in repository %s',
+                        item, source.name), module);
                 }
 
                 return exists;
@@ -120,7 +121,8 @@ function createTargets(source) {
             var target = new Target(source, ref, type);
             targets.push(target);
 
-            logger.debug('create target %s into directory %s', target.getName(), target.getContentPath());
+            logger.debug(util.format('create target %s into directory %s',
+                target.getName(), target.getContentPath()), module);
         });
     });
 
@@ -139,7 +141,7 @@ function make(source) {
                 return vow.all(dirs.map(function(dir) {
                     var p = path.join(constants.DIRECTORY.CONTENT, dir);
 
-                    logger.debug('remove directory %s', p);
+                    logger.debug(util.format('remove directory %s', p), module);
                     return utility.removeDir(p);
                 }));
             });
@@ -208,16 +210,16 @@ module.exports = function() {
             .flag()
             .end()
         .act(function(opts) {
-            logger.info('TRY TO MAKE FOR:');
+            logger.info('TRY TO MAKE FOR:', module);
 
-            logger.info('repository privacy: %s', !!opts.private);
-            logger.info('repository user or organization: %s', opts.user);
-            logger.info('repository name: %s', opts.repo);
-            logger.info('repository refs %s', opts.tags || opts.branches);
-            logger.info('only docs %s', !!opts.docsOnly);
+            logger.info(util.format('repository privacy: %s', !!opts.private), module);
+            logger.info(util.format('repository user or organization: %s', opts.user), module);
+            logger.info(util.format('repository name: %s', opts.repo), module);
+            logger.info(util.format('repository refs %s', opts.tags || opts.branches), module);
+            logger.info(util.format('only docs %s', !!opts.docsOnly), module);
 
             if (!opts.tags && !opts.branches) {
-                logger.error('Tags or branches have not been set');
+                logger.error('Tags or branches have not been set', module);
                 return;
             }
 

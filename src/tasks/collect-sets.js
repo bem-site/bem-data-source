@@ -22,7 +22,7 @@ module.exports = function(target) {
         .then(function() { return readLevelsForLibrary(target, result); })
         .then(function() { return writeResultToFile(target, result); })
         .then(function() {
-            logger.info('-- collect sets end --');
+            logger.info('-- collect sets end --', module);
             return this;
         }, target);
 };
@@ -34,7 +34,7 @@ module.exports = function(target) {
  * @returns {*}
  */
 function readMDFilesForLibrary(target, result) {
-    logger.debug('read markdown files for library %s', target.getName());
+    logger.debug(util.format('read markdown files for library %s', target.getName()), module);
     return vow.allResolved(Object.keys(target.getMdTargets())
             .map(function(key) {
                 var folder = this.getMdTargets()[key].folder,
@@ -163,7 +163,7 @@ function readDependencies(target, result) {
  * @returns {*}
  */
 function readLevelsForLibrary(target, result) {
-    logger.debug('read level directories for library %s', target.getName());
+    logger.debug(util.format('read level directories for library %s', target.getName()), module);
 
     return vowFs.listDir(path.resolve(target.getOutputPath()))
         .then(function(levels) {
@@ -244,8 +244,8 @@ function readDataForBlock(target, level, block) {
  * @returns {*}
  */
 function writeResultToFile(target, result) {
-    logger.debug('write result of target %s to file %s', target.getName(),
-        path.resolve(target.getOutputPath(), constants.FILE.DATA));
+    logger.debug(util.format('write result of target %s to file %s', target.getName(),
+        path.resolve(target.getOutputPath(), constants.FILE.DATA)), module);
 
     return vowFs.write(path.resolve(target.getOutputPath(), constants.FILE.DATA),
         JSON.stringify(result, null, 4), { charset: 'utf8' });
