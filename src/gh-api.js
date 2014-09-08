@@ -12,7 +12,7 @@ var Api = require('github'),
  */
 module.exports = (function() {
 
-    logger.info('Initialize github API');
+    logger.info('Initialize github API', module);
 
     var gitPublic,
         gitPrivate,
