@@ -1,10 +1,18 @@
 {
   "name": "bem-data-source",
-  "version": "0.2.7",
+  "version": "0.3.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/bem/bem-data-source.git"
   },
+  "author": "Andrey Kuznetsov <andrey.kuznetsov48@yandex.ua> (http://github.com/tormozz48)",
+  "maintainers": [
+    "Andrey Kuznetsov <andrey.kuznetsov48@yandex.ua> (http://github.com/tormozz48)"
+  ],
+  "contributors": [
+    "Andrey Kuznetsov <andrey.kuznetsov48@yandex.ua> (http://github.com/tormozz48)",
+    "Nikolay Ilchenko <tavria@yandex-team.ru> (http://github.com/tavriaforever)"
+  ],
   "engines": {
     "node": ">= 0.8.0"
   },
@@ -23,11 +31,19 @@
     "jshint": "2.4.1",
     "jscs": "1.2.2"
   },
-  "scripts": {
-    "start": "node bin/start.js",
-    "test": "make lint"
+  "bin": {
+    "ds": "./bin/ds"
   },
-  "author": "bemer@yandex-team.ru",
+  "scripts": {
+    "postinstall": "cp config/_credentials.json config/credentials.json",
+    "test": "node_modules/.bin/jshint . && node_modules/.bin/jscs ."
+  },
   "readmeFilename": "README.md",
+  "licenses": [
+    {
+      "type": "APACHE",
+      "url": "http://github.com/bem/bem-data-source/raw/master/LICENSE"
+    }
+  ],
   "private": true
 }
