@@ -60,3 +60,28 @@
 
 
 ## Создание собственного модуля для сборки
+
+Архитектура bem-data-source позволяет создавать собственные шаги или модули сборки.
+
+Для этого, в папке [tasks](../src/tasks) необходимо создать js файл, название которого может быть произвольным
+но рекоммендуется выбрать его так, чтобы оно отражало суть того, что будет делать данный модуль при сборке.
+
+В созданный файл скопируйте код:
+
+```
+'use strict';
+
+var vow = require('vow');
+
+/**
+ * @param target - {Target} target objects
+ * @returns {defer.promise|*}
+ */
+module.exports = function(target) {
+    //TODO you can right your own custom actions here
+    return vow.resolve(target);
+};
+```
+
+Модуль должен экспортировать функцию аргументом которой является объект класса [Target](../src/target.js).
+
