@@ -22,13 +22,13 @@
 
 Подключение в декларации: `require(../src/tasks/npm-cache-clean)`
 
-#### Установка npm зависимостей [код]('../src/tasks/npm-install.js')
+#### Установка npm зависимостей [код](../src/tasks/npm-install.js)
 
 Подключение в декларации: `require(../src/tasks/npm-install)`
 
-#### Установка акутальной версии [bem-sets](https://github.com/bem/bem-sets) [код](../src/tasks/npm-run-bem-sets.js)
+#### Установка акутальной версии [bem-sets](https://github.com/bem/bem-sets) [код](../src/tasks/npm-install-bem-sets.js)
 
-Подключение в декларации: `require('../src/tasks/npm-run-bem-sets')`
+Подключение в декларации: `require('../src/tasks/npm-install-bem-sets')`
 
 #### Установка акутальной версии [bem-tools](https://github.com/bem/bem-tools) [код](../src/tasks/npm-install-bem.js)
 
@@ -38,7 +38,7 @@
 
 Подключение в декларации: `require('../src/tasks/npm-run-deps')`
 
-#### Копирование файла .borschik в директорию /content/{lib}/{ref} [код]('../src/tasks/copy-borschik.js)
+#### Копирование файла .borschik в директорию /content/{lib}/{ref} [код](../src/tasks/copy-borschik.js)
 
 Подключение в декларации: `require('../src/tasks/copy-borschik')`
 
