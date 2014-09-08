@@ -30,7 +30,7 @@ function getLogger(module) {
  * @param module - {Object} module object
  * @returns {*}
  */
-exports.verbose = function(str, module) {
+exports.verbose = function (str, module) {
     return getLogger(module).verbose(str);
 };
 
@@ -40,7 +40,7 @@ exports.verbose = function(str, module) {
  * @param module - {Object} module object
  * @returns {*}
  */
-exports.debug = function(str, module) {
+exports.debug = function (str, module) {
     return getLogger(module).debug(str);
 };
 
@@ -50,7 +50,7 @@ exports.debug = function(str, module) {
  * @param module - {Object} module object
  * @returns {*}
  */
-exports.info = function(str, module) {
+exports.info = function (str, module) {
   return getLogger(module).info(str);
 };
 
@@ -60,7 +60,7 @@ exports.info = function(str, module) {
  * @param module - {Object} module object
  * @returns {*}
  */
-exports.warn = function(str, module) {
+exports.warn = function (str, module) {
     return getLogger(module).warn(str);
 };
 
@@ -70,6 +70,6 @@ exports.warn = function(str, module) {
  * @param module - {Object} module object
  * @returns {*}
  */
-exports.error = function(str, module) {
+exports.error = function (str, module) {
     return getLogger(module).error(str);
 };

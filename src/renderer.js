@@ -6,7 +6,7 @@ var util = require('util'),
 /**
  * Custom renderer for marked parser
  */
-module.exports = (function() {
+module.exports = (function () {
     var r = new md.Renderer();
 
     /**
@@ -17,7 +17,7 @@ module.exports = (function() {
      * @param options - {Object} options
      * @returns {String} - result header string
      */
-    r.heading = function(text, level, raw, options) {
+    r.heading = function (text, level, raw, options) {
         var specials = ['-','[',']','/','{','}','(',')','*','+','?','.','\\','^','$','|','s','\'','\"'];
 
         options = options || {};
@@ -28,7 +28,7 @@ module.exports = (function() {
     };
 
     return {
-        get: function() {
+        get: function () {
             return r;
         }
     };

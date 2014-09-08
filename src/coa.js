@@ -13,7 +13,7 @@ function command() {
             .short('v').long('version')
             .flag()
             .only()
-            .act(function() {
+            .act(function () {
                 var p = require('./../package.json');
                 logger.info(util.format('application name: %s version %s', p.name, p.version), module);
                 return '';

@@ -6,7 +6,7 @@ var path =require('path'),
 /**
  * Application configuration module based on nconf library
  */
-module.exports = (function() {
+module.exports = (function () {
     nconf
         .env()
         .file({ file: path.join(path.join(process.cwd(), 'config'), 'config.json') });

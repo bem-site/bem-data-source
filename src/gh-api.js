@@ -10,7 +10,7 @@ var Api = require('github'),
 /**
  * Github API module based on github library
  */
-module.exports = (function() {
+module.exports = (function () {
 
     logger.info('Initialize github API', module);
 
@@ -33,14 +33,14 @@ module.exports = (function() {
         privateCredentials = config.get('credentials:private');
 
     gitPublic = new Api(_.extend(publicConfig, commonConfig));
-    if(publicCredentials && publicCredentials.length) {
+    if (publicCredentials && publicCredentials.length) {
         gitPublic.authenticate({ type: 'oauth', token: publicCredentials });
     }else {
         logger.warn('It would be better if you were input you public credential oauth token', module);
     }
 
     gitPrivate = new Api(_.extend(privateConfig, commonConfig));
-    if(privateCredentials && privateCredentials.length) {
+    if (privateCredentials && privateCredentials.length) {
         gitPrivate.authenticate({ type: 'oauth', token: privateCredentials });
     }
 
@@ -52,11 +52,11 @@ module.exports = (function() {
          * - name {String} name of repository
          * @returns {defer.promise|*}
          */
-        getRepository: function(source) {
+        getRepository: function (source) {
             var def = vow.defer(),
                 git = (source.isPrivate && source.isPrivate === 'true')  ? gitPrivate : gitPublic;
 
-            git.repos.get({ user: source.user, repo: source.name }, function(err, res) {
+            git.repos.get({ user: source.user, repo: source.name }, function (err, res) {
                 if (err) {
                     logger.error(err.message, module);
                     def.reject(err);
@@ -74,11 +74,11 @@ module.exports = (function() {
          * - name {String} name of repository
          * @returns {defer.promise|*}
          */
-        getRepositoryTags: function(source) {
+        getRepositoryTags: function (source) {
             var def = vow.defer(),
                 git = source.isPrivate ? gitPrivate : gitPublic;
 
-            git.repos.getTags({ user: source.user, repo: source.name, per_page: 100 }, function(err, res) {
+            git.repos.getTags({ user: source.user, repo: source.name, per_page: 100 }, function (err, res) {
                 if (err) {
                     logger.error(err.message, module);
                     def.reject(err);
@@ -96,11 +96,11 @@ module.exports = (function() {
          * - name {String} name of repository
          * @returns {defer.promise|*}
          */
-        getRepositoryBranches: function(source) {
+        getRepositoryBranches: function (source) {
             var def = vow.defer(),
                 git = source.isPrivate ? gitPrivate : gitPublic;
 
-            git.repos.getBranches({ user: source.user, repo: source.name, per_page: 100 }, function(err, res) {
+            git.repos.getBranches({ user: source.user, repo: source.name, per_page: 100 }, function (err, res) {
                 if (err) {
                     logger.error(err.message, module);
                     def.reject(err);
@@ -120,7 +120,7 @@ module.exports = (function() {
          * - path {String} relative path from the root of repository
          * @returns {*}
          */
-        getContent: function(source) {
+        getContent: function (source) {
             var def = vow.defer(),
                 git = source.isPrivate ? gitPrivate : gitPublic;
             git.repos.getContent({
@@ -128,7 +128,7 @@ module.exports = (function() {
                 repo: source.repo,
                 ref:  source.ref,
                 path: source.path
-            }, function(err, res) {
+            }, function (err, res) {
                 if (err || !res) {
                     def.reject({ res: null, repo: source });
                 }else {

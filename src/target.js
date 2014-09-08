@@ -8,7 +8,7 @@ var util = require('util'),
     titles = require('./titles'),
     constants = require('./constants'),
 
-    Target = function(source, ref, type) {
+    Target = function (source, ref, type) {
         return this.init(source, ref, type);
     };
 
@@ -26,7 +26,7 @@ Target.prototype = {
      * @param type - {String} type of reference
      * @returns {Target}
      */
-    init: function(source, ref, type) {
+    init: function (source, ref, type) {
         this.source = source;
         this.ref = ref;
         this.type = type;
@@ -34,18 +34,18 @@ Target.prototype = {
         return this;
     },
 
-    makeDeclaration: function() {
+    makeDeclaration: function () {
         var base = require('../declarations/base'),
             lib;
 
         try {
             lib = require('../declarations/' + this.getSourceName());
-        }catch(err) {
+        }catch (err) {
             lib = { default: {} };
         }
 
         var declaration = _.extend(base.default, lib.default);
-        if(lib.default.docs && _.isObject(lib.default.docs)) {
+        if (lib.default.docs && _.isObject(lib.default.docs)) {
             declaration.docs = _.extend(base.default.docs, lib.default.docs);
         }
         return declaration;
@@ -55,7 +55,7 @@ Target.prototype = {
      * Returns human readable name for target
      * @returns {String}
      */
-    getName: function() {
+    getName: function () {
         return util.format('%s %s', this.getSourceName(), this.ref);
     },
 
@@ -63,7 +63,7 @@ Target.prototype = {
      * Returns name of library
      * @returns {String}
      */
-    getSourceName: function() {
+    getSourceName: function () {
         return this.source.name;
     },
 
@@ -71,7 +71,7 @@ Target.prototype = {
      * Returns source privacy flag
      * @returns {boolean}
      */
-    getSourcePrivacy: function() {
+    getSourcePrivacy: function () {
         return this.source.isPrivate;
     },
 
@@ -79,7 +79,7 @@ Target.prototype = {
      * Return gh url for library
      * @returns {String}
      */
-    getUrl: function() {
+    getUrl: function () {
         return this.source.url;
     },
 
@@ -87,7 +87,7 @@ Target.prototype = {
      *
      * @returns {*}
      */
-    getMdTargets: function() {
+    getMdTargets: function () {
         return this.declaration.docs;
     },
 
@@ -95,7 +95,7 @@ Target.prototype = {
      *
      * @returns {*}
      */
-    getBlockTargets: function() {
+    getBlockTargets: function () {
         return this.declaration.pattern;
     },
 
@@ -103,7 +103,7 @@ Target.prototype = {
      *
      * @returns {String}
      */
-    getBuildCommand: function() {
+    getBuildCommand: function () {
         return this.declaration.command;
     },
 
@@ -112,7 +112,7 @@ Target.prototype = {
      * from content to output directory
      * @returns {Array}
      */
-    getCopyPatterns: function() {
+    getCopyPatterns: function () {
         return this.declaration.copy;
     },
 
@@ -120,7 +120,7 @@ Target.prototype = {
      *
      * @returns {*}
      */
-    getDocPatterns: function() {
+    getDocPatterns: function () {
         return this.getCopyPatterns()[0];
     },
 
@@ -128,7 +128,7 @@ Target.prototype = {
      * Returns name of builder
      * @returns {String}
      */
-    getBuilderName: function() {
+    getBuilderName: function () {
         return this.declaration.builder;
     },
 
@@ -136,7 +136,7 @@ Target.prototype = {
      *
      * @returns {*|exports}
      */
-    getTitles: function() {
+    getTitles: function () {
         return titles;
     },
 
@@ -145,8 +145,8 @@ Target.prototype = {
      * in the same order as they were written
      * @returns {Array}
      */
-    getTasks: function() {
-        if(this.source.docsOnly) {
+    getTasks: function () {
+        if (this.source.docsOnly) {
             return  [
                 require('./tasks/remove-output'),
                 require('./tasks/create-output'),
@@ -163,7 +163,7 @@ Target.prototype = {
      * Returns path of library in output folder
      * @returns {String}
      */
-    getContentPath: function() {
+    getContentPath: function () {
         return path.join(path.join(constants.DIRECTORY.CONTENT, this.getSourceName()), this.ref.replace(/\//g, '-'));
     },
 
@@ -171,7 +171,7 @@ Target.prototype = {
      * Returns path of library in output folder
      * @returns {String}
      */
-    getOutputPath: function() {
+    getOutputPath: function () {
         return path.join(path.join(constants.DIRECTORY.OUTPUT, this.getSourceName()), this.ref.replace(/\//g, '-'));
     },
 
@@ -179,11 +179,11 @@ Target.prototype = {
      * Make chained calls for all tasks for target and call them
      * @returns {*}
      */
-    execute: function() {
+    execute: function () {
         var _this = this,
             initial = this.getTasks().shift();
-        return this.getTasks().reduce(function(prev, item) {
-            return prev.then(function() {
+        return this.getTasks().reduce(function (prev, item) {
+            return prev.then(function () {
                 return item(_this);
             });
         }, initial(_this));
@@ -193,7 +193,7 @@ Target.prototype = {
      *
      * @returns {{repo: *, ref: *, url: string}}
      */
-    createSetsResultBase: function() {
+    createSetsResultBase: function () {
         return {
             repo: this.getSourceName(),
             ref: this.ref,
@@ -209,9 +209,9 @@ Target.prototype = {
      * and set actual library name and version to url pattern
      * @returns {*}
      */
-    getCustom: function() {
-        return (this.declaration.custom).map(function(item) {
-            if(item.url) {
+    getCustom: function () {
+        return (this.declaration.custom).map(function (item) {
+            if (item.url) {
                 item.url = item.url
                     .replace('{lib}', this.getSourceName())
                     .replace('{ref}', this.ref);

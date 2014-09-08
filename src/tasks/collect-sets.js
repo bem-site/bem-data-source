@@ -13,15 +13,15 @@ var util = require('util'),
     constants = require('../constants'),
     utility = require('../util');
 
-module.exports = function(target) {
+module.exports = function (target) {
     logger.info('-- collect sets start --');
 
     var result = target.createSetsResultBase();
     return readMDFilesForLibrary(target, result)
-        .then(function() { return readDependencies(target, result); })
-        .then(function() { return readLevelsForLibrary(target, result); })
-        .then(function() { return writeResultToFile(target, result); })
-        .then(function() {
+        .then(function () { return readDependencies(target, result); })
+        .then(function () { return readLevelsForLibrary(target, result); })
+        .then(function () { return writeResultToFile(target, result); })
+        .then(function () {
             logger.info('-- collect sets end --', module);
             return this;
         }, target);
@@ -36,7 +36,7 @@ module.exports = function(target) {
 function readMDFilesForLibrary(target, result) {
     logger.debug(util.format('read markdown files for library %s', target.getName()), module);
     return vow.allResolved(Object.keys(target.getMdTargets())
-            .map(function(key) {
+            .map(function (key) {
                 var folder = this.getMdTargets()[key].folder,
                     fn = _.isUndefined(folder) ? loadMDFromRemote : loadMDFromFile;
                 return fn.call(null, this, result.docs, key);
@@ -54,12 +54,12 @@ function readMDFilesForLibrary(target, result) {
 function loadMDFromFile(target, result, key) {
     return vowFs
         .listDir(path.join(target.getContentPath(), target.getMdTargets()[key].folder))
-        .then(function(files) {
+        .then(function (files) {
             var languages = config.get('languages') || ['en'],
                 pattern = target.getMdTargets()[key].pattern;
 
-            if(!_.isObject(pattern)) {
-                pattern = languages.reduce(function(prev, lang) {
+            if (!_.isObject(pattern)) {
+                pattern = languages.reduce(function (prev, lang) {
                     prev[lang] = pattern;
                     return prev;
                 }, {});
@@ -70,19 +70,19 @@ function loadMDFromFile(target, result, key) {
                 content: null
             };
 
-            return vow.allResolved(Object.keys(pattern).map(function(lang) {
-                var file  = files.filter(function(file) {
+            return vow.allResolved(Object.keys(pattern).map(function (lang) {
+                var file  = files.filter(function (file) {
                     return file.indexOf(pattern[lang]) !== -1;
                 }).pop();
 
                 return vowFs
                     .read(path.join(path.join(target.getContentPath(),
                         target.getMdTargets()[key].folder), file), 'utf-8')
-                    .then(function(content) {
+                    .then(function (content) {
                         try {
                             result[key].content = result[key].content || {};
                             result[key].content[lang] = utility.mdToHtml(content);
-                        }catch(e) {}
+                        }catch (e) {}
                     });
             }));
         });
@@ -99,8 +99,8 @@ function loadMDFromRemote(target, result, key) {
     var languages = config.get('languages') || ['en'],
         pattern = target.getMdTargets()[key].pattern;
 
-    if(!_.isObject(pattern)) {
-        pattern = languages.reduce(function(prev, lang) {
+    if (!_.isObject(pattern)) {
+        pattern = languages.reduce(function (prev, lang) {
             prev[lang] = pattern;
             return prev;
         }, {});
@@ -111,8 +111,8 @@ function loadMDFromRemote(target, result, key) {
         content: null
     };
 
-    return vow.allResolved(Object.keys(pattern).map(function(lang) {
-        var repo = (function(s) {
+    return vow.allResolved(Object.keys(pattern).map(function (lang) {
+        var repo = (function (s) {
             var ps = s.match(/^https?:\/\/(.+?)\/(.+?)\/(.+?)\/(tree|blob)\/(.+?)\/(.+)/);
             return {
                 isPrivate: ps[1].indexOf('yandex') > -1,
@@ -124,12 +124,12 @@ function loadMDFromRemote(target, result, key) {
         })(pattern[lang]);
 
         return api.getContent(repo)
-            .then(function(data) {
-                if(data.res) {
+            .then(function (data) {
+                if (data.res) {
                     try {
                         result[key].content = result[key].content || {};
                         result[key][lang] = utility.mdToHtml((new Buffer(data.res.content, 'base64')).toString());
-                    } catch(err) {}
+                    } catch (err) {}
                 }
             });
     }));
@@ -143,15 +143,15 @@ function loadMDFromRemote(target, result, key) {
  */
 function readDependencies(target, result) {
     return vowFs.read(path.resolve(target.getContentPath(), 'bower.json'),'utf-8')
-        .then(function(content) {
+        .then(function (content) {
             try {
                 content = JSON.parse(content);
                 result.deps = content.dependencies;
-            }catch(e) {
+            }catch (e) {
                 result.deps = null;
             }
         })
-        .fail(function() {
+        .fail(function () {
             result.deps = null;
         });
 }
@@ -166,16 +166,16 @@ function readLevelsForLibrary(target, result) {
     logger.debug(util.format('read level directories for library %s', target.getName()), module);
 
     return vowFs.listDir(path.resolve(target.getOutputPath()))
-        .then(function(levels) {
-            var levelNames = ['desktop', 'touch-pad', 'touch-phone'].map(function(item) {
+        .then(function (levels) {
+            var levelNames = ['desktop', 'touch-pad', 'touch-phone'].map(function (item) {
                 return item + target.getDocPatterns().replace('*', '');
             });
 
-            levels = levels.filter(function(item) {
+            levels = levels.filter(function (item) {
                 return levelNames.indexOf(item) !== -1;
             });
 
-            return vow.allResolved(levels.map(function(level) {
+            return vow.allResolved(levels.map(function (level) {
                 level = { name: level };
                 result.levels = result.levels || [];
                 result.levels.push(level);
@@ -195,13 +195,13 @@ function readBlocksForLevel(target, level) {
     var blockIgnores = ['.dist', '.bem', 'index', 'catalogue', 'index', 'jscatalogue'];
 
     return vowFs.listDir(path.resolve(target.getOutputPath(), level.name))
-        .then(function(blocks) {
+        .then(function (blocks) {
             return vow.allResolved(
                 blocks
-                    .filter(function(block) {
+                    .filter(function (block) {
                         return blockIgnores.indexOf(block) === -1;
                     })
-                    .map(function(block) {
+                    .map(function (block) {
                         block = { name: block };
                         level.blocks = level.blocks || [];
                         level.blocks.push(block);
@@ -220,17 +220,17 @@ function readBlocksForLevel(target, level) {
  * @returns {*}
  */
 function readDataForBlock(target, level, block) {
-    return vow.allResolved(Object.keys(target.getBlockTargets()).map(function(key) {
+    return vow.allResolved(Object.keys(target.getBlockTargets()).map(function (key) {
             return vowFs.read(path.resolve(this.getOutputPath(),level.name, block.name,
                 util.format(this.getBlockTargets()[key], block.name)), 'utf-8')
-                .then(function(content) {
+                .then(function (content) {
                     try {
                         block[key] = JSON.parse(content);
-                    }catch(e) {
+                    }catch (e) {
                         block[key] = content;
                     }
                 })
-                .fail(function() {
+                .fail(function () {
                     block[key] = null;
                 });
         }, target)
