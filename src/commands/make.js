@@ -152,13 +152,13 @@ function make(source) {
         .then(function(source) {
             return verifyRepositoryReferences(source, {
                 field: 'tags',
-                apiFunction: api.getRepositoryTags
+                apiFunction: api['getRepositoryTags']
             });
         })
         .then(function(source) {
             return verifyRepositoryReferences(source, {
                 field: 'branches',
-                apiFunction: api.getRepositoryBranches
+                apiFunction: api['getRepositoryBranches']
             });
         })
         .then(createTargets)
