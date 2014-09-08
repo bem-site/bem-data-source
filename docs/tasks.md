@@ -2,11 +2,11 @@
 
 Примечание: `{lib}` - название библиотеки, `{ref}` - тег или ветка.
 
-#### Удаление папки `/output/{lib}/{ref}`. [код]('../src/tasks/remove-output.js')
+#### Удаление папки /output/{lib}/{ref}. [код]('../src/tasks/remove-output.js')
 
 Подключение в декларации: `require('../src/tasks/remove-output')`
 
-#### Создание папки `/output/{lib}/{ref}`. [код]('../src/tasks/create-output.js')
+#### Создание папки /output/{lib}/{ref}. [код]('../src/tasks/create-output.js')
 
 Подключение в декларации: `require('../src/tasks/create-output')`
 
@@ -14,7 +14,7 @@
 
 Подключение в декларации: `require('../src/tasks/git-clone')`
 
-#### Переключение git на ветку или тег `{ref}` [код]('../src/tasks/git-checkout.js')
+#### Переключение git на ветку или тег {ref} [код]('../src/tasks/git-checkout.js')
 
 Подключение в декларации: `require('../src/tasks/git-checkout')`
 
@@ -38,7 +38,7 @@
 
 Подключение в декларации: `require('../src/tasks/npm-run-deps')`
 
-#### Копирование файла `.borschik` в директорию`/content/{lib}/{ref}` [код]('../src/tasks/copy-borschik.js')
+#### Копирование файла .borschik в директорию`/content/{lib}/{ref}` [код]('../src/tasks/copy-borschik.js')
 
 Подключение в декларации: `require('../src/tasks/copy-borschik')`
 
@@ -54,7 +54,7 @@
 Примечание: происходит копирование папок, суффиксы названий которых указаны в параметре `copy` в декларации библиотеки
 из папки `/content/{lib}/{ref}` в `/output/{lib}/{ref}`
 
-#### Пост-обработка и сборка в единый файл `/output/{lib}/{ref}/data.json` [код]('../src/tasks/collect-sets.js')
+#### Пост-обработка и сборка в единый файл /output/{lib}/{ref}/data.json [код]('../src/tasks/collect-sets.js')
 
 Подключение в декларации: `require('../src/tasks/collect-sets')`
 
