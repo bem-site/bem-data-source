@@ -8,7 +8,7 @@ var util = require('util'),
  * Create target folder in output directory
  * @returns {defer.promise|*}
  */
-module.exports = function(target) {
+module.exports = function (target) {
     logger.debug(util.format('create output folder for target %s', target.getName()), module);
-    return vowFs.makeDir(target.getOutputPath()).then(function() { return target; });
+    return vowFs.makeDir(target.getOutputPath()).then(function () { return target; });
 };

@@ -8,11 +8,11 @@ var path = require('path'),
  * Copy borschik file to library directory
  * @returns {defer.promise|*}
  */
-module.exports = function(target) {
+module.exports = function (target) {
     logger.debug('copy borschik configuration', module);
     return vowFs
         .copy('.borschik', path.join(target.getContentPath(), '.borschik'))
-        .then(function() {
+        .then(function () {
             return target;
         }
     );

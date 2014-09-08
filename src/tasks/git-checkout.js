@@ -8,7 +8,7 @@ var path = require('path'),
  * Executes git checkout command
  * @returns {defer.promise|*}
  */
-module.exports = function(target) {
+module.exports = function (target) {
     return commander.runCommand(util.format('git checkout %s', target.ref),
         { cwd: path.resolve(target.getContentPath()) }, 'git checkout', target);
 };

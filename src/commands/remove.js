@@ -8,7 +8,7 @@ var path = require('path'),
     common = require('./common'),
     constants = require('../constants');
 
-module.exports = function() {
+module.exports = function () {
 
     return this
         .title('remove command')
@@ -23,7 +23,7 @@ module.exports = function() {
             .short('v').long('version')
             .req()
             .end()
-        .act(function(opts) {
+        .act(function (opts) {
             logger.info('TRY TO REMOVE FOR:', module);
 
             logger.info(util.format('repository name: %s', opts.repo), module);

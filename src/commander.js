@@ -17,7 +17,7 @@ var path = require('path'),
  * @param folder - {String} path to target folder
  * @returns {defer.promise|*}
  */
-exports.gitClone = function(url, folder) {
+exports.gitClone = function (url, folder) {
     return this.runCommand(
         util.format('git clone --progress %s %s', url, folder), {}, 'git clone', null);
 };
@@ -27,7 +27,7 @@ exports.gitClone = function(url, folder) {
  * @param branch - {String} - name of branch
  * @returns {defer.promise|*}
  */
-exports.gitCheckout = function(branch) {
+exports.gitCheckout = function (branch) {
     return this.runCommand(util.format('git checkout %s', branch),
         { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git checkout', null);
 };
@@ -36,7 +36,7 @@ exports.gitCheckout = function(branch) {
  * Adds all files for commit
  * @returns {defer.promise|*}
  */
-exports.gitAdd = function() {
+exports.gitAdd = function () {
     return this.runCommand('git add .',
         { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git add', null);
 };
@@ -46,7 +46,7 @@ exports.gitAdd = function() {
  * @param message - {String} commit message
  * @returns {defer.promise|*}
  */
-exports.gitCommit = function(message) {
+exports.gitCommit = function (message) {
     return this.runCommand(util.format('git commit -a --allow-empty -m "%s"', message),
         { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git commit', null);
 };
@@ -56,7 +56,7 @@ exports.gitCommit = function(message) {
  * @param ref {String} of remote branch
  * @returns {defer.promise|*}
  */
-exports.gitPush = function(ref) {
+exports.gitPush = function (ref) {
     return this.runCommand(util.format('git push -u origin %s', ref),
         { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git push', null);
 };
@@ -69,7 +69,7 @@ exports.gitPush = function(ref) {
  * @param target - {Object} target
  * @returns {defer.promise|*}
  */
-exports.runCommand = function(cmd, opts, name, target) {
+exports.runCommand = function (cmd, opts, name, target) {
     var baseOpts = {
         encoding: 'utf8',
         maxBuffer: 1000000 * 1024
@@ -77,7 +77,7 @@ exports.runCommand = function(cmd, opts, name, target) {
 
     if (!target) {
         target = {
-            getName: function() {
+            getName: function () {
                 return 'all';
             }
         };
@@ -87,11 +87,11 @@ exports.runCommand = function(cmd, opts, name, target) {
     logger.debug(util.format('execute command: %s', cmd), module);
 
     return utility.exec(cmd, _.extend(opts, baseOpts))
-        .then(function() {
+        .then(function () {
             logger.info(util.format('%s for target %s completed', name, target.getName()), module);
             return vow.resolve(target);
         })
-        .fail(function(error) {
+        .fail(function (error) {
             logger.error(error, module);
             logger.error(util.format('execution of command: %s failed', cmd), module);
             return vow.reject(error);

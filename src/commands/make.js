@@ -30,18 +30,18 @@ function init() {
         return commander.gitCheckout(branch);
     }
 
-    return vowFs.makeDir(constants.DIRECTORY.CONTENT).then(function() {
-        return vowFs.exists(constants.DIRECTORY.OUTPUT).then(function(exists) {
-            if(exists) {
+    return vowFs.makeDir(constants.DIRECTORY.CONTENT).then(function () {
+        return vowFs.exists(constants.DIRECTORY.OUTPUT).then(function (exists) {
+            if (exists) {
                 return checkout();
             }
             return utility.getSSHUrl(config.get('dataConfig'))
-                .then(function(url) {
+                .then(function (url) {
                     logger.info('Start clone remote target data repository. Please wait ...', module);
                     return commander.gitClone(url, constants.DIRECTORY.OUTPUT);
                 })
                 .then(checkout)
-                .then(function() {
+                .then(function () {
                     logger.info('Remote target data repository has been cloned successfully', module);
                 });
         });
@@ -83,21 +83,21 @@ function retrieveSshUrl(source) {
  * @returns {defer.promise|*}
  */
 function verifyRepositoryReferences(source, conf) {
-    if(!source[conf.field]) {
+    if (!source[conf.field]) {
         source[conf.field] = [];
         return source;
     }
 
     return conf.apiFunction.call(null, source)
-        .then(function(res) {
-            var refNames = res.result.map(function(item) {
+        .then(function (res) {
+            var refNames = res.result.map(function (item) {
                 return item.name;
             });
 
-            source[conf.field] = source[conf.field].filter(function(item) {
+            source[conf.field] = source[conf.field].filter(function (item) {
                 var exists = refNames.indexOf(item) > -1;
 
-                if(!exists) {
+                if (!exists) {
                     logger.warn(util.format('Ref %s does not actually present in repository %s',
                         item, source.name), module);
                 }
@@ -123,8 +123,8 @@ function verifyRepositoryReferences(source, conf) {
 function createTargets(source) {
     var targets = [];
 
-    ['tags', 'branches'].forEach(function(type) {
-        source[type].forEach(function(ref) {
+    ['tags', 'branches'].forEach(function (type) {
+        source[type].forEach(function (ref) {
             var target = new Target(source, ref, type);
             targets.push(target);
 
@@ -133,7 +133,7 @@ function createTargets(source) {
         });
     });
 
-    if(!targets.length) {
+    if (!targets.length) {
         return vow.reject('no targets will be executed');
     }
 
@@ -143,9 +143,9 @@ function createTargets(source) {
 function make(source) {
 
     return init()
-        .then(function() {
-            return vowFs.listDir(constants.DIRECTORY.CONTENT).then(function(dirs) {
-                return vow.all(dirs.map(function(dir) {
+        .then(function () {
+            return vowFs.listDir(constants.DIRECTORY.CONTENT).then(function (dirs) {
+                return vow.all(dirs.map(function (dir) {
                     var p = path.join(constants.DIRECTORY.CONTENT, dir);
 
                     logger.debug(util.format('remove directory %s', p), module);
@@ -153,24 +153,24 @@ function make(source) {
                 }));
             });
         })
-        .then(function() {
+        .then(function () {
             return retrieveSshUrl(source);
         })
-        .then(function(source) {
+        .then(function (source) {
             return verifyRepositoryReferences(source, {
                 field: 'tags',
-                apiFunction: api['getRepositoryTags']
+                apiFunction: api.getRepositoryTags
             });
         })
-        .then(function(source) {
+        .then(function (source) {
             return verifyRepositoryReferences(source, {
                 field: 'branches',
-                apiFunction: api['getRepositoryBranches']
+                apiFunction: api.getRepositoryBranches
             });
         })
         .then(createTargets)
-        .then(function(targets) {
-            return vow.all(targets.map(function(target) {
+        .then(function (targets) {
+            return vow.all(targets.map(function (target) {
                 return target.execute();
             }));
         })
@@ -181,7 +181,7 @@ function make(source) {
         }));
 }
 
-module.exports = function() {
+module.exports = function () {
 
     return this
         .title('make command')
@@ -216,7 +216,7 @@ module.exports = function() {
             .short('docs-only').long('docs-only')
             .flag()
             .end()
-        .act(function(opts) {
+        .act(function (opts) {
             logger.info('TRY TO MAKE FOR:', module);
 
             logger.info(util.format('repository privacy: %s', !!opts.private), module);

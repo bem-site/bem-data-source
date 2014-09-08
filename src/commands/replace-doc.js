@@ -25,14 +25,14 @@ function checkForFileExist(repo, version) {
         dataPath = path.join(versionDir, 'data.json');
 
     return vowFs.exists(repoDir)
-        .then(function(exists) {
-            if(!exists) {
+        .then(function (exists) {
+            if (!exists) {
                 return vow.reject('Directory %s does not exists', repoDir);
             }
             return vowFs.exists(versionDir);
         })
-        .then(function(exists) {
-            if(!exists) {
+        .then(function (exists) {
+            if (!exists) {
                 return vow.reject('Directory %s does not exists', versionDir);
             }
             return vow.all([
@@ -40,11 +40,11 @@ function checkForFileExist(repo, version) {
                 vowFs.isFile(dataPath)
             ]);
         })
-        .spread(function(exists, isFile) {
-            if(!exists) {
+        .spread(function (exists, isFile) {
+            if (!exists) {
                 return vow.reject('File %s does not exists', dataPath);
             }
-            if(!isFile) {
+            if (!isFile) {
                 return vow.reject('File %s is not file', dataPath);
             }
             return vowFs.read(dataPath, 'utf-8');
@@ -53,33 +53,33 @@ function checkForFileExist(repo, version) {
 
 function replaceDoc(repo, version, doc, lang, url) {
 
-    return checkForFileExist(repo, version).then(function(content) {
+    return checkForFileExist(repo, version).then(function (content) {
         try {
             content = JSON.parse(content);
-        }catch(err) {
+        }catch (err) {
             return vow.reject('Target library version file can not be parsed');
         }
 
-        if(!content.docs || !content.docs[doc]) {
+        if (!content.docs || !content.docs[doc]) {
             return vow.reject('Doc with key %s does not exists', doc);
         }
 
         //parse web url to gh doc for retrieve all necessary information about repository
         var _url = url.match(/^https?:\/\/(.+?)\/(.+?)\/(.+?)\/(tree|blob)\/(.+?)\/(.+)/);
 
-        if(!_url) {
+        if (!_url) {
             return vow.reject('Invalid format of url %s', url);
         }
 
-        return api['getContent']({
+        return api.getContent({
                 isPrivate: _url[1].indexOf('yandex') > -1,
                 user: _url[2],
                 repo: _url[3],
                 ref:  _url[5],
                 path: _url[6]
             })
-            .then(function(data) {
-                if(!data.res) {
+            .then(function (data) {
+                if (!data.res) {
                     return vow.reject('Response by url %s is empty', _url);
                 }
                 var _doc = content.docs[doc],
@@ -88,15 +88,15 @@ function replaceDoc(repo, version, doc, lang, url) {
                 //if lang option was not set then
                 //we should replace doc for all languages
                 Object.keys(_doc.content)
-                    .filter(function(item) {
+                    .filter(function (item) {
                         return lang ? item === lang : true;
-                    }).forEach(function(item) {
+                    }).forEach(function (item) {
                         _doc.content[item] = replace;
                     });
 
                 content.docs[doc] = _doc;
                 return content;
-            }).then(function(content) {
+            }).then(function (content) {
                 var repoDir = path.join(constants.DIRECTORY.OUTPUT, repo),
                     versionDir = path.join(repoDir, version),
                     dataPath = path.join(versionDir, 'data.json');
@@ -105,7 +105,7 @@ function replaceDoc(repo, version, doc, lang, url) {
     });
 }
 
-module.exports = function() {
+module.exports = function () {
 
     return this
         .title('replace doc command')
@@ -134,7 +134,7 @@ module.exports = function() {
             .short('u').long('url')
             .req()
             .end()
-        .act(function(opts) {
+        .act(function (opts) {
             logger.info('TRY TO REPLACE DOCUMENTATION FOR:', module);
 
             logger.info(util.format('repository name: %s', opts.repo), module);

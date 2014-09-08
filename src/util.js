@@ -17,24 +17,24 @@ var fs = require('fs-extra'),
  * @param {Object} options  Options to `child_process.exec()` function.
  * @return {Promise}
  */
-exports.exec = function(cmd, options) {
+exports.exec = function (cmd, options) {
     var proc = cp.exec(cmd, options),
         d = vow.defer(),
         output = '';
 
-    proc.on('exit', function(code) {
+    proc.on('exit', function (code) {
         if (code === 0) {
             return d.resolve();
         }
         d.reject(new Error(util.format('%s failed: %s', cmd, output)));
     });
 
-    proc.stderr.on('data', function(data) {
+    proc.stderr.on('data', function (data) {
         logger.verbose(data, module);
         output += data;
     });
 
-    proc.stdout.on('data', function(data) {
+    proc.stdout.on('data', function (data) {
         logger.verbose(data, module);
         output += data;
     });
@@ -47,7 +47,7 @@ exports.exec = function(cmd, options) {
  * @param content - {String} markdown content
  * @returns {String} - html string
  */
-exports.mdToHtml = function(content) {
+exports.mdToHtml = function (content) {
     return md(content, {
         gfm: true,
         pedantic: false,
@@ -61,10 +61,10 @@ exports.mdToHtml = function(content) {
  * @param path - {String} path to directory on filesystem
  * @returns {*}
  */
-exports.removeDir = function(path) {
+exports.removeDir = function (path) {
     var def = vow.defer();
-    fs.remove(path, function(err) {
-        if(err) {
+    fs.remove(path, function (err) {
+        if (err) {
             def.reject(err);
         }
 
@@ -79,17 +79,17 @@ exports.removeDir = function(path) {
  * @param repo - {Object} repo object
  * @returns {*}
  */
-exports.getSSHUrl = function(repo) {
+exports.getSSHUrl = function (repo) {
     return api
         .getRepository({
             user: repo.user,
             name: repo.repo,
             isPrivate: repo.private
         })
-        .then(function(res) {
+        .then(function (res) {
             return res.result.ssh_url;
         })
-        .fail(function() {
+        .fail(function () {
             logger.error('Data repository was not found. Application will be terminated', module);
         });
 };

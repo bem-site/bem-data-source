@@ -7,7 +7,7 @@ var path = require('path'),
  * Executes npm run build or any custom build command
  * @returns {defer.promise|*}
  */
-module.exports = function(target) {
+module.exports = function (target) {
     var command = target.getBuildCommand();
     return commander.runCommand(command, { cwd: path.resolve(target.getContentPath()) }, command, target);
 };

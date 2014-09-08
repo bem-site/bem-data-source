@@ -9,7 +9,7 @@ var path = require('path'),
  * Executes npm install command
  * @returns {defer.promise|*}
  */
-module.exports = function(target) {
+module.exports = function (target) {
     return commander.runCommand(util.format('npm install --registry="%s"',
             target.getSourcePrivacy() ? constants.NPM_REGISTRY.PRIVATE : constants.NPM_REGISTRY.PUBLIC),
         { cwd: path.resolve(target.getContentPath()) }, 'npm install', target);
