@@ -1,6 +1,6 @@
 'use strict';
 
-var fs = require('fs'),
+var fs = require('fs-extra'),
     util = require('util'),
     cp = require('child_process'),
 
