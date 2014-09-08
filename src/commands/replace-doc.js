@@ -71,7 +71,7 @@ function replaceDoc(repo, version, doc, lang, url) {
             return vow.reject('Invalid format of url %s', url);
         }
 
-        return api.getContent({
+        return api['getContent']({
                 isPrivate: _url[1].indexOf('yandex') > -1,
                 user: _url[2],
                 repo: _url[3],
