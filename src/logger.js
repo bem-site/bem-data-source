@@ -31,7 +31,7 @@ function getLogger(module) {
  * @returns {*}
  */
 exports.verbose = function(str, module) {
-    return getLogger(module).verbose.apply(null, str);
+    return getLogger(module).verbose(str);
 };
 
 /**
@@ -41,7 +41,7 @@ exports.verbose = function(str, module) {
  * @returns {*}
  */
 exports.debug = function(str, module) {
-    return getLogger(module).debug.apply(null, str);
+    return getLogger(module).debug(str);
 };
 
 /**
@@ -51,7 +51,7 @@ exports.debug = function(str, module) {
  * @returns {*}
  */
 exports.info = function(str, module) {
-  return getLogger(module).info.apply(null, str);
+  return getLogger(module).info(str);
 };
 
 /**
@@ -61,7 +61,7 @@ exports.info = function(str, module) {
  * @returns {*}
  */
 exports.warn = function(str, module) {
-    return getLogger(module).warn.apply(null, str);
+    return getLogger(module).warn(str);
 };
 
 /**
@@ -71,5 +71,5 @@ exports.warn = function(str, module) {
  * @returns {*}
  */
 exports.error = function(str, module) {
-    return getLogger(module).error.apply(null, str);
+    return getLogger(module).error(str);
 };
