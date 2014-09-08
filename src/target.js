@@ -184,9 +184,9 @@ Target.prototype = {
             initial = this.getTasks().shift();
         return this.getTasks().reduce(function(prev, item) {
             return prev.then(function() {
-                return item.apply(_this);
+                return item(_this);
             });
-        }, initial.apply(this));
+        }, initial(_this));
     },
 
     /**
