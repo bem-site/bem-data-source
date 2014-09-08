@@ -15,8 +15,8 @@ var path = require('path'),
 /**
  * This method needs for check if file data.json
  * really exists in dir output/{repo}/{version} folder
- * @param repo - {String} name of repo (lib)
- * @param version - {String} name of library version (branch ot tag)
+ * @param {String} repo (lib)
+ * @param {String} version of library (branch ot tag)
  * @returns {*}
  */
 function checkForFileExist(repo, version) {
@@ -52,7 +52,6 @@ function checkForFileExist(repo, version) {
 }
 
 function replaceDoc(repo, version, doc, lang, url) {
-
     return checkForFileExist(repo, version).then(function (content) {
         try {
             content = JSON.parse(content);
@@ -64,7 +63,7 @@ function replaceDoc(repo, version, doc, lang, url) {
             return vow.reject('Doc with key %s does not exists', doc);
         }
 
-        //parse web url to gh doc for retrieve all necessary information about repository
+        // parse web url to gh doc for retrieve all necessary information about repository
         var _url = url.match(/^https?:\/\/(.+?)\/(.+?)\/(.+?)\/(tree|blob)\/(.+?)\/(.+)/);
 
         if (!_url) {
@@ -85,8 +84,7 @@ function replaceDoc(repo, version, doc, lang, url) {
                 var _doc = content.docs[doc],
                     replace = utility.mdToHtml((new Buffer(data.res.content, 'base64')).toString());
 
-                //if lang option was not set then
-                //we should replace doc for all languages
+                // if lang option was not set then we should replace doc for all languages
                 Object.keys(_doc.content)
                     .filter(function (item) {
                         return lang ? item === lang : true;
@@ -106,7 +104,6 @@ function replaceDoc(repo, version, doc, lang, url) {
 }
 
 module.exports = function () {
-
     return this
         .title('replace doc command')
         .helpful()

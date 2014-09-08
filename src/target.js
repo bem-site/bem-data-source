@@ -1,7 +1,7 @@
 'use strict';
 
 var util = require('util'),
-    path =require('path'),
+    path = require('path'),
 
     _ = require('lodash'),
 
@@ -21,9 +21,10 @@ Target.prototype = {
 
     /**
      * Initialize target for build
-     * @param source - {Object} source
-     * @param ref - {String} name of tag or branch
-     * @param type - {String} type of reference
+     *
+     * @param {Object} source
+     * @param {String} ref - name of tag or branch
+     * @param {String} type of reference
      * @returns {Target}
      */
     init: function (source, ref, type) {
@@ -34,6 +35,10 @@ Target.prototype = {
         return this;
     },
 
+    /**
+     * Retrieve merged declaration for library
+     * @returns {Boolean|*}
+     */
     makeDeclaration: function () {
         var base = require('../declarations/base'),
             lib;
@@ -84,7 +89,7 @@ Target.prototype = {
     },
 
     /**
-     *
+     * Return part of declaration corresponding to docs
      * @returns {*}
      */
     getMdTargets: function () {
@@ -92,7 +97,7 @@ Target.prototype = {
     },
 
     /**
-     *
+     * Returns name patters of folders that should be copied to output folder
      * @returns {*}
      */
     getBlockTargets: function () {
@@ -100,7 +105,7 @@ Target.prototype = {
     },
 
     /**
-     *
+     * Returns value if build command
      * @returns {String}
      */
     getBuildCommand: function () {
@@ -147,7 +152,7 @@ Target.prototype = {
      */
     getTasks: function () {
         if (this.source.docsOnly) {
-            return  [
+            return [
                 require('./tasks/remove-output'),
                 require('./tasks/create-output'),
                 require('./tasks/git-clone'),

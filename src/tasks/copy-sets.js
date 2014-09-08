@@ -7,6 +7,8 @@ var path = require('path'),
 
 /**
  * Executes copying built folders from content to output
+ *
+ * @param {Target} target for building
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {

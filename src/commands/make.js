@@ -1,7 +1,7 @@
 'use strict';
 
 var util = require('util'),
-    path =require('path'),
+    path = require('path'),
 
     vow = require('vow'),
     vowFs = require('vow-fs'),
@@ -50,7 +50,7 @@ function init() {
 
 /**
  * Generates ssh url of repository
- * @param source - {Object} object with fields:
+ * @param {Object} source object with fields:
  * - isPrivate {Boolean} indicate if repository from private github
  * - name - {String} name of repository
  * - user {String} name of user or organization
@@ -70,14 +70,14 @@ function retrieveSshUrl(source) {
 
 /**
  * Retrieves information about repository branches and filter them according to config
- * @param source - {Object} with fields:
+ * @param {Object} source with fields:
  * - isPrivate {Boolean} indicate if repository from private github
  * - user {String} name of user or organization
  * - name - {String} name of repository
  * - tags - {String} tag name
  * - branches - {String} branch name
  * - url - {String} git url of repository
- * @param conf - {Object} with fields:
+ * @param {Object} conf with fields:
  * - field - {String} name of reference
  * - apiFunction - {Function} api function to retrieve reference information
  * @returns {defer.promise|*}
@@ -111,7 +111,7 @@ function verifyRepositoryReferences(source, conf) {
 
 /**
  * Create targets for source
- * @param source - {Object} with fields:
+ * @param {Object} source with fields:
  * - isPrivate {Boolean} indicate if repository from private github
  * - user {String} name of user or organization
  * - name - {String} name of repository
@@ -141,7 +141,6 @@ function createTargets(source) {
 }
 
 function make(source) {
-
     return init()
         .then(function () {
             return vowFs.listDir(constants.DIRECTORY.CONTENT).then(function (dirs) {
@@ -182,7 +181,6 @@ function make(source) {
 }
 
 module.exports = function () {
-
     return this
         .title('make command')
         .helpful()
@@ -239,5 +237,4 @@ module.exports = function () {
                 docsOnly: !!opts.docsOnly
             });
         });
-
 };

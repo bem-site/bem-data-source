@@ -7,6 +7,8 @@ var path = require('path'),
 
 /**
  * Executes npm install command
+ *
+ * @param {Target} target for building
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {

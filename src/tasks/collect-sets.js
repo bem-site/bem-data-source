@@ -1,7 +1,7 @@
 'use strict';
 
 var util = require('util'),
-    path =require('path'),
+    path = require('path'),
 
     _ = require('lodash'),
     vow = require('vow'),
@@ -14,7 +14,7 @@ var util = require('util'),
     utility = require('../util');
 
 module.exports = function (target) {
-    logger.info('-- collect sets start --');
+    logger.info(util.format('-- collect sets start --'), module);
 
     var result = target.createSetsResultBase();
     return readMDFilesForLibrary(target, result)
@@ -29,8 +29,8 @@ module.exports = function (target) {
 
 /**
  * Read markdown files for library and compile them into html
- * @param target - {Target} target model
- * @param result - {Object} result model
+ * @param {Target} target model
+ * @param {Object} result model
  * @returns {*}
  */
 function readMDFilesForLibrary(target, result) {
@@ -46,9 +46,9 @@ function readMDFilesForLibrary(target, result) {
 
 /**
  * Reads markdown files from filesystem
- * @param target - {Target} target model
- * @param result - {Object} result model
- * @param key - {String} key with name of markdown doc
+ * @param {Target} target model
+ * @param {Object} result model
+ * @param {String} key with name of markdown doc
  * @returns {*}
  */
 function loadMDFromFile(target, result, key) {
@@ -90,9 +90,9 @@ function loadMDFromFile(target, result, key) {
 
 /**
  * Reads markdown files from remote github repo via Github API
- * @param target - {Target} target model
- * @param result - {Object} result model
- * @param key - {String} key with name of markdown doc
+ * @param {Target} target model
+ * @param {Object} result model
+ * @param {String} key with name of markdown doc
  * @returns {*}
  */
 function loadMDFromRemote(target, result, key) {
@@ -137,12 +137,12 @@ function loadMDFromRemote(target, result, key) {
 
 /**
  * Reads library dependencies from bower.json file
- * @param target - {Target} target model
- * @param result - {Object} result model
+ * @param {Target} target model
+ * @param {Object} result model
  * @returns {*}
  */
 function readDependencies(target, result) {
-    return vowFs.read(path.resolve(target.getContentPath(), 'bower.json'),'utf-8')
+    return vowFs.read(path.resolve(target.getContentPath(), 'bower.json'), 'utf-8')
         .then(function (content) {
             try {
                 content = JSON.parse(content);
@@ -158,8 +158,8 @@ function readDependencies(target, result) {
 
 /**
  * Scan level directories for library
- * @param target - {Target} target model
- * @param result - {Object} result model
+ * @param {Target} target model
+ * @param {Object} result model
  * @returns {*}
  */
 function readLevelsForLibrary(target, result) {
@@ -187,8 +187,8 @@ function readLevelsForLibrary(target, result) {
 
 /**
  * Scan block directories for level
- * @param target - {Target} target model
- * @param level - {Object} level
+ * @param {Target} target model
+ * @param {Object} level
  * @returns {*}
  */
 function readBlocksForLevel(target, level) {
@@ -214,14 +214,14 @@ function readBlocksForLevel(target, level) {
 
 /**
  * Read data files for single block
- * @param target - {Target} target model
- * @param level - {Object} level
- * @param block - {Object} block
+ * @param {Target} target model
+ * @param {Object} level
+ * @param {Object} block
  * @returns {*}
  */
 function readDataForBlock(target, level, block) {
     return vow.allResolved(Object.keys(target.getBlockTargets()).map(function (key) {
-            return vowFs.read(path.resolve(this.getOutputPath(),level.name, block.name,
+            return vowFs.read(path.resolve(this.getOutputPath(), level.name, block.name,
                 util.format(this.getBlockTargets()[key], block.name)), 'utf-8')
                 .then(function (content) {
                     try {
@@ -239,8 +239,8 @@ function readDataForBlock(target, level, block) {
 
 /**
  * Save result model into json file
- * @param target - {Target} target model
- * @param result - {Object} result model
+ * @param {Target} target model
+ * @param {Object} result model
  * @returns {*}
  */
 function writeResultToFile(target, result) {

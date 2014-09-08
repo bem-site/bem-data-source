@@ -11,14 +11,16 @@ module.exports = (function () {
 
     /**
      * Fix marked issue with cyrillic symbols replacing
-     * @param text - {String} test of header
-     * @param level - {Number} index of header
-     * @param raw
-     * @param options - {Object} options
+     *
+     * @param {String} text of header
+     * @param {Number} level index of header
+     * @param {String} raw
+     * @param {Object} options
      * @returns {String} - result header string
      */
     r.heading = function (text, level, raw, options) {
-        var specials = ['-','[',']','/','{','}','(',')','*','+','?','.','\\','^','$','|','s','\'','\"'];
+        var specials = ['-', '[', ']', '/', '{', '}',
+            '(', ')', '*', '+', '?', '.', '\\', '^', '$', '|', 's', '\'', '\"'];
 
         options = options || {};
         options.headerPrefix = options.headerPrefix || '';

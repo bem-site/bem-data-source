@@ -9,7 +9,6 @@ var path = require('path'),
     constants = require('../constants');
 
 module.exports = function () {
-
     return this
         .title('remove command')
         .helpful()

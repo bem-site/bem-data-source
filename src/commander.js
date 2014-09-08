@@ -13,8 +13,9 @@ var path = require('path'),
 
 /**
  * Clone repository from url to folder
- * @param url - {String} - url of git repository
- * @param folder - {String} path to target folder
+ *
+ * @param {String} url of git repository
+ * @param {String} folder path to target
  * @returns {defer.promise|*}
  */
 exports.gitClone = function (url, folder) {
@@ -24,7 +25,7 @@ exports.gitClone = function (url, folder) {
 
 /**
  * Switch git branch of inner repo to branch set in config
- * @param branch - {String} - name of branch
+ * @param {String} branch name
  * @returns {defer.promise|*}
  */
 exports.gitCheckout = function (branch) {
@@ -43,7 +44,7 @@ exports.gitAdd = function () {
 
 /**
  * Executes git commit command
- * @param message - {String} commit message
+ * @param {String} message of commit
  * @returns {defer.promise|*}
  */
 exports.gitCommit = function (message) {
@@ -53,7 +54,7 @@ exports.gitCommit = function (message) {
 
 /**
  * Executes git push command
- * @param ref {String} of remote branch
+ * @param {String} ref - name of remote branch
  * @returns {defer.promise|*}
  */
 exports.gitPush = function (ref) {
@@ -63,10 +64,10 @@ exports.gitPush = function (ref) {
 
 /**
  * Run command in child process
- * @param cmd - {String} command to run
- * @param opts - {Object} options for command execution
- * @param name - {String} command name for log
- * @param target - {Object} target
+ * @param {String} cmd (command) to run
+ * @param {Object} opts (options) for command execution
+ * @param {String} name of command for log
+ * @param {Target} target
  * @returns {defer.promise|*}
  */
 exports.runCommand = function (cmd, opts, name, target) {
@@ -83,7 +84,7 @@ exports.runCommand = function (cmd, opts, name, target) {
         };
     }
 
-    //logger.debug('execute %s for target %s', cmd, target.getName());
+    // logger.debug('execute %s for target %s', cmd, target.getName());
     logger.debug(util.format('execute command: %s', cmd), module);
 
     return utility.exec(cmd, _.extend(opts, baseOpts))

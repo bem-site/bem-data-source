@@ -5,6 +5,8 @@ var path = require('path'),
 
 /**
  * Executes npm run build or any custom build command
+ *
+ * @param {Target} target for building
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {

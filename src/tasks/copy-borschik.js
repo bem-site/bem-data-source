@@ -6,6 +6,8 @@ var path = require('path'),
 
 /**
  * Copy borschik file to library directory
+ *
+ * @param {Target} target for building
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {
