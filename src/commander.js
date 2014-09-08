@@ -23,6 +23,16 @@ exports.gitClone = function(url, folder) {
 };
 
 /**
+ * Switch git branch of inner repo to branch set in config
+ * @param branch - {String} - name of branch
+ * @returns {defer.promise|*}
+ */
+exports.gitCheckout = function(branch) {
+    return this.runCommand(util.format('git checkout %s', branch),
+        { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git checkout', null);
+};
+
+/**
  * Adds all files for commit
  * @returns {defer.promise|*}
  */
