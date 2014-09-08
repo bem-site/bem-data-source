@@ -1,8 +1,10 @@
 module.exports = {
     default: {
         builder: 'enb',
-        command: 'YENV=production enb make examples && enb make docs',
-        copy: ['*.docs', '*.examples'],
+        command: 'YENV=production bower install && npm run libs && enb make __magic__ desktop.examples ' +
+            'desktop.tests desktop.docs touch-pad.examples touch-pad.tests touch-pad.docs ' +
+            'touch-phone.examples touch-phone.tests touch-phone.docs',
+        copy: ['*.docs', '*.tests', '*.examples'],
         docs: {
             readme: {
                 folder: '',
@@ -36,7 +38,7 @@ module.exports = {
                     en: 'Documentation',
                     ru: 'Документация'
                 },
-                url: '/tags/{lib}-{ref}'
+                url: '/tags/{lib}-v2.3.0'
             }
         ],
         tasks: [
@@ -44,9 +46,8 @@ module.exports = {
             require('../src/tasks/create-output'),
             require('../src/tasks/git-clone'),
             require('../src/tasks/git-checkout'),
-            require('../src/tasks/npm-install'),
-            require('../src/tasks/npm-run-deps'),
             require('../src/tasks/copy-borschik'),
+            require('../src/tasks/npm-install'),
             require('../src/tasks/npm-run-build'),
             require('../src/tasks/copy-sets'),
             require('../src/tasks/collect-sets')
