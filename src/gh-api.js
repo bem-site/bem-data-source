@@ -75,9 +75,12 @@ module.exports = (function () {
          */
         getRepositoryTags: function (source) {
             var def = vow.defer(),
-                git = source.isPrivate ? gitPrivate : gitPublic;
+                git = source.isPrivate ? gitPrivate : gitPublic,
+                opts = { user: source.user, repo: source.name };
 
-            git.repos.getTags({ user: source.user, repo: source.name, per_page: 100 }, function (err, res) {
+            opts['per_page'] = 100;
+
+            git.repos.getTags(opts, function (err, res) {
                 if (err) {
                     logger.error(err.message, module);
                     def.reject(err);
@@ -97,9 +100,12 @@ module.exports = (function () {
          */
         getRepositoryBranches: function (source) {
             var def = vow.defer(),
-                git = source.isPrivate ? gitPrivate : gitPublic;
+                git = source.isPrivate ? gitPrivate : gitPublic,
+                opts = { user: source.user, repo: source.name };
 
-            git.repos.getBranches({ user: source.user, repo: source.name, per_page: 100 }, function (err, res) {
+            opts['per_page'] = 100;
+
+            git.repos.getBranches(opts, function (err, res) {
                 if (err) {
                     logger.error(err.message, module);
                     def.reject(err);
