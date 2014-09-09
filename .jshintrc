@@ -13,6 +13,7 @@
     "latedef"       : "nofucn",
     "noarg"         : true,
     "noempty"       : true,
+    "nonbsp"        : true,
     "nonew"         : true,
     "undef"         : true,
     "unused"        : true,
