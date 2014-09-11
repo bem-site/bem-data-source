@@ -14,12 +14,13 @@ function command() {
             .flag()
             .only()
             .act(function () {
-                var p = require('./../package.json');
+                var p = require('../package.json');
                 logger.info(util.format('application name: %s version %s', p.name, p.version), module);
                 return '';
             })
             .end()
         .cmd().name('make').apply(require('./commands/make')).end()
+        .cmd().name('publish').apply(require('./commands/publish')).end()
         .cmd().name('replace-doc').apply(require('./commands/replace-doc')).end()
         .cmd().name('remove').apply(require('./commands/remove')).end()
         .completable();
