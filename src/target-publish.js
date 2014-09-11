@@ -2,20 +2,22 @@
 
 var Target = require('./target')
 
-var PTarget  = function (source, ref) {
+var TargetPublish  = function (source, ref) {
     return this.init(source, ref, null);
 };
 
-PTarget.prototype = Target.prototype;
+TargetPublish.prototype = Target.prototype;
 
-PTarget.prototype.getContentPath = function() {
+TargetPublish.prototype.getContentPath = function() {
     return process.cwd();
 };
 
-PTarget.prototype.getOutputPath = function() {
+TargetPublish.prototype.getOutputPath = function() {
     return process.cwd();
 };
 
-PTarget.prototype.getTasks = function() {
+TargetPublish.prototype.getTasks = function() {
     return [require('./tasks/collect-sets')];
 };
+
+module.exports = TargetPublish;
