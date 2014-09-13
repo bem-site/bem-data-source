@@ -17,7 +17,6 @@ Target.prototype = {
     ref: null,
     type: null,
     declaration: null,
-    tasks: [],
 
     /**
      * Initialize target for build
