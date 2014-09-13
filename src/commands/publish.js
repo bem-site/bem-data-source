@@ -22,12 +22,15 @@ function readPackageJson() {
 
 function publish(version) {
     return readPackageJson().then(function(packageJson) {
+        version = version || packageJson.version;
+        version = version.replace(/\//g, '-');
+
         var repository = packageJson.repository,
             target = new TargetPublish({
                 name: packageJson.name,
                 url: repository && repository.url,
                 isPrivate: true
-            }, version || packageJson.version);
+            }, version);
         return target.execute();
     })
     .fail(function(err) {
