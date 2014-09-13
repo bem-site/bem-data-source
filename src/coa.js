@@ -23,6 +23,7 @@ function command() {
         .cmd().name('publish').apply(require('./commands/publish')).end()
         .cmd().name('replace-doc').apply(require('./commands/replace-doc')).end()
         .cmd().name('remove').apply(require('./commands/remove')).end()
+        .cmd().name('server').apply(require('./commands/server')).end()
         .completable();
 }
 
