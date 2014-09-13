@@ -9,11 +9,11 @@ var path = require('path'),
 module.exports = (function () {
     nconf
         .env()
-        .file({ file: path.join(path.join(process.cwd(), 'config'), 'config.json') });
+        .file({ file: path.resolve(__dirname, '..', 'config/config.json') });
 
     nconf.add('credentials', {
         type: 'file',
-        file: path.join(path.join(process.cwd(), 'config'), 'credentials.json')
+        file: path.resolve(__dirname, '..', 'config/credentials.json')
     });
 
     return nconf;
