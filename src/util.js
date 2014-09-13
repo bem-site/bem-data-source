@@ -67,7 +67,18 @@ exports.removeDir = function (path) {
         if (err) {
             def.reject(err);
         }
+        def.resolve();
+    });
 
+    return def.promise();
+};
+
+exports.copy = function (target, destination) {
+    var def = vow.defer();
+    fs.copy(target, destination, function (err) {
+        if (err) {
+            def.reject(err);
+        }
         def.resolve();
     });
 
