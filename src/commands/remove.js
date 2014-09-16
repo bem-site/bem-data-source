@@ -5,7 +5,7 @@ var path = require('path'),
 
     utility = require('../util'),
     logger = require('../logger'),
-    common = require('./common'),
+    pusher = require('../pusher'),
     constants = require('../constants');
 
 module.exports = function () {
@@ -31,7 +31,7 @@ module.exports = function () {
             var p = path.join(path.join(constants.DIRECTORY.OUTPUT, opts.repo), opts.version);
             logger.debug(util.format('remove directory: %s', p), module);
 
-            return utility.removeDir(p).then(common({
+            return utility.removeDir(p).then(pusher.commitAndPush({
                 commitMessage: util.format('Remove version %s from lib %s', opts.version, opts.repo),
                 successMessage: 'REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY',
                 errorMessage: 'REMOVE COMMAND FAILED WITH ERROR %s'
