@@ -11,17 +11,17 @@ var path = require('path'),
 
 function readPackageJson() {
     return vowFs.read(path.join(process.cwd(), 'package.json'), 'utf-8')
-        .then(function(content) {
+        .then(function (content) {
             try {
                 return vow.resolve(JSON.parse(content));
-            }catch(err) {
+            }catch (err) {
                 return vow.reject('Can not parse package.json file');
             }
         });
 }
 
 function publish(version) {
-    return readPackageJson().then(function(packageJson) {
+    return readPackageJson().then(function (packageJson) {
         version = version || packageJson.version;
         version = version.replace(/\//g, '-');
 
@@ -33,7 +33,7 @@ function publish(version) {
             }, version);
         return target.execute();
     })
-    .fail(function(err) {
+    .fail(function (err) {
         logger.error(err.message, module);
     });
 }

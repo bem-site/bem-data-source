@@ -16,7 +16,7 @@ var util = require('util'),
     constants = require('../constants');
 
 module.exports = function (target) {
-    var copyDataFile = function() {
+    var copyDataFile = function () {
         return vowFs.copy(
             path.join(target.getOutputPath(), constants.FILE.DATA),
             path.join(path.join(target.getOutputPath(), constants.DIRECTORY.TEMP), constants.FILE.DATA)
@@ -24,24 +24,25 @@ module.exports = function (target) {
     };
 
     return vowFs.makeDir(path.join(target.getOutputPath(), constants.DIRECTORY.TEMP))
-        .then(function() {
+        .then(function () {
             return vow.all([copyDataFile()].concat(target.getCopyPatterns()
-                .filter(function(item) {
+                .filter(function (item) {
                     return item !== target.getDocPatterns();
-                }).map(function(item) {
+                }).map(function (item) {
                     return commander.runCommand(
-                        util.format('cp -R %s %s', item, path.resolve(target.getOutputPath(), constants.DIRECTORY.TEMP)),
+                        util.format('cp -R %s %s', item,
+                            path.resolve(target.getOutputPath(), constants.DIRECTORY.TEMP)),
                     { cwd: path.resolve(target.getContentPath()) }, util.format('copy folders %s', item), null);
                 })
             ));
         })
-        .then(function() {
+        .then(function () {
             var def = vow.defer(),
                 host = config.get('server:host') || '127.0.0.1',
                 port = config.get('server:port') || 3000,
                 url = util.format('http://%s:%s/publish/%s/%s', host, port, target.getSourceName(), target.ref);
 
-            fstream.Reader({ path: path.join(target.getOutputPath(), constants.DIRECTORY.TEMP), 'type': 'Directory' })
+            fstream.Reader({ path: path.join(target.getOutputPath(), constants.DIRECTORY.TEMP), type: 'Directory' })
                 .pipe(tar.Pack())
                 .pipe(zlib.Gzip())
                 .pipe(request.post(url))

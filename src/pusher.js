@@ -55,17 +55,17 @@ function dischargeAfterPush () {
     charge = false;
 }
 
-function execute() {
+function execute () {
     logger.info('execute commit and push data', module);
 
     // we should perform commit and push only
     // if another commit and push is not executing at this moment
     // and we have new added or modified files for commit
-    if(!isCharged() || isActive()) {
-        if(!isCharged()) {
+    if (!isCharged() || isActive()) {
+        if (!isCharged()) {
             logger.warn('There any added or modified files in git folder', module);
         }
-        if(isActive()) {
+        if (isActive()) {
             logger.warn('Another commit and push is executing now', module);
         }
         return;
@@ -77,7 +77,7 @@ function execute() {
             successMessage: 'PUSH DATA HAS BEEN FINISHED SUCCESSFULLY',
             errorMessage: 'PUSH FAILED WITH ERROR %s'
         }))()
-        .then(function() {
+        .then(function () {
             dischargeAfterPush();
             setIdle();
         });
@@ -87,7 +87,7 @@ module.exports = {
     /**
      * Initialize cron job for commit and push tasks perform
      */
-    init: function() {
+    init: function () {
         job = new CronJob({
             cronTime: '0 */1 * * * *',
             onTick: execute,
@@ -99,7 +99,7 @@ module.exports = {
      * Set charge flag to true
      * It will indicate that commit and push will be performed at next cron launch
      */
-    chargeForPush: function() {
+    chargeForPush: function () {
         charge = true;
     },
 
@@ -126,4 +126,3 @@ module.exports = {
         };
     }
 };
-
