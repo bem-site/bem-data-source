@@ -5,6 +5,7 @@ var Target = require('./target'),
         this.init(source, ref, null);
         this.declaration.tasks = [
             require('./tasks/collect-sets'),
+            require('./tasks/clean-unused'),
             require('./tasks/archive')
         ];
         this.getContentPath = function () {
