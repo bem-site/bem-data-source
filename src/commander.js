@@ -62,6 +62,11 @@ exports.gitPush = function (ref) {
         { cwd: path.resolve(constants.DIRECTORY.OUTPUT) }, 'git push', null);
 };
 
+exports.moveFiles = function (source, destination) {
+    return this.runCommand(
+        util.format('mv %s/* %s', source, destination), {}, util.format('move folders %s', source), null);
+};
+
 /**
  * Run command in child process
  * @param {String} cmd (command) to run
