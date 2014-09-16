@@ -8,7 +8,7 @@ var path = require('path'),
 
     api = require('../gh-api'),
     logger = require('../logger'),
-    common = require('./common'),
+    pusher = require('../pusher'),
     utility = require('../util'),
     constants = require('../constants');
 
@@ -140,7 +140,7 @@ module.exports = function () {
             logger.info(util.format('documentation language %s', opts.lang || 'all'), module);
             logger.info(util.format('replacement documentation url %s', opts.url), module);
 
-            return replaceDoc(opts.repo, opts.version, opts.doc, opts.lang, opts.url).then(common({
+            return replaceDoc(opts.repo, opts.version, opts.doc, opts.lang, opts.url).then(pusher.commitAndPush({
                 commitMessage: util.format('Replace doc %s for version %s of lib %s',
                     opts.doc, opts.version, opts.repo),
                 successMessage: 'REPLACE DOC COMMAND HAS BEEN FINISHED SUCCESSFULLY',

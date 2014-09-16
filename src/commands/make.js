@@ -9,7 +9,7 @@ var util = require('util'),
     constants = require('../constants'),
 
     api = require('../gh-api'),
-    common = require('./common'),
+    pusher = require('../pusher'),
     config = require('../config'),
     logger = require('../logger'),
     commander = require('../commander'),
@@ -173,7 +173,7 @@ function make(source) {
                 return target.execute();
             }));
         })
-        .then(common({
+        .then(pusher.commitAndPush({
             commitMessage: util.format('Update data: %s', (new Date()).toString()),
             successMessage: 'MAKE COMMAND HAS BEEN FINISHED SUCCESSFULLY',
             errorMessage: 'MAKE COMMAND FAILED WITH ERROR %s'
