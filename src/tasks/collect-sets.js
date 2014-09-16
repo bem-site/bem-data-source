@@ -248,5 +248,5 @@ function writeResultToFile(target, result) {
         path.resolve(target.getOutputPath(), constants.FILE.DATA)), module);
 
     return vowFs.write(path.resolve(target.getOutputPath(), constants.FILE.DATA),
-        JSON.stringify(result, null, 4), { charset: 'utf8' });
+        JSON.stringify(result), { charset: 'utf8' });
 }
