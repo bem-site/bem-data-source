@@ -1,7 +1,8 @@
 module.exports = {
     DIRECTORY: {
         CONTENT: 'content',
-        OUTPUT: 'output'
+        OUTPUT: 'output',
+        TEMP: 'temp'
     },
     FILE: {
         DATA: 'data.json'
