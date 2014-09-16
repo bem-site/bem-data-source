@@ -84,7 +84,7 @@ function startServer (app) {
     app
         .set('port', config.get('server:port') || 3000)
         .use(function (req, res, next) {
-            logger.debug('retrieve request %s', req.path);
+            logger.debug(util.format('retrieve request %s', req.path), module);
             next();
         })
         .get('/', ping)
