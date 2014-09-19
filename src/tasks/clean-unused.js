@@ -6,9 +6,9 @@ var util = require('util'),
     vow = require('vow'),
 
     logger = require('../logger'),
-    commander = require('../commander');
+    commander = require('../commander'),
 
-var LEVEL_NAMES = ['desktop', 'touch-pad', 'touch-phone'],
+    LEVEL_NAMES = ['desktop', 'touch-pad', 'touch-phone'],
     PATTERN = {
         LEAVE: ['_*.css', '_*.js', '*.bemhtml.js', '*.ru.html', '*.bemjson.js'],
         REMOVE: ['*.browser.bemhtml.js', '*.en.js', '*.ru.js', '*.tr.js']
@@ -29,7 +29,7 @@ module.exports = function (target) {
         }, ''),
         findAndRemove = function (query) {
             return vow
-                .all(LEVEL_NAMES.map(function(level) {
+                .all(LEVEL_NAMES.map(function (level) {
                     return commander.runCommand(
                         util.format(commandPattern, path.resolve(target.getOutputPath(), level + '.examples'), query),
                         {}, util.format('remove unused files from %s', level), target);
@@ -37,10 +37,10 @@ module.exports = function (target) {
         };
 
     return findAndRemove(queryLeaveStr)
-        .then(function() {
+        .then(function () {
             return findAndRemove(queryRemoveStr);
         })
-        .then(function() {
+        .then(function () {
             return target;
         });
 };
