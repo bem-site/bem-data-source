@@ -64,10 +64,12 @@ function sendRequest () {
         return;
     }
 
-    request({ url: url, timeout: 600000 }, function (error, response, body) {
+    request({ url: url }, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             logger.info('server received data update notification', module);
             logger.info(body, module);
+        }else {
+            logger.error(util.format('error occur while site notification %s', error), module);
         }
     });
 }
