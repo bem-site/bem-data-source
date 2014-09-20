@@ -11,8 +11,13 @@ lib-cov
 pids
 content
 output
+libs
 
 npm-debug.log
 node_modules
+
+.enb/tmp
+src/*.bundles/*/*.*
+!src/*.bundles/*/*.bemdecl.js
 
 config/credentials.json
