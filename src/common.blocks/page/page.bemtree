@@ -12,6 +12,10 @@ block('page')(
             {
                 block: 'header'
             },
+            {
+                block: 'menu-wrapper',
+                content: this.ctx.data
+            },
             { elem: 'js' }
         ];
     }),
