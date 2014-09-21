@@ -1,0 +1,19 @@
+block('menu-wrapper').content()(function() {
+    return {
+       block : 'menu',
+       mods : { theme : 'normal', size : 'm', mode : 'radio' },
+       content: this.ctx.content.map(function(libItem) {
+            return {
+                elem: 'group',
+                title: libItem.lib,
+                content: libItem.versions.map(function(versionItem) {
+                    return {
+                       block : 'menu-item',
+                       val : [libItem, versionItem],
+                       content : versionItem
+                    };
+                })
+            };
+       })
+    };
+})
