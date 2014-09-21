@@ -1,0 +1,3 @@
+block('header').elem('title').content()(function() {
+    return 'BEM DATA SOURCE';
+});
