@@ -3,16 +3,15 @@ block('page')(
         this._myGuard = true;
 
         !this.ctx.head && (this.ctx.head = []);
-        this.ctx.head.push({ elem: 'css', url: 'src/common.bundles/index/index.min.css' });
+        this.ctx.head.push({ elem: 'css', url: '/src/common.bundles/index/index.min.css' });
         return applyNext();
     }),
 
     match(function() { return this.ctx }).content()(function() {
         return [
-//            {
-//                block: 'forum',
-//                forum: this.ctx.forum
-//            },
+            {
+                block: 'header'
+            },
             { elem: 'js' }
         ];
     }),
