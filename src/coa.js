@@ -21,8 +21,8 @@ function command() {
             .end()
         .cmd().name('make').apply(require('./commands/make')).end()
         .cmd().name('publish').apply(require('./commands/publish')).end()
-        .cmd().name('replace-doc').apply(require('./commands/replace-doc')).end()
-        .cmd().name('remove').apply(require('./commands/remove')).end()
+        .cmd().name('replace-doc').apply(require('./commands/replace-doc').cmd).end()
+        .cmd().name('remove').apply(require('./commands/remove').cmd).end()
         .cmd().name('server').apply(require('./commands/server')).end()
         .completable();
 }
