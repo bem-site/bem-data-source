@@ -19,7 +19,7 @@ var path = require('path'),
  * @param {String} version of library (branch ot tag)
  * @returns {*}
  */
-function checkForFileExist(repo, version) {
+function _checkForFileExist(repo, version) {
     var repoDir = path.join(constants.DIRECTORY.OUTPUT, repo),
         versionDir = path.join(repoDir, version),
         dataPath = path.join(versionDir, 'data.json');
@@ -51,8 +51,16 @@ function checkForFileExist(repo, version) {
         });
 }
 
-function replaceDoc(repo, version, doc, lang, url) {
-    return checkForFileExist(repo, version).then(function (content) {
+function _replaceDoc(repo, version, doc, lang, url, needToCommit) {
+    logger.info('TRY TO REPLACE DOCUMENTATION FOR:', module);
+
+    logger.debug(util.format('repository name: %s', repo), module);
+    logger.debug(util.format('repository version %s', version), module);
+    logger.debug(util.format('documentation key %s', doc), module);
+    logger.debug(util.format('documentation language %s', lang || 'all'), module);
+    logger.debug(util.format('replacement documentation url %s', url), module);
+
+    return _checkForFileExist(repo, version).then(function (content) {
         try {
             content = JSON.parse(content);
         }catch (err) {
@@ -99,52 +107,56 @@ function replaceDoc(repo, version, doc, lang, url) {
                     versionDir = path.join(repoDir, version),
                     dataPath = path.join(versionDir, 'data.json');
                 return vowFs.write(dataPath, JSON.stringify(content, null, 4), { charset: 'utf8' });
+            }).then(function() {
+                if (needToCommit) {
+                    return pusher.commitAndPush({
+                        commitMessage: util.format('Replace doc %s for version %s of lib %s',
+                            doc, version, repo),
+                        successMessage: 'REPLACE DOC COMMAND HAS BEEN FINISHED SUCCESSFULLY',
+                        errorMessage: 'REPLACE DOC COMMAND FAILED WITH ERROR %s'
+                    });
+                } else {
+                    return vow.resolve();
+                }
             });
     });
 }
 
-module.exports = function () {
-    return this
-        .title('replace doc command')
-        .helpful()
-        .opt()
-            .name('repo').title('Name of repository')
-            .short('r').long('repo')
-            .req()
-            .end()
-        .opt()
-            .name('version').title('Version of repository (tag or branch)')
-            .short('v').long('version')
-            .req()
-            .end()
-        .opt()
-            .name('doc').title('Document key: readme|changelog|migration|notes')
-            .short('d').long('doc')
-            .req()
-            .end()
-        .opt()
-            .name('lang').title('Document language: ru|en|...')
-            .short('l').long('lang')
-            .end()
-        .opt()
-            .name('url').title('Github url of file with replacement content')
-            .short('u').long('url')
-            .req()
-            .end()
-        .act(function (opts) {
-            logger.info('TRY TO REPLACE DOCUMENTATION FOR:', module);
+module.exports = {
+    replaceDoc: function(repo, version, doc, lang, url) {
+        return _replaceDoc(repo, version, doc, lang, url, false);
+    },
 
-            logger.info(util.format('repository name: %s', opts.repo), module);
-            logger.info(util.format('repository version %s', opts.version), module);
-            logger.info(util.format('documentation key %s', opts.doc), module);
-            logger.info(util.format('documentation language %s', opts.lang || 'all'), module);
-            logger.info(util.format('replacement documentation url %s', opts.url), module);
-
-            return replaceDoc(opts.repo, opts.version, opts.doc, opts.lang, opts.url).then(pusher.commitAndPush({
-                commitMessage: util.format('Replace doc %s for version %s of lib %s',
-                    opts.doc, opts.version, opts.repo),
-                successMessage: 'REPLACE DOC COMMAND HAS BEEN FINISHED SUCCESSFULLY',
-                errorMessage: 'REPLACE DOC COMMAND FAILED WITH ERROR %s'
-            }));
-        });
+    cmd: function () {
+        return this
+            .title('replace doc command')
+            .helpful()
+            .opt()
+                .name('repo').title('Name of repository')
+                .short('r').long('repo')
+                .req()
+                .end()
+            .opt()
+                .name('version').title('Version of repository (tag or branch)')
+                .short('v').long('version')
+                .req()
+                .end()
+            .opt()
+                .name('doc').title('Document key: readme|changelog|migration|notes')
+                .short('d').long('doc')
+                .req()
+                .end()
+            .opt()
+                .name('lang').title('Document language: ru|en|...')
+                .short('l').long('lang')
+            .end()
+                .opt()
+                .name('url').title('Github url of file with replacement content')
+                .short('u').long('url')
+                .req()
+            .end()
+            .act(function (opts) {
+                return _replaceDoc(opts.repo, opts.version, opts.doc, opts.lang, opts.url, true);
+            });
+    }
 };
