@@ -1,3 +1,7 @@
 block('header').elem('title').content()(function() {
-    return 'BEM DATA SOURCE';
+    return {
+        block: 'link',
+        url: '/',
+        content: 'BEM DATA SOURCE'
+    };
 });

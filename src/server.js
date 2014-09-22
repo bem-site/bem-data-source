@@ -29,6 +29,8 @@ module.exports = function () {
             next();
         })
         .get('/', controllers.index)
+        .get('/libs/:lib', controllers.lib)
+        .get('/libs/:lib/:version', controllers.version)
         .post('/publish/:lib/:version', controllers.publish)
         .post('/replace', controllers.replaceDoc)
         .post('/remove', controllers.remove)

@@ -2,3 +2,5 @@
   mods: { theme: normal, select: check, size: m, mode: radio }
   required: true
 - block: menu-item
+- block: link
+  mods: { theme: normal }
