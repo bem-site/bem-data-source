@@ -2,7 +2,7 @@
 
 var util = require('util'),
 
-    request = require('request'),
+    //request = require('request'),
     CronJob = require('cron').CronJob,
 
     config = require('./config'),
@@ -58,6 +58,7 @@ function dischargeAfterPush () {
 /**
  * Send notification request to site to initialize model rebuild
  */
+/*
 function sendRequest () {
     var url = config.get('notification_url');
     if (!url || !url.length) {
@@ -74,6 +75,7 @@ function sendRequest () {
         }
     });
 }
+*/
 
 function execute () {
     logger.info('execute commit and push data', module);
@@ -100,7 +102,7 @@ function execute () {
         .then(function () {
             dischargeAfterPush();
             setIdle();
-            sendRequest();
+            //sendRequest();
         });
 }
 
