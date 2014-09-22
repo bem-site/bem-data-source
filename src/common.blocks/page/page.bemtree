@@ -14,7 +14,11 @@ block('page')(
             },
             {
                 block: 'menu-wrapper',
-                content: this.ctx.data
+                items: this.ctx.libraries
+            },
+            {
+                block: 'menu-wrapper',
+                items: this.ctx.versions
             },
             { elem: 'js' }
         ];
