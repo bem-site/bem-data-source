@@ -14,11 +14,16 @@ block('page')(
             },
             {
                 block: 'menu-wrapper',
+                title: 'Библиотеки',
                 items: this.ctx.libraries
             },
             {
                 block: 'menu-wrapper',
+                title: 'Версии',
                 items: this.ctx.versions
+            },
+            {
+                block: 'content-wrapper'
             },
             { elem: 'js' }
         ];

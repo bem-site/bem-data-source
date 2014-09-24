@@ -6,26 +6,32 @@ block('menu-wrapper')(
     }),
 
     content()(function() {
-        return {
-           block : 'menu',
-           mods : { theme : 'normal', size : 'm', mode : 'radio' },
-           content: this.ctx.items.map(function(item) {
-                return {
-                    block : 'menu-item',
-                    mods : {
-                        theme : 'normal',
-                        size : 'm',
-                        type : 'link',
-                        checked : item.checked
-                    },
-                    val : item.name,
-                    content : {
-                        block : 'link',
-                        url : item.url,
-                        content : item.name
-                    }
-                };
-           })
-        };
+        return [
+            {
+                elem: 'title',
+                content: this.ctx.title
+            },
+            {
+               block : 'menu',
+               mods : { theme : 'normal', size : 'm', mode : 'radio' },
+               content: this.ctx.items.map(function(item) {
+                    return {
+                        block : 'menu-item',
+                        mods : {
+                            theme : 'normal',
+                            size : 'm',
+                            type : 'link',
+                            checked : item.checked
+                        },
+                        val : item.name,
+                        content : {
+                            block : 'link',
+                            url : item.url,
+                            content : item.name
+                        }
+                    };
+               })
+            }
+        ];
     })
 )

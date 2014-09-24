@@ -4,3 +4,5 @@
 - block: menu-item
 - block: link
   mods: { theme: normal }
+- elems:
+  - title

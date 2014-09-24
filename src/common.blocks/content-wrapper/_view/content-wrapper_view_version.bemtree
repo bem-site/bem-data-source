@@ -1,0 +1,14 @@
+block('content-wrapper').mod('view', 'version')(
+    content()(function() {
+        return [
+            {
+                block: 'panel',
+                mods: { type: 'replace-doc' }
+            },
+            {
+                block: 'panel',
+                mods: { type: 'remove' }
+            }
+        ];
+    })
+);
