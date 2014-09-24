@@ -1,0 +1,5 @@
+block('panel').mod('type', 'make')(
+    content()(function() {
+        return [];
+    })
+);
