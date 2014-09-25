@@ -1,19 +1,20 @@
 block('content-wrapper')(
-//    def()(function() {
-//        var params = req.params,
-//            lib = params.lib,
-//            version = params.version;
-//
-//        if(lib && version) {
-//            this.extend(this.ctx, { mods: { view: version } });
-//            applyNext();
-//        }
-//    }),
+    content()(
+        (function() {
+            return {
+                block: 'panel',
+                mods: { type: 'make' }
+            };
+        })//,
 
-    content()(function() {
-        return {
-            block: 'panel',
-            mods: { type: 'make' }
-        };
-    })
+//        match(function() {
+//            var params = req.params,
+//                lib = params.lib,
+//                version = params.version;
+//            return lib && version;
+//        })(function() {
+//            this.ctx = this.extend(this.ctx, { mods: { view: version } });
+//            applyNext();
+//        })
+    )
 );
