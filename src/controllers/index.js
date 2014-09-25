@@ -13,7 +13,7 @@ var _ = require('lodash'),
 function index (req, res) {
     return common.getLibraries(req)
         .then(function (libraries) {
-            return template.run(_.extend({ block: 'page' }, { libraries: libraries }));
+            return template.run(_.extend({ block: 'page' }, { libraries: libraries }), req);
         })
         .then(function(html) {
             res.end(html);

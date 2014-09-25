@@ -15,7 +15,7 @@ module.exports = function (req, res) {
             return template.run(_.extend({ block: 'page' }, {
                 libraries: libraries,
                 versions: versions
-            }));
+            }), req);
         })
         .then(function(html) {
             res.end(html);
