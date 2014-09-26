@@ -14,5 +14,6 @@ module.exports = {
     GITHUB: {
         PRIVATE: 'github.yandex-team.ru',
         PUBLIC: 'github.com'
-    }
+    },
+    LEVELS: ['desktop', 'touch-pad', 'touch-phone']
 };
