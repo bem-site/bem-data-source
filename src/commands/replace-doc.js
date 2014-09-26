@@ -107,7 +107,7 @@ function _replaceDoc(repo, version, doc, lang, url, needToCommit) {
                     versionDir = path.join(repoDir, version),
                     dataPath = path.join(versionDir, 'data.json');
                 return vowFs.write(dataPath, JSON.stringify(content, null, 4), { charset: 'utf8' });
-            }).then(function() {
+            }).then(function () {
                 if (needToCommit) {
                     return pusher.commitAndPush({
                         commitMessage: util.format('Replace doc %s for version %s of lib %s',
@@ -123,7 +123,7 @@ function _replaceDoc(repo, version, doc, lang, url, needToCommit) {
 }
 
 module.exports = {
-    replaceDoc: function(repo, version, doc, lang, url) {
+    replaceDoc: function (repo, version, doc, lang, url) {
         return _replaceDoc(repo, version, doc, lang, url, false);
     },
 

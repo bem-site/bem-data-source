@@ -12,7 +12,6 @@ var util = require('util'),
 
 /**
  * Starts express server
- * @param {Object} app - initialized express with default params
  */
 module.exports = function () {
     var app = express();

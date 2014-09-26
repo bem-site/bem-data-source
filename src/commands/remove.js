@@ -18,7 +18,7 @@ function _remove (repo, version, needToCommit) {
     var p = path.join(path.join(constants.DIRECTORY.OUTPUT, repo), version);
     logger.debug(util.format('remove directory: %s', p), module);
 
-    return utility.removeDir(p).then(function() {
+    return utility.removeDir(p).then(function () {
         if (needToCommit) {
             return pusher.commitAndPush({
                 commitMessage: util.format('Remove version %s from lib %s', version, repo),
@@ -33,7 +33,7 @@ function _remove (repo, version, needToCommit) {
 
 module.exports = {
 
-    remove: function(repo, version) {
+    remove: function (repo, version) {
         return _remove(repo, version, false);
     },
 

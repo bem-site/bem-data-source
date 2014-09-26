@@ -32,7 +32,7 @@ module.exports = function (target) {
             port = options.port,
             url = util.format('http://%s:%s/publish/%s/%s', host, port, target.getSourceName(), target.ref);
 
-        if(target.isDryRun) {
+        if (target.isDryRun) {
             logger.info('Publish command was launched in dry run mode', module);
             logger.info(util.format('Tarball data should be loaded to host: %s  port: %s', host, port), module);
             return vow.resolve();

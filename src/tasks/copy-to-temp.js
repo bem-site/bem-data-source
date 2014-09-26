@@ -13,8 +13,8 @@ var path = require('path'),
  */
 module.exports = function (target) {
     var rSyncConfiguration = target.getRsyncConfiguration();
-    return vow.all(constants.LEVELS.map(function(levelName) {
-        return vow.all(rSyncConfiguration.targets.map(function(levelSuffix) {
+    return vow.all(constants.LEVELS.map(function (levelName) {
+        return vow.all(rSyncConfiguration.targets.map(function (levelSuffix) {
             var levelFolderName = levelSuffix.replace('*', levelName),
                 syncOptions = {
                     source: path.join(process.cwd(), levelFolderName),
@@ -22,13 +22,13 @@ module.exports = function (target) {
                     flags: 'rd'
                 };
 
-            //add include file patterns if exist
-            if(rSyncConfiguration.include && rSyncConfiguration.include.length) {
+            // add include file patterns if exist
+            if (rSyncConfiguration.include && rSyncConfiguration.include.length) {
                 syncOptions.include = rSyncConfiguration.include;
             }
 
-            //add exclude file patterns if exist
-            if(rSyncConfiguration.exclude && rSyncConfiguration.exclude.length) {
+            // add exclude file patterns if exist
+            if (rSyncConfiguration.exclude && rSyncConfiguration.exclude.length) {
                 syncOptions.exclude = rSyncConfiguration.exclude;
             }
 
@@ -36,5 +36,3 @@ module.exports = function (target) {
         }));
     }));
 };
-
-

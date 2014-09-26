@@ -2,7 +2,6 @@
 
 var util = require('util'),
 
-    //request = require('request'),
     CronJob = require('cron').CronJob,
 
     config = require('./config'),
@@ -55,28 +54,6 @@ function dischargeAfterPush () {
     charge = false;
 }
 
-/**
- * Send notification request to site to initialize model rebuild
- */
-/*
-function sendRequest () {
-    var url = config.get('notification_url');
-    if (!url || !url.length) {
-        return;
-    }
-    logger.debug(util.format('send request to url %s for data rebuild', url), module);
-
-    request({ url: url }, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            logger.info('server received data update notification', module);
-            logger.info(body, module);
-        }else {
-            logger.error(util.format('error occur while site notification %s', error), module);
-        }
-    });
-}
-*/
-
 function execute () {
     logger.info('execute commit and push data', module);
 
@@ -102,7 +79,6 @@ function execute () {
         .then(function () {
             dischargeAfterPush();
             setIdle();
-            //sendRequest();
         });
 }
 

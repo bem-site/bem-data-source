@@ -16,7 +16,7 @@ var util = require('util'),
 function rebuild(targets) {
     return vow.all(
         targets.map(function (target) {
-            return enbBuilder(target).then(function() {
+            return enbBuilder(target).then(function () {
                 dropRequireCache(require, target);
                 return target;
             });
@@ -24,7 +24,7 @@ function rebuild(targets) {
     );
 }
 
-exports.init = function(o) {
+exports.init = function (o) {
     targets = {
         bemtree: util.format('src/%s.bundles/%s/%s.bemtree.js', o.level, o.bundle, o.bundle),
         bemhtml: util.format('src/%s.bundles/%s/%s.bemhtml.js', o.level, o.bundle, o.bundle)
@@ -34,16 +34,16 @@ exports.init = function(o) {
 /**
  * Recompile bemtree and bemhtml templates (only for development environment)
  * throw context and applies bemtree and bemhtml templates
- * @param ctx  - {Object} context for templates
- * @param mode - {String} mode for output format
+ * @param {Object} ctx  -  context for templates
+ * @param {Object} req - request object
  * @returns {*}
  */
-exports.run = function(ctx, req) {
+exports.run = function (ctx, req) {
     var build = rebuild;
-    //var build = vow.resolve();
+    // var build = vow.resolve();
 
     return build(_.values(targets))
-        .then(function() {
+        .then(function () {
             var p = path.join(process.cwd(), targets.bemtree),
                 context = vm.createContext({
                     console: console,
@@ -51,17 +51,17 @@ exports.run = function(ctx, req) {
                     req: req
                 });
 
-            return vowFs.read(p).then(function(content) {
+            return vowFs.read(p).then(function (content) {
                 vm.runInNewContext(content, context);
                 return context;
             });
         })
-        .then(function(template) {
+        .then(function (template) {
             return template.BEMTREE.apply(ctx)
-                .then(function(bemjson) {
-                    //if (req.query.__mode === 'bemjson') {
+                .then(function (bemjson) {
+                    // if (req.query.__mode === 'bemjson') {
                     //    return stringify(bemjson, null, 2);
-                    //}
+                    // }
                     return require(path.join(process.cwd(), targets.bemhtml)).BEMHTML.apply(bemjson);
                 });
         });

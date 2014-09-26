@@ -15,10 +15,10 @@ function index (req, res) {
         .then(function (libraries) {
             return template.run(_.extend({ block: 'page' }, { libraries: libraries }), req);
         })
-        .then(function(html) {
+        .then(function (html) {
             res.end(html);
         })
-        .fail(function(err) {
+        .fail(function (err) {
             res.status(500).end(err);
         });
 }
@@ -29,5 +29,3 @@ exports.version = require('./version');
 exports.publish = require('./publish');
 exports.replaceDoc = require('./replace-doc');
 exports.remove = require('./remove');
-
-

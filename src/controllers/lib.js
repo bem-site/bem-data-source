@@ -17,10 +17,10 @@ module.exports = function (req, res) {
                 versions: versions
             }), req);
         })
-        .then(function(html) {
+        .then(function (html) {
             res.end(html);
         })
-        .fail(function(err) {
+        .fail(function (err) {
             res.status(500).end(err);
         });
 };
