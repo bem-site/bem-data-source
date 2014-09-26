@@ -116,8 +116,8 @@ Target.prototype = {
      * from content to output directory
      * @returns {Array}
      */
-    getCopyPatterns: function () {
-        return this.declaration.copy;
+    getRsyncConfiguration: function () {
+        return this.declaration.rsync;
     },
 
     /**
@@ -125,7 +125,7 @@ Target.prototype = {
      * @returns {*}
      */
     getDocPatterns: function () {
-        return this.getCopyPatterns()[0];
+        return this.declaration.docDirs;
     },
 
     /**
