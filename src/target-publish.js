@@ -27,6 +27,10 @@ TargetPublish.prototype.setOptions = function (options) {
     this.options = options;
 };
 
+TargetPublish.prototype.getOptions = function (options) {
+    return this.options;
+};
+
 /**
  * Set isDryRun option
  * @param {Boolean} isDryRun
