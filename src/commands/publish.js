@@ -6,6 +6,7 @@ var path = require('path'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
 
+    config = require('../config'),
     logger = require('../logger'),
     TargetPublish = require('../target-publish');
 
@@ -20,35 +21,47 @@ function readPackageJson() {
         });
 }
 
-function publish(version) {
+function _publish(version, options, isDryRun) {
     return readPackageJson().then(function (packageJson) {
-        version = version || packageJson.version;
-        version = version.replace(/\//g, '-');
+            version = version || packageJson.version;
+            version = version.replace(/\//g, '-');
 
-        var repository = packageJson.repository,
-            target = new TargetPublish({
-                name: packageJson.name,
-                url: repository && repository.url,
-                isPrivate: true
-            }, version);
-        return target.execute();
-    })
-    .fail(function (err) {
-        logger.error(err.message, module);
-    });
+            var repository = packageJson.repository,
+                target = new TargetPublish({
+                    name: packageJson.name,
+                    url: repository && repository.url,
+                    isPrivate: true
+                }, version);
+                target.setOptions(options);
+                target.setDryRun(isDryRun);
+            return target.execute();
+        })
+        .then(function () {
+            logger.info('PUBLISH COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);
+        })
+        .fail(function (err) {
+            logger.error(util.format('PUBLISH COMMAND FAILED WITH ERROR %s', err.message), module);
+        });
 }
 
-module.exports = function () {
-    return this
-        .title('publish command')
-        .helpful()
-        .opt()
-            .name('version').title('Version of repository (tag or branch)')
-            .short('v').long('version')
-        .end()
-        .act(function (opts) {
-            logger.info('PUBLISH:', module);
-            logger.info(util.format('repository version %s', opts.version), module);
-            return publish(opts.version);
-        });
+module.exports = {
+
+    publish: function (version, options, isDryRun) {
+        return _publish(version, options, isDryRun);
+    },
+
+    cmd: function () {
+        return this
+            .title('publish command')
+            .helpful()
+            .opt()
+                .name('version').title('Version of repository (tag or branch)')
+                .short('v').long('version')
+                .end()
+            .act(function (opts) {
+                logger.info('PUBLISH:', module);
+                logger.info(util.format('repository version %s', opts.version), module);
+                return _publish(opts.version, config.get('server'), true);
+            });
+    }
 };
