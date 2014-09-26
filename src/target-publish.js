@@ -23,7 +23,7 @@ TargetPublish.prototype = Target.prototype;
  * Sets options to to target
  * @param {Object} options
  */
-TargetPublish.prototype.setOptions = function(options) {
+TargetPublish.prototype.setOptions = function (options) {
     this.options = options;
 };
 
@@ -31,7 +31,7 @@ TargetPublish.prototype.setOptions = function(options) {
  * Set isDryRun option
  * @param {Boolean} isDryRun
  */
-TargetPublish.prototype.setDryRun = function(isDryRun) {
+TargetPublish.prototype.setDryRun = function (isDryRun) {
     this.isDryRun = isDryRun || false;
 };
 
@@ -39,7 +39,7 @@ TargetPublish.prototype.setDryRun = function(isDryRun) {
  * Check is publish command was run in dry run mode without tarball send
  * @returns {Function}
  */
-TargetPublish.prototype.isDryRun = function() {
+TargetPublish.prototype.isDryRun = function () {
     return this.isDryRun;
 };
 

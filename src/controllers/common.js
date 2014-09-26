@@ -25,8 +25,8 @@ exports.getLibraries = function (req) {
                 });
             }));
         })
-        .then(function() {
-            return result.sort(function(a, b) {
+        .then(function () {
+            return result.sort(function (a, b) {
                 return a.name > b.name;
             });
         });
@@ -55,7 +55,7 @@ exports.getVersions = function (req) {
                 });
             }));
         })
-        .then(function() {
+        .then(function () {
             return result.sort();
         });
 };
