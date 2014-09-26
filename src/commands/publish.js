@@ -61,7 +61,7 @@ module.exports = {
             .act(function (opts) {
                 logger.info('PUBLISH:', module);
                 logger.info(util.format('repository version %s', opts.version), module);
-                return _publish(opts.version, config.get('server'), true);
+                return _publish(opts.version, config.get('server'), false);
             });
     }
 };
