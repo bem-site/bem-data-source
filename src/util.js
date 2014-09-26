@@ -118,7 +118,7 @@ exports.rsync = function (options) {
     logger.debug(util.format('rsync command: %s', rsync.command()), module);
     rsync.execute(function(err, code) {
         if(err) {
-            logger.error(util.format('Rsync failed wit error %s', err.message), module)
+            logger.error(util.format('Rsync failed wit error %s', err.message), module);
             def.reject(err);
         }else {
             def.resolve(code);
