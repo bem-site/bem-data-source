@@ -132,8 +132,8 @@ node {path to bem-data-source}/bin/ds publish [-v version]
 Из другого `node.js` скрипта:
 
 ```
-var publishModule = require('{path to bem-data-source}'/src/commands/publish');
-publishModule.publish(version, options, dryMode);
+var publish = require('bem-data-source');
+publish(version, options, dryMode);
 ```
 
 * `version` - обязательный параметр названия версии (ветка, тег, пулл-реквест)
