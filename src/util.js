@@ -6,6 +6,7 @@ var fs = require('fs-extra'),
 
     md = require('marked'),
     vow = require('vow'),
+    Rsync = require('rsync'),
 
     api = require('./gh-api'),
     renderer = require('./renderer'),
@@ -87,7 +88,6 @@ exports.copy = function (target, destination) {
 
 /**
  * Retrieve github ssh url via github api
- *
  * @param {Object} repo object
  * @returns {*}
  */
@@ -104,4 +104,25 @@ exports.getSSHUrl = function (repo) {
         .fail(function () {
             logger.error('Data repository was not found. Application will be terminated', module);
         });
+};
+
+/**
+ * Runs rsync command with options
+ * @param {Object} options - options for rsync command
+ * @returns {*}
+ */
+exports.rsync = function (options) {
+    var def = vow.defer(),
+        rsync = Rsync.build(options);
+
+    logger.debug(util.format('rsync command: %s', rsync.command()), module);
+    rsync.execute(function(err, code) {
+        if(err) {
+            logger.error(util.format('Rsync failed wit error %s', err.message), module)
+            def.reject(err);
+        }else {
+            def.resolve(code);
+        }
+    });
+    return def.promise();
 };
