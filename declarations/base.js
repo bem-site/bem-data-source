@@ -2,7 +2,9 @@ module.exports = {
     default: {
         builder: 'bem-tools',
         command: 'npm run build',
-        copy: ['*.sets'],
+        rsync: {
+            targets: ['*.sets']
+        },
         docs: {
             readme: { folder: '', pattern: 'README.md' },
             changelog: { folder: 'releases', pattern: 'changelog.md' },

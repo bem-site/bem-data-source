@@ -4,7 +4,10 @@ module.exports = {
         command: 'YENV=production bower install && npm run libs && enb make __magic__ desktop.examples ' +
             'desktop.tests desktop.docs touch-pad.examples touch-pad.tests touch-pad.docs ' +
             'touch-phone.examples touch-phone.tests touch-phone.docs',
-        copy: ['*.docs', '*.tests', '*.examples'],
+        docDirs: '*.docs',
+        rsync: {
+            targets: ['*.tests', '*.examples']
+        },
         docs: {
             readme: {
                 folder: '',
