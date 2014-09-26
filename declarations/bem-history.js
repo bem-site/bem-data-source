@@ -2,7 +2,10 @@ module.exports = {
     default: {
         builder: 'enb',
         command: 'YENV=production enb make docs && enb make examples',
-        copy: ['*.docs', '*.examples'],
+        docDirs: '*.docs',
+        rsync: {
+            targets: ['*.examples']
+        },
         docs: {
             readme: {
                 folder: '',

@@ -3,7 +3,10 @@ module.exports = {
         builder: 'enb',
         command: 'enb make __magic__ desktop.examples desktop.docs touch-pad.examples ' +
             'touch-pad.docs touch-phone.examples touch-phone.docs',
-        copy: ['*.docs', '*.examples'],
+        docDirs: '*.docs',
+        rsync: {
+            targets: ['*.examples']
+        },
         docs: {
             readme: {
                 folder: '',
