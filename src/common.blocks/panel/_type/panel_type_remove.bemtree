@@ -1,5 +1,0 @@
-block('panel').mod('type', 'remove')(
-    content()(function() {
-        return [];
-    })
-);

@@ -1,5 +1,0 @@
-block('panel').mod('type', 'replace-doc')(
-    content()(function() {
-        return [];
-    })
-);

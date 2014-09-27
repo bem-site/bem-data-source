@@ -1,0 +1,9 @@
+block('version').elem('url')(
+    content()(function() {
+        return {
+            block: 'link',
+            url: this.ctx.url,
+            content: 'Репозиторий библиотеки'
+        };
+    })
+)

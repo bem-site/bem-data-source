@@ -13,17 +13,9 @@ block('page')(
                 block: 'header'
             },
             {
-                block: 'menu-wrapper',
-                title: 'Библиотеки',
-                items: this.ctx.libraries
-            },
-            {
-                block: 'menu-wrapper',
-                title: 'Версии',
-                items: this.ctx.versions
-            },
-            {
-                block: 'content-wrapper'
+                block: 'content',
+                mods: { view: this.ctx.view },
+                data: this.ctx.data
             },
             { elem: 'js' }
         ];

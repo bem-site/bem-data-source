@@ -1,0 +1,7 @@
+- elems:
+  - url
+  - docs
+  - dependencies
+- block: link
+  mods: { theme: normal }
+- block: dependencies
