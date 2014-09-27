@@ -3,5 +3,4 @@
   - js
 
 - block: header
-- block: menu-wrapper
-- block: content-wrapper
+- block: content

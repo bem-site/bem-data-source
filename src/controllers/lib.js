@@ -12,9 +12,11 @@ module.exports = function (req, res) {
             common.getVersions(req)
         ])
         .spread(function (libraries, versions) {
-            return template.run(_.extend({ block: 'page' }, {
-                libraries: libraries,
-                versions: versions
+            return template.run(_.extend({ block: 'page', view: 'lib' }, {
+                data: {
+                    libraries: libraries,
+                    versions: versions
+                }
             }), req);
         })
         .then(function (html) {

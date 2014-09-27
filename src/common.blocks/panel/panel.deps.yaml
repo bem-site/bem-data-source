@@ -1,1 +1,5 @@
-- mods: { type: [make, replace-doc, remove] }
+- mods: { type: [version] }
+- elems:
+  - title
+  - body
+- block: version

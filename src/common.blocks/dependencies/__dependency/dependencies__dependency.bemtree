@@ -1,0 +1,17 @@
+block('dependencies').elem('dependency')(
+    content()(function() {
+        var content = this.ctx.content;
+        return [
+            {
+                block: 'dependencies',
+                elem: 'lib',
+                content: content.lib
+            },
+            {
+                block: 'dependencies',
+                elem: 'url',
+                content: content.version
+            }
+        ];
+    })
+)

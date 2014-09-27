@@ -1,0 +1,18 @@
+block('panel').mod('type', 'version')(
+    content()(function() {
+        var content = this.ctx.content;
+        return [
+            {
+                elem: 'title',
+                content: content.ref
+            },
+            {
+                elem: 'body',
+                content: {
+                    block: 'version',
+                    content: content
+                }
+            }
+        ];
+    })
+);

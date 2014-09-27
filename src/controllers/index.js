@@ -13,7 +13,9 @@ var _ = require('lodash'),
 function index (req, res) {
     return common.getLibraries(req)
         .then(function (libraries) {
-            return template.run(_.extend({ block: 'page' }, { libraries: libraries }), req);
+            return template.run(
+                _.extend({ block: 'page', view: 'index' },
+                    { data: { libraries: libraries }}), req);
         })
         .then(function (html) {
             res.end(html);
@@ -25,7 +27,6 @@ function index (req, res) {
 
 exports.index = index;
 exports.lib = require('./lib');
-exports.version = require('./version');
 exports.publish = require('./publish');
 exports.replaceDoc = require('./replace-doc');
 exports.remove = require('./remove');

@@ -3,9 +3,11 @@
 var util = require('util'),
     path = require('path'),
 
+    _ = require('lodash'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
 
+    logger = require('../logger'),
     constants = require('../constants');
 
 exports.getLibraries = function (req) {
@@ -35,7 +37,6 @@ exports.getLibraries = function (req) {
 exports.getVersions = function (req) {
     var result = [],
         lib = req.params.lib,
-        version = req.params.version,
         p = path.join(process.cwd(), constants.DIRECTORY.OUTPUT);
 
     if (!lib) {
@@ -45,13 +46,22 @@ exports.getVersions = function (req) {
 
     return vowFs.listDir(p).then(function (versions) {
             return vow.all(versions.map(function (item) {
-                return vowFs.isDir(path.join(p, item)).then(function (isDir) {
-                    return isDir ?
-                        result.push({
-                            name: item,
-                            url: util.format('/libs/%s/%s', lib, item),
-                            checked: item === version
-                        }) : vow.resolve();
+                var versionPath = path.join(p, item);
+                return vowFs.isDir(versionPath).then(function (isDir) {
+                    if(!isDir) {
+                        return vow.resolve();
+                    }
+                    return vowFs
+                        .read(path.join(versionPath, 'data.json'))
+                        .then(function(content) {
+                            try {
+                                content = JSON.parse(content);
+                                result.push(_.omit(content, 'levels'));
+                            } catch(e) {
+                                logger.warn(util.format('Can not parse file %s',
+                                    path.join(versionPath, 'data.json')), module);
+                            }
+                        });
                 });
             }));
         })

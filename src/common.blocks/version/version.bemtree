@@ -1,0 +1,22 @@
+block('version')(
+    content()(function() {
+        var content = this.ctx.content;
+        return [
+            {
+                elem: 'url',
+                url: content.url
+            },
+            {
+                elem: 'dependencies',
+                content: {
+                    block: 'dependencies',
+                    content: content.deps
+                }
+            },
+            {
+                elem: 'docs',
+                content: content.docs
+            }
+        ]
+    })
+)
