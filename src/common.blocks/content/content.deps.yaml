@@ -1,0 +1,3 @@
+- mods: { view: [index, lib] }
+- block: panel
+- block: menu-wrapper
