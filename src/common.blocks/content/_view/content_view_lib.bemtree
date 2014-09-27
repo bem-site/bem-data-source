@@ -1,0 +1,22 @@
+block('content').mod('view', 'lib')(
+    content()(function() {
+        var data = this.ctx.data;
+        return [
+            {
+                block: 'menu-wrapper',
+                title: 'Библиотеки',
+                items: data.libraries
+            },
+            {
+                block: 'version-wrapper',
+                content: data.versions.map(function(version) {
+                    return {
+                        block: 'panel',
+                        mods: { type: 'version' },
+                        content: version
+                    }
+                })
+            }
+        ];
+    })
+);
