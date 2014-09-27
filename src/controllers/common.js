@@ -8,6 +8,7 @@ var util = require('util'),
     vowFs = require('vow-fs'),
 
     logger = require('../logger'),
+    utility = require('../util'),
     constants = require('../constants');
 
 exports.getLibraries = function (req) {
@@ -45,7 +46,7 @@ exports.getVersions = function (req) {
     p = path.join(p, lib);
 
     return vowFs.listDir(p).then(function (versions) {
-            return vow.all(versions.map(function (item) {
+            return vow.all(versions.sort(utility.sortLibraryVerions).map(function (item) {
                 var versionPath = path.join(p, item);
                 return vowFs.isDir(versionPath).then(function (isDir) {
                     if(!isDir) {
@@ -66,6 +67,6 @@ exports.getVersions = function (req) {
             }));
         })
         .then(function () {
-            return result.sort();
+            return result;
         });
 };
