@@ -1,0 +1,3 @@
+block('version').elem('body')(
+    mix()({ block: 'panel', elem: 'body' })
+);
