@@ -28,7 +28,11 @@ module.exports = function () {
             next();
         })
         .get('/', controllers.index)
+        .get('/build', controllers.build.index)
+        .get('/build/tags', controllers.build.getTagsViaAPIByLib)
+        .get('/build/branches', controllers.build.getBranchesViaAPIByLib)
         .get('/libs/:lib', controllers.lib)
+        .post('/build', controllers.build.build)
         .post('/publish/:lib/:version', controllers.publish)
         .post('/replace', controllers.replaceDoc)
         .post('/remove', controllers.remove)
