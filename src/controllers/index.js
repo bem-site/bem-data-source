@@ -27,6 +27,7 @@ function index (req, res) {
 
 exports.index = index;
 exports.lib = require('./lib');
+exports.build = require('./build'),
 exports.publish = require('./publish');
 exports.replaceDoc = require('./replace-doc');
 exports.remove = require('./remove');
