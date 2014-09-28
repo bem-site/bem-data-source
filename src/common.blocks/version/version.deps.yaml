@@ -2,6 +2,10 @@
   - url
   - docs
   - dependencies
+  - remove
+  - ref
+  - body
 - block: link
   mods: { theme: normal }
 - block: dependencies
+- block: panel

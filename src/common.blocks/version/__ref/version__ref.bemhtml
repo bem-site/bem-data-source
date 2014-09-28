@@ -1,0 +1,3 @@
+block('version').elem('ref')(
+    mix()({ block: 'panel', elem: 'title' })
+);

@@ -11,8 +11,7 @@ block('content').mod('view', 'lib')(
                 block: 'version-wrapper',
                 content: data.versions.map(function(version) {
                     return {
-                        block: 'panel',
-                        mods: { type: 'version' },
+                        block: 'version',
                         content: version
                     }
                 })
