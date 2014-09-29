@@ -116,6 +116,7 @@ exports.rsync = function (options) {
     var def = vow.defer(),
         rsync = Rsync.build(options);
 
+    rsync.set('safe-links');
     logger.debug(util.format('rsync command: %s', rsync.command()), module);
     rsync.execute(function (err, code) {
         if (err) {
