@@ -119,13 +119,20 @@ exports.rsync = function (options) {
     rsync.set('safe-links');
     logger.debug(util.format('rsync command: %s', rsync.command()), module);
     rsync.execute(function (err, code) {
-        if (err) {
-            logger.error(util.format('Rsync failed wit error %s', err.message), module);
-            def.reject(err);
-        }else {
-            def.resolve(code);
+            if (err) {
+                logger.error(util.format('Rsync failed wit error %s', err.message), module);
+                def.reject(err);
+            }else {
+                def.resolve(code);
+            }
+        },
+        function(data){
+            logger.debug(data.toString(), module);
+        },
+        function(data) {
+            logger.warn(data.toString(), module);
         }
-    });
+    );
     return def.promise();
 };
 
