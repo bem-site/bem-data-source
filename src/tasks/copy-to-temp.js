@@ -13,26 +13,24 @@ var path = require('path'),
  */
 module.exports = function (target) {
     var rSyncConfiguration = target.getRsyncConfiguration();
-    return vow.all(constants.LEVELS.map(function (levelName) {
-        return vow.all(rSyncConfiguration.targets.map(function (levelSuffix) {
-            var levelFolderName = levelSuffix.replace('*', levelName),
-                syncOptions = {
-                    source: path.join(process.cwd(), levelFolderName),
-                    destination: path.join(target.getTempPath()),
-                    flags: 'rd'
-                };
+    return vow.all(rSyncConfiguration.targets.map(function (suffix) {
+        var syncOptions = {
+                source: path.join(process.cwd(), suffix),
+                destination: path.join(target.getTempPath()),
+                flags: 'rd'
+            };
 
-            // add include file patterns if exist
-            if (rSyncConfiguration.include && rSyncConfiguration.include.length) {
-                syncOptions.include = rSyncConfiguration.include;
-            }
+        // add include file patterns if exist
+        if (rSyncConfiguration.include && rSyncConfiguration.include.length) {
+            syncOptions.include = rSyncConfiguration.include;
+        }
 
-            // add exclude file patterns if exist
-            if (rSyncConfiguration.exclude && rSyncConfiguration.exclude.length) {
-                syncOptions.exclude = rSyncConfiguration.exclude;
-            }
+        // add exclude file patterns if exist
+        if (rSyncConfiguration.exclude && rSyncConfiguration.exclude.length) {
+            syncOptions.exclude = rSyncConfiguration.exclude;
+        }
 
-            return utility.rsync(syncOptions);
-        }));
+        return utility.rsync(syncOptions);
     }));
+
 };
