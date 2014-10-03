@@ -58,10 +58,15 @@ module.exports = {
                 .name('version').title('Version of repository (tag or branch)')
                 .short('v').long('version')
                 .end()
+            .opt()
+                .name('dry').title('Dry run mode of launch')
+                .short('d').long('dry')
+                .flag()
+                .end()
             .act(function (opts) {
                 logger.info('PUBLISH:', module);
                 logger.info(util.format('repository version %s', opts.version), module);
-                return _publish(opts.version, config.get('server'), false);
+                return _publish(opts.version, config.get('server'), opts.dry);
             });
     }
 };
