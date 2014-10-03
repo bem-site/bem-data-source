@@ -117,6 +117,7 @@ exports.rsync = function (options) {
         rsync = Rsync.build(options);
 
     rsync.set('safe-links');
+    rsync.set('copy-links');
     logger.debug(util.format('rsync command: %s', rsync.command()), module);
     rsync.execute(function (err, code) {
             if (err) {
