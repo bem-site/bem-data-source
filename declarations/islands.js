@@ -10,9 +10,9 @@ module.exports = {
         rsync: {
             targets: ['*.examples'],
             exclude: ['*.browser.bemhtml.js', '*.css', '*.ru.js', '*.en.js', '*.tr.js', '*.all.js',
-                '*.pre.js', '*.html', '*.json', '*.md', '*.deps.js', '*.bemdecl.js', '*.html'
+                '*.pre.js', '*.json', '*.md', '*.deps.js', '*.bemdecl.js', '*.en.html', '*.tr.html', '*.ru.html'
             ],
-            include: ['*.ru.html', '_.*js', '_*.css', '_*.ie.css', '_*.ie6.css', '_*.ie7.css',
+            include: ['_.*js', '_*.css', '_*.ie.css', '_*.ie6.css', '_*.ie7.css',
                 '_*.ie8.css', '_*.ie9.css', '*.bemjson.js'
             ]
         },
