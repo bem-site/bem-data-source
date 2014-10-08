@@ -17,7 +17,7 @@ var path = require('path'),
         return this;
     };
 
-TargetPublish.prototype = Target.prototype;
+TargetPublish.prototype = Object.create(Target.prototype);
 
 /**
  * Sets options to to target
