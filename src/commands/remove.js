@@ -24,7 +24,7 @@ function _remove (repo, version, needToCommit) {
                 commitMessage: util.format('Remove version %s from lib %s', version, repo),
                 successMessage: 'REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY',
                 errorMessage: 'REMOVE COMMAND FAILED WITH ERROR %s'
-            });
+            })();
         } else {
             return vow.resolve();
         }

@@ -114,7 +114,7 @@ function _replaceDoc(repo, version, doc, lang, url, needToCommit) {
                             doc, version, repo),
                         successMessage: 'REPLACE DOC COMMAND HAS BEEN FINISHED SUCCESSFULLY',
                         errorMessage: 'REPLACE DOC COMMAND FAILED WITH ERROR %s'
-                    });
+                    })();
                 } else {
                     return vow.resolve();
                 }
