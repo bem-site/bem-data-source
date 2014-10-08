@@ -71,9 +71,17 @@ function loadMDFromFile(target, result, key) {
             };
 
             return vow.allResolved(Object.keys(pattern).map(function (lang) {
-                var file  = files.filter(function (file) {
-                    return file.indexOf(pattern[lang]) !== -1;
-                }).pop();
+                var file  = files
+                    .filter(function (file) {
+                        return file.indexOf(pattern[lang]) !== -1;
+                    })
+                    .sort(function(a, b) {
+                        var toVersion = function(str) {
+                            return str.replace(pattern[lang], '').replace('-', '').replace('.', '');
+                        };
+                        return toVersion(a) - toVersion(b);
+                    })
+                    .pop();
 
                 return vowFs
                     .read(path.join(path.join(target.getContentPath(),
