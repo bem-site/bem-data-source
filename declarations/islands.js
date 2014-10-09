@@ -9,10 +9,10 @@ module.exports = {
         docDirs: '*.docs',
         rsync: {
             targets: ['*.examples'],
-            exclude: ['*.browser.bemhtml.js', '*.css', '*.ru.js', '*.en.js', '*.tr.js', '*.all.js',
+            exclude: ['*.browser.bemhtml.js', '*.css', '*.en.js', '*.tr.js', '*.all.js',
                 '*.pre.js', '*.json', '*.md', '*.deps.js', '*.bemdecl.js', '*.en.html', '*.tr.html', '*.ru.html'
             ],
-            include: ['_.*js', '_*.css', '_*.ie.css', '_*.ie6.css', '_*.ie7.css',
+            include: ['_.*js', '*.ru.js', '_*.css', '_*.ie.css', '_*.ie6.css', '_*.ie7.css',
                 '_*.ie8.css', '_*.ie9.css', '*.bemjson.js'
             ]
         },
