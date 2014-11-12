@@ -7,9 +7,11 @@ var path = require('path'),
     vowFs = require('vow-fs'),
 
     api = require('../gh-api'),
+    config = require('../config'),
     logger = require('../logger'),
     pusher = require('../pusher'),
     utility = require('../util'),
+    titles = require('../titles'),
     constants = require('../constants');
 
 /**
@@ -67,8 +69,25 @@ function _replaceDoc(repo, version, doc, lang, url, needToCommit) {
             return vow.reject('Target library version file can not be parsed');
         }
 
-        if (!content.docs || !content.docs[doc]) {
-            return vow.reject('Doc with key %s does not exists', doc);
+        if (!content.docs) {
+            logger.warn('Docs section does not exists. It will be created', module);
+            content.docs = {};
+        }
+
+        if (!content.docs[doc]) {
+            logger.warn(util.format('Doc with key %s does not exists. It will be created', doc), module);
+            var languages = config.get('languages'),
+                _title = languages.reduce(function (prev, item) {
+                    prev[item] = titles[doc][item];
+                }, {}),
+                _content = languages.reduce(function (prev, item) {
+                    prev[item] = null;
+                }, {});
+
+            content.docs[doc] = {
+                title: _title,
+                content: _content
+            };
         }
 
         // parse web url to gh doc for retrieve all necessary information about repository
