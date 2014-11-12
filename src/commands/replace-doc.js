@@ -79,9 +79,11 @@ function _replaceDoc(repo, version, doc, lang, url, needToCommit) {
             var languages = config.get('languages'),
                 _title = languages.reduce(function (prev, item) {
                     prev[item] = titles[doc][item];
+                    return prev;
                 }, {}),
                 _content = languages.reduce(function (prev, item) {
                     prev[item] = null;
+                    return prev;
                 }, {});
 
             content.docs[doc] = {
