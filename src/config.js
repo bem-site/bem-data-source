@@ -8,8 +8,12 @@ var path = require('path'),
  */
 module.exports = (function () {
     nconf
-        .env()
-        .file({ file: path.resolve(__dirname, '..', 'config/config.json') });
+        .env();
+
+    nconf.add('config', {
+        type: 'file',
+        file: path.resolve(__dirname, '..', 'config/config.json')
+    });
 
     nconf.add('credentials', {
         type: 'file',

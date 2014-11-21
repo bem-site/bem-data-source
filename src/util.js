@@ -166,3 +166,31 @@ exports.sortLibraryVerions = function (a, b) {
 
         return a - b;
 };
+
+/**
+ * Set correct rights for socket file
+ * @param {String} socket - path to socket file
+ */
+exports.chmodSocket = function (socket) {
+    if (!socket.toString().match(/\d{2,4}/) && fs.existsSync(socket)) {
+        try {
+            fs.chmod(socket, '0777');
+        }catch (err) {
+            console.error('Can\'t chmod 0777 to socket');
+        }
+    }
+};
+
+/**
+ * Unlink socket from filesystem
+ * @param {String} socket - path to socket file
+ */
+exports.unlinkSocket = function (socket) {
+    if (!socket.toString().match(/\d{2,4}/) && fs.existsSync(socket)) {
+        try {
+            fs.unlinkSync(socket);
+        } catch (err) {
+            console.error('Can\'t unlink socket %s', socket);
+        }
+    }
+};
