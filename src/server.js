@@ -5,7 +5,7 @@ var util = require('util'),
     express = require('express'),
     st = require('serve-static'),
 
-    util = require('./util'),
+    utility = require('./util'),
     config = require('./config'),
     logger = require('./logger'),
     template = require('./template'),
@@ -22,7 +22,7 @@ module.exports = function () {
         noLog: false
     }));
 
-    util.unlinkSocket(app.get('port'));
+    utility.unlinkSocket(app.get('port'));
 
     app
         .use(st(process.cwd()))
@@ -40,7 +40,7 @@ module.exports = function () {
         .post('/replace', controllers.replaceDoc)
         .post('/remove', controllers.remove)
         .listen(app.get('port'), function () {
-            util.chmodSocket(app.get('port'));
+            utility.chmodSocket(app.get('port'));
             logger.info(util.format('Express server listening on port %s', app.get('port')), module);
             template.init({ level: 'common', bundle: 'index' });
         });
