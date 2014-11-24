@@ -9,6 +9,7 @@ var path = require('path'),
     utility = require('../util'),
     logger = require('../logger'),
     pusher = require('../pusher'),
+    config = require('../config'),
     constants = require('../constants');
 
 function _removeLocal (repo, version) {
@@ -29,12 +30,13 @@ function _removeLocal (repo, version) {
 }
 
 function _removeRemote (repo, version, options, isDryRun) {
+    options = options || config.get('server') || {
+        host: '127.0.0.1',
+        port: 3000
+    };
+    version = version.replace(/\//g, '-');
+
     var def = vow.defer(),
-        options = options || config.get('server') || {
-            host: '127.0.0.1',
-            port: 3000
-        },
-        version = version.replace(/\//g, '-'),
         host = options.host,
         port = options.port,
         url = util.format('http://%s:%s/remove/%s/%s', host, port, repo, version);

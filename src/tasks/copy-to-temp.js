@@ -3,7 +3,6 @@
 var path = require('path'),
     vow = require('vow'),
 
-    constants = require('../constants'),
     utility = require('../util');
 
 /**
@@ -32,5 +31,4 @@ module.exports = function (target) {
 
         return utility.rsync(syncOptions);
     }));
-
 };
