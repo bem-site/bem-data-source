@@ -62,7 +62,14 @@ function _removeRemote (repo, version, options, isDryRun) {
 module.exports = {
 
     remove: function (repo, version, options, isDryRun) {
-        return _removeRemote(repo, version, options, isDryRun);
+        return _removeRemote(repo, version, options, isDryRun)
+            .then(function () {
+                logger.info('REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);
+            })
+            .fail(function (err) {
+                logger.error(util.format('REMOVE COMMAND FAILED WITH ERROR %s', err.message), module);
+                process.exit(1);
+            });
     },
 
     cmd: function () {

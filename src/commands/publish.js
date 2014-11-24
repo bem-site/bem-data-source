@@ -41,6 +41,7 @@ function _publish(version, options, isDryRun) {
         })
         .fail(function (err) {
             logger.error(util.format('PUBLISH COMMAND FAILED WITH ERROR %s', err.message), module);
+            process.exit(1);
         });
 }
 
