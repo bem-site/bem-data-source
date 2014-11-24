@@ -6,7 +6,6 @@ var fs = require('fs-extra'),
 
     md = require('marked'),
     vow = require('vow'),
-    semver = require('semver'),
     Rsync = require('rsync'),
 
     api = require('./gh-api'),
@@ -135,62 +134,4 @@ exports.rsync = function (options) {
         }
     );
     return def.promise();
-};
-
-/**
- * Sort library versions function
- * @returns {Number}
- */
-exports.sortLibraryVerions = function (a, b) {
-        var BRANCHES = ['master', 'dev'],
-            VERSION_REGEXP = /^\d+\.\d+\.\d+$/;
-
-        if(BRANCHES.indexOf(a) !== -1) { return 1; }
-
-        if(BRANCHES.indexOf(b) !== -1) { return -1; }
-
-        a = semver.clean(a);
-        b = semver.clean(b);
-
-        if(VERSION_REGEXP.test(a) && VERSION_REGEXP.test(b)) { return semver.rcompare(a, b); }
-
-        if(VERSION_REGEXP.test(a)) { return -1;}
-
-        if(VERSION_REGEXP.test(b)) { return 1; }
-
-        if(semver.valid(a) && semver.valid(b)) { return semver.rcompare(a, b); }
-
-        if(semver.valid(a)) { return -1; }
-
-        if(semver.valid(b)) { return 1; }
-
-        return a - b;
-};
-
-/**
- * Set correct rights for socket file
- * @param {String} socket - path to socket file
- */
-exports.chmodSocket = function (socket) {
-    if (!socket.toString().match(/\d{2,4}/) && fs.existsSync(socket)) {
-        try {
-            fs.chmod(socket, '0777');
-        }catch (err) {
-            console.error('Can\'t chmod 0777 to socket');
-        }
-    }
-};
-
-/**
- * Unlink socket from filesystem
- * @param {String} socket - path to socket file
- */
-exports.unlinkSocket = function (socket) {
-    if (!socket.toString().match(/\d{2,4}/) && fs.existsSync(socket)) {
-        try {
-            fs.unlinkSync(socket);
-        } catch (err) {
-            console.error('Can\'t unlink socket %s', socket);
-        }
-    }
 };

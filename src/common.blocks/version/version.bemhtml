@@ -1,5 +1,0 @@
-block('version')(
-    mix()({ block: 'panel' })
-);
-
-
