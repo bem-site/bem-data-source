@@ -4,13 +4,14 @@ var path = require('path'),
     util = require('util'),
 
     vow = require('vow'),
+    request = require('request'),
 
     utility = require('../util'),
     logger = require('../logger'),
     pusher = require('../pusher'),
     constants = require('../constants');
 
-function _remove (repo, version, needToCommit) {
+function _removeLocal (repo, version) {
     logger.info('TRY TO REMOVE FOR:', module);
     logger.debug(util.format('repository name: %s', repo), module);
     logger.debug(util.format('repository version %s', version), module);
@@ -19,22 +20,49 @@ function _remove (repo, version, needToCommit) {
     logger.debug(util.format('remove directory: %s', p), module);
 
     return utility.removeDir(p).then(function () {
-        if (needToCommit) {
-            return pusher.commitAndPush({
-                commitMessage: util.format('Remove version %s from lib %s', version, repo),
-                successMessage: 'REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY',
-                errorMessage: 'REMOVE COMMAND FAILED WITH ERROR %s'
-            })();
+        return pusher.commitAndPush({
+            commitMessage: util.format('Remove version %s from lib %s', version, repo),
+            successMessage: 'REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY',
+            errorMessage: 'REMOVE COMMAND FAILED WITH ERROR %s'
+        })();
+    });
+}
+
+function _removeRemote (repo, version, options, isDryRun) {
+    var def = vow.defer(),
+        options = options || config.get('server') || {
+            host: '127.0.0.1',
+            port: 3000
+        },
+        version = version.replace(/\//g, '-'),
+        host = options.host,
+        port = options.port,
+        url = util.format('http://%s:%s/remove/%s/%s', host, port, repo, version);
+
+    if (isDryRun) {
+        logger.info('Remove command was launched in dry run mode', module);
+        logger.info(util.format('Data for %s %s should be removed from host: %s  port: %s',
+            repo, version, host, port), module);
+        return vow.resolve();
+    }
+
+    request.post(url, function (err) {
+        if (err) {
+            logger.error(util.format('remove command error %s', err), module);
+            def.reject(err);
         } else {
-            return vow.resolve();
+            logger.info(util.format('remove command send to %s', url), module);
+            def.resolve();
         }
     });
+
+    return def.promise();
 }
 
 module.exports = {
 
-    remove: function (repo, version) {
-        return _remove(repo, version, false);
+    remove: function (repo, version, options, isDryRun) {
+        return _removeRemote(repo, version, options, isDryRun);
     },
 
     cmd: function () {
@@ -52,7 +80,7 @@ module.exports = {
                 .req()
                 .end()
             .act(function (opts) {
-                return _remove(opts.repo, opts.version, true);
+                return _removeLocal(opts.repo, opts.version);
             });
     }
 };
