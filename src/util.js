@@ -126,10 +126,10 @@ exports.rsync = function (options) {
                 def.resolve(code);
             }
         },
-        function(data){
+        function (data) {
             logger.debug(data.toString(), module);
         },
-        function(data) {
+        function (data) {
             logger.warn(data.toString(), module);
         }
     );

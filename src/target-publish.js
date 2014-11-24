@@ -27,7 +27,7 @@ TargetPublish.prototype.setOptions = function (options) {
     this.options = options;
 };
 
-TargetPublish.prototype.getOptions = function (options) {
+TargetPublish.prototype.getOptions = function () {
     return this.options;
 };
 

@@ -75,8 +75,8 @@ function loadMDFromFile(target, result, key) {
                     .filter(function (file) {
                         return file.indexOf(pattern[lang]) !== -1;
                     })
-                    .sort(function(a, b) {
-                        var toVersion = function(str) {
+                    .sort(function (a, b) {
+                        var toVersion = function (str) {
                             return str.replace(pattern[lang], '').replace('-', '').replace('.', '');
                         };
                         return toVersion(a) - toVersion(b);
