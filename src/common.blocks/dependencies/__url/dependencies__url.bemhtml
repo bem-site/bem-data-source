@@ -1,3 +1,0 @@
-block('dependencies').elem('url')(
-    tag()('span')
-);

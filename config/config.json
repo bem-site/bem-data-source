@@ -2,7 +2,7 @@
     "logLevel": "debug",
     "languages": ["en", "ru"],
     "server": {
-        "host": "127.0.0.1",
-        "port": 3000
+        "host": "lego-site-source.legoprovider.dev.yandex-team.ru",
+        "port": 80
     }
 }
