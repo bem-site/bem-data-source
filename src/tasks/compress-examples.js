@@ -26,12 +26,12 @@ function readFiles(baseDir) {
 
 /**
  * Compress given file
- * @param {TargetPublish} target - target object
+ * @param {Target} target - target object
  * @param {String} filePath - path to source file
  * @returns {*}
  */
 function zipFile(target, filePath) {
-    var basePath = path.join(target.getOutputPath(), constants.DIRECTORY.TEMP),
+    var basePath = target.getTempPath(),
         sPath = path.join(basePath, filePath),
         dPath = sPath + '.zip';
 
@@ -70,7 +70,7 @@ function zipFile(target, filePath) {
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {
-    return readFiles(path.join(target.getOutputPath(), constants.DIRECTORY.TEMP))
+    return readFiles(target.getTempPath())
         .then(function (files) {
             logger.debug(util.format('example files count: %s', files.length), module);
             return vow.all(files.map(function (item) {
