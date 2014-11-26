@@ -12,8 +12,9 @@ var path = require('path'),
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {
-    var rSyncConfiguration = target.getRsyncConfiguration();
-    return vow.all(constants.LEVELS.map(function (levelName) {
+    var rSyncConfiguration = target.getRsyncConfiguration(),
+        levels = rSyncConfiguration.levels || constants.LEVELS;
+    return vow.all(levels.map(function (levelName) {
         return vow.all(rSyncConfiguration.targets.map(function (levelSuffix) {
             var levelFolderName = levelSuffix.replace('*', levelName),
                 syncOptions = {

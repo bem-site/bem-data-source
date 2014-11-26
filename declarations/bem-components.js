@@ -6,6 +6,7 @@ module.exports = {
             'touch-phone.tests touch-phone.docs && enb make *.pages/*',
         docDirs: '*.docs',
         rsync: {
+            levels: ['desktop', 'touch-pad', 'touch-phone'],
             targets: ['*.tests', '*.examples']
         },
         docs: {
