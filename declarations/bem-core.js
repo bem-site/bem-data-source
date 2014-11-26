@@ -6,7 +6,7 @@ module.exports = {
             'touch-phone.examples touch-phone.tests touch-phone.docs',
         docDirs: '*.docs',
         rsync: {
-            targets: ['*.tests', '*.examples']
+            targets: ['*.docs', '*.examples']
         },
         docs: {
             readme: {
