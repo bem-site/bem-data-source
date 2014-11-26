@@ -1,13 +1,12 @@
 module.exports = {
     default: {
         builder: 'enb',
-        command: 'YENV=production enb make __magic__ desktop.examples desktop.tests desktop.docs ' +
-            'touch-pad.examples touch-pad.tests touch-pad.docs touch-phone.examples ' +
-            'touch-phone.tests touch-phone.docs && enb make *.pages/*',
+        command: 'YENV=production enb make __magic__ ' + 
+		 'desktop.examples desktop.docs touch.examples touch.docs',
         docDirs: '*.docs',
         rsync: {
-            levels: ['desktop', 'touch-pad', 'touch-phone'],
-            targets: ['*.tests', '*.examples']
+            levels: ['desktop', 'touch'],
+            targets: ['*.docs', '*.examples']
         },
         docs: {
             readme: {
