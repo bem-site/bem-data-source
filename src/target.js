@@ -180,6 +180,14 @@ Target.prototype = {
     },
 
     /**
+    * Returns output path for target
+    * @returns {String}
+    */
+    getTempPath: function () {
+        return this.getOutputPath();
+    },
+
+    /**
      * Make chained calls for all tasks for target and call them
      * @returns {*}
      */
