@@ -30,13 +30,15 @@ module.exports = function (target) {
             },
             host = options.host,
             port = options.port,
-            url = util.format('http://%s/publish/%s/%s', host, target.getSourceName(), target.ref);
+            url = util.format('http://%s:%s/publish/%s/%s', host, port, target.getSourceName(), target.ref);
 
         if (target.isDryRun) {
             logger.info('Publish command was launched in dry run mode', module);
             logger.info(util.format('Tarball data should be loaded to host: %s  port: %s', host, port), module);
             return vow.resolve();
         }
+
+        logger.info(util.format('Tarball data will be loaded to %s', url), module);
 
         fstream.Reader({ path: path.join(target.getOutputPath(), constants.DIRECTORY.TEMP), type: 'Directory' })
             .pipe(tar.Pack())
