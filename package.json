@@ -23,13 +23,14 @@
     "nconf": "~0.6.8",
     "lodash": "~2.4.1",
     "intel": "~0.4.0",
-    "github": "*",
+    "github": "~0.2.2",
     "marked": "git://github.com/dab/marked.git",
     "coa": "~0.4.0",
     "fs-extra": "~0.8.1",
     "fstream": "1.0.2",
     "tar": "1.0.1",
-    "rsync": "0.3.0"
+    "rsync": "0.3.0",
+    "glob": "4.2.1"
   },
   "devDependencies": {
     "jshint": "2.5.5",
