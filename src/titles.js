@@ -6,7 +6,7 @@ module.exports = {
         ru: 'Readme'
     },
     changelog: {
-        en: 'Сhangelog',
+        en: 'Changelog',
         ru: 'История изменений'
     },
     migration: {
