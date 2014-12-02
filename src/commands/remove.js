@@ -64,6 +64,7 @@ function _removeRemote (repo, version, options, isDryRun) {
 module.exports = {
 
     remove: function (repo, version, options, isDryRun) {
+        logger.setProductionMode();
         return _removeRemote(repo, version, options, isDryRun)
             .then(function () {
                 logger.info('REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);

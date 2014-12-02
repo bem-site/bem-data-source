@@ -48,6 +48,7 @@ function _publish(version, options, isDryRun) {
 module.exports = {
 
     publish: function (version, options, isDryRun) {
+        logger.setProductionMode();
         return _publish(version, options, isDryRun);
     },
 
