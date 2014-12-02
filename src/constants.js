@@ -15,5 +15,6 @@ module.exports = {
         PRIVATE: 'github.yandex-team.ru',
         PUBLIC: 'github.com'
     },
-    LEVELS: ['desktop', 'touch-pad', 'touch-phone']
+    LEVELS: ['desktop', 'touch-pad', 'touch-phone'],
+    MAXIMUM_OPEN_FILES: 100
 };
