@@ -1,7 +1,10 @@
 'use strict';
 
 var intel = require('intel'),
-    config = require('./config');
+    config = require('./config'),
+
+    DEFAULT_MODE = 'single',
+    mode;
 
 intel.setLevel(config.get('logLevel'));
 intel.addHandler(
@@ -14,6 +17,10 @@ intel.addHandler(
     })
 );
 
+function getMode() {
+    return mode || DEFAULT_MODE;
+}
+
 /**
  * Returns logger by it name
  * If first arguments is module then add part of module file path to log string
@@ -21,8 +28,22 @@ intel.addHandler(
  * @returns {*}
  */
 function getLogger(module) {
-    return intel.getLogger(module ? module.filename.split('/').slice(-2).join('/') : '');
+    if (getMode() === DEFAULT_MODE) {
+        return intel.getLogger(module ? module.filename.split('/').slice(-2).join('/') : '');
+    } else {
+        return {
+            verbose: function() {},
+            debug: console.log,
+            info: console.info,
+            warn: console.warn,
+            error: console.error
+        };
+    }
 }
+
+exports.setProductionMode = function () {
+    mode = 'api';
+};
 
 /**
  * Alias for logging verbose messages
