@@ -8,6 +8,7 @@ var fs = require('fs'),
     vowFs = require('vow-fs'),
     glob = require('glob'),
 
+    config = require('../config'),
     logger = require('../logger'),
     constants = require('../constants');
 
@@ -19,7 +20,7 @@ var fs = require('fs'),
 function readFiles(baseDir) {
     var def = vow.defer();
     glob("**", { cwd: baseDir, nodir: true }, function (err, files) {
-        err ? def.reject(err) : def.resolve(files)
+        err ? def.reject(err) : def.resolve(files);
     });
     return def.promise();
 }
@@ -70,11 +71,29 @@ function zipFile(target, filePath) {
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {
+    var openFilesLimit = config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES;
+
     return readFiles(target.getTempPath())
         .then(function (files) {
+            var chuncks = files.reduce((function (n) {
+                    return function(p, c, i) {
+                        (p[i/n|0] = p[i/n|0] || []).push(c);
+                        return p;
+                    };
+                })(openFilesLimit), []);
+
             logger.debug(util.format('example files count: %s', files.length), module);
-            return vow.all(files.map(function (item) {
-                return zipFile(target, item);
-            }));
-        })
+            logger.debug(util.format('compression will be executed in %s steps', chuncks.length), module);
+
+            return chuncks.reduce(function (prev, item, index) {
+                prev = prev.then(function () {
+                    logger.debug(util.format('compress files in range %s - %s',
+                        index * openFilesLimit, (index + 1) * openFilesLimit), module);
+                    return vow.all(item.map(function (item) {
+                        return zipFile(target, item);
+                    }));
+                });
+                return prev;
+            }, vow.resolve());
+        });
 };
