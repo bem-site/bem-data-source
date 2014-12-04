@@ -30,7 +30,7 @@ module.exports = function (target) {
             },
             host = options.host,
             port = options.port,
-            url = util.format('http://%s:%s/publish/%s/%s', host, port, target.getSourceName(), target.ref);
+            url = util.format('http://%s/publish/%s/%s', host, target.getSourceName(), target.ref);
 
         if (target.isDryRun) {
             logger.info('Publish command was launched in dry run mode', module);
