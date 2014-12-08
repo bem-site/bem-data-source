@@ -1,6 +1,9 @@
 bem-data-source
 ===============
 
+[![Dependency Status](https://david-dm.org/bem/bem-data-source.svg?style=flat)](https://david-dm.org/bem/bem-data-source)
+[![devDependency Status](https://david-dm.org/bem/bem-data-source/dev-status.svg?style=flat)](https://david-dm.org/bem/bem-data-source#info=devDependencies)
+
 Инструмент для версионированной сборки документации и примеров библиотек для проектов bem-info.
 
 ## Установка
