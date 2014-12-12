@@ -4,6 +4,7 @@ var fs = require('fs'),
     zlib = require('zlib'),
     path = require('path'),
     util = require('util'),
+
     vow = require('vow'),
     vowFs = require('vow-fs'),
     glob = require('glob'),
@@ -113,6 +114,7 @@ module.exports = function (target) {
                         index * openFilesLimit, (index + 1) * openFilesLimit), module);
                     return vow.all(item.map(function (item) {
                         return zipFile(target, item).then(function() {
+                            //return target.isDryRun ? vow.resolve() : sendToStorage(target, item);
                             return sendToStorage(target, item);
                         });
                     }));

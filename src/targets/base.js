@@ -152,10 +152,6 @@ Target.prototype = {
     getTasks: function () {
         if (this.source.docsOnly) {
             return [
-                require('./../tasks/remove-output'),
-                require('./../tasks/create-output'),
-                require('./../tasks/git-clone'),
-                require('./../tasks/git-checkout'),
                 require('./../tasks/collect-sets')
             ];
         }

@@ -19,7 +19,6 @@ function command() {
                 return '';
             })
             .end()
-        .cmd().name('make').apply(require('./commands/make')).end()
         .cmd().name('publish').apply(require('./commands/publish').cmd).end()
         .cmd().name('replace-doc').apply(require('./commands/replace-doc').cmd).end()
         .cmd().name('remove').apply(require('./commands/remove').cmd).end()

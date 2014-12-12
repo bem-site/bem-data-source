@@ -33,3 +33,18 @@ exports.write = function(key, value) {
     });
     return def.promise();
 };
+
+exports.read = function(key) {
+    if(!storage.connected) {
+        logger.error('storage is not connected', module);
+        return vow.reject();
+    }
+
+    logger.verbose(util.format('read from storage || key: %s', key), module);
+
+    var def = vow.defer();
+    storage.read(key, function(err, value) {
+        err ? def.reject(err) : def.resolve(value);
+    });
+    return def.promise();
+};
