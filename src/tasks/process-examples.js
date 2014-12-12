@@ -8,6 +8,7 @@ var fs = require('fs'),
     vowFs = require('vow-fs'),
     glob = require('glob'),
 
+    storage = require('../cocaine/api'),
     config = require('../config'),
     logger = require('../logger'),
     constants = require('../constants');
@@ -65,6 +66,24 @@ function zipFile(target, filePath) {
     });
 }
 
+function sendToStorage(target, filePath) {
+    var basePath = target.getTempPath(),
+        fPath = path.join(basePath, filePath),
+        key = util.format('%s/%s/%s', target.getSourceName(), target.ref, filePath);
+
+    return vowFs.isSymLink(fPath)
+        .then(function (isSymlink) {
+            if(isSymlink) {
+                console.log('find symlink %s', filePath);
+                return vow.resolve();
+            }
+
+            return vowFs.read(fPath).then(function(content) {
+                return storage.write(key, content);
+            });
+        });
+}
+
 /**
  * Executes copying built folders from content to temp
  * @param {Target} target for building
@@ -73,7 +92,10 @@ function zipFile(target, filePath) {
 module.exports = function (target) {
     var openFilesLimit = config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES;
 
-    return readFiles(target.getTempPath())
+    return storage.init()
+        .then(function() {
+            return readFiles(target.getTempPath());
+        })
         .then(function (files) {
             var chuncks = files.reduce((function (n) {
                     return function(p, c, i) {
@@ -87,10 +109,12 @@ module.exports = function (target) {
 
             return chuncks.reduce(function (prev, item, index) {
                 prev = prev.then(function () {
-                    logger.debug(util.format('compress files in range %s - %s',
+                    logger.debug(util.format('compress and send files in range %s - %s',
                         index * openFilesLimit, (index + 1) * openFilesLimit), module);
                     return vow.all(item.map(function (item) {
-                        return zipFile(target, item);
+                        return zipFile(target, item).then(function() {
+                            return sendToStorage(target, item);
+                        });
                     }));
                 });
                 return prev;

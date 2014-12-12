@@ -54,7 +54,7 @@ module.exports = {
             require('../src/tasks/create-output'),
             require('../src/tasks/copy-sets'),
             require('../src/tasks/collect-sets'),
-            require('../src/tasks/compress-examples')
+            require('../src/tasks/process-examples')
         ]
     }
 };

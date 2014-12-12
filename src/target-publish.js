@@ -12,7 +12,7 @@ var path = require('path'),
             require('./tasks/remove-temp'),
             require('./tasks/create-temp'),
             require('./tasks/copy-to-temp'),
-            require('./tasks/compress-examples'),
+            require('./tasks/process-examples'),
             require('./tasks/send-tarball')
         ];
         return this;
