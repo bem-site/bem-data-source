@@ -2,18 +2,18 @@
 
 var path = require('path'),
 
-    constants = require('./constants'),
-    Target = require('./target'),
+    constants = require('./../constants'),
+    Target = require('./base'),
 
     TargetPublish  = function (source, ref) {
         this.init(source, ref, null);
         this.declaration.tasks = [
-            require('./tasks/collect-sets'),
-            require('./tasks/remove-temp'),
-            require('./tasks/create-temp'),
-            require('./tasks/copy-to-temp'),
-            require('./tasks/process-examples'),
-            require('./tasks/send-tarball')
+            require('./../tasks/collect-sets'),
+            require('./../tasks/remove-temp'),
+            require('./../tasks/create-temp'),
+            require('./../tasks/copy-to-temp'),
+            require('./../tasks/process-examples'),
+            require('./../tasks/send-tarball')
         ];
         return this;
     };

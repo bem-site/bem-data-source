@@ -8,7 +8,7 @@ var path = require('path'),
 
     config = require('../config'),
     logger = require('../logger'),
-    TargetPublish = require('../target-publish');
+    TargetPublish = require('../targets/publish');
 
 function readPackageJson() {
     return vowFs.read(path.join(process.cwd(), 'package.json'), 'utf-8')

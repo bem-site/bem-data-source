@@ -5,8 +5,8 @@ var util = require('util'),
 
     _ = require('lodash'),
 
-    titles = require('./titles'),
-    constants = require('./constants'),
+    titles = require('./../titles'),
+    constants = require('./../constants'),
 
     Target = function (source, ref, type) {
         return this.init(source, ref, type);
@@ -39,7 +39,7 @@ Target.prototype = {
      * @returns {Boolean|*}
      */
     makeDeclaration: function () {
-        var base = require('../declarations/base'),
+        var base = require('../../declarations/base'),
             lib;
 
         try {
@@ -152,11 +152,11 @@ Target.prototype = {
     getTasks: function () {
         if (this.source.docsOnly) {
             return [
-                require('./tasks/remove-output'),
-                require('./tasks/create-output'),
-                require('./tasks/git-clone'),
-                require('./tasks/git-checkout'),
-                require('./tasks/collect-sets')
+                require('./../tasks/remove-output'),
+                require('./../tasks/create-output'),
+                require('./../tasks/git-clone'),
+                require('./../tasks/git-checkout'),
+                require('./../tasks/collect-sets')
             ];
         }
 
