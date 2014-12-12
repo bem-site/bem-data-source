@@ -8,7 +8,6 @@ var path = require('path'),
 
     utility = require('../util'),
     logger = require('../logger'),
-    pusher = require('../pusher'),
     config = require('../config'),
     constants = require('../constants');
 
@@ -20,13 +19,7 @@ function _removeLocal (repo, version) {
     var p = path.join(path.join(constants.DIRECTORY.OUTPUT, repo), version);
     logger.debug(util.format('remove directory: %s', p), module);
 
-    return utility.removeDir(p).then(function () {
-        return pusher.commitAndPush({
-            commitMessage: util.format('Remove version %s from lib %s', version, repo),
-            successMessage: 'REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY',
-            errorMessage: 'REMOVE COMMAND FAILED WITH ERROR %s'
-        })();
-    });
+    return utility.removeDir(p).then(function () {});
 }
 
 function _removeRemote (repo, version, options, isDryRun) {

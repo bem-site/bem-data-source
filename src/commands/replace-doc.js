@@ -9,7 +9,6 @@ var path = require('path'),
     api = require('../gh-api'),
     config = require('../config'),
     logger = require('../logger'),
-    pusher = require('../pusher'),
     utility = require('../util'),
     titles = require('../titles'),
     constants = require('../constants');
@@ -128,18 +127,7 @@ function _replaceDoc(repo, version, doc, lang, url, needToCommit) {
                     versionDir = path.join(repoDir, version),
                     dataPath = path.join(versionDir, 'data.json');
                 return vowFs.write(dataPath, JSON.stringify(content, null, 4), { charset: 'utf8' });
-            }).then(function () {
-                if (needToCommit) {
-                    return pusher.commitAndPush({
-                        commitMessage: util.format('Replace doc %s for version %s of lib %s',
-                            doc, version, repo),
-                        successMessage: 'REPLACE DOC COMMAND HAS BEEN FINISHED SUCCESSFULLY',
-                        errorMessage: 'REPLACE DOC COMMAND FAILED WITH ERROR %s'
-                    })();
-                } else {
-                    return vow.resolve();
-                }
-            });
+            }).then(function () {});
     });
 }
 

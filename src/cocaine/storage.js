@@ -93,7 +93,7 @@ Storage.prototype.read = function (key, cb) {
     var self = this;
 
     this._log('[%s] Storage.read("%s::%s")', id, this._namespace, key);
-    this._storage.read_latest(this._namespace, key, function(err, result){
+    this._storage.read(this._namespace, key, function(err, result){
         if(!err){
             self._log('[%s] read ok: "%s"', id, result);
         } else {
