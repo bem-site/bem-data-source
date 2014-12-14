@@ -135,3 +135,12 @@ exports.rsync = function (options) {
     );
     return def.promise();
 };
+
+exports.separateArrayOnChunks = function (arr, chunkSize) {
+    return arr.reduce((function (n) {
+        return function(prev, item, index) {
+            (prev[index/n|0] = prev[index/n|0] || []).push(item);
+            return prev;
+        };
+    })(chunkSize), []);
+};

@@ -4,6 +4,7 @@ var util = require('util'),
     path = require('path'),
     vowFs = require('vow-fs'),
 
+    sha = require('sha1'),
     storage = require('../cocaine/api'),
     logger = require('../logger'),
     constants = require('../constants');
@@ -17,25 +18,29 @@ module.exports = function (target) {
     var fPath = path.join(target.getOutputPath(), constants.FILE.DATA),
         lib = target.getSourceName(),
         version = target.ref,
-        key = util.format('%s/%s/%s', lib, version, fPath);
+        key = util.format('%s/%s/%s', lib, version, fPath),
+        shaKey;
 
     return vowFs.read(fPath, 'utf-8')
         .then(function(content) {
-            return storage.write(key, content);
+            shaKey = sha(JSON.stringify(content));
+            return storage.write(key, content, [lib, version]);
         })
         .then(function() {
             return storage.read(constants.ROOT);
         })
         .then(function(registry) {
             registry = registry ? JSON.parse(registry) : {};
-            registry[lib] = registry[lib] || { name: lib, versions: [] };
+            registry[lib] = registry[lib] || { name: lib, versions: {} };
 
             logger.debug(util.format('registry: %s', JSON.stringify(registry[lib])), module);
 
-            if(registry[lib].versions.indexOf(version) < 0) {
-                registry[lib].versions.push(version);
-            }
-            return storage.write(constants.ROOT, JSON.stringify(registry));
+            registry[lib].versions[version] = {
+                sha: shaKey,
+                date: +(new Date())
+            };
+
+            return storage.write(constants.ROOT, JSON.stringify(registry), [constants.ROOT]);
         })
         .then(function() {
             return target;

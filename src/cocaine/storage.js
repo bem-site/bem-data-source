@@ -2,10 +2,13 @@ var util = require('util'),
 
     assert = require('assert'),
     EventEmitter = require('events').EventEmitter,
+    Client = require('cocaine').Client,
 
-    argv = require('optimist').argv,
-
-    Client = require('cocaine').Client;
+    OPTIONS = {
+        NAME_SPACE: 'defaultnamespace',
+        HOST: 'apefront.tst.ape.yandex.net',
+        PORT: 10053
+    };
 
 function __uid(){
     return (Math.random()*0x100000000).toString(36);
@@ -14,11 +17,14 @@ function __uid(){
 function Storage(options) {
 
     options = options || {};
-    this._namespace = options.namespace || 'defaultnamespace';
-    this._locator = options.locator || 'apefront.tst.ape.yandex.net:10053';
+    this._namespace = options.namespace || OPTIONS.NAME_SPACE;
+    this._locator = options.locator || util.format('%s:%s', OPTIONS.HOST, OPTIONS.PORT);
+
+    this._connecting = false;
+    this.connected = false;
 
     this._debug = options.debug || false;
-    this._app = argv.app || 'defaultapp';
+    this._app = process.argv.app || 'defaultapp';
     this._logger = null;
 
     this._client = new Client(this._locator);
@@ -26,7 +32,6 @@ function Storage(options) {
     this._storage = this._client.Service('storage');
 
     this._connecting = false;
-    this.connected = false;
 }
 
 util.inherits(Storage, EventEmitter);
@@ -37,68 +42,90 @@ Storage.prototype._log = function(){
     }
 };
 
+/**
+ * Connect to storage
+ */
 Storage.prototype.connect = function(){
-    var self = this;
 
-    assert(!this._connecting && !this.connected, "!this._connecting && !this.connected");
+    var _this = this;
+
+    assert(!this._connecting && !this._connected, "!this._connecting && !this._connected");
 
     this._connecting = true;
-    this._debug ? _connectLogger() : _connectStorage();
+
+    if(this._debug){
+        _connectLogger();
+    } else {
+        _connectStorage();
+    }
 
     function _connectLogger(){
-        self._logger = self._client.Logger(self._app);
-        self._logger.connect();
-        self._logger.once('connect', function(){
-            self._logger._verbosity = 4;
+        _this._logger = _this._client.Logger(_this._app);
+        _this._logger.connect();
+        _this._logger.once('connect', function(){
+            _this._logger._verbosity = 4;
             _connectStorage();
         });
     }
 
     function _connectStorage(){
         var id = __uid();
-        self._log('[%s] connecting to storage service', id);
-        self._storage.connect();
-        self._storage.once('connect', function(){
-            assert(self._connecting);
-            self._log('[%s] connected to storage', id);
-            self._connecting = false;
-            self.connected = true;
-            self.emit('connect');
+        _this._log('[%s] connecting to storage service', id);
+        _this._storage.connect();
+        _this._storage.once('connect', function(){
+            assert(_this._connecting);
+            _this._log('[%s] connected to storage', id);
+            _this._connecting = false;
+            _this.connected = true;
+            _this.emit('connect');
         });
     }
 };
 
-Storage.prototype.write = function (key, value, cb) {
-    assert(this.connected, 'this.connected');
-    var id = __uid();
+/**
+ * Find keys by tags
+ * @param {Array} tags - array of tags
+ * @param {Function} cb - callback function
+ */
+Storage.prototype.find = function (tags, cb) {
+    tags = tags || [];
+    this._storage.find(this._namespace, tags, function(err, result){
+        cb(err, result);
+    });
+};
 
-    var self = this;
+/**
+ * Reads record for key
+ * @param {String} key - record key
+ * @param {Function} cb - callback function
+ */
+Storage.prototype.read = function (key, cb) {
+    this._storage.read(this._namespace, key, function(err, result){
+        cb(err, result);
+    });
+};
 
-    this._log('[%s] Storage.write("%s::%s", "%s")', id, this._namespace, key, value);
-
-    this._storage.write(this._namespace, key, value, function(err){
-        if(!err){
-            self._log('[%s] write ok', id);
-        } else {
-            self._log('[%s] write failed: %s', id, err);
-        }
+/**
+ * Write record for key
+ * @param {String} key - record key
+ * @param {Object} value - record value
+ * @param {Array} tags - array of tags
+ * @param {Function} cb - callback function
+ */
+Storage.prototype.write = function (key, value, tags, cb) {
+    tags = tags || [];
+    this._storage.write(this._namespace, key, value, tags, function(err) {
         cb(err);
     });
 };
 
-Storage.prototype.read = function (key, cb) {
-    assert(this.connected, 'this.connected');
-
-    var id = __uid();
-    var self = this;
-
-    this._log('[%s] Storage.read("%s::%s")', id, this._namespace, key);
-    this._storage.read(this._namespace, key, function(err, result){
-        if(!err){
-            self._log('[%s] read ok: "%s"', id, result);
-        } else {
-            self._log('[%s] read failed: %s', id, err);
-        }
+/**
+ * Remove record by key
+ * @param {String} key - record key
+ * @param {Function} cb - callback function
+ */
+Storage.prototype.remove = function (key, cb) {
+    this._storage.remove(this._namespace, key, function(err, result) {
         cb(err, result);
     });
 };

@@ -43,7 +43,7 @@ Target.prototype = {
             lib;
 
         try {
-            lib = require('../declarations/' + this.getSourceName());
+            lib = require('../../declarations/' + this.getSourceName());
         }catch (err) {
             lib = { default: {} };
         }

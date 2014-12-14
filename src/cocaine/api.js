@@ -5,11 +5,18 @@ var util = require('util'),
     logger = require('../logger'),
     Storage = require('./storage'),
 
+    ERROR_CODE_NOT_FOUND = 2,
+
     storage;
 
+/**
+ * Initialize cocaine storage
+ * @returns {*}
+ */
 exports.init = function() {
     logger.info('Initialize cocaine storage', module);
     storage = new Storage(config.get('cocaine:storage'));
+
     storage.connect();
 
     var def = vow.defer();
@@ -19,32 +26,65 @@ exports.init = function() {
     return def.promise();
 };
 
-exports.write = function(key, value) {
+exports.find = function(tags) {
     if(!storage.connected) {
-        logger.error('storage is not connected', module);
         return vow.reject();
     }
 
-    logger.verbose(util.format('save to storage || key: %s', key), module);
-
     var def = vow.defer();
-    storage.write(key, value, function(err) {
-        err ? def.reject(err) : def.resolve();
+    storage.find(tags, function(err, value) {
+        if(!err) {
+            def.resolve(value);
+        }else if(err.code === ERROR_CODE_NOT_FOUND) {
+            def.resolve([]);
+        }else {
+            def.reject(err);
+        }
     });
+
     return def.promise();
 };
 
+/**
+ * Reads data from storage by key
+ * @param {String} key - record key
+ * @returns {*}
+ */
 exports.read = function(key) {
     if(!storage.connected) {
-        logger.error('storage is not connected', module);
         return vow.reject();
     }
 
-    logger.verbose(util.format('read from storage || key: %s', key), module);
-
     var def = vow.defer();
     storage.read(key, function(err, value) {
-        err ? def.reject(err) : def.resolve(value);
+        if(!err) {
+            def.resolve(value);
+        }else if(err.code === ERROR_CODE_NOT_FOUND) {
+            def.resolve(null);
+        }else {
+            def.reject(err);
+        }
     });
+
+    return def.promise();
+};
+
+/**
+ * Writes data to storage
+ * @param {String} key - record key
+ * @param {Object} value - record value
+ * @param {Array} tags - array of tags
+ * @returns {*}
+ */
+exports.write = function(key, value, tags) {
+    if(!storage.connected) {
+        return vow.reject();
+    }
+
+    var def = vow.defer();
+    storage.write(key, value, tags, function(err) {
+        err ? def.reject(err) : def.resolve();
+    });
+
     return def.promise();
 };
