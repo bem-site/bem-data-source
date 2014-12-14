@@ -13,8 +13,7 @@ var path = require('path'),
             require('./../tasks/create-temp'),
             require('./../tasks/copy-to-temp'),
             require('./../tasks/process-examples'),
-            require('./../tasks/send-doc'),
-            require('./../tasks/send-tarball')
+            require('./../tasks/send-doc')
         ];
         return this;
     };

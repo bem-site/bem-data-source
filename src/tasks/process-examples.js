@@ -12,6 +12,7 @@ var fs = require('fs'),
     storage = require('../cocaine/api'),
     config = require('../config'),
     logger = require('../logger'),
+    utility = require('../util'),
     constants = require('../constants');
 
 /**
@@ -67,6 +68,12 @@ function zipFile(target, filePath) {
     });
 }
 
+/**
+ * Write file to cocaine storage
+ * @param {Target} target - target object
+ * @param {String} filePath - path to source file
+ * @returns {*}
+ */
 function sendToStorage(target, filePath) {
     var basePath = target.getTempPath(),
         fPath = path.join(basePath, filePath),
@@ -80,7 +87,7 @@ function sendToStorage(target, filePath) {
             }
 
             return vowFs.read(fPath).then(function(content) {
-                return storage.write(key, content);
+                return storage.write(key, content, [target.getSourceName(), target.ref]);
             });
         });
 }
@@ -98,28 +105,27 @@ module.exports = function (target) {
             return readFiles(target.getTempPath());
         })
         .then(function (files) {
-            var chuncks = files.reduce((function (n) {
-                    return function(p, c, i) {
-                        (p[i/n|0] = p[i/n|0] || []).push(c);
-                        return p;
-                    };
-                })(openFilesLimit), []);
+            var portions = utility.separateArrayOnChunks(files, openFilesLimit);
 
             logger.debug(util.format('example files count: %s', files.length), module);
-            logger.debug(util.format('compression will be executed in %s steps', chuncks.length), module);
+            logger.debug(util.format('compression will be executed in %s steps', portions.length), module);
 
-            return chuncks.reduce(function (prev, item, index) {
+            return portions.reduce(function (prev, item, index) {
                 prev = prev.then(function () {
                     logger.debug(util.format('compress and send files in range %s - %s',
                         index * openFilesLimit, (index + 1) * openFilesLimit), module);
-                    return vow.all(item.map(function (item) {
-                        return zipFile(target, item).then(function() {
+
+                    return vow.all(item.map(function (_item) {
+                        return zipFile(target, _item).then(function() {
                             //return target.isDryRun ? vow.resolve() : sendToStorage(target, item);
-                            return sendToStorage(target, item);
+                            return sendToStorage(target, _item);
                         });
                     }));
                 });
                 return prev;
             }, vow.resolve());
+        })
+        .then(function() {
+            return vow.resolve(target);
         });
 };

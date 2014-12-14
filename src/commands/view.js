@@ -3,36 +3,34 @@
 var util = require('util'),
 
     logger = require('../logger'),
-    TargetRemove = require('../targets/remove');
+    TargetView = require('../targets/view');
 
 module.exports = function () {
     return this
-        .title('remove command')
+        .title('view command')
         .helpful()
         .opt()
             .name('repo').title('Name of repository')
             .short('r').long('repo')
-            .req()
             .end()
         .opt()
             .name('version').title('Version of repository (tag or branch)')
             .short('v').long('version')
-            .req()
             .end()
         .opt()
-            .name('dry').title('Dry run mode of launch')
-            .short('d').long('dry')
-            .flag()
+            .name('format').title('Output format')
+            .short('f').long('format')
+            .def('short')
             .end()
         .act(function (opts) {
-            var target = new TargetRemove(opts.repo, opts.version, { isDryRun: opts.dry });
+            var target = new TargetView(opts.repo, opts.version, { isCli: true, format: opts.format });
             return target.execute()
                 .then(function () {
-                    logger.info('REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);
+                    logger.info('VIEW COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);
                     process.exit(0);
                 })
                 .fail(function (err) {
-                    logger.error(util.format('REMOVE COMMAND FAILED WITH ERROR %s', err.message), module);
+                    logger.error(util.format('VIEW COMMAND FAILED WITH ERROR %s', err.message), module);
                     process.exit(1);
                 });
         });
