@@ -105,6 +105,24 @@ module.exports = function (target) {
             return readFiles(target.getTempPath());
         })
         .then(function (files) {
+            //TODO remove this filter!
+            files = files.filter(function(file) {
+                if(file.match(/README\.md$/)) {
+                    console.log('ignore readme %s', file);
+                    return false;
+                }
+                if(file.match(/desktop\.sets\/(\.bem|catalogue|index|jscatalogue)/)) {
+                    console.log('ignore folders %s', file);
+                    return false;
+                }
+                if(file.match(/\/\.bem\//)) {
+                    console.log('ignore .bem %s', file);
+                    return false;
+                }
+
+                return true;
+            });
+
             var portions = utility.separateArrayOnChunks(files, openFilesLimit);
 
             logger.debug(util.format('example files count: %s', files.length), module);

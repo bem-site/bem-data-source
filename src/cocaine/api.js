@@ -15,6 +15,10 @@ var util = require('util'),
  */
 exports.init = function() {
     logger.info('Initialize cocaine storage', module);
+    if(storage && storage.connected) {
+        return vow.resolve();
+    }
+
     storage = new Storage(config.get('cocaine:storage'));
 
     storage.connect();

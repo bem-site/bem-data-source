@@ -143,4 +143,4 @@ module.exports = (function () {
             return def.promise();
         }
     };
-})();
+});

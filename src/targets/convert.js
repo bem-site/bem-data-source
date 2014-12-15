@@ -20,7 +20,7 @@ var path = require('path'),
         this.getOutputPath = function() {
             return path.join(process.cwd(), version);
         };
-        this.getTempPath = this.getOutputPath();
+        this.getTempPath = this.getOutputPath;
         this.getSourceName = function() {
             return lib;
         };
@@ -67,10 +67,10 @@ TargetConvert.prototype = {
 
     _convertVersion: function(version) {
         var target = new TargetConvertVersion(this.source, version);
-        return vow.all([
-            this._processExamples(target),
-            this._sendDoc(target)
-        ]);
+        return this._processExamples(target)
+            .then(function() {
+                return this._sendDoc(target);
+            }, this);
     },
 
     _processExamples: function(target) {
@@ -81,3 +81,5 @@ TargetConvert.prototype = {
         return sendDoc(target);
     }
 };
+
+module.exports = TargetConvert;
