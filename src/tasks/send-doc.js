@@ -2,6 +2,8 @@
 
 var util = require('util'),
     path = require('path'),
+
+    vow = require('vow'),
     vowFs = require('vow-fs'),
 
     sha = require('sha1'),
@@ -18,12 +20,16 @@ module.exports = function (target) {
     var fPath = path.join(target.getOutputPath(), constants.FILE.DATA),
         lib = target.getSourceName(),
         version = target.ref,
-        key = util.format('%s/%s/%s', lib, version, fPath),
+        key = util.format('%s/%s/%s', lib, version, constants.FILE.DATA),
         shaKey;
 
     return vowFs.read(fPath, 'utf-8')
         .then(function(content) {
-            shaKey = sha(JSON.stringify(content));
+            try {
+                shaKey = sha(content);
+            }catch(err) {
+                shaKey = sha(util.format('%s:%s:%s', lib, version, (new Date()).toString()));
+            }
             return storage.write(key, content, [lib, version]);
         })
         .then(function() {
@@ -43,7 +49,7 @@ module.exports = function (target) {
             return storage.write(constants.ROOT, JSON.stringify(registry), [constants.ROOT]);
         })
         .then(function() {
-            return target;
+            return vow.resolve(target);
         });
 };
 

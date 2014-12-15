@@ -105,6 +105,28 @@ module.exports = function (target) {
             return readFiles(target.getTempPath());
         })
         .then(function (files) {
+            //TODO remove this filter!
+            files = files.filter(function(file) {
+                if (file.match(/README\.md$/)) {
+                    //console.log('ignore readme %s', file);
+                    return false;
+                }
+                if (file.match(/desktop\.sets\/(\.bem|catalogue|index|jscatalogue)/)) {
+                    //console.log('ignore folders %s', file);
+                    return false;
+                }
+                if (file.match(/\/\.bem\//)) {
+                    //console.log('ignore .bem %s', file);
+                    return false;
+                }
+                if (file.match(/data\.json$/)) {
+                    //console.log('ignore data.json %s', file);
+                    return false;
+                }
+
+                return true;
+            });
+
             var portions = utility.separateArrayOnChunks(files, openFilesLimit);
 
             logger.debug(util.format('example files count: %s', files.length), module);
@@ -116,10 +138,10 @@ module.exports = function (target) {
                         index * openFilesLimit, (index + 1) * openFilesLimit), module);
 
                     return vow.all(item.map(function (_item) {
-                        return zipFile(target, _item).then(function() {
-                            //return target.isDryRun ? vow.resolve() : sendToStorage(target, item);
-                            return sendToStorage(target, _item);
-                        });
+                        return zipFile(target, _item)
+                            .then(function() {
+                                return sendToStorage(target, _item);
+                            });
                     }));
                 });
                 return prev;
