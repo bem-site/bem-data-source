@@ -108,19 +108,15 @@ module.exports = function (target) {
             //TODO remove this filter!
             files = files.filter(function(file) {
                 if (file.match(/README\.md$/)) {
-                    //console.log('ignore readme %s', file);
                     return false;
                 }
                 if (file.match(/desktop\.sets\/(\.bem|catalogue|index|jscatalogue)/)) {
-                    //console.log('ignore folders %s', file);
                     return false;
                 }
                 if (file.match(/\/\.bem\//)) {
-                    //console.log('ignore .bem %s', file);
                     return false;
                 }
                 if (file.match(/data\.json$/)) {
-                    //console.log('ignore data.json %s', file);
                     return false;
                 }
 
