@@ -88,3 +88,21 @@ exports.write = function(key, value, tags) {
 
     return def.promise();
 };
+
+/**
+ * Removes data from storage
+ * @param {String} key - record key
+ * @returns {*}
+ */
+exports.remove = function(key) {
+    if(!storage.connected) {
+        return vow.reject();
+    }
+
+    var def = vow.defer();
+    storage.remove(key, function(err) {
+        err ? def.reject(err) : def.resolve();
+    });
+
+    return def.promise();
+};
