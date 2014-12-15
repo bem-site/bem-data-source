@@ -44,7 +44,6 @@
     "ds": "./bin/ds"
   },
   "scripts": {
-    "postinstall": "cp config/_credentials.json config/credentials.json",
     "test": "node_modules/.bin/jshint . && node_modules/.bin/jscs -c .jscs.js ."
   },
   "readmeFilename": "README.md",
