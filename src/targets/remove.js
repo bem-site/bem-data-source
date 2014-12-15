@@ -101,15 +101,15 @@ TargetRemove.prototype = {
                     return vow.resolve();
                 }
 
-                if (!registry[this.source][this.ref]) {
+                if (!registry[this.source ].versions[this.ref]) {
                     logger.warn(util.format('Library %s version %s was not found in registry. ' +
                     'Operation will be skipped', this.source, this.ref), module);
                     return vow.resolve();
                 }
 
-                delete registry[this.source][this.ref];
+                delete registry[this.source ].versions[this.ref];
                 return storage.write(constants.ROOT, JSON.stringify(registry), [constants.ROOT]);
-            });
+            }, this);
     }
 };
 
