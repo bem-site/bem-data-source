@@ -49,6 +49,7 @@ TargetView.prototype = {
                 }
 
                 registry = JSON.parse(registry);
+                var table;
 
                 if (this.source && this.ref) {
                     if(this.options.format === 'short') {
@@ -76,7 +77,7 @@ TargetView.prototype = {
                     logger.info('Versions:', module);
 
 
-                    var table = new Table();
+                    table = new Table();
                     Object.keys(lib.versions).forEach(function(versionName) {
                         var version = lib.versions[versionName];
                         table.cell('Name', versionName);
@@ -85,14 +86,17 @@ TargetView.prototype = {
                         table.newRow();
                     });
                     console.log(table.toString());
-
                     return vow.resolve(Object.keys(lib.versions));
                 }
 
+                table = new Table();
                 logger.info('Libraries:', module);
                 Object.keys(registry).forEach(function(libraryName) {
-                    logger.debug(util.format('library: %s', libraryName), module);
+                    table.cell('Name', libraryName);
+                    table.newRow();
                 });
+                console.log(table.toString());
+
                 return vow.resolve(Object.keys(registry));
             }, this);
     }
