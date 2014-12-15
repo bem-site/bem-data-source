@@ -3,6 +3,8 @@
 var util = require('util'),
 
     vow = require('vow'),
+    Table = require('easy-table'),
+
     logger = require('../logger'),
     constants = require('../constants'),
     storage = require('../cocaine/api'),
@@ -73,11 +75,17 @@ TargetView.prototype = {
                     logger.info(util.format('Library: %s', lib.name), module);
                     logger.info('Versions:', module);
 
+
+                    var table = new Table();
                     Object.keys(lib.versions).forEach(function(versionName) {
                         var version = lib.versions[versionName];
-                        logger.debug(util.format('version: %s sha: %s date: %s',
-                            versionName, version.sha, version.date), module);
+                        table.cell('Name', versionName);
+                        table.cell('Sha', version.sha);
+                        table.cell('Date', (new Date(version.date)).toString());
+                        table.newRow();
                     });
+                    console.log(table.toString());
+
                     return vow.resolve(Object.keys(lib.versions));
                 }
 

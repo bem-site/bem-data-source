@@ -34,7 +34,8 @@
     "glob": "4.2.1",
     "assert": "^1.1.2",
     "cocaine": "^0.4.1-6",
-    "optimist": "^0.6.1"
+    "optimist": "^0.6.1",
+    "easy-table": "0.3.0"
   },
   "devDependencies": {
     "jshint": "2.5.5",
