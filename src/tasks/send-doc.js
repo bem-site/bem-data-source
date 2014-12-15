@@ -2,6 +2,8 @@
 
 var util = require('util'),
     path = require('path'),
+
+    vow = require('vow'),
     vowFs = require('vow-fs'),
 
     sha = require('sha1'),
@@ -43,7 +45,7 @@ module.exports = function (target) {
             return storage.write(constants.ROOT, JSON.stringify(registry), [constants.ROOT]);
         })
         .then(function() {
-            return target;
+            return vow.resolve(target);
         });
 };
 
