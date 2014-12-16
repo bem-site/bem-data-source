@@ -22,4 +22,5 @@ src/*.bundles/*/*.*
 !src/common.blocks/content
 
 test/test-data/temp
+test/test-data/data.json
 config/private.json
