@@ -41,7 +41,7 @@ function zipFile(target, filePath) {
 
     return vowFs.isSymLink(sPath)
         .then(function (isSymlink) {
-            if(isSymlink) {
+            if (isSymlink) {
                 console.log('find symlink %s', filePath);
                 return vow.resolve();
             }
@@ -81,12 +81,12 @@ function sendToStorage(target, filePath) {
 
     return vowFs.isSymLink(fPath)
         .then(function (isSymlink) {
-            if(isSymlink) {
+            if (isSymlink) {
                 console.log('find symlink %s', filePath);
                 return vow.resolve();
             }
 
-            return vowFs.read(fPath).then(function(content) {
+            return vowFs.read(fPath).then(function (content) {
                 return storage.write(key, content, [target.getSourceName(), target.ref]);
             });
         });
@@ -101,13 +101,13 @@ module.exports = function (target) {
     var openFilesLimit = config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES;
 
     return storage.init()
-        .then(function() {
+        .then(function () {
             return readFiles(target.getTempPath());
         })
         .then(function (files) {
             //TODO remove this filter!
             /*
-            files = files.filter(function(file) {
+            files = files.filter(function (file) {
                 if (file.match(/README\.md$/)) {
                     return false;
                 }
@@ -137,7 +137,7 @@ module.exports = function (target) {
 
                     return vow.all(item.map(function (_item) {
                         return zipFile(target, _item)
-                            .then(function() {
+                            .then(function () {
                                 return sendToStorage(target, _item);
                             });
                     }));
@@ -145,7 +145,7 @@ module.exports = function (target) {
                 return prev;
             }, vow.resolve());
         })
-        .then(function() {
+        .then(function () {
             return vow.resolve(target);
         });
 };

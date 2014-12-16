@@ -137,10 +137,12 @@ exports.rsync = function (options) {
 };
 
 exports.separateArrayOnChunks = function (arr, chunkSize) {
-    return arr.reduce((function (n) {
-        return function(prev, item, index) {
-            (prev[index/n|0] = prev[index/n|0] || []).push(item);
-            return prev;
-        };
-    })(chunkSize), []);
+    var _arr = arr.slice(0),
+        arrays = [];
+
+    while (_arr.length > 0) {
+        arrays.push(_arr.splice(0, chunkSize));
+    }
+
+    return arrays;
 };

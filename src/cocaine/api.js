@@ -12,19 +12,19 @@ var vow = require('vow'),
  * Initialize cocaine storage
  * @returns {*}
  */
-exports.init = function(options) {
+exports.init = function (options) {
     logger.info('Initialize cocaine storage', module);
-    if(storage && storage.connected) {
+    if (storage && storage.connected) {
         return vow.resolve();
     }
 
     var o = config.get('storage:cocaine');
 
-    if(options && options.debug) {
+    if (options && options.debug) {
         o.debug = options.debug;
     }
 
-    if(options && options.namespace) {
+    if (options && options.namespace) {
         o.namespace = options.namespace;
     }
 
@@ -33,22 +33,22 @@ exports.init = function(options) {
     storage.connect();
 
     var def = vow.defer();
-    storage.on('connect', function(err) {
+    storage.on('connect', function (err) {
         err ? def.reject(err) : def.resolve();
     });
     return def.promise();
 };
 
-exports.find = function(tags) {
-    if(!storage.connected) {
+exports.find = function (tags) {
+    if (!storage.connected) {
         return vow.reject();
     }
 
     var def = vow.defer();
-    storage.find(tags, function(err, value) {
-        if(!err) {
+    storage.find(tags, function (err, value) {
+        if (!err) {
             def.resolve(value);
-        }else if(err.code === ERROR_CODE_NOT_FOUND) {
+        }else if (err.code === ERROR_CODE_NOT_FOUND) {
             def.resolve([]);
         }else {
             def.reject(err);
@@ -63,16 +63,16 @@ exports.find = function(tags) {
  * @param {String} key - record key
  * @returns {*}
  */
-exports.read = function(key) {
-    if(!storage.connected) {
+exports.read = function (key) {
+    if (!storage.connected) {
         return vow.reject();
     }
 
     var def = vow.defer();
-    storage.read(key, function(err, value) {
-        if(!err) {
+    storage.read(key, function (err, value) {
+        if (!err) {
             def.resolve(value);
-        }else if(err.code === ERROR_CODE_NOT_FOUND) {
+        }else if (err.code === ERROR_CODE_NOT_FOUND) {
             def.resolve(null);
         }else {
             def.reject(err);
@@ -89,13 +89,13 @@ exports.read = function(key) {
  * @param {Array} tags - array of tags
  * @returns {*}
  */
-exports.write = function(key, value, tags) {
-    if(!storage.connected) {
+exports.write = function (key, value, tags) {
+    if (!storage.connected) {
         return vow.reject();
     }
 
     var def = vow.defer();
-    storage.write(key, value, tags, function(err) {
+    storage.write(key, value, tags, function (err) {
         err ? def.reject(err) : def.resolve();
     });
 
@@ -107,13 +107,13 @@ exports.write = function(key, value, tags) {
  * @param {String} key - record key
  * @returns {*}
  */
-exports.remove = function(key) {
-    if(!storage.connected) {
+exports.remove = function (key) {
+    if (!storage.connected) {
         return vow.reject();
     }
 
     var def = vow.defer();
-    storage.remove(key, function(err) {
+    storage.remove(key, function (err) {
         err ? def.reject(err) : def.resolve();
     });
 

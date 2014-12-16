@@ -36,8 +36,8 @@ function Storage(options) {
 
 util.inherits(Storage, EventEmitter);
 
-Storage.prototype._log = function(){
-    if(this._debug){
+Storage.prototype._log = function (){
+    if (this._debug){
         this._logger.debug.apply(this._logger, arguments);
     }
 };
@@ -45,7 +45,7 @@ Storage.prototype._log = function(){
 /**
  * Connect to storage
  */
-Storage.prototype.connect = function(){
+Storage.prototype.connect = function (){
 
     var _this = this;
 
@@ -53,7 +53,7 @@ Storage.prototype.connect = function(){
 
     this._connecting = true;
 
-    if(this._debug){
+    if (this._debug){
         _connectLogger();
     } else {
         _connectStorage();
@@ -62,7 +62,7 @@ Storage.prototype.connect = function(){
     function _connectLogger(){
         _this._logger = _this._client.Logger(_this._app);
         _this._logger.connect();
-        _this._logger.once('connect', function(){
+        _this._logger.once('connect', function (){
             _this._logger._verbosity = 4;
             _connectStorage();
         });
@@ -72,7 +72,7 @@ Storage.prototype.connect = function(){
         var id = __uid();
         _this._log('[%s] connecting to storage service', id);
         _this._storage.connect();
-        _this._storage.once('connect', function(){
+        _this._storage.once('connect', function (){
             assert(_this._connecting);
             _this._log('[%s] connected to storage', id);
             _this._connecting = false;
@@ -89,7 +89,7 @@ Storage.prototype.connect = function(){
  */
 Storage.prototype.find = function (tags, cb) {
     tags = tags || [];
-    this._storage.find(this._namespace, tags, function(err, result){
+    this._storage.find(this._namespace, tags, function (err, result){
         cb(err, result);
     });
 };
@@ -100,7 +100,7 @@ Storage.prototype.find = function (tags, cb) {
  * @param {Function} cb - callback function
  */
 Storage.prototype.read = function (key, cb) {
-    this._storage.read(this._namespace, key, function(err, result){
+    this._storage.read(this._namespace, key, function (err, result){
         cb(err, result);
     });
 };
@@ -114,7 +114,7 @@ Storage.prototype.read = function (key, cb) {
  */
 Storage.prototype.write = function (key, value, tags, cb) {
     tags = tags || [];
-    this._storage.write(this._namespace, key, value, tags, function(err) {
+    this._storage.write(this._namespace, key, value, tags, function (err) {
         cb(err);
     });
 };
@@ -125,7 +125,7 @@ Storage.prototype.write = function (key, value, tags, cb) {
  * @param {Function} cb - callback function
  */
 Storage.prototype.remove = function (key, cb) {
-    this._storage.remove(this._namespace, key, function(err, result) {
+    this._storage.remove(this._namespace, key, function (err, result) {
         cb(err, result);
     });
 };
