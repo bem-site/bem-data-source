@@ -1,11 +1,8 @@
 module.exports = {
     excludeFiles: [
-        'libs/**',
-        'src/common.bundles/**',
         'node_modules',
-        'content/**',
-        'output/**',
-        ".*"
+        ".*",
+        "test"
     ],
     requireSpaceAfterKeywords: ['if', 'else', 'for', 'while', 'do', 'switch', 'return', 'try', 'catch'],
     requireSpaceBeforeBlockStatements: true,
