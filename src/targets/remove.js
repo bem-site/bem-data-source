@@ -85,31 +85,37 @@ TargetRemove.prototype = {
      * @private
      */
     _removeFromRegistry: function() {
-        return storage.read(constants.ROOT)
-            .then(function(registry) {
-                if (!registry) {
-                    logger.warn('No registry record were found. ' +
-                    'Please try to make publish any library. Also this operation will be skipped', module);
-                    return vow.resolve();
-                }
+        return storage.read(constants.ROOT).then(function(registry) {
+            var message = {
+                noRegistry: 'No registry record were found. ' +
+                    'Please try to make publish any library. Also this operation will be skipped',
+                noLibrary: 'Library %s was not found in registry. Operation will be skipped',
+                noVersion: 'Library %s version %s was not found in registry. Operation will be skipped'
+            };
 
-                registry = JSON.parse(registry);
+            //check if registry exists
+            if (!registry) {
+                logger.warn(message.noRegistry, module);
+                return vow.resolve();
+            }
 
-                if (!registry[this.source]) {
-                    logger.warn(util.format('Library %s was not found in registry. ' +
-                    'Operation will be skipped', this.source), module);
-                    return vow.resolve();
-                }
+            registry = JSON.parse(registry);
 
-                if (!registry[this.source ].versions[this.ref]) {
-                    logger.warn(util.format('Library %s version %s was not found in registry. ' +
-                    'Operation will be skipped', this.source, this.ref), module);
-                    return vow.resolve();
-                }
+            //check if given library exists in registry
+            if (!registry[this.source]) {
+                logger.warn(util.format(message.noLibrary, this.source), module);
+                return vow.resolve();
+            }
 
-                delete registry[this.source ].versions[this.ref];
-                return storage.write(constants.ROOT, JSON.stringify(registry), [constants.ROOT]);
-            }, this);
+            //check if given library version exists in registry
+            if (!registry[this.source ].versions[this.ref]) {
+                logger.warn(util.format(message.noVersion, this.source, this.ref), module);
+                return vow.resolve();
+            }
+
+            delete registry[this.source].versions[this.ref];
+            return storage.write(constants.ROOT, JSON.stringify(registry), [constants.ROOT]);
+        }, this);
     }
 };
 
