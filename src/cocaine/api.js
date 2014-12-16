@@ -1,5 +1,4 @@
-var util = require('util'),
-    vow = require('vow'),
+var vow = require('vow'),
 
     config = require('../config'),
     logger = require('../logger'),
@@ -13,13 +12,23 @@ var util = require('util'),
  * Initialize cocaine storage
  * @returns {*}
  */
-exports.init = function() {
+exports.init = function(options) {
     logger.info('Initialize cocaine storage', module);
     if(storage && storage.connected) {
         return vow.resolve();
     }
 
-    storage = new Storage(config.get('cocaine:storage'));
+    var o = config.get('storage:cocaine');
+
+    if(options && options.debug) {
+        o.debug = options.debug;
+    }
+
+    if(options && options.namespace) {
+        o.namespace = options.namespace;
+    }
+
+    storage = new Storage(o);
 
     storage.connect();
 

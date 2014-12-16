@@ -43,7 +43,7 @@ TargetRemove.prototype = {
                 'Data for %s %s should be removed from cocaine storage', this.source, this.ref), module);
             return vow.resolve();
         }
-        return storage.init()
+        return storage.init(this.options)
             .then(function() {
                 return this._removeRecords();
             }, this)
