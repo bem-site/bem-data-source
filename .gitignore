@@ -21,4 +21,5 @@ src/*.bundles/*/*.*
 !src/*.bundles/*/*.bemdecl.js
 !src/common.blocks/content
 
+test/test-data/temp
 config/private.json
