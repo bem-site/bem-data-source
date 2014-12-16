@@ -21,4 +21,4 @@ src/*.bundles/*/*.*
 !src/*.bundles/*/*.bemdecl.js
 !src/common.blocks/content
 
-config/credentials.json
+config/private.json

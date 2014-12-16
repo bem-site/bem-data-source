@@ -7,17 +7,16 @@ var path = require('path'),
  * Application configuration module based on nconf library
  */
 module.exports = (function () {
-    nconf
-        .env();
+    nconf.env();
 
     nconf.add('config', {
         type: 'file',
-        file: path.resolve(__dirname, '..', 'config/config.json')
+        file: path.resolve(__dirname, '..', 'config/public.json')
     });
 
     nconf.add('credentials', {
         type: 'file',
-        file: path.resolve(__dirname, '..', 'config/credentials.json')
+        file: path.resolve(__dirname, '..', 'config/private.json')
     });
 
     return nconf;

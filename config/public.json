@@ -4,8 +4,7 @@
     "maxOpenFiles": 100,
     "cocaine": {
         "storage": {
-            "debug": false,
-            "namespace": "lego-site-data:master"
+            "debug": false
         }
     }
 }

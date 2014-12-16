@@ -4,17 +4,29 @@ var logger = require('./src/logger'),
 
 exports.publish = require('./src/commands/publish').publish;
 
-exports.remove = function (repo, version, options, isDryRun) {
+/**
+ * Removes version from registry
+ * Also removes all example files from storage
+ * @param {String} repo - name of repository (library)
+ * @param {String} version - name of version (branch|tag|pr)
+ * @param {Boolean} isDryRun - dry run flag
+ * @returns {*}
+ */
+exports.remove = function (repo, version, isDryRun) {
     logger.setProductionMode();
 
-    options.isDryRun = isDryRun;
-    var target = new TargetRemove(repo, version, options);
+    var target = new TargetRemove(repo, version, { isDryRun: isDryRun });
     return target.execute().fail(function() { process.exit(1); });
 };
 
+/**
+ * View registry data
+ * @param {String} repo - name of repository (library)
+ * @param {String} version - name of version (branch|tag|pr)
+ * @returns {Promise}
+ */
 exports.view = function (repo, version) {
     logger.setProductionMode();
-    var options = { isCli: false},
-        target = new TargetView(repo, version, options);
+    var target = new TargetView(repo, version, { isCli: false });
     return target.execute().fail(function() { process.exit(1); });
 };
