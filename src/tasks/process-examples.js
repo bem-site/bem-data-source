@@ -22,7 +22,7 @@ var fs = require('fs'),
  */
 function readFiles(baseDir) {
     var def = vow.defer();
-    glob("**", { cwd: baseDir, nodir: true }, function (err, files) {
+    glob('**', { cwd: baseDir, nodir: true }, function (err, files) {
         err ? def.reject(err) : def.resolve(files);
     });
     return def.promise();
@@ -105,7 +105,7 @@ module.exports = function (target) {
             return readFiles(target.getTempPath());
         })
         .then(function (files) {
-            //TODO remove this filter!
+            // TODO remove this filter!
             /*
             files = files.filter(function (file) {
                 if (file.match(/README\.md$/)) {

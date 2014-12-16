@@ -93,7 +93,7 @@ TargetRemove.prototype = {
                 noVersion: 'Library %s version %s was not found in registry. Operation will be skipped'
             };
 
-            //check if registry exists
+            // check if registry exists
             if (!registry) {
                 logger.warn(message.noRegistry, module);
                 return vow.resolve();
@@ -101,13 +101,13 @@ TargetRemove.prototype = {
 
             registry = JSON.parse(registry);
 
-            //check if given library exists in registry
+            // check if given library exists in registry
             if (!registry[this.source]) {
                 logger.warn(util.format(message.noLibrary, this.source), module);
                 return vow.resolve();
             }
 
-            //check if given library version exists in registry
+            // check if given library version exists in registry
             if (!registry[this.source ].versions[this.ref]) {
                 logger.warn(util.format(message.noVersion, this.source, this.ref), module);
                 return vow.resolve();
@@ -119,6 +119,4 @@ TargetRemove.prototype = {
     }
 };
 
-
 module.exports = TargetRemove;
-

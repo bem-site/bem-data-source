@@ -10,12 +10,11 @@ var util = require('util'),
         PORT: 10053
     };
 
-function __uid(){
-    return (Math.random()*0x100000000).toString(36);
+function __uid() {
+    return (Math.random() * 0x100000000).toString(36);
 }
 
 function Storage(options) {
-
     options = options || {};
     this._namespace = options.namespace || OPTIONS.NAME_SPACE;
     this._locator = options.locator || util.format('%s:%s', OPTIONS.HOST, OPTIONS.PORT);
@@ -36,8 +35,8 @@ function Storage(options) {
 
 util.inherits(Storage, EventEmitter);
 
-Storage.prototype._log = function (){
-    if (this._debug){
+Storage.prototype._log = function () {
+    if (this._debug) {
         this._logger.debug.apply(this._logger, arguments);
     }
 };
@@ -45,34 +44,33 @@ Storage.prototype._log = function (){
 /**
  * Connect to storage
  */
-Storage.prototype.connect = function (){
-
+Storage.prototype.connect = function () {
     var _this = this;
 
-    assert(!this._connecting && !this._connected, "!this._connecting && !this._connected");
+    assert(!this._connecting && !this._connected, '!this._connecting && !this._connected');
 
     this._connecting = true;
 
-    if (this._debug){
+    if (this._debug) {
         _connectLogger();
     } else {
         _connectStorage();
     }
 
-    function _connectLogger(){
+    function _connectLogger() {
         _this._logger = _this._client.Logger(_this._app);
         _this._logger.connect();
-        _this._logger.once('connect', function (){
+        _this._logger.once('connect', function () {
             _this._logger._verbosity = 4;
             _connectStorage();
         });
     }
 
-    function _connectStorage(){
+    function _connectStorage() {
         var id = __uid();
         _this._log('[%s] connecting to storage service', id);
         _this._storage.connect();
-        _this._storage.once('connect', function (){
+        _this._storage.once('connect', function () {
             assert(_this._connecting);
             _this._log('[%s] connected to storage', id);
             _this._connecting = false;
@@ -89,7 +87,7 @@ Storage.prototype.connect = function (){
  */
 Storage.prototype.find = function (tags, cb) {
     tags = tags || [];
-    this._storage.find(this._namespace, tags, function (err, result){
+    this._storage.find(this._namespace, tags, function (err, result) {
         cb(err, result);
     });
 };
@@ -100,7 +98,7 @@ Storage.prototype.find = function (tags, cb) {
  * @param {Function} cb - callback function
  */
 Storage.prototype.read = function (key, cb) {
-    this._storage.read(this._namespace, key, function (err, result){
+    this._storage.read(this._namespace, key, function (err, result) {
         cb(err, result);
     });
 };
@@ -129,6 +127,5 @@ Storage.prototype.remove = function (key, cb) {
         cb(err, result);
     });
 };
-
 
 module.exports = Storage;
