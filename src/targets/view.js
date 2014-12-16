@@ -43,62 +43,121 @@ TargetView.prototype = {
             })
             .then(function(registry) {
                 if (!registry) {
-                    logger.warn('No registry record were found. ' +
-                    'Please try to make publish any library. Also this operation will be skipped', module);
-                    return vow.resolve();
+                    logger.warn(this._getMessage().registryNotFound, module);
+                    return vow.resolve(null);
                 }
 
                 registry = JSON.parse(registry);
-                var table;
 
-                if (this.source && this.ref) {
-                    if(this.options.format === 'short') {
-                        if(!registry[this.source]) {
-                            logger.warn(util.format('Library %s was not found in registry', this.ref), module);
-                            return vow.resolve(null);
-                        }
-
-                        var version = registry[this.source ].versions[this.ref];
-                        logger.info(util.format('Library: %s version: %s sha: %s date: %s',
-                            this.source, this.ref, version.sha, version.date), module);
-                        return vow.resolve(version);
-                    }
-                    //TODO implement show of data.json file for full format
+                // if no source and version names were given then show list of libraries in registry
+                if(!this.source) {
+                    return this._getListOfLibraries(registry);
                 }
 
-                if (this.source) {
-                    if(!registry[this.source]) {
-                        logger.warn(util.format('Library %s was not found in registry', this.ref), module);
-                        return vow.resolve([]);
-                    }
-
-                    var lib = registry[this.source];
-                    logger.info(util.format('Library: %s', lib.name), module);
-                    logger.info('Versions:', module);
-
-
-                    table = new Table();
-                    Object.keys(lib.versions).forEach(function(versionName) {
-                        var version = lib.versions[versionName];
-                        table.cell('Name', versionName);
-                        table.cell('Sha', version.sha);
-                        table.cell('Date', (new Date(version.date)).toString());
-                        table.newRow();
-                    });
-                    console.log(table.toString());
-                    return vow.resolve(Object.keys(lib.versions));
+                // check if given library exists in registry
+                if(!registry[this.source]) {
+                    logger.warn(this._getMessage().libraryNotFound, module);
+                    return vow.resolve([]);
                 }
 
-                table = new Table();
-                logger.info('Libraries:', module);
-                Object.keys(registry).forEach(function(libraryName) {
-                    table.cell('Name', libraryName);
-                    table.newRow();
-                });
-                console.log(table.toString());
+                if(!this.ref) {
+                    return this._getListOfVersions(registry);
+                }
 
-                return vow.resolve(Object.keys(registry));
+                // check if given library version exists in registry
+                if(!registry[this.source ].versions[this.ref]) {
+                    logger.warn(this._getMessage().versionNotFound, module);
+                    return vow.resolve(null);
+                }
+
+                return this._getVersionInfo(registry);
             }, this);
+    },
+
+    /**
+     * Returns message for given message key
+     * @returns {{registryNotFound: string, libraryNotFound: *, versionNotFound: *}}
+     * @private
+     */
+    _getMessage: function() {
+        return {
+            registryNotFound: 'No registry record were found. ' +
+            'Please try to make publish any library. Also this operation will be skipped',
+            libraryNotFound: util.format('Library %s was not found in registry', this.source),
+            versionNotFound: util.format('Library %s version %s was not found in registry', this.source, this.ref)
+        };
+    },
+
+    /**
+     * Returns list of libraries in storage for current namespace
+     * @param {Object} registry object
+     * @returns {*}
+     * @private
+     */
+    _getListOfLibraries: function(registry) {
+        var table = new Table();
+
+        if(this.options.isCli) {
+            logger.info('Libraries:', module);
+            Object.keys(registry).forEach(function (libraryName) {
+                table.cell('Name', libraryName);
+                table.newRow();
+            });
+            console.log(table.toString());
+        }
+        
+        return vow.resolve(Object.keys(registry));
+    },
+
+    /**
+     * Returns list of versions for given library. Also prints this information to console
+     * @param {String} registry - object
+     * @returns {*}
+     * @private
+     */
+    _getListOfVersions: function(registry) {
+        var lib = registry[this.source],
+            table = new Table();
+
+        if (this.options.isCli) {
+            logger.info(util.format('Library: %s', lib.name), module);
+            logger.info('Versions:', module);
+
+            Object.keys(lib.versions).forEach(function (versionName) {
+                var version = lib.versions[ versionName ];
+                table.cell('Library', this.source);
+                table.cell('Name', versionName);
+                table.cell('Sha', version.sha);
+                table.cell('Date', (new Date(version.date)).toString());
+                table.newRow();
+            }, this);
+            console.log(table.toString());
+        }
+
+        return vow.resolve(Object.keys(lib.versions));
+    },
+
+    /**
+     * Returns version info object. Also prints this information to console
+     * @param {Object} registry object
+     * @returns {*}
+     * @private
+     */
+    _getVersionInfo: function(registry) {
+        var version = registry[this.source ].versions[this.ref ],
+            table = new Table();
+
+        if (this.options.isCli) {
+            table.cell('Library', this.source);
+            table.cell('Version', this.ref);
+            table.cell('Sha', version.sha);
+            table.cell('Date', (new Date(version.date)).toString());
+            table.newRow();
+
+            console.log(table.toString());
+        }
+
+        return vow.resolve(version);
     }
 };
 

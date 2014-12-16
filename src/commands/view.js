@@ -17,11 +17,6 @@ module.exports = function () {
             .name('version').title('Version of repository (tag or branch)')
             .short('v').long('version')
             .end()
-        .opt()
-            .name('format').title('Output format')
-            .short('f').long('format')
-            .def('short')
-            .end()
         .act(function (opts) {
             var target = new TargetView(opts.repo, opts.version, { isCli: true, format: opts.format });
             return target.execute()
