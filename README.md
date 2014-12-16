@@ -2,6 +2,7 @@ bem-data-source
 ===============
 
 [![Build Status](https://travis-ci.org/bem/bem-data-source.svg?branch=master)](https://travis-ci.org/bem/bem-data-source)
+[![Coverage Status](https://coveralls.io/repos/bem/bem-data-source/badge.png)](https://coveralls.io/r/bem/bem-data-source)
 [![Dependency Status](https://david-dm.org/bem/bem-data-source.svg?style=flat)](https://david-dm.org/bem/bem-data-source)
 [![devDependency Status](https://david-dm.org/bem/bem-data-source/dev-status.svg?style=flat)](https://david-dm.org/bem/bem-data-source#info=devDependencies)
 
