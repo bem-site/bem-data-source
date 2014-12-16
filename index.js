@@ -9,13 +9,16 @@ exports.publish = require('./src/commands/publish').publish;
  * Also removes all example files from storage
  * @param {String} repo - name of repository (library)
  * @param {String} version - name of version (branch|tag|pr)
+ * @param {Object} options - options object with fields:
+ * - {Boolean} debug - flag for storage
+ * - {String} namespace - storage key namespace
  * @param {Boolean} isDryRun - dry run flag
  * @returns {*}
  */
-exports.remove = function (repo, version, isDryRun) {
+exports.remove = function (repo, version, options, isDryRun) {
     logger.setProductionMode();
-
-    var target = new TargetRemove(repo, version, { isDryRun: isDryRun });
+    options.isDryRun = isDryRun;
+    var target = new TargetRemove(repo, version, options);
     return target.execute().fail(function() { process.exit(1); });
 };
 
@@ -23,10 +26,14 @@ exports.remove = function (repo, version, isDryRun) {
  * View registry data
  * @param {String} repo - name of repository (library)
  * @param {String} version - name of version (branch|tag|pr)
+ * @param {Object} options - options object with fields:
+ * - {Boolean} debug - flag for storage
+ * - {String} namespace - storage key namespace
  * @returns {Promise}
  */
-exports.view = function (repo, version) {
+exports.view = function (repo, version, options) {
     logger.setProductionMode();
-    var target = new TargetView(repo, version, { isCli: false });
+    options.isCli = false;
+    var target = new TargetView(repo, version, options);
     return target.execute().fail(function() { process.exit(1); });
 };

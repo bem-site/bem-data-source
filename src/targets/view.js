@@ -37,7 +37,7 @@ TargetView.prototype = {
      * @returns {*}
      */
     execute: function() {
-        return storage.init()
+        return storage.init(this.options)
             .then(function () {
                 return storage.read(constants.ROOT);
             })

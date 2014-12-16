@@ -18,7 +18,7 @@ module.exports = function () {
             .short('v').long('version')
             .end()
         .act(function (opts) {
-            var target = new TargetView(opts.repo, opts.version, { isCli: true, format: opts.format });
+            var target = new TargetView(opts.repo, opts.version, { isCli: true });
             return target.execute()
                 .then(function () {
                     logger.info('VIEW COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);
