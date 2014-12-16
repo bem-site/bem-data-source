@@ -100,7 +100,7 @@ function sendToStorage(target, filePath) {
 module.exports = function (target) {
     var openFilesLimit = config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES;
 
-    return storage.init()
+    return storage.init(target.options)
         .then(function () {
             return readFiles(target.getTempPath());
         })
