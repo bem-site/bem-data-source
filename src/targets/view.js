@@ -105,7 +105,7 @@ TargetView.prototype = {
             });
             console.log(table.toString());
         }
-        
+
         return vow.resolve(Object.keys(registry));
     },
 
