@@ -1,0 +1,707 @@
+/* ../../../libs/bem-bl/blocks-touch/b-page/b-page.css: begin */ /**/
+    .b-page
+    {
+        font: 12px Helvetica, Arial, sans-serif;
+    
+        margin: 0;
+    
+        background: #fff;
+        -webkit-text-size-adjust: none;
+    }
+/* ../../../libs/bem-bl/blocks-touch/b-page/b-page.css: end */ /**/
+
+/* ../../../libs/islands-romochka/touch.blocks/b-page/b-page.css: begin */ /**/
+    /* :( */
+    .i-ua_android-vowels-hack_yes *
+    {
+        text-shadow: none !important;
+    }
+/* ../../../libs/islands-romochka/touch.blocks/b-page/b-page.css: end */ /**/
+
+/* ./blocks/example/example.css: begin */ /**/
+    .example + .example
+    {
+        margin-top: 20px;
+    }
+    
+/* ./blocks/example/example.css: end */ /**/
+
+/* ./blocks/service-icon/service-icon.css: begin */ /**/
+    .service-icon .image
+    {
+        width: 100%;
+        height: 100%;
+    
+        background-repeat: no-repeat;
+        -webkit-background-size: 100% 100%;
+                background-size: 100% 100%;
+    }
+    
+    .service-icon .service-icon__elem
+    {
+        display: inline-block;
+    
+        margin-right: 10px;
+    }
+    
+/* ./blocks/service-icon/service-icon.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__afisha/_color/service-icon__afisha_color_56.css: begin */ /**/
+    .service-icon__afisha_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__afisha/_color/service-icon__afisha_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__afisha_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__afisha/_color/service-icon__afisha_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__afisha/_color/service-icon__afisha_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__auto/_color/service-icon__auto_color_56.css: begin */ /**/
+    .service-icon__auto_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__auto/_color/service-icon__auto_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__auto_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__auto/_color/service-icon__auto_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__auto/_color/service-icon__auto_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__browser/_color/service-icon__browser_color_56.css: begin */ /**/
+    .service-icon__browser_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__browser/_color/service-icon__browser_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__browser_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__browser/_color/service-icon__browser_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__browser/_color/service-icon__browser_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__disk/_color/service-icon__disk_color_56.css: begin */ /**/
+    .service-icon__disk_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__disk/_color/service-icon__disk_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__disk_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__disk/_color/service-icon__disk_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__disk/_color/service-icon__disk_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__images/_color/service-icon__images_color_56.css: begin */ /**/
+    .service-icon__images_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__images/_color/service-icon__images_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__images_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__images/_color/service-icon__images_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__images/_color/service-icon__images_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__mail/_color/service-icon__mail_color_56.css: begin */ /**/
+    .service-icon__mail_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__mail/_color/service-icon__mail_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__mail_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__mail/_color/service-icon__mail_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__mail/_color/service-icon__mail_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__maps/_color/service-icon__maps_color_56.css: begin */ /**/
+    .service-icon__maps_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__maps/_color/service-icon__maps_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__maps_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__maps/_color/service-icon__maps_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__maps/_color/service-icon__maps_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__market/_color/service-icon__market_color_56.css: begin */ /**/
+    .service-icon__market_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__market/_color/service-icon__market_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__market_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__market/_color/service-icon__market_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__market/_color/service-icon__market_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__money/_color/service-icon__money_color_56.css: begin */ /**/
+    .service-icon__money_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__money/_color/service-icon__money_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__money_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__money/_color/service-icon__money_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__money/_color/service-icon__money_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__music/_color/service-icon__music_color_56.css: begin */ /**/
+    .service-icon__music_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__music/_color/service-icon__music_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__music_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__music/_color/service-icon__music_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__music/_color/service-icon__music_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__news/_color/service-icon__news_color_56.css: begin */ /**/
+    .service-icon__news_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__news/_color/service-icon__news_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__news_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__news/_color/service-icon__news_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__news/_color/service-icon__news_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__slovari/_color/service-icon__slovari_color_56.css: begin */ /**/
+    .service-icon__slovari_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__slovari/_color/service-icon__slovari_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__slovari_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__slovari/_color/service-icon__slovari_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__slovari/_color/service-icon__slovari_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__taxi/_color/service-icon__taxi_color_56.css: begin */ /**/
+    .service-icon__taxi_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__taxi/_color/service-icon__taxi_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__taxi_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__taxi/_color/service-icon__taxi_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__taxi/_color/service-icon__taxi_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__translate/_color/service-icon__translate_color_56.css: begin */ /**/
+    .service-icon__translate_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__translate/_color/service-icon__translate_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__translate_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__translate/_color/service-icon__translate_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__translate/_color/service-icon__translate_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__video/_color/service-icon__video_color_56.css: begin */ /**/
+    .service-icon__video_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__video/_color/service-icon__video_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__video_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__video/_color/service-icon__video_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__video/_color/service-icon__video_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__weather/_color/service-icon__weather_color_56.css: begin */ /**/
+    .service-icon__weather_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__weather/_color/service-icon__weather_color.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__weather_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__weather/_color/service-icon__weather_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__weather/_color/service-icon__weather_color_56.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__afisha/_self/service-icon__afisha_self_40.css: begin */ /**/
+    .service-icon__afisha_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__afisha/_self/service-icon__afisha_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__afisha_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__afisha/_self/service-icon__afisha_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__afisha/_self/service-icon__afisha_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__appsearch/_self/service-icon__appsearch_self_40.css: begin */ /**/
+    .service-icon__appsearch_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__appsearch/_self/service-icon__appsearch_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__appsearch_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__appsearch/_self/service-icon__appsearch_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__appsearch/_self/service-icon__appsearch_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__auto/_self/service-icon__auto_self_40.css: begin */ /**/
+    .service-icon__auto_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__auto/_self/service-icon__auto_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__auto_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__auto/_self/service-icon__auto_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__auto/_self/service-icon__auto_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__avia/_self/service-icon__avia_self_40.css: begin */ /**/
+    .service-icon__avia_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__avia/_self/service-icon__avia_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__avia_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__avia/_self/service-icon__avia_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__avia/_self/service-icon__avia_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__blogs/_self/service-icon__blogs_self_40.css: begin */ /**/
+    .service-icon__blogs_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__blogs/_self/service-icon__blogs_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__blogs_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__blogs/_self/service-icon__blogs_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__blogs/_self/service-icon__blogs_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__browser/_self/service-icon__browser_self_40.css: begin */ /**/
+    .service-icon__browser_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__browser/_self/service-icon__browser_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__browser_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__browser/_self/service-icon__browser_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__browser/_self/service-icon__browser_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__fresh/_self/service-icon__fresh_self_40.css: begin */ /**/
+    .service-icon__fresh_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__fresh/_self/service-icon__fresh_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__fresh_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__fresh/_self/service-icon__fresh_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__fresh/_self/service-icon__fresh_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__gorod/_self/service-icon__gorod_self_40.css: begin */ /**/
+    .service-icon__gorod_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__gorod/_self/service-icon__gorod_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__gorod_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__gorod/_self/service-icon__gorod_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__gorod/_self/service-icon__gorod_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__images/_self/service-icon__images_self_40.css: begin */ /**/
+    .service-icon__images_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__images/_self/service-icon__images_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__images_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__images/_self/service-icon__images_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__images/_self/service-icon__images_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__mail/_self/service-icon__mail_self_40.css: begin */ /**/
+    .service-icon__mail_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__mail/_self/service-icon__mail_self.svg");
+    }
+    
+    .i-ua_inlinesvg_no .service-icon__mail_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__mail/_self/service-icon__mail_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__mail/_self/service-icon__mail_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__maps/_self/service-icon__maps_self_40.css: begin */ /**/
+    .service-icon__maps_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__maps/_self/service-icon__maps_self_40.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__maps_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__maps/_self/service-icon__maps_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__maps/_self/service-icon__maps_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__market/_self/service-icon__market_self_40.css: begin */ /**/
+    .service-icon__market_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__market/_self/service-icon__market_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__market_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__market/_self/service-icon__market_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__market/_self/service-icon__market_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__music/_self/service-icon__music_self_40.css: begin */ /**/
+    .service-icon__music_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__music/_self/service-icon__music_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__music_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__music/_self/service-icon__music_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__music/_self/service-icon__music_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__news/_self/service-icon__news_self_40.css: begin */ /**/
+    .service-icon__news_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__news/_self/service-icon__news_self.svg");
+    }
+    
+    .i-ua_inlinesvg_no .service-icon__news_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__news/_self/service-icon__news_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__news/_self/service-icon__news_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__peoplesearch/_self/service-icon__peoplesearch_self_40.css: begin */ /**/
+    .service-icon__peoplesearch_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__peoplesearch/_self/service-icon__peoplesearch_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__peoplesearch_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__peoplesearch/_self/service-icon__peoplesearch_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__peoplesearch/_self/service-icon__peoplesearch_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__rabota/_self/service-icon__rabota_self_40.css: begin */ /**/
+    .service-icon__rabota_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__rabota/_self/service-icon__rabota_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__rabota_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__rabota/_self/service-icon__rabota_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__rabota/_self/service-icon__rabota_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__rasp/_self/service-icon__rasp_self_40.css: begin */ /**/
+    .service-icon__rasp_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__rasp/_self/service-icon__rasp_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__rasp_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__rasp/_self/service-icon__rasp_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__rasp/_self/service-icon__rasp_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__realty/_self/service-icon__realty_self_40.css: begin */ /**/
+    .service-icon__realty_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__realty/_self/service-icon__realty_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__realty_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__realty/_self/service-icon__realty_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__realty/_self/service-icon__realty_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__review/_self/service-icon__review_self_40.css: begin */ /**/
+    .service-icon__review_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__review/_self/service-icon__review_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__review_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__review/_self/service-icon__review_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__review/_self/service-icon__review_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__search/_self/service-icon__search_self_40.css: begin */ /**/
+    .service-icon__search_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__search/_self/service-icon__search_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__search_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__search/_self/service-icon__search_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__search/_self/service-icon__search_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__slovari/_self/service-icon__slovari_self_40.css: begin */ /**/
+    .service-icon__slovari_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__slovari/_self/service-icon__slovari_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__slovari_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__slovari/_self/service-icon__slovari_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__slovari/_self/service-icon__slovari_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__translate/_self/service-icon__translate_self_40.css: begin */ /**/
+    .service-icon__translate_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__translate/_self/service-icon__translate_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__translate_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__translate/_self/service-icon__translate_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__translate/_self/service-icon__translate_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__tv/_self/service-icon__tv_self_40.css: begin */ /**/
+    .service-icon__tv_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__tv/_self/service-icon__tv_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__tv_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__tv/_self/service-icon__tv_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__tv/_self/service-icon__tv_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__video/_self/service-icon__video_self_40.css: begin */ /**/
+    .service-icon__video_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__video/_self/service-icon__video_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__video_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__video/_self/service-icon__video_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__video/_self/service-icon__video_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__weather/_self/service-icon__weather_self_40.css: begin */ /**/
+    .service-icon__weather_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__weather/_self/service-icon__weather_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__weather_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__weather/_self/service-icon__weather_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__weather/_self/service-icon__weather_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__www/_self/service-icon__www_self_40.css: begin */ /**/
+    .service-icon__www_self_40
+    {
+        width: 40px;
+        height: 40px;
+    
+        background: url("../../../common.blocks/service-icon/__www/_self/service-icon__www_self.svg");
+    }
+    .i-ua_inlinesvg_no .service-icon__www_self_40
+    {
+        background: url("../../../common.blocks/service-icon/__www/_self/service-icon__www_self_40.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__www/_self/service-icon__www_self_40.css: end */ /**/
+
+/* ../../../common.blocks/service-icon/__avia/_color/service-icon__avia_color_56.css: begin */ /**/
+    .service-icon__avia_color_56
+    {
+        width: 56px;
+        height: 56px;
+    
+        background: url("../../../common.blocks/service-icon/__avia/_color/service-icon__avia_color.svg");
+    }
+    
+    .i-ua_inlinesvg_no .service-icon__avia_color_56
+    {
+        background: url("../../../common.blocks/service-icon/__avia/_color/service-icon__avia_color_56.png");
+    }
+    
+/* ../../../common.blocks/service-icon/__avia/_color/service-icon__avia_color_56.css: end */ /**/
+
+/* ./blocks/example/_oneline/example_oneline_yes.css: begin */ /**/
+    .example_oneline_yes .service-icon
+    {
+        display: inline-block;
+    
+        vertical-align: middle;
+    
+        background: #fff133;
+    }
+    
+/* ./blocks/example/_oneline/example_oneline_yes.css: end */ /**/

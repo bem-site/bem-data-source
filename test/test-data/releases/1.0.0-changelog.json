@@ -1,0 +1,103 @@
+{
+    "Исправлено": [
+        {
+            "source": "startrek",
+            "url": "https://st.yandex-team.ru/ISL-887",
+            "title": "Избавиться от warning при сборке bemhtml шаблонов",
+            "state": "closed",
+            "user": "arikon",
+            "id": "ISL-887",
+            "timestamp": 1411628965894,
+            "labels": {
+                "changelog": [
+                    "Исправлено"
+                ],
+                "platform": [],
+                "block": []
+            }
+        }
+    ],
+    "Новое": [
+        {
+            "source": "startrek",
+            "url": "https://st.yandex-team.ru/ISLICONS-61",
+            "title": "service-icon: Добавить иконку сервиса «Яндекс.Город»",
+            "state": "closed",
+            "user": "gogoleff",
+            "id": "ISLICONS-61",
+            "timestamp": 1407320581016,
+            "labels": {
+                "changelog": [
+                    "Новое"
+                ],
+                "platform": [
+                    "Common"
+                ],
+                "block": [
+                    "service-icon"
+                ]
+            }
+        },
+        {
+            "source": "startrek",
+            "url": "https://st.yandex-team.ru/ISLICONS-63",
+            "title": "service-icon: Добавить новую иконку сервиса Авиабилеты",
+            "state": "closed",
+            "user": "arikon",
+            "id": "ISLICONS-63",
+            "timestamp": 1407853016884,
+            "labels": {
+                "changelog": [
+                    "Новое"
+                ],
+                "platform": [
+                    "Common"
+                ],
+                "block": [
+                    "service-icon"
+                ]
+            }
+        },
+        {
+            "source": "startrek",
+            "url": "https://st.yandex-team.ru/ISLICONS-54",
+            "title": "service-icon: Рефакторинг",
+            "state": "closed",
+            "user": "karamadjong",
+            "id": "ISLICONS-54",
+            "timestamp": 1406009023588,
+            "labels": {
+                "changelog": [
+                    "Новое"
+                ],
+                "platform": [
+                    "Common",
+                    "Desktop"
+                ],
+                "block": [
+                    "service-icon"
+                ]
+            }
+        },
+        {
+            "source": "startrek",
+            "url": "https://st.yandex-team.ru/ISLICONS-62",
+            "title": "Нормализовать зависимости во всех блоках от блока i-bem",
+            "state": "closed",
+            "user": "sagitov",
+            "id": "ISLICONS-62",
+            "timestamp": 1407854015855,
+            "labels": {
+                "changelog": [
+                    "Новое"
+                ],
+                "platform": [
+                    "Common"
+                ],
+                "block": [
+                    "service-icon"
+                ]
+            }
+        }
+    ]
+}

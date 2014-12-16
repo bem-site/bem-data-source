@@ -38,8 +38,9 @@
     "easy-table": "0.3.0"
   },
   "devDependencies": {
-    "jshint": "2.5.5",
-    "jscs": "1.5.9"
+    "mocha": "~2.0.1",
+    "jshint": "~2.5.5",
+    "jscs": "~1.5.9"
   },
   "bin": {
     "ds": "./bin/ds"

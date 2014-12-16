@@ -1,0 +1,13 @@
+{
+  "author": "",
+  "name": "test-library",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/test/test-library.git"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {},
+  "private": true
+}

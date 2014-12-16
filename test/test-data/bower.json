@@ -1,0 +1,14 @@
+{
+  "name": "test-library",
+  "version": "1.0.0",
+  "description": "test-library",
+  "main": "",
+  "icon": "test-library.svg",
+  "ignore": [
+    "node_modules",
+    "debian"
+  ],
+  "dependencies": {
+    "bem-bl": "git://github.com/bem/bem-bl.git#^2.0.2"
+  }
+}
