@@ -10,7 +10,7 @@ var Api = require('github'),
 /**
  * Github API module based on github library
  */
-module.exports = (function () {
+module.exports = function () {
     logger.info('Initialize github API', module);
 
     var gitPublic,
@@ -143,4 +143,4 @@ module.exports = (function () {
             return def.promise();
         }
     };
-});
+};

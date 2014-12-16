@@ -18,7 +18,7 @@ var fs = require('fs'),
     TargetPublish  = function (ref, options) {
         var packageJson = _readPackageJson();
 
-        if(!packageJson) {
+        if (!packageJson) {
             throw new Error('package.json file can not be parsed');
         }
 

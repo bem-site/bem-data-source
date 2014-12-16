@@ -14,14 +14,14 @@ var path = require('path'),
         return this.init(options);
     },
 
-    TargetConvertVersion = function(lib, version) {
+    TargetConvertVersion = function (lib, version) {
         this.source = lib;
         this.ref = version;
-        this.getOutputPath = function() {
+        this.getOutputPath = function () {
             return path.join(process.cwd(), version);
         };
         this.getTempPath = this.getOutputPath;
-        this.getSourceName = function() {
+        this.getSourceName = function () {
             return lib;
         };
     };
@@ -51,12 +51,12 @@ TargetConvert.prototype = {
             }, this);
     },
 
-    _convertVersions: function() {
+    _convertVersions: function () {
         logger.info(util.format('Start convert versions of %s library', this.source), module);
         var _this = this;
-        return vowFs.listDir(process.cwd()).then(function(versions) {
+        return vowFs.listDir(process.cwd()).then(function (versions) {
             //TODO remove it
-            //versions = versions.filter(function(v) {
+            //versions = versions.filter(function (v) {
             //    return ['dev', 'support-2.x', 'v2.1.0', 'v2.1.1', 'v2.2.0'].indexOf(v) === -1;
             //});
 
@@ -70,19 +70,19 @@ TargetConvert.prototype = {
         }, this);
     },
 
-    _convertVersion: function(version) {
+    _convertVersion: function (version) {
         var target = new TargetConvertVersion(this.source, version);
         return this._processExamples(target)
-            .then(function() {
+            .then(function () {
                 return this._sendDoc(target);
             }, this);
     },
 
-    _processExamples: function(target) {
+    _processExamples: function (target) {
         return processExamples(target);
     },
 
-    _sendDoc: function(target) {
+    _sendDoc: function (target) {
         return sendDoc(target);
     }
 };

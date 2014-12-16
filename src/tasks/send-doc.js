@@ -24,7 +24,7 @@ module.exports = function (target) {
         shaKey;
 
     return vowFs.read(fPath, 'utf-8')
-        .then(function(content) {
+        .then(function (content) {
             try {
                 shaKey = sha(content);
             }catch(err) {
@@ -32,10 +32,10 @@ module.exports = function (target) {
             }
             return storage.write(key, content, [lib, version]);
         })
-        .then(function() {
+        .then(function () {
             return storage.read(constants.ROOT);
         })
-        .then(function(registry) {
+        .then(function (registry) {
             registry = registry ? JSON.parse(registry) : {};
             registry[lib] = registry[lib] || { name: lib, versions: {} };
 
@@ -48,7 +48,7 @@ module.exports = function (target) {
 
             return storage.write(constants.ROOT, JSON.stringify(registry), [constants.ROOT]);
         })
-        .then(function() {
+        .then(function () {
             return vow.resolve(target);
         });
 };

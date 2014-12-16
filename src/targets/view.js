@@ -36,12 +36,12 @@ TargetView.prototype = {
      * Executes target
      * @returns {*}
      */
-    execute: function() {
+    execute: function () {
         return storage.init(this.options)
             .then(function () {
                 return storage.read(constants.ROOT);
             })
-            .then(function(registry) {
+            .then(function (registry) {
                 if (!registry) {
                     logger.warn(this._getMessage().registryNotFound, module);
                     return vow.resolve(null);
@@ -50,22 +50,22 @@ TargetView.prototype = {
                 registry = JSON.parse(registry);
 
                 // if no source and version names were given then show list of libraries in registry
-                if(!this.source) {
+                if (!this.source) {
                     return this._getListOfLibraries(registry);
                 }
 
                 // check if given library exists in registry
-                if(!registry[this.source]) {
+                if (!registry[this.source]) {
                     logger.warn(this._getMessage().libraryNotFound, module);
                     return vow.resolve([]);
                 }
 
-                if(!this.ref) {
+                if (!this.ref) {
                     return this._getListOfVersions(registry);
                 }
 
                 // check if given library version exists in registry
-                if(!registry[this.source ].versions[this.ref]) {
+                if (!registry[this.source ].versions[this.ref]) {
                     logger.warn(this._getMessage().versionNotFound, module);
                     return vow.resolve(null);
                 }
@@ -79,7 +79,7 @@ TargetView.prototype = {
      * @returns {{registryNotFound: string, libraryNotFound: *, versionNotFound: *}}
      * @private
      */
-    _getMessage: function() {
+    _getMessage: function () {
         return {
             registryNotFound: 'No registry record were found. ' +
             'Please try to make publish any library. Also this operation will be skipped',
@@ -94,10 +94,10 @@ TargetView.prototype = {
      * @returns {*}
      * @private
      */
-    _getListOfLibraries: function(registry) {
+    _getListOfLibraries: function (registry) {
         var table = new Table();
 
-        if(this.options.isCli) {
+        if (this.options.isCli) {
             logger.info('Libraries:', module);
             Object.keys(registry).forEach(function (libraryName) {
                 table.cell('Name', libraryName);
@@ -115,7 +115,7 @@ TargetView.prototype = {
      * @returns {*}
      * @private
      */
-    _getListOfVersions: function(registry) {
+    _getListOfVersions: function (registry) {
         var lib = registry[this.source],
             table = new Table();
 
@@ -143,7 +143,7 @@ TargetView.prototype = {
      * @returns {*}
      * @private
      */
-    _getVersionInfo: function(registry) {
+    _getVersionInfo: function (registry) {
         var version = registry[this.source ].versions[this.ref ],
             table = new Table();
 

@@ -52,7 +52,7 @@ function _checkForFileExist(repo, version) {
         });
 }
 
-function _replaceDoc(repo, version, doc, lang, url, needToCommit) {
+function _replaceDoc(repo, version, doc, lang, url) {
     logger.info('TRY TO REPLACE DOCUMENTATION FOR:', module);
 
     logger.debug(util.format('repository name: %s', repo), module);

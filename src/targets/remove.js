@@ -36,7 +36,7 @@ TargetRemove.prototype = {
      * Executes target
      * @returns {*}
      */
-    execute: function() {
+    execute: function () {
         if (this.options.isDryRun) {
             logger.info('Remove command was launched in dry run mode', module);
             logger.info(util.format(
@@ -44,10 +44,10 @@ TargetRemove.prototype = {
             return vow.resolve();
         }
         return storage.init(this.options)
-            .then(function() {
+            .then(function () {
                 return this._removeRecords();
             }, this)
-            .then(function() {
+            .then(function () {
                 return this._removeFromRegistry();
             }, this);
     },
@@ -57,10 +57,10 @@ TargetRemove.prototype = {
      * @returns {*}
      * @private
      */
-    _removeRecords: function() {
+    _removeRecords: function () {
         var portionSize = config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES;
 
-        return storage.find([this.source, this.ref]).then(function(keys) {
+        return storage.find([this.source, this.ref]).then(function (keys) {
             var portions = utility.separateArrayOnChunks(keys, portionSize);
 
             logger.debug(util.format('example records count: %s', keys.length), module);
@@ -84,8 +84,8 @@ TargetRemove.prototype = {
      * @returns {*}
      * @private
      */
-    _removeFromRegistry: function() {
-        return storage.read(constants.ROOT).then(function(registry) {
+    _removeFromRegistry: function () {
+        return storage.read(constants.ROOT).then(function (registry) {
             var message = {
                 noRegistry: 'No registry record were found. ' +
                     'Please try to make publish any library. Also this operation will be skipped',

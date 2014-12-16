@@ -32,7 +32,7 @@ function getLogger(module) {
         return intel.getLogger(module ? module.filename.split('/').slice(-2).join('/') : '');
     } else {
         return {
-            verbose: function() {},
+            verbose: function () {},
             debug: console.log,
             info: console.info,
             warn: console.warn,
