@@ -106,6 +106,7 @@ module.exports = function (target) {
         })
         .then(function (files) {
             //TODO remove this filter!
+            /*
             files = files.filter(function(file) {
                 if (file.match(/README\.md$/)) {
                     return false;
@@ -122,6 +123,7 @@ module.exports = function (target) {
 
                 return true;
             });
+            */
 
             var portions = utility.separateArrayOnChunks(files, openFilesLimit);
 
