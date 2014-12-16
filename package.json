@@ -47,8 +47,8 @@
   },
   "scripts": {
     "config": "cp config/_private.json config/private.json",
-    "test": "./node_modules/.bin/mocha",
-    "codestyle": "node_modules/.bin/jshint . && node_modules/.bin/jscs -c .jscs.js ."
+    "mocha": "",
+    "test": "node_modules/.bin/jshint . && node_modules/.bin/jscs -c .jscs.js ."
   },
   "readmeFilename": "README.md",
   "licenses": [
