@@ -27,7 +27,7 @@ module.exports = function (target) {
         .then(function (content) {
             try {
                 shaKey = sha(content);
-            }catch(err) {
+            }catch (err) {
                 shaKey = sha(util.format('%s:%s:%s', lib, version, (new Date()).toString()));
             }
             return storage.write(key, content, [lib, version]);
@@ -52,4 +52,3 @@ module.exports = function (target) {
             return vow.resolve(target);
         });
 };
-

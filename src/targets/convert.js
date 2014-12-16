@@ -55,10 +55,10 @@ TargetConvert.prototype = {
         logger.info(util.format('Start convert versions of %s library', this.source), module);
         var _this = this;
         return vowFs.listDir(process.cwd()).then(function (versions) {
-            //TODO remove it
-            //versions = versions.filter(function (v) {
+            // TODO remove it
+            // versions = versions.filter(function (v) {
             //    return ['dev', 'support-2.x', 'v2.1.0', 'v2.1.1', 'v2.2.0'].indexOf(v) === -1;
-            //});
+            // });
 
             return versions.reduce(function (prev, item) {
                 prev = prev.then(function () {

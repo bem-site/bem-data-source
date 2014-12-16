@@ -12,11 +12,11 @@ var logger = require('./src/logger'),
  * @param {Boolean} isDryRun - dry run flag
  * @returns {*}
  */
-exports.publish = function(version, options, isDryRun) {
+exports.publish = function (version, options, isDryRun) {
     logger.setProductionMode();
     options.isDryRun = isDryRun;
     var target = new TargetPublish(version, options);
-    return target.execute().fail(function() { process.exit(1); });
+    return target.execute().fail(function () { process.exit(1); });
 };
 
 /**
@@ -32,7 +32,7 @@ exports.view = function (repo, version, options) {
     logger.setProductionMode();
     options.isCli = false;
     var target = new TargetView(repo, version, options);
-    return target.execute().fail(function() { process.exit(1); });
+    return target.execute().fail(function () { process.exit(1); });
 };
 
 /**
@@ -50,5 +50,5 @@ exports.remove = function (repo, version, options, isDryRun) {
     logger.setProductionMode();
     options.isDryRun = isDryRun;
     var target = new TargetRemove(repo, version, options);
-    return target.execute().fail(function() { process.exit(1); });
+    return target.execute().fail(function () { process.exit(1); });
 };

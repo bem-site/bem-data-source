@@ -161,7 +161,4 @@ TargetView.prototype = {
     }
 };
 
-
 module.exports = TargetView;
-
-
