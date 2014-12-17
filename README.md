@@ -35,6 +35,8 @@ bem-data-source
     }
 }
 ```
+* `mailer` - объект с настройками почтовой рассылки. Настоятельно рекомендуется выносить данные
+настройки в приватный конфигурационный файл `config/private.json`.
 
 ### Файл config/private.json
 
@@ -46,6 +48,22 @@ bem-data-source
     "cocaine": {
       "namespace": "your_application_namespace"
     }
+  }
+}
+```
+
+Настройки почтовой рассылки:
+
+```
+{
+  "mailer": {
+    "host": "your e-mail-host",
+     "port": 25,
+     "from": "john.smith@gmail.com",
+     "to": [
+       "recepient1@gmail.com",
+       "recepient2@gmail.com"
+     ]
   }
 }
 ```
