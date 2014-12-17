@@ -10,7 +10,7 @@ var util = require('util'),
 
 module.exports = function (target) {
     var isEnable = config.get('mailer:enabled') || false;
-    if(!isEnable) {
+    if (!isEnable) {
         return vow.resolve(target);
     }
 

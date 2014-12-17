@@ -129,7 +129,7 @@ TargetRemove.prototype = {
      */
     _sendEmail: function () {
         var isEnable = config.get('mailer:enabled') || false;
-        if(!isEnable) {
+        if (!isEnable) {
             return vow.resolve();
         }
 
