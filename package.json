@@ -17,26 +17,27 @@
     "node": ">= 0.8.0"
   },
   "dependencies": {
-    "vow": "~0.4.1",
-    "vow-fs": "~0.3.0",
-    "nconf": "~0.7.1",
-    "lodash": "~2.4.1",
-    "intel": "~0.5.2",
-    "github": "~0.2.2",
-    "marked": "git://github.com/dab/marked.git",
-    "coa": "~0.4.0",
-    "fs-extra": "~0.13.0",
-    "sha1": "~1.1.0",
-    "rsync": "0.3.0",
-    "glob": "4.3.1",
     "assert": "^1.1.2",
+    "coa": "~0.4.0",
     "cocaine": "^0.4.1-6",
+    "easy-table": "0.3.0",
+    "fs-extra": "~0.13.0",
+    "github": "~0.2.2",
+    "glob": "4.3.1",
+    "intel": "~0.5.2",
+    "lodash": "~2.4.1",
+    "marked": "git://github.com/dab/marked.git",
+    "nconf": "~0.7.1",
     "optimist": "^0.6.1",
-    "easy-table": "0.3.0"
+    "rsync": "0.3.0",
+    "sha1": "~1.1.0",
+    "vow": "~0.4.1",
+    "vow-fs": "~0.3.0"
   },
   "devDependencies": {
     "mocha": "~2.0.1",
     "should": "~4.4.1",
+    "istanbul": "^0.3.5",
     "jshint": "~2.5.10",
     "jscs": "~1.8.1"
   },
@@ -46,6 +47,7 @@
   "scripts": {
     "config": "cp config/_private.json config/private.json",
     "mocha": "node_modules/.bin/mocha",
+    "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha && istanbul report json-summary",
     "test": "node_modules/.bin/jshint . && node_modules/.bin/jscs -c .jscs.js ."
   },
   "readmeFilename": "README.md",
