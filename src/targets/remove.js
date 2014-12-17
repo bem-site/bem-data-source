@@ -51,7 +51,7 @@ TargetRemove.prototype = {
             .then(function () {
                 return this._removeFromRegistry();
             }, this)
-            .then(function() {
+            .then(function () {
                 return this._sendEmail();
             }, this);
     },
@@ -127,7 +127,7 @@ TargetRemove.prototype = {
      * @returns {*}
      * @private
      */
-    _sendEmail: function() {
+    _sendEmail: function () {
         mailer.init();
 
         var subject = util.format('bem-data-source: success remove library [%s] version [%s]',
