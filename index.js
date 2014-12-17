@@ -48,7 +48,7 @@ exports.view = function (repo, version, options) {
  * - {String} url - url for new document on github (like in browser view) required
  * @returns {Promise}
  */
-exports.replace = function(repo, version, options) {
+exports.replace = function (repo, version, options) {
     logger.setProductionMode();
     options.isCli = false;
     var target = new TargetReplace(repo, version, options);

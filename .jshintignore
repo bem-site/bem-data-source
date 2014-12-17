@@ -6,3 +6,4 @@ libs
 .enb
 src/common.bundles
 test
+coverage
