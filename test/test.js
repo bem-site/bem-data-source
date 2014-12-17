@@ -79,4 +79,17 @@ describe('bem-data-source', function(){
                 }).done();
         });
     });
+
+    describe('#remove', function(){
+        it('should be valid done', function(done) {
+            ds.remove('test-library', 'v1.0.0', options, false)
+                .then(function() {
+                    return ds.view('test-library', null, options);
+                })
+                .then(function (versions) {
+                    versions.should.have.length(0);
+                    done();
+                }).done();
+        });
+    });
 });

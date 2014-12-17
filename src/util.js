@@ -2,46 +2,13 @@
 
 var fs = require('fs-extra'),
     util = require('util'),
-    cp = require('child_process'),
 
     md = require('marked'),
     vow = require('vow'),
     Rsync = require('rsync'),
 
-    api = require('./gh-api'),
     renderer = require('./renderer'),
     logger = require('./logger');
-
-/**
- * Executes specified command with options.
- * @param {String} cmd (command) to execute.
- * @param {Object} options to `child_process.exec()` function.
- * @return {Promise}
- */
-exports.exec = function (cmd, options) {
-    var proc = cp.exec(cmd, options),
-        d = vow.defer(),
-        output = '';
-
-    proc.on('exit', function (code) {
-        if (code === 0) {
-            return d.resolve();
-        }
-        d.reject(new Error(util.format('%s failed: %s', cmd, output)));
-    });
-
-    proc.stderr.on('data', function (data) {
-        logger.verbose(data, module);
-        output += data;
-    });
-
-    proc.stdout.on('data', function (data) {
-        logger.verbose(data, module);
-        output += data;
-    });
-
-    return d.promise();
-};
 
 /**
  * Converts markdown content into html with marked module
@@ -74,6 +41,12 @@ exports.removeDir = function (path) {
     return def.promise();
 };
 
+/**
+ * Copy file from target path to destination path
+ * @param {String} target path
+ * @param {String} destination path
+ * @returns {*}
+ */
 exports.copy = function (target, destination) {
     var def = vow.defer();
     fs.copy(target, destination, function (err) {
@@ -116,6 +89,12 @@ exports.rsync = function (options) {
     return def.promise();
 };
 
+/**
+ * Separates array into small array with given chunkSize length
+ * @param {Array} arr - array for separate
+ * @param {Number} chunkSize - size of chunk
+ * @returns {Array}
+ */
 exports.separateArrayOnChunks = function (arr, chunkSize) {
     var _arr = arr.slice(0),
         arrays = [];

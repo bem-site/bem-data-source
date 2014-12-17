@@ -55,7 +55,7 @@ TargetReplace.prototype = {
                 return storage.read(dataKey);
             }, this)
             .then(function (content) {
-                if(!content) {
+                if (!content) {
                     return vow.reject(util.format('File %s does not exists in storage', dataKey));
                 }
 
@@ -96,21 +96,22 @@ TargetReplace.prototype = {
                 content.docs[this.options.doc] = _doc;
                 return content;
             }, this)
-            .then(function(content) {
-                return storage.write(dataKey, JSON.stringify(content), [this.source, this.ref])
-                    .then(function() {
-                        return sha(content);
+            .then(function (content) {
+                var strContent = JSON.stringify(content);
+                return storage.write(dataKey, strContent, [this.source, this.ref])
+                    .then(function () {
+                        return sha(strContent);
                     });
             }, this)
-            .then(function(shaSum) {
+            .then(function (shaSum) {
                 return this._updateRegistry(shaSum);
             }, this);
     },
 
     /**
-     *
-     * @param content
-     * @returns {*}
+     * Creates doc if it not exist yet
+     * @param {Object} content - parsed content of data.json file
+     * @returns {Object} content with added new document
      * @private
      */
     _createDoc: function (content) {
@@ -134,7 +135,7 @@ TargetReplace.prototype = {
     },
 
     /**
-     *
+     * Parse given gh url of replacement file and returns config for github api call
      * @returns {{isPrivate: boolean, user: *, repo: *, ref: *, path: *}}
      * @private
      */
@@ -156,8 +157,23 @@ TargetReplace.prototype = {
         };
     },
 
-    _updateRegistry: function(shaSum) {
-        return vow.resolve();
+    /**
+     * Updates data in registry
+     * @param {String} shaSum - sha sum of updated content object
+     * @returns {*}
+     * @private
+     */
+    _updateRegistry: function (shaSum) {
+        return storage.read(constants.ROOT)
+            .then(function (registry) {
+                registry = registry ? JSON.parse(registry) : {};
+                registry[this.source] = registry[this.source] || { name: this.source, versions: {} };
+                registry[this.source].versions[this.ref] = {
+                    sha: shaSum,
+                    date: +(new Date())
+                };
+                return storage.write(constants.ROOT, JSON.stringify(registry), [constants.ROOT]);
+            }, this);
     }
 };
 
