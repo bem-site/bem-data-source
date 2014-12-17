@@ -6,5 +6,6 @@
         "cocaine": {
             "debug": false
         }
-    }
+    },
+    "mailer": {}
 }
