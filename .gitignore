@@ -24,3 +24,4 @@ src/*.bundles/*/*.*
 test/test-data/temp
 test/test-data/data.json
 config/private.json
+coverage
