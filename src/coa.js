@@ -19,8 +19,8 @@ function command() {
                 return '';
             })
             .end()
-        .cmd().name('publish').apply(require('./commands/publish').cmd).end()
-        .cmd().name('replace-doc').apply(require('./commands/replace-doc').cmd).end()
+        .cmd().name('publish').apply(require('./commands/publish')).end()
+        .cmd().name('replace').apply(require('./commands/replace')).end()
         .cmd().name('convert').apply(require('./commands/convert')).end()
         .cmd().name('remove').apply(require('./commands/remove')).end()
         .cmd().name('view').apply(require('./commands/view')).end()

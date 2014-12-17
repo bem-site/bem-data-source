@@ -1,6 +1,7 @@
 var logger = require('./src/logger'),
     TargetView = require('./src/targets/view'),
     TargetRemove = require('./src/targets/remove'),
+    TargetReplace = require('./src/targets/replace'),
     TargetPublish = require('./src/targets/publish');
 
 /**
@@ -32,6 +33,25 @@ exports.view = function (repo, version, options) {
     logger.setProductionMode();
     options.isCli = false;
     var target = new TargetView(repo, version, options);
+    return target.execute().fail(function () { process.exit(1); });
+};
+
+/**
+ * Replace documentation data in documentation object
+ * @param {String} repo - name of repository (library) required
+ * @param {String} version - name of version (branch|tag|pr) required
+ * @param {Object} options - options object with fields:
+ * - {Boolean} debug - flag for storage
+ * - {String} namespace - storage key namespace
+ * - {String} doc - doc key (readme|changelog|migration|notes) required
+ * - {String} lang - language param (en|ru) required
+ * - {String} url - url for new document on github (like in browser view) required
+ * @returns {Promise}
+ */
+exports.replace = function(repo, version, options) {
+    logger.setProductionMode();
+    options.isCli = false;
+    var target = new TargetReplace(repo, version, options);
     return target.execute().fail(function () { process.exit(1); });
 };
 
