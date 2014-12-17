@@ -32,7 +32,9 @@
     "rsync": "0.3.0",
     "sha1": "~1.1.0",
     "vow": "~0.4.1",
-    "vow-fs": "~0.3.0"
+    "vow-fs": "~0.3.0",
+    "nodemailer": "1.3.0",
+    "nodemailer-smtp-transport": "0.1.3"
   },
   "devDependencies": {
     "mocha": "~2.0.1",
@@ -46,8 +48,8 @@
   },
   "scripts": {
     "config": "cp config/_private.json config/private.json",
-    "mocha": "node_modules/.bin/mocha",
-    "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha",
+    "mocha": "node_modules/.bin/mocha --timeout 10000",
+    "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha --timeout 10000",
     "test": "node_modules/.bin/jshint . && node_modules/.bin/jscs -c .jscs.js ."
   },
   "readmeFilename": "README.md",

@@ -3,5 +3,14 @@
     "cocaine": {
       "namespace": ""
     }
+  },
+  "mailer": {
+    "host": "your e-mail-host",
+    "port": 25,
+    "from": "john.smith@gmail.com",
+    "to": [
+      "recepient1@gmail.com",
+      "recepient2@gmail.com"
+    ]
   }
 }

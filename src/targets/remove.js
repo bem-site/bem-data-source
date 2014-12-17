@@ -6,6 +6,7 @@ var util = require('util'),
     logger = require('../logger'),
     config = require('../config'),
     utility = require('../util'),
+    mailer = require('../mailer'),
     constants = require('../constants'),
     storage = require('../cocaine/api'),
 
@@ -49,6 +50,9 @@ TargetRemove.prototype = {
             }, this)
             .then(function () {
                 return this._removeFromRegistry();
+            }, this)
+            .then(function () {
+                return this._sendEmail();
             }, this);
     },
 
@@ -116,6 +120,25 @@ TargetRemove.prototype = {
             delete registry[this.source].versions[this.ref];
             return storage.write(constants.ROOT, JSON.stringify(registry), [constants.ROOT]);
         }, this);
+    },
+
+    /**
+     * Sends email notification
+     * @returns {*}
+     * @private
+     */
+    _sendEmail: function () {
+        mailer.init();
+
+        var subject = util.format('bem-data-source: success remove library [%s] version [%s]',
+            this.source, this.ref);
+
+        return mailer.send({
+            from: config.get('mailer:from'),
+            to: config.get('mailer:to'),
+            subject: subject,
+            text: ''
+        });
     }
 };
 
