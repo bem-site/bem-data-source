@@ -1,7 +1,8 @@
 var path = require('path'),
-    assert = require('assert'),
+
     should = require('should'),
 
+    _ = require('lodash'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
     utility = require('../src/util.js'),
@@ -60,6 +61,20 @@ describe('bem-data-source', function(){
             ds.view('test-library', null, options)
                 .then(function(versions) {
                     (versions.indexOf('v1.0.0') > -1).should.be.true;
+                    done();
+                }).done();
+        });
+    });
+
+    describe('#replace', function(){
+        it('should be valid done', function(done) {
+            var o = {
+                doc: 'readme',
+                lang: 'ru',
+                url: 'https://github.com/bem/bem-data-source/blob/master/README.md'
+            };
+            ds.replace('test-library', 'v1.0.0', _.extend({}, options, o))
+                .then(function () {
                     done();
                 }).done();
         });

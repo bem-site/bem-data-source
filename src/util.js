@@ -87,26 +87,6 @@ exports.copy = function (target, destination) {
 };
 
 /**
- * Retrieve github ssh url via github api
- * @param {Object} repo object
- * @returns {*}
- */
-exports.getSSHUrl = function (repo) {
-    return api
-        .getRepository({
-            user: repo.user,
-            name: repo.repo,
-            isPrivate: repo.private
-        })
-        .then(function (res) {
-            return res.result['ssh_url'];
-        })
-        .fail(function () {
-            logger.error('Data repository was not found. Application will be terminated', module);
-        });
-};
-
-/**
  * Runs rsync command with options
  * @param {Object} options - options for rsync command
  * @returns {*}
