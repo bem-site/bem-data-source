@@ -128,6 +128,11 @@ TargetRemove.prototype = {
      * @private
      */
     _sendEmail: function () {
+        var isEnable = config.get('mailer:enabled') || false;
+        if(!isEnable) {
+            return vow.resolve();
+        }
+
         mailer.init();
 
         var subject = util.format('bem-data-source: success remove library [%s] version [%s]',
