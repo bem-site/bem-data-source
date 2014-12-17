@@ -11,7 +11,6 @@ var util = require('util'),
 
 /**
  * Initialize mailer module
- * @param {Object} options - mailer options object
  */
 exports.init = function () {
     mailer = new nm.createTransport(transport({
@@ -37,4 +36,3 @@ exports.send = function (options) {
 
     return def.promise();
 };
-

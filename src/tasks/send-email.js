@@ -25,7 +25,7 @@ module.exports = function (target) {
                 path: path.join(target.getOutputPath(), 'data.json')
             }
         ]
-    }).then(function() {
+    }).then(function () {
         return vow.resolve(target);
     });
 };
