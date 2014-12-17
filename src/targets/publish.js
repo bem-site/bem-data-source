@@ -39,7 +39,8 @@ var fs = require('fs'),
             require('../tasks/create-temp'),
             require('../tasks/copy-to-temp'),
             require('../tasks/process-examples'),
-            require('../tasks/send-doc')
+            require('../tasks/send-doc'),
+            require('../tasks/send-email')
         ];
     };
 
