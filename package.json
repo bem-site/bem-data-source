@@ -48,8 +48,8 @@
   },
   "scripts": {
     "config": "cp config/_private.json config/private.json",
-    "mocha": "node_modules/.bin/mocha --timeout 10000",
-    "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha --timeout 10000",
+    "mocha": "node_modules/.bin/mocha",
+    "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha",
     "test": "node_modules/.bin/jshint . && node_modules/.bin/jscs -c .jscs.js ."
   },
   "readmeFilename": "README.md",
