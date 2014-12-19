@@ -1,40 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <title>Bem-data-source by bem-site</title>
 
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
-    <title>Bem-data-source by bem</title>
   </head>
-
   <body>
-    <header>
-      <div class="inner">
-        <h1>Bem-data-source</h1>
-        <h2>Tool for collect documentation and exaples from libraries and common sources for bem-info and legoa</h2>
-        <a href="https://github.com/bem/bem-data-source" class="button"><small>View project on</small>GitHub</a>
-      </div>
-    </header>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Bem-data-source</h1>
+        <p class="header">Tool for collect documentation and exaples from libraries and common sources for bem-info and legoa</p>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
-<a name="bem-data-source" class="anchor" href="#bem-data-source"><span class="octicon octicon-link"></span></a>bem-data-source</h1>
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/bem-site/bem-data-source/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/bem-site/bem-data-source/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/bem-site/bem-data-source">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/bem-site">bem-site</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a id="bem-data-source" class="anchor" href="#bem-data-source" aria-hidden="true"><span class="octicon octicon-link"></span></a>bem-data-source</h1>
 
 <p>Инструмент для версионированной сборки документации и примеров библиотек для проектов bem-info.</p>
 
 <h2>
-<a name="%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0" class="anchor" href="#%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0"><span class="octicon octicon-link"></span></a>Установка</h2>
+<a id="Установка" class="anchor" href="#%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0" aria-hidden="true"><span class="octicon octicon-link"></span></a>Установка</h2>
 
 <ul>
 <li>клонировать репозиторий <code>git clone git://github.com/bem/bem-data-source.git</code>
@@ -43,23 +45,27 @@
 </li>
 <li>установить npm зависимости коммандой <code>npm install</code>
 </li>
-</ul><p>После установки зависимостей конфигурационный файл <code>config/credentials.json</code>.</p>
+</ul>
+
+<p>После установки зависимостей конфигурационный файл <code>config/credentials.json</code>.</p>
 
 <h2>
-<a name="%D0%9A%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5" class="anchor" href="#%D0%9A%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5"><span class="octicon octicon-link"></span></a>Конфигурирование</h2>
+<a id="Конфигурирование" class="anchor" href="#%D0%9A%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Конфигурирование</h2>
 
 <p>Конфигурация инструмента описывается в файлах <code>config/config.json</code>, <code>config/credentials.json</code>.</p>
 
 <h3>
-<a name="%D0%A4%D0%B0%D0%B9%D0%BB-configconfigjson" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configconfigjson"><span class="octicon octicon-link"></span></a>Файл config/config.json</h3>
+<a id="Файл-configconfigjson" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configconfigjson" aria-hidden="true"><span class="octicon octicon-link"></span></a>Файл config/config.json</h3>
 
 <ul>
 <li>
 <code>logLevel</code> - флаг уровня логгирования. может принимать значения: ("verbose", "debug", "info", "warn", "error")</li>
 <li>
 <code>languages</code> - массив локалей</li>
-</ul><h3>
-<a name="%D0%A4%D0%B0%D0%B9%D0%BB-configcredentialsjson" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configcredentialsjson"><span class="octicon octicon-link"></span></a>Файл config/credentials.json</h3>
+</ul>
+
+<h3>
+<a id="Файл-configcredentialsjson" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configcredentialsjson" aria-hidden="true"><span class="octicon octicon-link"></span></a>Файл config/credentials.json</h3>
 
 <p>Файл с токенами доступа к публичным и приватным репозиториям (github.com и github.yandex-team.ru соответственно)
 Необходимо сгенерировать токены доступа в настройках профиля пользователя на github.com и github.yandex.team.ru
@@ -87,7 +93,9 @@
 <ul>
 <li>
 <code>private</code> - обозначает приватность github хоста на котором хранится репозиторий. </li>
-</ul><p><code>false</code> - для публичного гитхаба <code>github.com</code>
+</ul>
+
+<p><code>false</code> - для публичного гитхаба <code>github.com</code>
 <code>true</code> - для корпоративного гитхаба.</p>
 
 <ul>
@@ -97,16 +105,18 @@
 <code>repo</code> - название рапозитория</li>
 <li>
 <code>ref</code> - название ветки (по умолчанию "master")</li>
-</ul><h2>
-<a name="%D0%94%D0%B5%D0%BA%D0%BB%D0%B0%D1%80%D0%B0%D1%86%D0%B8%D0%B8-%D0%B4%D0%BB%D1%8F-%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B8-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8" class="anchor" href="#%D0%94%D0%B5%D0%BA%D0%BB%D0%B0%D1%80%D0%B0%D1%86%D0%B8%D0%B8-%D0%B4%D0%BB%D1%8F-%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B8-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8"><span class="octicon octicon-link"></span></a><a href="./docs/declarations.md">Декларации для сборки библиотеки</a>
+</ul>
+
+<h2>
+<a id="Декларации-для-сборки-библиотеки" class="anchor" href="#%D0%94%D0%B5%D0%BA%D0%BB%D0%B0%D1%80%D0%B0%D1%86%D0%B8%D0%B8-%D0%B4%D0%BB%D1%8F-%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B8-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="./docs/declarations.md">Декларации для сборки библиотеки</a>
 </h2>
 
 <h2>
-<a name="%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BC%D0%BE%D0%B4%D1%83%D0%BB%D0%B5%D0%B9-%D0%B4%D0%BB%D1%8F-%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B8" class="anchor" href="#%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BC%D0%BE%D0%B4%D1%83%D0%BB%D0%B5%D0%B9-%D0%B4%D0%BB%D1%8F-%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B8"><span class="octicon octicon-link"></span></a><a href="./docs/tasks.md">Описание модулей для сборки</a>
+<a id="Описание-модулей-для-сборки" class="anchor" href="#%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BC%D0%BE%D0%B4%D1%83%D0%BB%D0%B5%D0%B9-%D0%B4%D0%BB%D1%8F-%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="./docs/tasks.md">Описание модулей для сборки</a>
 </h2>
 
 <h2>
-<a name="%D0%97%D0%B0%D0%BF%D1%83%D1%81%D0%BA" class="anchor" href="#%D0%97%D0%B0%D0%BF%D1%83%D1%81%D0%BA"><span class="octicon octicon-link"></span></a>Запуск</h2>
+<a id="Запуск" class="anchor" href="#%D0%97%D0%B0%D0%BF%D1%83%D1%81%D0%BA" aria-hidden="true"><span class="octicon octicon-link"></span></a>Запуск</h2>
 
 <p>Запуск выполняется командой <code>node bin/ds make</code> с указанием дополнительных опций:</p>
 
@@ -121,11 +131,13 @@
 <code>-t</code> или <code>--tags</code> - название версии (тега) библиотеки</li>
 <li>
 <code>-b</code> или <code>--branches</code> - название ветки библиотеки</li>
-</ul><h2>
-<a name="%D0%94%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5-%D0%BA%D0%BE%D0%BC%D0%BC%D0%B0%D0%BD%D0%B4%D1%8B" class="anchor" href="#%D0%94%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5-%D0%BA%D0%BE%D0%BC%D0%BC%D0%B0%D0%BD%D0%B4%D1%8B"><span class="octicon octicon-link"></span></a>Дополнительные комманды</h2>
+</ul>
+
+<h2>
+<a id="Дополнительные-комманды" class="anchor" href="#%D0%94%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5-%D0%BA%D0%BE%D0%BC%D0%BC%D0%B0%D0%BD%D0%B4%D1%8B" aria-hidden="true"><span class="octicon octicon-link"></span></a>Дополнительные комманды</h2>
 
 <h3>
-<a name="%D0%97%D0%B0%D0%BC%D0%B5%D0%BD%D0%B0-%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0-%D0%B2-%D1%81%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8" class="anchor" href="#%D0%97%D0%B0%D0%BC%D0%B5%D0%BD%D0%B0-%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0-%D0%B2-%D1%81%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8"><span class="octicon octicon-link"></span></a>Замена документа в собранных данных библиотеки</h3>
+<a id="Замена-документа-в-собранных-данных-библиотеки" class="anchor" href="#%D0%97%D0%B0%D0%BC%D0%B5%D0%BD%D0%B0-%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0-%D0%B2-%D1%81%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Замена документа в собранных данных библиотеки</h3>
 
 <p>Выполняется командой <code>node bin/ds replace-doc</code> с указанием дополнительных опций:</p>
 
@@ -141,8 +153,10 @@
 все яызковые версии документа, указанного в параметре <code>-d</code>.</li>
 <li>
 <code>-u</code> или <code>--url</code> - url для <code>*.md</code> файла источника замены на github, например: </li>
-</ul><h3>
-<a name="%D0%A3%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B8-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8-%D0%B8%D0%B7-%D1%80%D0%B5%D0%BF%D0%BE%D0%B7%D0%B8%D1%82%D0%BE%D1%80%D0%B8%D1%8F-%D1%81-%D1%81%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D0%BC%D0%B8-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D0%BC%D0%B8" class="anchor" href="#%D0%A3%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B8-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8-%D0%B8%D0%B7-%D1%80%D0%B5%D0%BF%D0%BE%D0%B7%D0%B8%D1%82%D0%BE%D1%80%D0%B8%D1%8F-%D1%81-%D1%81%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D0%BC%D0%B8-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D0%BC%D0%B8"><span class="octicon octicon-link"></span></a>Удаление версии библиотеки из репозитория с собранными данными</h3>
+</ul>
+
+<h3>
+<a id="Удаление-версии-библиотеки-из-репозитория-с-собранными-данными" class="anchor" href="#%D0%A3%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B8-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8-%D0%B8%D0%B7-%D1%80%D0%B5%D0%BF%D0%BE%D0%B7%D0%B8%D1%82%D0%BE%D1%80%D0%B8%D1%8F-%D1%81-%D1%81%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D0%BC%D0%B8-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D0%BC%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Удаление версии библиотеки из репозитория с собранными данными</h3>
 
 <p>Выполняется командой <code>node bin/ds remove</code> с указанием дополнительных опций:</p>
 
@@ -151,30 +165,19 @@
 <code>-r</code> или <code>--repo</code> - название репозитория (обязательный параметр)</li>
 <li>
 <code>-v</code> или <code>--version</code> - название версии (тега или ветки) библиотеки (обязательный параметр)</li>
-</ul><p>Посмотреть текущую версию приложения можно выполнив команду: <code>node bin/ds -v</code></p>
+</ul>
+
+<p>Посмотреть текущую версию приложения можно выполнив команду: <code>node bin/ds -v</code></p>
 
 <p>Ответственный за разработку <a href="https://github.com/bemer" class="user-mention">@bemer</a></p>
 
 <p>Вопросы и пожелания присылать по адресу: <a href="mailto:bemer@yandex-team.ru">bemer@yandex-team.ru</a></p>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/bem/bem-data-source/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/bem/bem-data-source/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/bem/bem-data-source"></a> is maintained by <a href="https://github.com/bem">bem</a>.</p>
-
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
     </div>
-
-  
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
   </body>
 </html>
