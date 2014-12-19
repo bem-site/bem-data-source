@@ -4,36 +4,48 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Bem-data-source by bem-site</title>
-
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
     <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
   </head>
   <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/bem-site/bem-data-source">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/bem-site/bem-data-source/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/bem-site/bem-data-source/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
     <div class="wrapper">
-      <header>
-        <h1 class="header">Bem-data-source</h1>
-        <p class="header">Tool for collect documentation and exaples from libraries and common sources for bem-info and legoa</p>
 
-        <ul>
-          <li class="download"><a class="buttons" href="https://github.com/bem-site/bem-data-source/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/bem-site/bem-data-source/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/bem-site/bem-data-source">View On GitHub</a></li>
-        </ul>
-
-        <p class="header">This project is maintained by <a class="header name" href="https://github.com/bem-site">bem-site</a></p>
-
-
-      </header>
       <section>
+        <div id="title">
+          <h1>Bem-data-source</h1>
+          <p>Tool for collect documentation and exaples from libraries and common sources for bem-info and legoa</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/bem-site">bem-site</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
         <h1>
 <a id="bem-data-source" class="anchor" href="#bem-data-source" aria-hidden="true"><span class="octicon octicon-link"></span></a>bem-data-source</h1>
 
-<p>Инструмент для версионированной сборки документации и примеров библиотек для проектов bem-info.</p>
+<p><a href="https://travis-ci.org/bem/bem-data-source"><img src="https://travis-ci.org/bem-site/bem-data-source.svg?branch=master" alt="Build Status"></a>
+<a href="https://david-dm.org/bem/bem-data-source"><img src="https://david-dm.org/bem-site/bem-data-source.svg?style=flat" alt="Dependency Status"></a>
+<a href="https://david-dm.org/bem/bem-data-source#info=devDependencies"><img src="https://david-dm.org/bem-site/bem-data-source/dev-status.svg?style=flat" alt="devDependency Status"></a></p>
+
+<p>Данный инструмент предназначен для публикации данных документации и примеров по библиотекам блоков.</p>
 
 <h2>
 <a id="Установка" class="anchor" href="#%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0" aria-hidden="true"><span class="octicon octicon-link"></span></a>Установка</h2>
@@ -45,101 +57,122 @@
 </li>
 <li>установить npm зависимости коммандой <code>npm install</code>
 </li>
+<li>сгенерировать приватный конфигурационный файл командой <code>npm run config</code>
+</li>
 </ul>
 
-<p>После установки зависимостей конфигурационный файл <code>config/credentials.json</code>.</p>
+<p>После выполнения <code>npm run config</code> должен появиться новый конфигурационный файл <code>config/private.json</code>.</p>
 
 <h2>
 <a id="Конфигурирование" class="anchor" href="#%D0%9A%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Конфигурирование</h2>
 
-<p>Конфигурация инструмента описывается в файлах <code>config/config.json</code>, <code>config/credentials.json</code>.</p>
+<p>Конфигурация инструмента описывается в файлах <code>config/public.json</code>, <code>config/private.json</code>.</p>
 
 <h3>
-<a id="Файл-configconfigjson" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configconfigjson" aria-hidden="true"><span class="octicon octicon-link"></span></a>Файл config/config.json</h3>
+<a id="Файл-configpublicjson" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configpublicjson" aria-hidden="true"><span class="octicon octicon-link"></span></a>Файл config/public.json</h3>
 
 <ul>
 <li>
 <code>logLevel</code> - флаг уровня логгирования. может принимать значения: ("verbose", "debug", "info", "warn", "error")</li>
 <li>
 <code>languages</code> - массив локалей</li>
+<li>
+<code>maxOpenFiles</code> - максимальное количество открытых файлов. Этот параметр также определяет размер
+порций файлов которые одновременно записываются в хранилище.</li>
+<li>
+<code>storage</code> - объект хранилища данных, например:</li>
+</ul>
+
+<pre><code>"storage": {
+    "cocaine": {
+        "debug": false
+    }
+}
+</code></pre>
+
+<ul>
+<li>
+<code>mailer</code> - объект с настройками почтовой рассылки. Настоятельно рекомендуется выносить данные
+настройки в приватный конфигурационный файл <code>config/private.json</code>.</li>
 </ul>
 
 <h3>
-<a id="Файл-configcredentialsjson" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configcredentialsjson" aria-hidden="true"><span class="octicon octicon-link"></span></a>Файл config/credentials.json</h3>
+<a id="Файл-configprivatejson" class="anchor" href="#%D0%A4%D0%B0%D0%B9%D0%BB-configprivatejson" aria-hidden="true"><span class="octicon octicon-link"></span></a>Файл config/private.json</h3>
 
-<p>Файл с токенами доступа к публичным и приватным репозиториям (github.com и github.yandex-team.ru соответственно)
-Необходимо сгенерировать токены доступа в настройках профиля пользователя на github.com и github.yandex.team.ru
-и вставить как значения соответствующих token-полей в данном файле.</p>
+<p>В этом файле настриваются приватные параметры приложения, например пространство имен для хранилища:</p>
 
-<pre><code>"credentials": {
-    "public": "",
-    "private": ""
+<pre><code>{
+  "storage": {
+    "cocaine": {
+      "namespace": "your_application_namespace"
+    }
+  }
 }
 </code></pre>
 
-<p>Также в этом файле настраивается конфигурация для доступа целевому репозиторию
-в который будет помещен результат сборки, например:</p>
+<p>Настройки почтовой рассылки:</p>
 
-<pre><code>"dataConfig": {
-    "private": false,
-    "user": "bem",
-    "repo": "bem-info-libs",
-    "ref": "master"
+<pre><code>{
+  "mailer": {
+    "host": "your e-mail-host",
+     "port": 25,
+     "from": "john.smith@gmail.com",
+     "to": [
+       "recepient1@gmail.com",
+       "recepient2@gmail.com"
+     ]
+  }
 }
 </code></pre>
 
-<p>Здесь: </p>
-
-<ul>
-<li>
-<code>private</code> - обозначает приватность github хоста на котором хранится репозиторий. </li>
-</ul>
-
-<p><code>false</code> - для публичного гитхаба <code>github.com</code>
-<code>true</code> - для корпоративного гитхаба.</p>
-
-<ul>
-<li>
-<code>user</code> - имя пользователя или название организации.</li>
-<li>
-<code>repo</code> - название рапозитория</li>
-<li>
-<code>ref</code> - название ветки (по умолчанию "master")</li>
-</ul>
-
-<h2>
+<h3>
 <a id="Декларации-для-сборки-библиотеки" class="anchor" href="#%D0%94%D0%B5%D0%BA%D0%BB%D0%B0%D1%80%D0%B0%D1%86%D0%B8%D0%B8-%D0%B4%D0%BB%D1%8F-%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B8-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="./docs/declarations.md">Декларации для сборки библиотеки</a>
-</h2>
+</h3>
 
 <h2>
-<a id="Описание-модулей-для-сборки" class="anchor" href="#%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BC%D0%BE%D0%B4%D1%83%D0%BB%D0%B5%D0%B9-%D0%B4%D0%BB%D1%8F-%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="./docs/tasks.md">Описание модулей для сборки</a>
-</h2>
+<a id="cli-интерфейс" class="anchor" href="#cli-%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81" aria-hidden="true"><span class="octicon octicon-link"></span></a>CLI интерфейс</h2>
 
-<h2>
-<a id="Запуск" class="anchor" href="#%D0%97%D0%B0%D0%BF%D1%83%D1%81%D0%BA" aria-hidden="true"><span class="octicon octicon-link"></span></a>Запуск</h2>
+<h4>
+<a id="Просмотр-данных-реестра-библиотек-в-хранилище" class="anchor" href="#%D0%9F%D1%80%D0%BE%D1%81%D0%BC%D0%BE%D1%82%D1%80-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D1%80%D0%B5%D0%B5%D1%81%D1%82%D1%80%D0%B0-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA-%D0%B2-%D1%85%D1%80%D0%B0%D0%BD%D0%B8%D0%BB%D0%B8%D1%89%D0%B5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Просмотр данных реестра библиотек в хранилище</h4>
 
-<p>Запуск выполняется командой <code>node bin/ds make</code> с указанием дополнительных опций:</p>
+<p>Выполняется командой <code>node bin/ds view</code> с указанием дополнительных опций:</p>
 
 <ul>
 <li>
-<code>-p</code> или <code>--private</code>, если репозиторий внутренний</li>
+<code>-r</code> или <code>--repo</code> - название репозитория (необязательный параметр)</li>
 <li>
-<code>-u</code> или <code>--user</code> - имя пользователя или название организации (обязательный параметр)</li>
+<code>-v</code> или <code>--version</code> - название версии (тега или ветки) библиотеки (необязательный параметр)</li>
+</ul>
+
+<p>В случае если указаны оба параметра, то выведется информация по конкретной указанной версии библиотеки.</p>
+
+<p>Если была передана только опция с названием библиотеки, то будет выведен список версий выбранной библиотеки.</p>
+
+<p>Если не был передан ни один из параметров, то будет выведен список библиотек, которые находятся в настоящее
+время в реестре.</p>
+
+<h4>
+<a id="Удаление-версии-библиотеки-из-репозитория-с-собранными-данными" class="anchor" href="#%D0%A3%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B8-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8-%D0%B8%D0%B7-%D1%80%D0%B5%D0%BF%D0%BE%D0%B7%D0%B8%D1%82%D0%BE%D1%80%D0%B8%D1%8F-%D1%81-%D1%81%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D0%BC%D0%B8-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D0%BC%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Удаление версии библиотеки из репозитория с собранными данными</h4>
+
+<p>Выполняется командой <code>node bin/ds remove</code> с указанием дополнительных опций:</p>
+
+<ul>
 <li>
 <code>-r</code> или <code>--repo</code> - название репозитория (обязательный параметр)</li>
 <li>
-<code>-t</code> или <code>--tags</code> - название версии (тега) библиотеки</li>
+<code>-v</code> или <code>--version</code> - название версии (тега или ветки) библиотеки (обязательный параметр)</li>
 <li>
-<code>-b</code> или <code>--branches</code> - название ветки библиотеки</li>
+<code>-d</code> или <code>--dry</code> - режим тестового запуска. При этом данные не будут удалены а в консоль
+будет выведено соответствующее сообщение.</li>
 </ul>
 
-<h2>
-<a id="Дополнительные-комманды" class="anchor" href="#%D0%94%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5-%D0%BA%D0%BE%D0%BC%D0%BC%D0%B0%D0%BD%D0%B4%D1%8B" aria-hidden="true"><span class="octicon octicon-link"></span></a>Дополнительные комманды</h2>
+<p>ВНИМАНИЕ! При выполнении этой команды происходит НОБРАТИМОЕ УДАЛЕНИЕ из хранилища!
+Будьте внимательными при ее использовании.</p>
 
-<h3>
-<a id="Замена-документа-в-собранных-данных-библиотеки" class="anchor" href="#%D0%97%D0%B0%D0%BC%D0%B5%D0%BD%D0%B0-%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0-%D0%B2-%D1%81%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Замена документа в собранных данных библиотеки</h3>
+<h4>
+<a id="Замена-документа-в-собранных-данных-библиотеки" class="anchor" href="#%D0%97%D0%B0%D0%BC%D0%B5%D0%BD%D0%B0-%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0-%D0%B2-%D1%81%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Замена документа в собранных данных библиотеки</h4>
 
-<p>Выполняется командой <code>node bin/ds replace-doc</code> с указанием дополнительных опций:</p>
+<p>Выполняется командой <code>node bin/ds replace</code> с указанием дополнительных опций:</p>
 
 <ul>
 <li>
@@ -152,32 +185,188 @@
 <code>-l</code> или <code>--lang</code> - языковая версия заменяемого документа. Если этот параметр неуказан, то будут заменены
 все яызковые версии документа, указанного в параметре <code>-d</code>.</li>
 <li>
-<code>-u</code> или <code>--url</code> - url для <code>*.md</code> файла источника замены на github, например: </li>
+<code>-u</code> или <code>--url</code> - url для <code>*.md</code> файла источника замены на github, например:</li>
 </ul>
 
-<h3>
-<a id="Удаление-версии-библиотеки-из-репозитория-с-собранными-данными" class="anchor" href="#%D0%A3%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B8-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8-%D0%B8%D0%B7-%D1%80%D0%B5%D0%BF%D0%BE%D0%B7%D0%B8%D1%82%D0%BE%D1%80%D0%B8%D1%8F-%D1%81-%D1%81%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D0%BC%D0%B8-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D0%BC%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Удаление версии библиотеки из репозитория с собранными данными</h3>
+<h4>
+<a id="Ручная-публикация-собранных-данных-библиотеки-на-удаленный-сервер" class="anchor" href="#%D0%A0%D1%83%D1%87%D0%BD%D0%B0%D1%8F-%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F-%D1%81%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8-%D0%BD%D0%B0-%D1%83%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ручная публикация собранных данных библиотеки на удаленный сервер</h4>
 
-<p>Выполняется командой <code>node bin/ds remove</code> с указанием дополнительных опций:</p>
+<p>Находясь в директории целевой библиотеки блоков, после сборки примеров и документации
+можно вызвать команду <code>publish</code> которая упакует собранные данные документации в формат
+необходимый для сайта, проведет архивацию всех примеров, отправит все данные по документации
+и примерам библиотеки в хранилище и добавит версию данной библиотеки в реестр собранных данных.</p>
+
+<p>Пример:</p>
+
+<pre><code>node {path to bem-data-source}/bin/ds publish [-v version]
+</code></pre>
+
+<p>Где <code>-v</code> - необязательный параметр названия версии (ветка, тег, пулл-реквест).
+Если этот параметр не будет указан, то название версии будет выбрано из файла <code>package.json</code></p>
+
+<h4>
+<a id="Просмотр-текущей-версии-приложения" class="anchor" href="#%D0%9F%D1%80%D0%BE%D1%81%D0%BC%D0%BE%D1%82%D1%80-%D1%82%D0%B5%D0%BA%D1%83%D1%89%D0%B5%D0%B9-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B8-%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D1%8F" aria-hidden="true"><span class="octicon octicon-link"></span></a>Просмотр текущей версии приложения.</h4>
+
+<p>Посмотреть текущую версию приложения можно выполнив команду: <code>node bin/ds -v</code></p>
+
+<h2>
+<a id="api" class="anchor" href="#api" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h2>
+
+<p>Команды <code>bem-data-source</code> можно выполнять не только вручную из коммандной строки, но также
+с помощью сторонних модулей. Это дает возможность интеграции <code>bem-data-source</code>
+в различные системы сборки документации и примеров библиотек блоков.</p>
+
+<h4>
+<a id="view" class="anchor" href="#view" aria-hidden="true"><span class="octicon octicon-link"></span></a>View:</h4>
+
+<p>Просмотр реестра собранных данных по библиотекам блоков.</p>
+
+<pre><code>var ds = require('bem-data-source');
+ds.view(repo, version, options);
+</code></pre>
 
 <ul>
 <li>
-<code>-r</code> или <code>--repo</code> - название репозитория (обязательный параметр)</li>
+<code>repo</code> - необязательный параметр названия библиотеки (ветка, тег, пулл-реквест)</li>
 <li>
-<code>-v</code> или <code>--version</code> - название версии (тега или ветки) библиотеки (обязательный параметр)</li>
+<code>version</code> - необязательный параметр названия версии (ветка, тег, пулл-реквест)</li>
+<li>
+<code>options</code> - опциональне настройки команды.</li>
 </ul>
 
-<p>Посмотреть текущую версию приложения можно выполнив команду: <code>node bin/ds -v</code></p>
+<p>Возможные варианты применения:</p>
+
+<h5>
+<a id="Просмотр-списка-библиотек-в-реестре" class="anchor" href="#%D0%9F%D1%80%D0%BE%D1%81%D0%BC%D0%BE%D1%82%D1%80-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA-%D0%B2-%D1%80%D0%B5%D0%B5%D1%81%D1%82%D1%80%D0%B5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Просмотр списка библиотек в реестре:</h5>
+
+<pre><code>    ds.view(null, null, options).then(function(libs) {
+        console.log(libs);
+    });
+</code></pre>
+
+<h5>
+<a id="Просмотр-списка-версий-библиотеки" class="anchor" href="#%D0%9F%D1%80%D0%BE%D1%81%D0%BC%D0%BE%D1%82%D1%80-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B9-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Просмотр списка версий библиотеки:</h5>
+
+<pre><code>    ds.view('bem-core', null, options).then(function(versions) {
+        console.log(versions);
+    });
+</code></pre>
+
+<h5>
+<a id="Просмотр-информации-по-отдельной-версии-библиотеки" class="anchor" href="#%D0%9F%D1%80%D0%BE%D1%81%D0%BC%D0%BE%D1%82%D1%80-%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D0%B8-%D0%BF%D0%BE-%D0%BE%D1%82%D0%B4%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D0%B9-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B8-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Просмотр информации по отдельной версии библиотеки:</h5>
+
+<pre><code>    ds.view('bem-core', 'v2.3.0', options).then(function(version) {
+        console.log(version.sha);
+        console.log(version.date);
+    });
+</code></pre>
+
+<h4>
+<a id="remove" class="anchor" href="#remove" aria-hidden="true"><span class="octicon octicon-link"></span></a>Remove:</h4>
+
+<p>Удаление собранных данных версии библиотеки.</p>
+
+<pre><code>var ds = require('bem-data-source');
+ds.remove(repo, version, options, dryMode);
+</code></pre>
+
+<ul>
+<li>
+<code>repo</code> - обязательный параметр названия библиотеки (ветка, тег, пулл-реквест)</li>
+<li>
+<code>version</code> - обязательный параметр названия версии (ветка, тег, пулл-реквест)</li>
+<li>
+<code>options</code> - опциональные настройки команды.</li>
+<li>
+<code>dryMode</code> - Тестовое выполнение команды. При включенном флаге <code>dryMode</code> в значении <code>true</code>,
+реального удаления данных не произойдет.</li>
+</ul>
+
+<h4>
+<a id="replace" class="anchor" href="#replace" aria-hidden="true"><span class="octicon octicon-link"></span></a>Replace:</h4>
+
+<p>Замена существующего документа (readme, documentation ...).</p>
+
+<pre><code>var ds = require('bem-data-source');
+ds.replace(repo, version, options);
+</code></pre>
+
+<ul>
+<li>
+<code>repo</code> - обязательный параметр названия библиотеки (ветка, тег, пулл-реквест)</li>
+<li>
+<code>version</code> - обязательный параметр названия версии (ветка, тег, пулл-реквест)</li>
+<li><p><code>options</code> - дополнительные настройки команды. Объект с полями:</p></li>
+<li><p><code>doc</code> - название документа. Допустимые значения: ('readme', 'changelog', 'migration', 'notes') (Обязательное поле)</p></li>
+<li>
+<code>lang</code> - язык документа. Если данный параметр отсутствует, то будут заменены все версии документа для списка
+языков указанных в конфигурационном файле.</li>
+<li>
+<code>url</code> - ссылка на <code>*.md</code> документ который должен заменить существующий. По своей сути - это
+такая ссылка на документ на github которую можно увидеть в браузере при открытии этого файла на github.
+Например, для README.md bem-data-source: <code>https://github.com/bem/bem-data-source/blob/master/README.md</code>
+</li>
+</ul>
+
+<h4>
+<a id="publish" class="anchor" href="#publish" aria-hidden="true"><span class="octicon octicon-link"></span></a>Publish:</h4>
+
+<p>Публикация собраных данных.</p>
+
+<pre><code>var ds = require('bem-data-source');
+ds.publish(version, options, dryMode);
+</code></pre>
+
+<ul>
+<li>
+<code>version</code> - обязательный параметр названия версии (ветка, тег, пулл-реквест)</li>
+<li>
+<code>options</code> - опциональне настройки команды.</li>
+<li>
+<code>dryMode</code> - Тестовое выполнение команды. При включенном флаге <code>dryMode</code> в значении <code>true</code>,
+реальной публикации данных не произойдет.</li>
+</ul>
+
+<p>ВНИМАНИЕ: при выполнении данной команды <code>process.cwd()</code> должен указывать на корневую директорию библиотеки.</p>
+
+<h5>
+<a id="Опциональные-настройки-для-команд" class="anchor" href="#%D0%9E%D0%BF%D1%86%D0%B8%D0%BE%D0%BD%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8-%D0%B4%D0%BB%D1%8F-%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Опциональные настройки для команд:</h5>
+
+<p>Помимо специфичных настроек (как например для метода replace), все методы API принимают
+объект с общими настройками. Они включают в себя такие поля:</p>
+
+<ul>
+<li>
+<code>debug</code> - флаг для отслеживания внутренней работы храниища данных (по умолчанию <code>false</code>).</li>
+<li>
+<code>namespace</code> - пространство имен для key-value хранилища. (по умолчанию <code>defaultnamespace</code>)</li>
+</ul>
+
+<h2>
+<a id="Тестирование" class="anchor" href="#%D0%A2%D0%B5%D1%81%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Тестирование</h2>
+
+<p>Запуск тестов:</p>
+
+<pre><code>npm run mocha
+</code></pre>
+
+<p>Запуск тестов с покрытием:</p>
+
+<pre><code>npm run istanbul
+</code></pre>
+
+<p>Запуск проверки codestyle (jshint и jscs)</p>
+
+<pre><code>npm test
+</code></pre>
 
 <p>Ответственный за разработку <a href="https://github.com/bemer" class="user-mention">@bemer</a></p>
 
 <p>Вопросы и пожелания присылать по адресу: <a href="mailto:bemer@yandex-team.ru">bemer@yandex-team.ru</a></p>
       </section>
-      <footer>
-        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
-      </footer>
+
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-		
+    
   </body>
 </html>
