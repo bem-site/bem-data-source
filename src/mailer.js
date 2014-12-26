@@ -7,12 +7,15 @@ var util = require('util'),
 
     config = require('./config'),
     logger = require('./logger'),
+    baseOptions = { encoding: 'utf-8' },
     mailer;
 
 /**
  * Initialize mailer module
  */
-exports.init = function () {
+exports.init = function (options) {
+    baseOptions = _.extend(baseOptions, options);
+
     mailer = new nm.createTransport(transport({
         host: config.get('mailer:host'),
         port: config.get('mailer:port')

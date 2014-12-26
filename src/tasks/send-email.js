@@ -9,19 +9,19 @@ var util = require('util'),
     mailer = require('../mailer');
 
 module.exports = function (target) {
-    var isEnable = config.get('mailer:enabled') || false;
+    var emailOptions = target.options['mailer'] || config.get('mailer'),
+        isEnable = emailOptions || false;
+
     if (!isEnable) {
         return vow.resolve(target);
     }
 
-    mailer.init();
+    mailer.init(emailOptions);
 
     var subject = util.format('bem-data-source: success publish library [%s] version [%s]',
         target.getSourceName(), target.ref);
 
     return mailer.send({
-        from: config.get('mailer:from'),
-        to: config.get('mailer:to'),
         subject: subject,
         text: '',
         attachments: [

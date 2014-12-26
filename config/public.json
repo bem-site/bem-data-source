@@ -6,8 +6,5 @@
         "cocaine": {
             "debug": false
         }
-    },
-    "mailer": {
-        "enabled": false
     }
 }
