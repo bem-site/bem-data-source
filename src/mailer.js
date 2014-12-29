@@ -5,7 +5,6 @@ var util = require('util'),
     nm = require('nodemailer'),
     transport = require('nodemailer-smtp-transport'),
 
-    config = require('./config'),
     logger = require('./logger'),
     baseOptions = { encoding: 'utf-8' },
     mailer;
@@ -17,8 +16,8 @@ exports.init = function (options) {
     baseOptions = _.extend(baseOptions, options);
 
     mailer = new nm.createTransport(transport({
-        host: config.get('mailer:host'),
-        port: config.get('mailer:port')
+        host: baseOptions.host,
+        port: baseOptions.port
     }));
 };
 

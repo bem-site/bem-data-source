@@ -22,6 +22,8 @@ module.exports = function (target) {
         target.getSourceName(), target.ref);
 
     return mailer.send({
+        from: emailOptions.from,
+        to: emailOptions.to,
         subject: subject,
         text: '',
         attachments: [
