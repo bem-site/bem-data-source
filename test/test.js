@@ -12,62 +12,63 @@ var path = require('path'),
         namespace: 'bem-data-source:test'
     };
 
-describe('bem-data-source', function(){
-    before(function() {
+describe('bem-data-source', function () {
+    before(function () {
         process.chdir(path.join(__dirname, './test-data'));
     });
 
-    after(function() {
+    after(function () {
         return vow.all([
             utility.removeDir(path.join(__dirname, './test-data/temp')),
             vowFs.remove(path.join(__dirname, './test-data/data.json'))
         ]);
     });
 
-    describe('#publish', function(){
-        it('should be valid done', function(done) {
-            ds.publish('v1.0.0', options, false).then(function() {
+    describe('#publish', function () {
+        it('should be valid done', function (done) {
+            ds.publish('v1.0.0', options, false).then(function () {
                 done();
             }).done();
         });
     });
 
-    describe('#view', function(){
-        it('should be correct number of libraries', function(done) {
+    describe('#view', function () {
+        it('should be correct number of libraries', function (done) {
             ds.view(null, null, options)
-                .then(function(libraries) {
+                .then(function (libraries) {
                     libraries.should.have.length(1);
                     done();
                 }).done();
         });
 
-        it('should be correct set of libraries', function(done) {
+        it('should be correct set of libraries', function (done) {
             ds.view(null, null, options)
-                .then(function(libraries) {
+                .then(function (libraries) {
                     (libraries.indexOf('test-library') > -1).should.be.true;
                     done();
                 }).done();
         });
 
-        it('should be correct number of versions', function(done) {
+        it('should be correct number of versions', function (done) {
             ds.view('test-library', null, options)
-                .then(function(versions) {
+                .then(function (versions) {
                     versions.should.have.length(1);
                     done();
                 }).done();
         });
 
-        it('should be correct set of versions', function(done) {
+        it('should be correct set of versions', function (done) {
             ds.view('test-library', null, options)
-                .then(function(versions) {
+                .then(function (versions) {
                     (versions.indexOf('v1.0.0') > -1).should.be.true;
                     done();
                 }).done();
         });
     });
 
-    describe('#replace', function(){
-        it('should be valid done', function(done) {
+
+    describe('#replace', function () {
+        it('should be valid done', function (done) {
             var o = {
                 doc: 'readme',
                 lang: 'ru',
@@ -80,10 +81,10 @@ describe('bem-data-source', function(){
         });
     });
 
-    describe('#remove', function(){
-        it('should be valid done', function(done) {
+    describe('#remove', function () {
+        it('should be valid done', function (done) {
             ds.remove('test-library', 'v1.0.0', options, false)
-                .then(function() {
+                .then(function () {
                     return ds.view('test-library', null, options);
                 })
                 .then(function (versions) {
