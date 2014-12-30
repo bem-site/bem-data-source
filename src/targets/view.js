@@ -23,7 +23,7 @@ TargetView.prototype = {
      * @param {String} source - name of source (library)
      * @param {String} ref - name of reference (tag, branch, pr)
      * @param {Object} options - advanced options
-     * @returns {TargetRemove}
+     * @returns {TargetView}
      */
     init: function (source, ref, options) {
         this.source = source;

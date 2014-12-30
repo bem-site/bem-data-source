@@ -24,6 +24,14 @@ describe('bem-data-source', function () {
         ]);
     });
 
+    describe('#init', function () {
+        it('should be valid done', function (done) {
+            ds.init(options).then(function () {
+                done();
+            }).done();
+        });
+    });
+
     describe('#publish', function () {
         it('should be valid done', function (done) {
             ds.publish('v1.0.0', options, false).then(function () {

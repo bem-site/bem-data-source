@@ -2,7 +2,8 @@ var logger = require('./src/logger'),
     TargetView = require('./src/targets/view'),
     TargetRemove = require('./src/targets/remove'),
     TargetReplace = require('./src/targets/replace'),
-    TargetPublish = require('./src/targets/publish');
+    TargetPublish = require('./src/targets/publish'),
+    TargetInit = require('./src/targets/init');
 
 /**
  * Publish library data to storage
@@ -70,5 +71,18 @@ exports.remove = function (repo, version, options, isDryRun) {
     logger.setProductionMode();
     options.isDryRun = isDryRun;
     var target = new TargetRemove(repo, version, options);
+    return target.execute().fail(function () { process.exit(1); });
+};
+
+/**
+ * Initialize storage
+ * @param {Object} options - options object with fields:
+ * - {Boolean} debug - flag for storage
+ * - {String} namespace - storage key namespace
+ * @returns {*}
+ */
+exports.init = function (options) {
+    logger.setProductionMode();
+    var target = new TargetInit(options);
     return target.execute().fail(function () { process.exit(1); });
 };
