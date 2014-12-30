@@ -6,6 +6,7 @@ var vow = require('vow'),
 
     ERROR_CODE_NOT_FOUND = 2,
 
+    error = new Error('Storage has not been connected'),
     storage;
 
 /**
@@ -14,7 +15,7 @@ var vow = require('vow'),
  */
 exports.init = function (options) {
     logger.info('Initialize cocaine storage', module);
-    if (storage && storage.connected) {
+    if (storage && !storage.isInDefaultState()) {
         return vow.resolve();
     }
 
@@ -40,8 +41,8 @@ exports.init = function (options) {
 };
 
 exports.find = function (tags) {
-    if (!storage.connected) {
-        return vow.reject();
+    if (!storage.isInConnectedState()) {
+        return vow.reject(error);
     }
 
     var def = vow.defer();
@@ -64,8 +65,8 @@ exports.find = function (tags) {
  * @returns {*}
  */
 exports.read = function (key) {
-    if (!storage.connected) {
-        return vow.reject();
+    if (!storage.isInConnectedState()) {
+        return vow.reject(error);
     }
 
     var def = vow.defer();
@@ -90,8 +91,8 @@ exports.read = function (key) {
  * @returns {*}
  */
 exports.write = function (key, value, tags) {
-    if (!storage.connected) {
-        return vow.reject();
+    if (!storage.isInConnectedState()) {
+        return vow.reject(error);
     }
 
     var def = vow.defer();
@@ -108,8 +109,8 @@ exports.write = function (key, value, tags) {
  * @returns {*}
  */
 exports.remove = function (key) {
-    if (!storage.connected) {
-        return vow.reject();
+    if (!storage.isInConnectedState()) {
+        return vow.reject(error);
     }
 
     var def = vow.defer();

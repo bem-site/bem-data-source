@@ -19,18 +19,26 @@ function Storage(options) {
     this._namespace = options.namespace || OPTIONS.NAME_SPACE;
     this._locator = options.locator || util.format('%s:%s', OPTIONS.HOST, OPTIONS.PORT);
 
-    this._connecting = false;
-    this.connected = false;
-
     this._debug = options.debug || false;
     this._app = process.argv.app || 'defaultapp';
     this._logger = null;
 
     this._client = new Client(this._locator);
-
     this._storage = this._client.Service('storage');
 
-    this._connecting = false;
+    this.STATE = {
+        DEFAULT: 0,
+        CONNECTING: 1,
+        CONNECTED: 2
+    };
+
+    this.state = this.STATE.DEFAULT;
+    this.isInDefaultState = function () {
+        return this.state === this.STATE.DEFAULT;
+    };
+    this.isInConnectedState = function () {
+        return this.state === this.STATE.CONNECTED;
+    };
 }
 
 util.inherits(Storage, EventEmitter);
@@ -47,9 +55,7 @@ Storage.prototype._log = function () {
 Storage.prototype.connect = function () {
     var _this = this;
 
-    assert(!this._connecting && !this._connected, '!this._connecting && !this._connected');
-
-    this._connecting = true;
+    this.state = this.STATE.CONNECTING;
 
     if (this._debug) {
         _connectLogger();
@@ -71,10 +77,9 @@ Storage.prototype.connect = function () {
         _this._log('[%s] connecting to storage service', id);
         _this._storage.connect();
         _this._storage.once('connect', function () {
-            assert(_this._connecting);
+            assert(_this.state === _this.STATE.CONNECTING);
             _this._log('[%s] connected to storage', id);
-            _this._connecting = false;
-            _this.connected = true;
+            _this.state = _this.STATE.CONNECTED;
             _this.emit('connect');
         });
     }
