@@ -1,8 +1,8 @@
 module.exports = {
     default: {
         builder: 'enb',
-        command: 'YENV=production enb make __magic__ ' + 
-		 'desktop.examples desktop.docs touch.examples touch.docs',
+        command: 'npm run deps && YENV=production magic make' + 
+		 ' desktop.examples desktop.docs touch.examples touch.docs',
         docDirs: '*.docs',
         rsync: {
             levels: ['desktop', 'touch'],

@@ -1,9 +1,9 @@
 module.exports = {
     default: {
         builder: 'enb',
-        command: 'YENV=production bower install && npm run libs && enb make __magic__ desktop.examples ' +
-            'desktop.tests desktop.docs touch-pad.examples touch-pad.tests touch-pad.docs ' +
-            'touch-phone.examples touch-phone.tests touch-phone.docs',
+        command: 'npm run deps && YENV=production magic make' +
+                 ' desktop.examples desktop.docs touch-pad.examples touch-pad.docs' +
+                 ' touch-phone.examples touch-phone.docs',
         docDirs: '*.docs',
         rsync: {
             targets: ['*.docs', '*.examples']
@@ -53,8 +53,8 @@ module.exports = {
             require('../src/tasks/remove-output'),
             require('../src/tasks/create-output'),
             require('../src/tasks/copy-sets'),
-            require('../src/tasks/collect-sets'),
-            require('../src/tasks/compress-examples')
+            require('../src/tasks/collect-sets')
+            // require('../src/tasks/compress-examples')
         ]
     }
 };
