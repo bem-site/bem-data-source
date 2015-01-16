@@ -26,6 +26,7 @@
     "lodash": "~2.4.1",
     "marked": "git://github.com/dab/marked.git",
     "nconf": "~0.7.1",
+    "request": "2.51.x",
     "rsync": "0.3.0",
     "sha1": "~1.1.0",
     "vow": "~0.4.1",
