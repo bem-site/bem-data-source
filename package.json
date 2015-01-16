@@ -17,9 +17,7 @@
     "node": ">= 0.8.0"
   },
   "dependencies": {
-    "assert": "^1.1.2",
     "coa": "~0.4.0",
-    "cocaine": "^0.4.1-6",
     "easy-table": "0.3.0",
     "fs-extra": "~0.13.0",
     "github": "~0.2.2",
@@ -28,7 +26,6 @@
     "lodash": "~2.4.1",
     "marked": "git://github.com/dab/marked.git",
     "nconf": "~0.7.1",
-    "optimist": "^0.6.1",
     "rsync": "0.3.0",
     "sha1": "~1.1.0",
     "vow": "~0.4.1",
