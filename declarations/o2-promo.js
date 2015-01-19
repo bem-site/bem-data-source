@@ -11,10 +11,7 @@ module.exports = {
         docs: {
             readme: {
                 folder: '',
-                pattern: {
-                    en: 'README.md',
-                    ru: 'README.ru.md'
-                }
+                pattern: 'README.md'
             },
             changelog: {
                 folder: '',
