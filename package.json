@@ -37,10 +37,11 @@
   },
   "devDependencies": {
     "mocha": "~2.1.0",
-    "should": "~4.4.2",
+    "mocha-lcov-reporter": "0.0.1",
+    "should": "~4.6.x",
     "istanbul": "^0.3.5",
     "jshint": "~2.5.11",
-    "jscs": "~1.9.0"
+    "jscs": "~1.10.x"
   },
   "bin": {
     "ds": "./bin/ds"
@@ -49,14 +50,12 @@
     "config": "cp config/_private.json config/private.json",
     "mocha": "node_modules/.bin/mocha",
     "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha",
-    "test": "node_modules/.bin/jshint . && node_modules/.bin/jscs -c .jscs.js ."
+    "codestyle": "node_modules/.bin/jshint . && node_modules/.bin/jscs -c .jscs.js .",
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec",
+    "coveralls": "npm i coveralls && npm run cover && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "test": "npm run codestyle && npm run cover"
   },
   "readmeFilename": "README.md",
-  "licenses": [
-    {
-      "type": "APACHE",
-      "url": "http://github.com/bem/bem-data-source/raw/master/LICENSE"
-    }
-  ],
+  "license": "MPL-2.0",
   "private": true
 }
