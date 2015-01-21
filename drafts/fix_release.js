@@ -10,7 +10,7 @@ var path = require('path'),
 
 function fixVersionDocs(folderName) {
     var folderParts = folderName.split(':'),
-        libName = folderParts[0 ],
+        libName = folderParts[0],
         libVersion = folderParts[1],
         dataJsonPath = path.join(process.cwd(), folderName, 'data.json');
 

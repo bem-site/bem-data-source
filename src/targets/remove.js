@@ -115,7 +115,7 @@ TargetRemove.prototype = {
             }
 
             // check if given library version exists in registry
-            if (!registry[this.source ].versions[this.ref]) {
+            if (!registry[this.source].versions[this.ref]) {
                 logger.warn(util.format(message.noVersion, this.source, this.ref), module);
                 return vow.resolve();
             }

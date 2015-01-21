@@ -62,7 +62,7 @@ TargetView.prototype = {
                 }
 
                 // check if given library version exists in registry
-                if (!registry[this.source ].versions[this.ref]) {
+                if (!registry[this.source].versions[this.ref]) {
                     logger.warn(this._getMessage().versionNotFound, module);
                     return vow.resolve(null);
                 }
@@ -121,7 +121,7 @@ TargetView.prototype = {
             logger.info('Versions:', module);
 
             Object.keys(lib.versions).forEach(function (versionName) {
-                var version = lib.versions[ versionName ];
+                var version = lib.versions[versionName];
                 table.cell('Library', this.source);
                 table.cell('Name', versionName);
                 table.cell('Sha', version.sha);
@@ -141,7 +141,7 @@ TargetView.prototype = {
      * @private
      */
     _getVersionInfo: function (registry) {
-        var version = registry[this.source ].versions[this.ref ],
+        var version = registry[this.source].versions[this.ref],
             table = new Table();
 
         if (this.options.isCli) {
