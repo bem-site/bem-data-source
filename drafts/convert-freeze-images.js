@@ -4,11 +4,11 @@ var util = require('util'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
 
-    utility = require('./src/util'),
-    config = require('./src/config'),
-    logger = require('./src/logger'),
-    constants = require('./src/constants'),
-    storage = require('./src/cocaine/api'),
+    utility = require('./../src/util'),
+    config = require('./../src/config'),
+    logger = require('./../src/logger'),
+    constants = require('./../src/constants'),
+    storage = require('./../src/cocaine/api'),
 
     FREEZE = 'freeze',
     basePath  = path.join(process.cwd(), FREEZE);

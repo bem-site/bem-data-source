@@ -9,7 +9,7 @@ var fs = require('fs'),
     vowFs = require('vow-fs'),
     glob = require('glob'),
 
-    storage = require('../cocaine/api'),
+    storage = require('../storage'),
     config = require('../config'),
     logger = require('../logger'),
     utility = require('../util'),
@@ -69,8 +69,8 @@ function zipFile(target, filePath) {
 }
 
 /**
- * Write file to cocaine storage
- * @param {Target} target - target object
+ * Write file to storage
+ * @param {TargetPublish} target - target object
  * @param {String} filePath - path to source file
  * @returns {*}
  */
@@ -86,45 +86,28 @@ function sendToStorage(target, filePath) {
                 return vow.resolve();
             }
 
-            return vowFs.read(fPath).then(function (content) {
-                return storage.write(key, content, [target.getSourceName(), target.ref]);
-            });
+            return vowFs
+                .read(fPath, 'utf-8')
+                .then(function (content) {
+                    return storage.get(target.options).writeP(key, content);
+                })
+                .then(function () {
+                    return key;
+                });
         });
 }
 
 /**
  * Executes copying built folders from content to temp
- * @param {Target} target for building
+ * @param {TargetPublish} target for building
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {
-    var openFilesLimit = config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES;
+    var openFilesLimit = config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
+        exampleKeys = [];
 
-    return storage.init(target.options)
-        .then(function () {
-            return readFiles(target.getTempPath());
-        })
+    return readFiles(target.getTempPath())
         .then(function (files) {
-            // TODO remove this filter!
-            /*
-            files = files.filter(function (file) {
-                if (file.match(/README\.md$/)) {
-                    return false;
-                }
-                if (file.match(/desktop\.sets\/(\.bem|catalogue|index|jscatalogue)/)) {
-                    return false;
-                }
-                if (file.match(/\/\.bem\//)) {
-                    return false;
-                }
-                if (file.match(/data\.json$/)) {
-                    return false;
-                }
-
-                return true;
-            });
-            */
-
             var portions = utility.separateArrayOnChunks(files, openFilesLimit);
 
             logger.debug(util.format('example files count: %s', files.length), module);
@@ -135,15 +118,23 @@ module.exports = function (target) {
                     logger.debug(util.format('compress and send files in range %s - %s',
                         index * openFilesLimit, (index + 1) * openFilesLimit), module);
 
-                    return vow.all(item.map(function (_item) {
-                        return zipFile(target, _item)
-                            .then(function () {
-                                return sendToStorage(target, _item);
-                            });
-                    }));
+                    var promises = item.map(function (_item) {
+                        return zipFile(target, _item).then(function () {
+                            return sendToStorage(target, _item);
+                        });
+                    });
+
+                    return vow.all(promises).then(function (keys) {
+                        exampleKeys.concat(keys);
+                    });
                 });
                 return prev;
             }, vow.resolve());
+        })
+        .then(function () {
+            logger.debug('write example registry key', module);
+            var examplesRegistryKey = util.format('%s/%s/%s', target.getSourceName(), target.ref, 'examples');
+            return storage.get(target.options).writeP(examplesRegistryKey, JSON.stringify(exampleKeys));
         })
         .then(function () {
             return vow.resolve(target);

@@ -11,7 +11,7 @@ var util = require('util'),
     titles = require('../titles'),
     utility = require('../util'),
     constants = require('../constants'),
-    storage = require('../cocaine/api'),
+    storage = require('../storage'),
 
     TargetReplace  = function (source, ref, options) {
         return this.init(source, ref, options);
@@ -44,16 +44,9 @@ TargetReplace.prototype = {
         logger.info('Replace documentation file', module);
         api.init();
 
-        var dataKey = util.format('%s/%s/%s', this.source, this.ref, constants.FILE.DATA),
-            storageOptions = {
-                debug: this.options.debug,
-                namespace: this.options.namespace
-            };
+        var dataKey = util.format('%s/%s/%s', this.source, this.ref, constants.FILE.DATA);
 
-        return storage.init(storageOptions)
-            .then(function () {
-                return storage.read(dataKey);
-            }, this)
+        return storage.get(this.options).readP(dataKey)
             .then(function (content) {
                 if (!content) {
                     return vow.reject(util.format('File %s does not exists in storage', dataKey));
@@ -98,7 +91,7 @@ TargetReplace.prototype = {
             }, this)
             .then(function (content) {
                 var strContent = JSON.stringify(content);
-                return storage.write(dataKey, strContent, [this.source, this.ref])
+                return storage.get(this.options).writeP(dataKey, strContent)
                     .then(function () {
                         return sha(strContent);
                     });
@@ -164,7 +157,7 @@ TargetReplace.prototype = {
      * @private
      */
     _updateRegistry: function (shaSum) {
-        return storage.read(constants.ROOT)
+        return storage.get(this.options).readP(constants.ROOT)
             .then(function (registry) {
                 registry = registry ? JSON.parse(registry) : {};
                 registry[this.source] = registry[this.source] || { name: this.source, versions: {} };
@@ -172,7 +165,7 @@ TargetReplace.prototype = {
                     sha: shaSum,
                     date: +(new Date())
                 };
-                return storage.write(constants.ROOT, JSON.stringify(registry), [constants.ROOT]);
+                return storage.get(this.options).writeP(constants.ROOT, JSON.stringify(registry));
             }, this);
     }
 };

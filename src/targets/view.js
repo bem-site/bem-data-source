@@ -5,9 +5,9 @@ var util = require('util'),
     vow = require('vow'),
     Table = require('easy-table'),
 
+    storage = require('../storage'),
     logger = require('../logger'),
     constants = require('../constants'),
-    storage = require('../cocaine/api'),
 
     TargetView  = function (source, ref, options) {
         return this.init(source, ref, options);
@@ -37,10 +37,7 @@ TargetView.prototype = {
      * @returns {*}
      */
     execute: function () {
-        return storage.init(this.options)
-            .then(function () {
-                return storage.read(constants.ROOT);
-            })
+        return storage.get(this.options).readP(constants.ROOT)
             .then(function (registry) {
                 if (!registry) {
                     logger.warn(this._getMessage().registryNotFound, module);
@@ -65,7 +62,7 @@ TargetView.prototype = {
                 }
 
                 // check if given library version exists in registry
-                if (!registry[this.source ].versions[this.ref]) {
+                if (!registry[this.source].versions[this.ref]) {
                     logger.warn(this._getMessage().versionNotFound, module);
                     return vow.resolve(null);
                 }
@@ -124,7 +121,7 @@ TargetView.prototype = {
             logger.info('Versions:', module);
 
             Object.keys(lib.versions).forEach(function (versionName) {
-                var version = lib.versions[ versionName ];
+                var version = lib.versions[versionName];
                 table.cell('Library', this.source);
                 table.cell('Name', versionName);
                 table.cell('Sha', version.sha);
@@ -144,7 +141,7 @@ TargetView.prototype = {
      * @private
      */
     _getVersionInfo: function (registry) {
-        var version = registry[this.source ].versions[this.ref ],
+        var version = registry[this.source].versions[this.ref],
             table = new Table();
 
         if (this.options.isCli) {
