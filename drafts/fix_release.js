@@ -3,10 +3,10 @@ var path = require('path'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
 
-    str = '<p>Внимание! Релиз islands_name X.Y.Z объявлен <strong>deprecated</strong> ' +
+    str = '<h2 style="color: #ff0000">Внимание! Релиз islands_name X.Y.Z объявлен <strong>deprecated</strong> ' +
         'в связи с багами в bem-bl-xjst 2.1.1. ' +
         '<a href="https://ml.yandex-team.ru/thread/2370000001370527991/#message2370000001370926784">' +
-        'Подробности</a></p>';
+        'Подробности</a></h2>';
 
 function fixVersionDocs(folderName) {
     var folderParts = folderName.split(':'),
@@ -23,8 +23,9 @@ function fixVersionDocs(folderName) {
                 ['en', 'ru'].forEach(function (lang) {
                     if (content.docs[docType]) {
                         console.log('change %s %s of %s %s', docType, lang, libName, libVersion);
-                        content.docs[docType].content[lang] = content.docs[docType].content[lang] +
-                        str.replace('islands_name', libName).replace('X.Y.Z', libVersion);
+                        content.docs[docType].content[lang] = str
+                            .replace('islands_name', libName)
+                            .replace('X.Y.Z', libVersion) + content.docs[docType].content[lang];
                     }
                 });
             });
