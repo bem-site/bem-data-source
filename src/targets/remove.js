@@ -3,12 +3,13 @@
 var util = require('util'),
 
     vow = require('vow'),
+
+    storage = require('../storage'),
     logger = require('../logger'),
     config = require('../config'),
     utility = require('../util'),
     mailer = require('../mailer'),
     constants = require('../constants'),
-    storage = require('../cocaine/api'),
 
     TargetRemove  = function (source, ref, options) {
         return this.init(source, ref, options);
@@ -44,10 +45,8 @@ TargetRemove.prototype = {
                 'Data for %s %s should be removed from cocaine storage', this.source, this.ref), module);
             return vow.resolve();
         }
-        return storage.init(this.options)
-            .then(function () {
-                return this._removeRecords();
-            }, this)
+
+        return this._removeRecords()
             .then(function () {
                 return this._removeFromRegistry();
             }, this)
@@ -57,30 +56,34 @@ TargetRemove.prototype = {
     },
 
     /**
-     * Remove all file records from cocaine storage
+     * Remove all file records from storage
      * @returns {*}
      * @private
      */
     _removeRecords: function () {
-        var portionSize = config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES;
+        var portionSize = config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
+            examplesRegistryKey = util.format('%s/%s/%s', this.source, this.ref, 'examples');
 
-        return storage.find([this.source, this.ref]).then(function (keys) {
-            var portions = utility.separateArrayOnChunks(keys, portionSize);
+        return storage.get(this.options).readP(examplesRegistryKey)
+            .then(function (content) {
+                var _this = this,
+                    keys = JSON.parse(content),
+                    portions = utility.separateArrayOnChunks(keys, portionSize);
 
-            logger.debug(util.format('example records count: %s', keys.length), module);
-            logger.debug(util.format('removing will be executed in %s steps', portions.length), module);
+                logger.debug(util.format('example records count: %s', keys.length), module);
+                logger.debug(util.format('removing will be executed in %s steps', portions.length), module);
 
-            return portions.reduce(function (prev, item, index) {
-                prev = prev.then(function () {
-                    logger.debug(util.format('remove files in range %s - %s',
-                        index * portionSize, (index + 1) * portionSize), module);
-                    return vow.all(item.map(function (_item) {
-                        return storage.remove(_item);
-                    }));
-                });
-                return prev;
-            }, vow.resolve());
-        });
+                return portions.reduce(function (prev, item, index) {
+                    prev = prev.then(function () {
+                        logger.debug(util.format('remove files in range %s - %s',
+                            index * portionSize, (index + 1) * portionSize), module);
+                        return vow.all(item.map(function (_item) {
+                            return storage.get(_this.options).removeP(_item);
+                        }));
+                    });
+                    return prev;
+                }, vow.resolve());
+            }, this);
     },
 
     /**
@@ -89,7 +92,7 @@ TargetRemove.prototype = {
      * @private
      */
     _removeFromRegistry: function () {
-        return storage.read(constants.ROOT).then(function (registry) {
+        return storage.get(this.options).readP(constants.ROOT).then(function (registry) {
             var message = {
                 noRegistry: 'No registry record were found. ' +
                     'Please try to make publish any library. Also this operation will be skipped',
@@ -118,7 +121,7 @@ TargetRemove.prototype = {
             }
 
             delete registry[this.source].versions[this.ref];
-            return storage.write(constants.ROOT, JSON.stringify(registry), [constants.ROOT]);
+            return storage.get(this.options).writeP(constants.ROOT, JSON.stringify(registry));
         }, this);
     },
 

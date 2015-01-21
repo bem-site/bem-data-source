@@ -7,13 +7,13 @@ var util = require('util'),
     vowFs = require('vow-fs'),
 
     sha = require('sha1'),
-    storage = require('../cocaine/api'),
+    storage = require('../storage'),
     logger = require('../logger'),
     constants = require('../constants');
 
 /**
  * Create target folder in output directory
- * @param {Target} target for building
+ * @param {TargetPublish} target for building
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {
@@ -30,10 +30,10 @@ module.exports = function (target) {
             }catch (err) {
                 shaKey = sha(util.format('%s:%s:%s', lib, version, (new Date()).toString()));
             }
-            return storage.write(key, content, [lib, version]);
+            return storage.get(target.options).writeP(key, content);
         })
         .then(function () {
-            return storage.read(constants.ROOT);
+            return storage.get(target.options).readP(constants.ROOT);
         })
         .then(function (registry) {
             registry = registry ? JSON.parse(registry) : {};
@@ -46,9 +46,17 @@ module.exports = function (target) {
                 date: +(new Date())
             };
 
-            return storage.write(constants.ROOT, JSON.stringify(registry), [constants.ROOT]);
+            return storage.get(target.options).writeP(constants.ROOT, JSON.stringify(registry));
         })
         .then(function () {
+            var examplesRegistryKey = util.format('%s/%s/%s', target.getSourceName(), target.ref, 'examples')
+            storage.get(target.options).read(examplesRegistryKey, function (data) {
+                console.log(data);
+            });
+
+            storage.get(target.options).read(constants.ROOT, function (data) {
+                console.log(data);
+            });
             return vow.resolve(target);
         });
 };

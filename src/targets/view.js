@@ -5,9 +5,9 @@ var util = require('util'),
     vow = require('vow'),
     Table = require('easy-table'),
 
+    storage = require('../storage'),
     logger = require('../logger'),
     constants = require('../constants'),
-    storage = require('../cocaine/api'),
 
     TargetView  = function (source, ref, options) {
         return this.init(source, ref, options);
@@ -37,10 +37,7 @@ TargetView.prototype = {
      * @returns {*}
      */
     execute: function () {
-        return storage.init(this.options)
-            .then(function () {
-                return storage.read(constants.ROOT);
-            })
+        return storage.get(this.options).readP(constants.ROOT)
             .then(function (registry) {
                 if (!registry) {
                     logger.warn(this._getMessage().registryNotFound, module);

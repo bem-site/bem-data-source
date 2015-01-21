@@ -5,31 +5,31 @@ var path = require('path'),
     _ = require('lodash'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
+
+    emulator = require('mds-wrapper/mds-emulator.js'),
+
     utility = require('../src/util.js'),
     ds = require('../index.js'),
     options = {
-        debug: true,
-        namespace: 'bem-data-source:test'
+        host: '127.0.0.1',
+        namespace: 'my-site',
+        get: { port: 3000 },
+        post: { port: 3001 },
+        auth: ''
     };
 
 describe('bem-data-source', function () {
     before(function () {
         process.chdir(path.join(__dirname, './test-data'));
+        emulator.start(options.get.port, options.post.port);
     });
 
     after(function () {
+        emulator.stop();
         return vow.all([
             utility.removeDir(path.join(__dirname, './test-data/temp')),
             vowFs.remove(path.join(__dirname, './test-data/data.json'))
         ]);
-    });
-
-    describe('#init', function () {
-        it('should be valid done', function (done) {
-            ds.init(options).then(function () {
-                done();
-            }).done();
-        });
     });
 
     describe('#publish', function () {
