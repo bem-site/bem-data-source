@@ -51,8 +51,8 @@
     "mocha": "node_modules/.bin/mocha",
     "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha",
     "codestyle": "node_modules/.bin/jshint . && node_modules/.bin/jscs -c .jscs.js .",
-    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec",
-    "coveralls": "npm i coveralls && npm run cover && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "cover": "istanbul cover _mocha",
+    "coveralls": "npm install coveralls && npm run cover && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "test": "npm run codestyle && npm run cover"
   },
   "readmeFilename": "README.md",
