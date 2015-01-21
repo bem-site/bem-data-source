@@ -49,7 +49,7 @@ module.exports = function (target) {
             return storage.get(target.options).writeP(constants.ROOT, JSON.stringify(registry));
         })
         .then(function () {
-            var examplesRegistryKey = util.format('%s/%s/%s', target.getSourceName(), target.ref, 'examples')
+            var examplesRegistryKey = util.format('%s/%s/%s', target.getSourceName(), target.ref, 'examples');
             storage.get(target.options).read(examplesRegistryKey, function (data) {
                 console.log(data);
             });
