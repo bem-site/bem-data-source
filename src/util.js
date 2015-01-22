@@ -1,11 +1,14 @@
 'use strict';
 
-var fs = require('fs-extra'),
+var fs = require('fs'),
     util = require('util'),
+    zlib = require('zlib'),
 
     md = require('marked'),
     vow = require('vow'),
+    vowFs = require('vow-fs'),
     Rsync = require('rsync'),
+    fsExtra = require('fs-extra'),
 
     renderer = require('./renderer'),
     logger = require('./logger');
@@ -31,7 +34,7 @@ exports.mdToHtml = function (content) {
  */
 exports.removeDir = function (path) {
     var def = vow.defer();
-    fs.remove(path, function (err) {
+    fsExtra.remove(path, function (err) {
         if (err) {
             def.reject(err);
         }
@@ -49,7 +52,7 @@ exports.removeDir = function (path) {
  */
 exports.copy = function (target, destination) {
     var def = vow.defer();
-    fs.copy(target, destination, function (err) {
+    fsExtra.copy(target, destination, function (err) {
         if (err) {
             def.reject(err);
         }
@@ -104,4 +107,41 @@ exports.separateArrayOnChunks = function (arr, chunkSize) {
     }
 
     return arrays;
+};
+
+/**
+ * Compress given file
+ * @param {String} filePath - path to source file
+ * @returns {*}
+ */
+exports.zipFile = function (filePath) {
+    var sPath = filePath,
+        dPath = sPath + '.zip';
+
+    return vowFs.isSymLink(sPath)
+        .then(function (isSymlink) {
+            if (isSymlink) {
+                return vow.resolve();
+            }
+
+            var def = vow.defer(),
+                readStream = fs.createReadStream(sPath),
+                writeStream = fs.createWriteStream(dPath);
+
+            readStream
+                .pipe(zlib.createGzip())
+                .pipe(writeStream)
+                .on('error', function (err) {
+                    logger.warn(util.format('error occur while compressing: %s', filePath), module);
+                    def.reject(err);
+                })
+                .on('close', function () {
+                    logger.verbose(util.format('compressed file: %s', filePath), module);
+                    fs.rename(dPath, sPath, function (err) {
+                        err ? def.reject(err) : def.resolve(filePath);
+                    });
+                });
+
+            return def.promise();
+        });
 };
