@@ -3,7 +3,6 @@
 var util = require('util'),
     path = require('path'),
 
-    vow = require('vow'),
     vowFs = require('vow-fs'),
 
     sha = require('sha1'),
