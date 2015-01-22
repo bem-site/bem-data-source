@@ -53,7 +53,7 @@
     "codestyle": "node_modules/.bin/jshint . && node_modules/.bin/jscs -c .jscs.js .",
     "cover": "istanbul cover _mocha",
     "coveralls": "npm install coveralls && npm run cover && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "test": "npm run codestyle && npm run cover"
+    "test": "npm run codestyle && npm run coveralls"
   },
   "readmeFilename": "README.md",
   "license": "MPL-2.0",
