@@ -2,6 +2,9 @@
 
 var util = require('util'),
 
+    _ = require('lodash'),
+
+    config = require('../config'),
     logger = require('../logger'),
     TargetReplace = require('../targets/replace');
 
@@ -34,12 +37,12 @@ module.exports = function () {
             .req()
             .end()
         .act(function (opts) {
-            var target = new TargetReplace(opts.repo, opts.version, {
+            var target = new TargetReplace(opts.repo, opts.version, _.extend({
                 isCli: true,
                 doc: opts.doc,
                 lang: opts.lang,
                 url: opts.url
-            });
+            }, config.get('storage')));
             return target.execute()
                 .then(function () {
                     logger.info('REPLACE COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);
