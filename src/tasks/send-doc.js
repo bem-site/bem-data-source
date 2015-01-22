@@ -41,22 +41,7 @@ module.exports = function (target) {
 
             logger.debug(util.format('registry: %s', JSON.stringify(registry[lib])), module);
 
-            registry[lib].versions[version] = {
-                sha: shaKey,
-                date: +(new Date())
-            };
-
+            registry[lib].versions[version] = { sha: shaKey, date: +(new Date()) };
             return storage.get(target.options).writeP(constants.ROOT, JSON.stringify(registry));
-        })
-        .then(function () {
-            var examplesRegistryKey = util.format('%s/%s/%s', target.getSourceName(), target.ref, 'examples');
-            storage.get(target.options).read(examplesRegistryKey, function (data) {
-                console.log(data);
-            });
-
-            storage.get(target.options).read(constants.ROOT, function (data) {
-                console.log(data);
-            });
-            return vow.resolve(target);
         });
 };
