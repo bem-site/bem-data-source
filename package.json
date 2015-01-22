@@ -19,10 +19,10 @@
   "dependencies": {
     "coa": "~0.4.0",
     "easy-table": "0.3.0",
-    "fs-extra": "~0.13.0",
+    "fs-extra": "^0.15.x",
     "github": "~0.2.2",
     "glob": "4.3.1",
-    "intel": "~0.5.2",
+    "intel": "^1.0.x",
     "lodash": "~2.4.1",
     "marked": "git://github.com/dab/marked.git",
     "nconf": "~0.7.1",
@@ -39,8 +39,8 @@
     "mocha": "~2.1.0",
     "mocha-lcov-reporter": "0.0.1",
     "should": "~4.6.x",
-    "istanbul": "^0.3.5",
-    "jshint": "~2.5.11",
+    "istanbul": "^0.3.x",
+    "jshint": "~2.6.x",
     "jscs": "~1.10.x"
   },
   "bin": {

@@ -2,6 +2,9 @@
 
 var util = require('util'),
 
+    _ = require('lodash'),
+
+    config = require('../config'),
     logger = require('../logger'),
     TargetView = require('../targets/view');
 
@@ -18,7 +21,7 @@ module.exports = function () {
             .short('v').long('version')
             .end()
         .act(function (opts) {
-            var target = new TargetView(opts.repo, opts.version, { isCli: true });
+            var target = new TargetView(opts.repo, opts.version, _.extend({ isCli: true }, config.get('storage')));
             return target.execute()
                 .then(function () {
                     logger.info('VIEW COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);
