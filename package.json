@@ -56,6 +56,5 @@
     "test": "npm run codestyle && npm run coveralls"
   },
   "readmeFilename": "README.md",
-  "license": "MPL-2.0",
-  "private": true
+  "license": "MPL-2.0"
 }
