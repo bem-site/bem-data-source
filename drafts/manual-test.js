@@ -4,14 +4,9 @@ var util = require('util'),
     vow = require('vow'),
 
     request = require('request'),
+    config = require('../src/config'),
 
-    configuration = {
-        host: '127.0.0.1',
-        namespace: 'my-site',
-        get: { port: 80 },
-        post: { port: 1111 },
-        auth: ''
-    },
+    configuration = config.get('storage'),
     baseRequestOptions = {
         encoding: 'utf-8',
         timeout: 5000
@@ -23,7 +18,7 @@ function read(key) {
             method: 'GET'
         },
         url = util.format('http://%s:%s/get-%s/%s',
-            configuration.host, configuration.get.port, configuration.namespace, key),
+            configuration.get.host, configuration.get.port, configuration.namespace, key),
         opts = _.extend({}, baseRequestOptions, requestOptions, { url: url });
 
     request(opts, function (error, response, body) {
@@ -41,7 +36,7 @@ function write(key, value) {
         }
     },
     url = util.format('http://%s:%s/upload-%s/%s',
-    configuration.host, configuration.post.port, configuration.namespace, key),
+    configuration.post.host, configuration.post.port, configuration.namespace, key),
     opts = _.extend({}, baseRequestOptions, requestOptions, {
         url: url,
         body: value
