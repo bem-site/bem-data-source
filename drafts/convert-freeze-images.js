@@ -8,15 +8,13 @@ var util = require('util'),
     config = require('./../src/config'),
     logger = require('./../src/logger'),
     constants = require('./../src/constants'),
-    storage = require('./../src/cocaine/api'),
+    storage = require('../src/storage'),
 
     FREEZE = 'freeze',
+    options = config.get('storage'),
     basePath  = path.join(process.cwd(), FREEZE);
 
-storage.init(config.get('storage:cocaine'))
-    .then(function () {
-        return vowFs.listDir(basePath);
-    })
+vowFs.listDir(basePath)
     .then(function (files) {
         var openFilesLimit = config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
             portions = utility.separateArrayOnChunks(files, openFilesLimit);
@@ -31,8 +29,8 @@ storage.init(config.get('storage:cocaine'))
                         key = util.format('%s/%s', FREEZE, _item);
 
                     logger.debug(util.format('send file %s', _item), module);
-                    return vowFs.read(fPath).then(function (content) {
-                        return storage.write(key, content, [FREEZE]);
+                    return vowFs.read(fPath, 'utf-8').then(function (content) {
+                        return storage.get(options).writeP(key, content);
                     });
                 }));
             });
