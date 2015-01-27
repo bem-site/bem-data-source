@@ -66,21 +66,13 @@ module.exports = function (target) {
 
     return readFiles(target.getTempPath())
         .then(function (files) {
-            files = files.filter(function (file) {
-                if (file.match(/README\.md$/)) {
-                    return false;
-                }
-                if (file.match(/desktop\.sets\/(\.bem|catalogue|index|jscatalogue)/)) {
-                    return false;
-                }
-                if (file.match(/\/\.bem\//)) {
-                    return false;
-                }
-                if (file.match(/data\.json$/)) {
-                    return false;
-                }
-                return true;
-            });
+            if (target.options.ignored) {
+                files = files.filter(function (file) {
+                    return !target.options.ignored.some(function (pattern) {
+                        return file.match(pattern);
+                    });
+                });
+            }
 
             var portions = utility.separateArrayOnChunks(files, openFilesLimit);
 

@@ -5,23 +5,36 @@ var path = require('path'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
     logger = require('../src/logger'),
+    config = require('../src/config'),
 
     processExamples = require('../src/tasks/process-examples'),
     sendDocumentation = require('../src/tasks/send-doc'),
 
-    options = {
-        host: 'storage-int.mdst.yandex.net',
-        namespace: 'lego-site',
-        get: { port: 80 },
-        post: { port: 1111 },
-        auth: 'Basic bGVnby1zaXRlOjJkZGUyZjI0OGIxODI2NWRiZWM2ZGRiOGVhMjBkNjg0',
-        timeout: 180000
-    },
+    options = config.get('storage'),
+
+    ignoredPatterns = [
+        /README\.md$/,
+        /desktop\.sets\/(\.bem|catalogue|index|jscatalogue)/,
+        /\/\.bem\//,
+        /data\.json$/,
+        /bemdecl\.js$/,
+        /browser\.bemhtml\.js$/,
+        /browser\.js$/,
+        /deps\.js$/,
+        /js\-js\.bemdecl\.js$/,
+        /js\.bemdecl\.js$/,
+        /js\.deps\.js$/,
+        /noprefix\.css$/,
+        /pre\.js$/,
+        /template\.bemdecl\.js$/,
+        /template\.deps\.js$/
+    ],
 
     CVT = function (lib, version, options) {
         this.source = lib;
         this.ref = version;
         this.options = options;
+        this.options.ignored = ignoredPatterns;
         this.getOutputPath = function () {
             return path.join(process.cwd(), version);
         };
@@ -33,6 +46,10 @@ var path = require('path'),
 
 function convertLibrary() {
     logger.info('START CONVERTING LIBRARY', module);
+    logger.debug(util.format('storage host: %s', options.post.host), module);
+    logger.debug(util.format('storage namespace: %s', options.namespace), module);
+    logger.debug(util.format('storage auth: %s', options.auth), module);
+
     var cwd = process.cwd(),
         libName = cwd.split('/').pop();
     logger.info(util.format('current directory: %s', cwd), module);
