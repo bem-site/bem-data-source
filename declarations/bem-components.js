@@ -1,7 +1,7 @@
 module.exports = {
     default: {
         builder: 'enb',
-        command: 'npm run deps && YENV=production magic make' + 
+        command: 'npm run deps && BEM_TEMPLATE_ENGINE=BEMHTML YENV=production magic make' + 
 		 ' desktop.examples desktop.docs touch.examples touch.docs',
         docDirs: '*.docs',
         rsync: {
