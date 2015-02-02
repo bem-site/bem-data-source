@@ -1,3 +1,8 @@
 language: node_js
 node_js:
   - "0.10"
+deploy:
+  provider: npm
+  api_key: "dXNlcm5hbWU6cGFzc3dvcmQ="
+  on:
+    tags: true
