@@ -42,7 +42,7 @@ module.exports = function () {
                 doc: opts.doc,
                 lang: opts.lang,
                 url: opts.url
-            }, config.get('storage')));
+            }, { storage: config.get('storage') }));
             return target.execute()
                 .then(function () {
                     logger.info('REPLACE COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);

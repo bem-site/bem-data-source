@@ -29,7 +29,7 @@ module.exports = function () {
             .end()
         .act(function (opts) {
             var target = new TargetRemove(opts.repo, opts.version,
-                _.extend({ isDryRun: opts.dry }, config.get('storage')));
+                _.extend({ isDryRun: opts.dry }, { storage: config.get('storage') }));
             return target.execute()
                 .then(function () {
                     logger.info('REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);

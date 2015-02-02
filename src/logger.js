@@ -41,7 +41,12 @@ function getLogger(module) {
     }
 }
 
-exports.setProductionMode = function () {
+/**
+ * Switches logger in production mode
+ * @param {String} level - verbosity level (verbose, debug, info, warn, error)
+ */
+exports.setProductionMode = function (level) {
+    intel.setLevel(level || config.get('logLevel'));
     mode = 'api';
 };
 

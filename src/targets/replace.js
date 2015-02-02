@@ -46,7 +46,7 @@ TargetReplace.prototype = {
 
         var dataKey = util.format('%s/%s/%s', this.source, this.ref, constants.FILE.DATA);
 
-        return storage.get(this.options).readP(dataKey)
+        return storage.get(this.options.storage).readP(dataKey)
             .then(function (content) {
                 if (!content) {
                     return vow.reject(util.format('File %s does not exists in storage', dataKey));
@@ -91,7 +91,7 @@ TargetReplace.prototype = {
             }, this)
             .then(function (content) {
                 var strContent = JSON.stringify(content);
-                return storage.get(this.options).writeP(dataKey, strContent)
+                return storage.get(this.options.storage).writeP(dataKey, strContent)
                     .then(function () {
                         return sha(strContent);
                     });
@@ -157,7 +157,7 @@ TargetReplace.prototype = {
      * @private
      */
     _updateRegistry: function (shaSum) {
-        return storage.get(this.options).readP(constants.ROOT)
+        return storage.get(this.options.storage).readP(constants.ROOT)
             .then(function (registry) {
                 registry = registry ? JSON.parse(registry) : {};
                 registry[this.source] = registry[this.source] || { name: this.source, versions: {} };
@@ -165,7 +165,7 @@ TargetReplace.prototype = {
                     sha: shaSum,
                     date: +(new Date())
                 };
-                return storage.get(this.options).writeP(constants.ROOT, JSON.stringify(registry));
+                return storage.get(this.options.storage).writeP(constants.ROOT, JSON.stringify(registry));
             }, this);
     }
 };

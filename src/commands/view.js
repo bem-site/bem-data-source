@@ -21,7 +21,8 @@ module.exports = function () {
             .short('v').long('version')
             .end()
         .act(function (opts) {
-            var target = new TargetView(opts.repo, opts.version, _.extend({ isCli: true }, config.get('storage')));
+            var target = new TargetView(opts.repo, opts.version,
+                _.extend({ isCli: true }, { storage: config.get('storage') }));
             return target.execute()
                 .then(function () {
                     logger.info('VIEW COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);

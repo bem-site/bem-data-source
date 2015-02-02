@@ -37,7 +37,7 @@ TargetView.prototype = {
      * @returns {*}
      */
     execute: function () {
-        return storage.get(this.options).readP(constants.ROOT)
+        return storage.get(this.options.storage).readP(constants.ROOT)
             .then(function (registry) {
                 if (!registry) {
                     logger.warn(this._getMessage().registryNotFound, module);

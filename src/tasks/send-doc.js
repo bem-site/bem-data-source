@@ -29,10 +29,10 @@ module.exports = function (target) {
             }catch (err) {
                 shaKey = sha(util.format('%s:%s:%s', lib, version, (new Date()).toString()));
             }
-            return storage.get(target.options).writeP(key, content);
+            return storage.get(target.options.storage).writeP(key, content);
         })
         .then(function () {
-            return storage.get(target.options).readP(constants.ROOT);
+            return storage.get(target.options.storage).readP(constants.ROOT);
         })
         .then(function (registry) {
             registry = registry ? JSON.parse(registry) : {};
@@ -41,6 +41,6 @@ module.exports = function (target) {
             logger.debug(util.format('registry: %s', JSON.stringify(registry[lib])), module);
 
             registry[lib].versions[version] = { sha: shaKey, date: +(new Date()) };
-            return storage.get(target.options).writeP(constants.ROOT, JSON.stringify(registry));
+            return storage.get(target.options.storage).writeP(constants.ROOT, JSON.stringify(registry));
         });
 };

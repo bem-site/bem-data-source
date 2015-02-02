@@ -24,7 +24,8 @@ module.exports = function () {
         .act(function (opts) {
             logger.info('PUBLISH:', module);
             logger.info(util.format('repository version %s', opts.version), module);
-            var target = new Target(opts.version, _.extend({ isCli: true, isDryRun: opts.dry }, config.get('storage')));
+            var target = new Target(opts.version,
+                _.extend({ isCli: true, isDryRun: opts.dry }, { storage: config.get('storage') }));
                 target.execute().then(function () {
                     logger.info('PUBLISH COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);
                     process.exit(0);

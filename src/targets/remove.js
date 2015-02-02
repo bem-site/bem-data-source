@@ -61,10 +61,10 @@ TargetRemove.prototype = {
      * @private
      */
     _removeRecords: function () {
-        var portionSize = config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
+        var portionSize = this.options.maxOpenFiles || config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
             examplesRegistryKey = util.format('%s/%s/%s', this.source, this.ref, 'examples');
 
-        return storage.get(this.options).readP(examplesRegistryKey)
+        return storage.get(this.options.storage).readP(examplesRegistryKey)
             .then(function (content) {
                 var _this = this,
                     keys = JSON.parse(content),
@@ -78,7 +78,7 @@ TargetRemove.prototype = {
                         logger.debug(util.format('remove files in range %s - %s',
                             index * portionSize, (index + 1) * portionSize), module);
                         return vow.all(item.map(function (_item) {
-                            return storage.get(_this.options).removeP(_item);
+                            return storage.get(_this.options.storage).removeP(_item);
                         }));
                     });
                     return prev;
@@ -92,7 +92,7 @@ TargetRemove.prototype = {
      * @private
      */
     _removeFromRegistry: function () {
-        return storage.get(this.options).readP(constants.ROOT).then(function (registry) {
+        return storage.get(this.options.storage).readP(constants.ROOT).then(function (registry) {
             var message = {
                 noRegistry: 'No registry record were found. ' +
                     'Please try to make publish any library. Also this operation will be skipped',
@@ -121,7 +121,7 @@ TargetRemove.prototype = {
             }
 
             delete registry[this.source].versions[this.ref];
-            return storage.get(this.options).writeP(constants.ROOT, JSON.stringify(registry));
+            return storage.get(this.options.storage).writeP(constants.ROOT, JSON.stringify(registry));
         }, this);
     },
 

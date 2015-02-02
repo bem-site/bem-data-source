@@ -47,7 +47,7 @@ function sendToStorage(target, filePath) {
             return vowFs
                 .read(fPath, 'utf-8')
                 .then(function (content) {
-                    return storage.get(target.options).writeP(key, content);
+                    return storage.get(target.options.storage).writeP(key, content);
                 })
                 .then(function () {
                     return key;
@@ -61,7 +61,7 @@ function sendToStorage(target, filePath) {
  * @returns {defer.promise|*}
  */
 module.exports = function (target) {
-    var openFilesLimit = config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
+    var openFilesLimit = target.options.maxOpenFiles || config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
         exampleKeys = [];
 
     return readFiles(target.getTempPath())
@@ -102,7 +102,7 @@ module.exports = function (target) {
         .then(function () {
             logger.debug('write example registry key', module);
             var examplesRegistryKey = util.format('%s/%s/%s', target.getSourceName(), target.ref, 'examples');
-            return storage.get(target.options).writeP(examplesRegistryKey, JSON.stringify(exampleKeys));
+            return storage.get(target.options.storage).writeP(examplesRegistryKey, JSON.stringify(exampleKeys));
         })
         .then(function () {
             return vow.resolve(target);
