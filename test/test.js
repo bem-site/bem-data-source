@@ -11,17 +11,24 @@ var path = require('path'),
     utility = require('../src/util.js'),
     ds = require('../index.js'),
     options = {
-        host: '127.0.0.1',
-        namespace: 'my-site',
-        get: { port: 3000 },
-        post: { port: 3001 },
-        auth: ''
+        storage: {
+            namespace: 'my-site',
+            get: {
+                host: '127.0.0.1',
+                port: 3000
+            },
+            post: {
+                host: '127.0.0.1',
+                port: 3001
+            },
+            auth: ''
+        }
     };
 
 describe('bem-data-source', function () {
     before(function () {
         process.chdir(path.join(__dirname, './test-data'));
-        emulator.start(options.get.port, options.post.port);
+        emulator.start(options.storage.get.port, options.storage.post.port);
     });
 
     after(function () {
