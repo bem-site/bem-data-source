@@ -1,10 +1,5 @@
 {
     "logLevel": "debug",
     "languages": ["en", "ru"],
-    "maxOpenFiles": 100,
-    "storage": {
-        "cocaine": {
-            "debug": false
-        }
-    }
+    "maxOpenFiles": 100
 }
