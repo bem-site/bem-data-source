@@ -64,6 +64,12 @@ module.exports = function (target) {
     var openFilesLimit = target.options.maxOpenFiles || config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
         exampleKeys = [];
 
+    if (target.options.isDryRun) {
+        logger.info('"Publish" or "Send" command was launched in dry run mode', module);
+        logger.warn(util.format(
+            'Data for %s %s won\' be sent to storage', this.source, this.ref), module);
+    }
+
     return readFiles(target.getTempPath())
         .then(function (files) {
             if (target.options.ignored) {
@@ -87,7 +93,7 @@ module.exports = function (target) {
                     var promises = item.map(function (_item) {
                         // TODO temporary disable compression
                         // return utility.zipFile(path.join(target.getTempPath(), _item)).then(function () {
-                            return sendToStorage(target, _item);
+                            return target.options.isDryRun ? vow.resolve() : sendToStorage(target, _item);
                         // });
                     });
 
@@ -102,7 +108,8 @@ module.exports = function (target) {
         .then(function () {
             logger.debug('write example registry key', module);
             var examplesRegistryKey = util.format('%s/%s/%s', target.getSourceName(), target.ref, 'examples');
-            return storage.get(target.options.storage).writeP(examplesRegistryKey, JSON.stringify(exampleKeys));
+            return target.options.isDryRun ? vow.resolve() :
+                storage.get(target.options.storage).writeP(examplesRegistryKey, JSON.stringify(exampleKeys));
         })
         .then(function () {
             return vow.resolve(target);
