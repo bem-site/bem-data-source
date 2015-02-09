@@ -114,6 +114,7 @@ exports.separateArrayOnChunks = function (arr, chunkSize) {
  * @param {String} filePath - path to source file
  * @returns {*}
  */
+/*
 exports.zipFile = function (filePath) {
     var sPath = filePath,
         dPath = sPath + '.zip';
@@ -145,3 +146,4 @@ exports.zipFile = function (filePath) {
             return def.promise();
         });
 };
+*/
