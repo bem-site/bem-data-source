@@ -75,7 +75,7 @@ function convertLibrary() {
 
 function convertLibraryVersion(lib, version) {
     logger.info(util.format('Convert: library - [%s] version - [%s]', lib, version), module);
-    var t = new CVT(lib, version, options);
+    var t = new CVT(lib, version, { storage: options });
     return processExamples(t).then(function () {
         return sendDocumentation(t);
     });
