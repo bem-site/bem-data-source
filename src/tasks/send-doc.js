@@ -3,6 +3,7 @@
 var util = require('util'),
     path = require('path'),
 
+    vow = require('vow'),
     vowFs = require('vow-fs'),
 
     sha = require('sha1'),
@@ -29,7 +30,8 @@ module.exports = function (target) {
             }catch (err) {
                 shaKey = sha(util.format('%s:%s:%s', lib, version, (new Date()).toString()));
             }
-            return storage.get(target.options.storage).writeP(key, content);
+            return target.options.isDryRun ? vow.resolve() :
+                storage.get(target.options.storage).writeP(key, content);
         })
         .then(function () {
             return storage.get(target.options.storage).readP(constants.ROOT);
@@ -41,6 +43,7 @@ module.exports = function (target) {
             logger.debug(util.format('registry: %s', JSON.stringify(registry[lib])), module);
 
             registry[lib].versions[version] = { sha: shaKey, date: +(new Date()) };
-            return storage.get(target.options.storage).writeP(constants.ROOT, JSON.stringify(registry));
+            return target.options.isDryRun ? vow.resolve() :
+                storage.get(target.options.storage).writeP(constants.ROOT, JSON.stringify(registry));
         });
 };

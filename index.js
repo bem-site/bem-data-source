@@ -34,12 +34,10 @@ exports.publish = function (version, options, isDryRun) {
  * @param {String} version - name of version (branch|tag|pr)
  * @param {Object} options - options object with fields:
  * - {String} logLevel - logger level (debug, info, warn, error)
- * @param {Boolean} isDryRun - dry run flag
  * @returns {*}
  */
-exports.prepare = function (version, options, isDryRun) {
+exports.prepare = function (version, options) {
     logger.setProductionMode(options.logLevel);
-    options.isDryRun = isDryRun;
     var target = new TargetPrepare(version, options);
     return target.execute().fail(function () { process.exit(1); });
 };

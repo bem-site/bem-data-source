@@ -41,9 +41,8 @@ TargetRemove.prototype = {
     execute: function () {
         if (this.options.isDryRun) {
             logger.info('Remove command was launched in dry run mode', module);
-            logger.info(util.format(
-                'Data for %s %s should be removed from cocaine storage', this.source, this.ref), module);
-            return vow.resolve();
+            logger.warn(util.format(
+                'Data for %s %s won\' be removed from storage', this.source, this.ref), module);
         }
 
         return this._removeRecords()
@@ -64,6 +63,7 @@ TargetRemove.prototype = {
         var portionSize = this.options.maxOpenFiles || config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
             examplesRegistryKey = util.format('%s/%s/%s', this.source, this.ref, 'examples');
 
+        logger.info('Start to remove example records', module);
         return storage.get(this.options.storage).readP(examplesRegistryKey)
             .then(function (content) {
                 var _this = this,
@@ -78,7 +78,8 @@ TargetRemove.prototype = {
                         logger.debug(util.format('remove files in range %s - %s',
                             index * portionSize, (index + 1) * portionSize), module);
                         return vow.all(item.map(function (_item) {
-                            return storage.get(_this.options.storage).removeP(_item);
+                            return _this.options.isDryRun ? vow.resolve() :
+                                storage.get(_this.options.storage).removeP(_item);
                         }));
                     });
                     return prev;
@@ -100,6 +101,8 @@ TargetRemove.prototype = {
                 noVersion: 'Library %s version %s was not found in registry. Operation will be skipped'
             };
 
+            logger.info('Start to remove library from common registry', module);
+
             // check if registry exists
             if (!registry) {
                 logger.warn(message.noRegistry, module);
@@ -117,6 +120,11 @@ TargetRemove.prototype = {
             // check if given library version exists in registry
             if (!registry[this.source].versions[this.ref]) {
                 logger.warn(util.format(message.noVersion, this.source, this.ref), module);
+                return vow.resolve();
+            }
+
+            // should to do nothing if command was launched in dry mode
+            if (this.options.isDryRun) {
                 return vow.resolve();
             }
 
