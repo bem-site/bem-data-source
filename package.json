@@ -17,17 +17,17 @@
     "node": ">= 0.8.0"
   },
   "dependencies": {
-    "coa": "~0.4.0",
+    "coa": "^0.4.x",
     "easy-table": "0.3.0",
-    "fs-extra": "^0.15.x",
-    "github": "~0.2.2",
-    "glob": "4.3.1",
+    "fs-extra": "^0.16.x",
+    "github": "~0.2.x",
+    "glob": "4.3.x",
     "intel": "^1.0.x",
-    "lodash": "~2.4.1",
+    "lodash": "^3.1.x",
     "marked": "git://github.com/dab/marked.git",
     "nconf": "~0.7.1",
-    "request": "2.51.x",
-    "rsync": "0.3.0",
+    "request": "^2.53.x",
+    "rsync": "^0.4.0",
     "sha1": "~1.1.0",
     "vow": "~0.4.1",
     "vow-fs": "~0.3.0",
@@ -36,12 +36,12 @@
     "mds-wrapper": "^1.2.x"
   },
   "devDependencies": {
-    "mocha": "~2.1.0",
+    "mocha": "~2.1.x",
     "mocha-lcov-reporter": "0.0.1",
     "should": "~4.6.x",
     "istanbul": "^0.3.x",
     "jshint": "~2.6.x",
-    "jscs": "~1.10.x"
+    "jscs": "^1.11.x"
   },
   "bin": {
     "ds": "./bin/ds"

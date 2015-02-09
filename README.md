@@ -1,10 +1,12 @@
 bem-data-source
 ===============
 
-[![Coverage Status](https://coveralls.io/repos/bem-site/bem-data-source/badge.svg?branch=master)](https://coveralls.io/r/bem-site/bem-data-source?branch=master)
-[![Build Status](https://travis-ci.org/bem-site/bem-data-source.svg?branch=master)](https://travis-ci.org/bem-site/bem-data-source)
-[![Dependency Status](https://david-dm.org/bem-site/bem-data-source.svg?style=flat)](https://david-dm.org/bem-site/bem-data-source)
-[![devDependency Status](https://david-dm.org/bem-site/bem-data-source/dev-status.svg?style=flat)](https://david-dm.org/bem-site/bem-data-source#info=devDependencies)
+[![NPM](https://nodei.co/npm/bem-data-source.png)](https://nodei.co/npm/bem-data-source/)
+
+[![Coveralls branch](https://img.shields.io/coveralls/bem-site/bem-data-source/master.svg)](https://coveralls.io/r/bem-site/bem-data-source?branch=master)
+[![Travis](https://img.shields.io/travis/bem-site/bem-data-source.svg)](https://travis-ci.org/bem-site/bem-data-source)
+[![David](https://img.shields.io/david/bem-site/bem-data-source.svg)](https://david-dm.org/bem-site/bem-data-source)
+[![David](https://img.shields.io/david/dev/bem-site/bem-data-source.svg)](https://david-dm.org/bem-site/bem-data-source#info=devDependencies)
 
 Данный инструмент предназначен для публикации данных документации и примеров по библиотекам блоков.
 
@@ -225,6 +227,33 @@ ds.publish(version, options, dryMode);
 
 ВНИМАНИЕ: при выполнении данной команды `process.cwd()` должен указывать на корневую директорию библиотеки.
 
+#### Prepare:
+
+Подготовка данных для отправки.
+
+```
+var ds = require('bem-data-source');
+ds.prepare(version, options, dryMode);
+```
+
+* `version` - обязательный параметр названия версии (ветка, тег, пулл-реквест)
+* `options` - опциональне настройки команды.
+* `dryMode` - Тестовое выполнение команды.
+
+#### Send:
+
+Отправка данных в удаленное хранилище.
+
+```
+var ds = require('bem-data-source');
+ds.send(version, options, dryMode);
+```
+
+* `version` - обязательный параметр названия версии (ветка, тег, пулл-реквест)
+* `options` - опциональне настройки команды.
+* `dryMode` - Тестовое выполнение команды.
+
+Примечание: Результат последовательного вызова методов `prepare` и `send` эквивалентен вызову метода `publish`.
 
 ##### Опциональные настройки для команд:
 
