@@ -1,8 +1,16 @@
 {
   "storage": {
-    "cocaine": {
-      "namespace": ""
-    }
+    "namespace": "your site namespace",
+    "get": {
+      "host": "",
+      "port": 80
+    },
+    "post": {
+      "host": "",
+      "port": 1111
+    },
+    "auth": "your personal auth token",
+    "timeout": 3000
   },
   "mailer": {
     "host": "your e-mail-host",
