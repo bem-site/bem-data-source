@@ -1,12 +1,9 @@
 'use strict';
 
-var fs = require('fs'),
-    util = require('util'),
-    zlib = require('zlib'),
+var util = require('util'),
 
     md = require('marked'),
     vow = require('vow'),
-    vowFs = require('vow-fs'),
     Rsync = require('rsync'),
     fsExtra = require('fs-extra'),
 

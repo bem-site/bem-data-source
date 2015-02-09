@@ -49,16 +49,12 @@ function write(key, value) {
     return def.promise();
 }
 
-read('db/5:2:2015-15:2:23/leveldb').then(function (result) {
-    console.log('READ %s', result);
-}).done();
-
-//write('test-data/aaa', 'aaa')
-//    .then(function (body) {
-//        console.log('UPLOAD %s', body || 'NULL');
-//        return read('test-data/aaa');
-//    })
-//    .then(function (body) {
-//        console.log('READ %s', body);
-//    })
-//    .done();
+write('test-data/aaa', 'aaa')
+    .then(function (body) {
+        console.log('UPLOAD %s', body || 'NULL');
+        return read('test-data/aaa');
+    })
+    .then(function (body) {
+        console.log('READ %s', body);
+    })
+    .done();
