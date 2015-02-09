@@ -21,6 +21,8 @@ function read(key) {
             configuration.get.host, configuration.get.port, configuration.namespace, key),
         opts = _.extend({}, baseRequestOptions, requestOptions, { url: url });
 
+    console.log(url);
+
     request(opts, function (error, response, body) {
         error ? def.reject(error) : def.resolve(body);
     });
@@ -47,12 +49,16 @@ function write(key, value) {
     return def.promise();
 }
 
-write('test-data/aaa', 'aaa')
-    .then(function (body) {
-        console.log('UPLOAD %s', body);
-        return read('test-data/aaa');
-    })
-    .then(function (body) {
-        console.log('READ %s', body);
-    })
-    .done();
+read('db/5:2:2015-15:2:23/leveldb').then(function (result) {
+    console.log('READ %s', result);
+}).done();
+
+//write('test-data/aaa', 'aaa')
+//    .then(function (body) {
+//        console.log('UPLOAD %s', body || 'NULL');
+//        return read('test-data/aaa');
+//    })
+//    .then(function (body) {
+//        console.log('READ %s', body);
+//    })
+//    .done();
