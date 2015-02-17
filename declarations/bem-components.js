@@ -5,7 +5,10 @@ module.exports = {
         docDirs: '*.docs',
         rsync: {
             levels: ['desktop', 'touch'],
-            targets: ['*.docs', '*.examples']
+            targets: ['*.examples'],
+            exclude: ['*.bemdecl.js', '*.browser.bemhtml.js', '*.browser.js',
+            '*.deps.js', '*.js-js.bemdecl.js', '*.js.bemdecl.js', '*.js.deps.js', '*.pre.js',
+            '*.template.bemdecl.js', '*.template.deps.js']
         },
         docs: {
             readme: {
