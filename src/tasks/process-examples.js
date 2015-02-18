@@ -70,13 +70,26 @@ module.exports = function (target) {
             'Data for %s %s won\' be sent to storage', this.source, this.ref), module);
     }
 
+    if (target.options.isDocsOnly) {
+        logger.warn('"Publish" commands was launched with enabled flag docs-only. ' +
+        'Examples will not be sent to mds storage', module);
+        return vow.resolve(target);
+    }
+
     return readFiles(target.getTempPath())
         .then(function (files) {
+            // TODO this condition is needed for convertation script
             if (target.options.ignored) {
                 files = files.filter(function (file) {
                     return !target.options.ignored.some(function (pattern) {
                         return file.match(pattern);
                     });
+                });
+            }
+
+            if (target.options.examples) {
+                files = files.filter(function (file) {
+                    return file.indexOf(target.options.examples) > -1;
                 });
             }
 
@@ -91,10 +104,7 @@ module.exports = function (target) {
                         index * openFilesLimit, (index + 1) * openFilesLimit), module);
 
                     var promises = item.map(function (_item) {
-                        // TODO temporary disable compression
-                        // return utility.zipFile(path.join(target.getTempPath(), _item)).then(function () {
-                            return target.options.isDryRun ? vow.resolve() : sendToStorage(target, _item);
-                        // });
+                        return target.options.isDryRun ? vow.resolve() : sendToStorage(target, _item);
                     });
 
                     return vow.all(promises).then(function (keys) {
