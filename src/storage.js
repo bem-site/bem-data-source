@@ -1,7 +1,9 @@
-var MDS = require('mds-wrapper'),
-    mds;
+var sha = require('sha1'),
+    MDS = require('mds-wrapper'),
+    mds = {};
 
 exports.get = function (options) {
-    mds = mds || new MDS(options);
-    return mds;
+    var key = sha(JSON.stringify(options));
+    mds[key] = mds[key] || new MDS(options);
+    return mds[key];
 };
