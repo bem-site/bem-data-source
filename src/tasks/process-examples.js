@@ -100,7 +100,7 @@ module.exports = function (target) {
 
             return portions.reduce(function (prev, item, index) {
                 prev = prev.then(function () {
-                    logger.debug(util.format('send files in range %s - %s',
+                    logger.verbose(util.format('send files in range %s - %s',
                         index * openFilesLimit, (index + 1) * openFilesLimit), module);
 
                     var promises = item.map(function (_item) {
