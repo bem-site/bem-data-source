@@ -47,7 +47,11 @@ function sendToStorage(target, filePath) {
             return vowFs
                 .read(fPath, 'utf-8')
                 .then(function (content) {
-                    return storage.get(target.options.storage).writeP(key, content);
+                    if (content && content.length) {
+                        return storage.get(target.options.storage).writeP(key, content);
+                    } else {
+                        return vow.resolve();
+                    }
                 })
                 .then(function () {
                     return key;
