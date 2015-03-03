@@ -5,7 +5,7 @@ module.exports = {
             'touch-pad.docs touch-phone.examples touch-phone.docs',
         docDirs: '*.docs',
         rsync: {
-            targets: ['*.docs', '*.examples']
+            targets: ['*.examples']
         },
         docs: {
             readme: {
