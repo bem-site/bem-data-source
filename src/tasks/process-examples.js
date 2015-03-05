@@ -40,7 +40,7 @@ function sendToStorage(target, filePath) {
     return vowFs.isSymLink(fPath)
         .then(function (isSymlink) {
             if (isSymlink) {
-                console.log('find symlink %s', filePath);
+                logger.debug(util.format('find symlink %s', filePath), module);
                 return vow.resolve();
             }
 
@@ -50,6 +50,7 @@ function sendToStorage(target, filePath) {
                     if (content && content.length) {
                         return storage.get(target.options.storage).writeP(key, content);
                     } else {
+                        logger.warn(util.format('content is empty for file %s', fPath), module);
                         return vow.resolve();
                     }
                 })
@@ -104,7 +105,7 @@ module.exports = function (target) {
 
             return portions.reduce(function (prev, item, index) {
                 prev = prev.then(function () {
-                    logger.verbose(util.format('send files in range %s - %s',
+                    logger.debug(util.format('send files in range %s - %s',
                         index * openFilesLimit, (index + 1) * openFilesLimit), module);
 
                     var promises = item.map(function (_item) {
