@@ -1,5 +1,5 @@
 {
     "logLevel": "debug",
     "languages": ["en", "ru"],
-    "maxOpenFiles": 100
+    "maxOpenFiles": 10
 }
