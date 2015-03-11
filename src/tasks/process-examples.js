@@ -40,7 +40,7 @@ function sendToStorage(target, filePath) {
     return vowFs.isSymLink(fPath)
         .then(function (isSymlink) {
             if (isSymlink) {
-                logger.debug(util.format('find symlink %s', filePath), module);
+                logger.verbose(util.format('find symlink %s', filePath), module);
                 return vow.resolve();
             }
 
@@ -56,6 +56,11 @@ function sendToStorage(target, filePath) {
                 })
                 .then(function () {
                     return key;
+                })
+                .fail(function (error) {
+                    logger.error(util.format('Error occur while sending file %s to mds', filePath), module);
+                    logger.error(error.message, module);
+                    throw error;
                 });
         });
 }
@@ -105,7 +110,7 @@ module.exports = function (target) {
 
             return portions.reduce(function (prev, item, index) {
                 prev = prev.then(function () {
-                    logger.debug(util.format('send files in range %s - %s',
+                    logger.verbose(util.format('send files in range %s - %s',
                         index * openFilesLimit, (index + 1) * openFilesLimit), module);
 
                     var promises = item.map(function (_item) {
