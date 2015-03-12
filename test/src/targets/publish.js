@@ -1,5 +1,5 @@
 var should = require('should'),
-    Target = require('../../src/targets/publish');
+    Target = require('../../../src/targets/publish');
 
 describe('targets publish', function () {
     it('should be initialized', function () {

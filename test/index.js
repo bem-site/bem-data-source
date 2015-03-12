@@ -1,6 +1,6 @@
-require('./targets/base');
-require('./targets/publish');
-require('./targets/prepare');
-require('./targets/send');
-require('./targets/view/api');
-require('./targets/view/cli');
+require('./src/targets/base');
+require('./src/targets/publish');
+require('./src/targets/prepare');
+require('./src/targets/send');
+require('./src/targets/view/api');
+require('./src/targets/view/cli');

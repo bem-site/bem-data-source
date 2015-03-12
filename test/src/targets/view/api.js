@@ -2,9 +2,9 @@ var path = require('path'),
     fs = require('fs'),
     should = require('should'),
     emulator = require('mds-wrapper/mds-emulator.js'),
-    Target = require('../../../src/targets/view/api.js'),
-    constants = require('../../../src/constants'),
-    storage = require('../../../src/storage');
+    Target = require('../../../../src/targets/view/api'),
+    constants = require('../../../../src/constants'),
+    storage = require('../../../../src/storage');
 
 describe('targets view api', function () {
     it('should be initialized', function () {
@@ -44,7 +44,7 @@ describe('targets view api', function () {
         describe('on filled registry', function () {
             before(function () {
                 emulator.start(options.storage.get.port, options.storage.post.port);
-                var p = path.resolve(__dirname, '../../test-registry', 'data.json');
+                var p = path.resolve(__dirname, '../../../test-registry', 'data.json');
                 storage.get(options.storage).write(constants.ROOT, fs.readFileSync(p), null);
             });
 

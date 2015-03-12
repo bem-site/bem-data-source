@@ -7,7 +7,6 @@ var util = require('util'),
 
     api = require('../gh-api'),
     config = require('../config'),
-    logger = require('../logger'),
     titles = require('../titles'),
     utility = require('../util'),
     constants = require('../constants'),
@@ -41,7 +40,7 @@ TargetReplace.prototype = {
      * @returns {*}
      */
     execute: function () {
-        logger.info('Replace documentation file', module);
+        console.info('Replace documentation file', module);
         api.init();
 
         var dataKey = util.format('%s/%s/%s', this.source, this.ref, constants.FILE.DATA);
@@ -59,7 +58,7 @@ TargetReplace.prototype = {
                 }
 
                 if (!content.docs) {
-                    logger.warn('Docs section does not exists. It will be created', module);
+                    console.warn('Docs section does not exists. It will be created', module);
                     content.docs = {};
                 }
 
@@ -108,7 +107,7 @@ TargetReplace.prototype = {
      * @private
      */
     _createDoc: function (content) {
-        logger.warn(util.format('Doc with key %s does not exists. It will be created', this.options.doc), module);
+        console.warn(util.format('Doc with key %s does not exists. It will be created', this.options.doc), module);
         var languages = config.get('languages'),
             _this = this,
             _title = languages.reduce(function (prev, item) {

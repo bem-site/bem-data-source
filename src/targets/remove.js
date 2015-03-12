@@ -5,7 +5,6 @@ var util = require('util'),
     vow = require('vow'),
 
     storage = require('../storage'),
-    logger = require('../logger'),
     config = require('../config'),
     utility = require('../util'),
     mailer = require('../mailer'),
@@ -40,8 +39,8 @@ TargetRemove.prototype = {
      */
     execute: function () {
         if (this.options.isDryRun) {
-            logger.info('Remove command was launched in dry run mode', module);
-            logger.warn(util.format(
+            console.info('Remove command was launched in dry run mode', module);
+            console.warn(util.format(
                 'Data for %s %s won\' be removed from storage', this.source, this.ref), module);
         }
 
@@ -63,19 +62,19 @@ TargetRemove.prototype = {
         var portionSize = this.options.maxOpenFiles || config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
             examplesRegistryKey = util.format('%s/%s/%s', this.source, this.ref, 'examples');
 
-        logger.info('Start to remove example records', module);
+        console.info('Start to remove example records', module);
         return storage.get(this.options.storage).readP(examplesRegistryKey)
             .then(function (content) {
                 var _this = this,
                     keys = JSON.parse(content),
                     portions = utility.separateArrayOnChunks(keys, portionSize);
 
-                logger.debug(util.format('example records count: %s', keys.length), module);
-                logger.debug(util.format('removing will be executed in %s steps', portions.length), module);
+                console.debug(util.format('example records count: %s', keys.length), module);
+                console.debug(util.format('removing will be executed in %s steps', portions.length), module);
 
                 return portions.reduce(function (prev, item, index) {
                     prev = prev.then(function () {
-                        logger.debug(util.format('remove files in range %s - %s',
+                        console.debug(util.format('remove files in range %s - %s',
                             index * portionSize, (index + 1) * portionSize), module);
                         return vow.all(item.map(function (_item) {
                             return _this.options.isDryRun ? vow.resolve() :
@@ -101,11 +100,11 @@ TargetRemove.prototype = {
                 noVersion: 'Library %s version %s was not found in registry. Operation will be skipped'
             };
 
-            logger.info('Start to remove library from common registry', module);
+            console.info('Start to remove library from common registry', module);
 
             // check if registry exists
             if (!registry) {
-                logger.warn(message.noRegistry, module);
+                console.warn(message.noRegistry, module);
                 return vow.resolve();
             }
 
@@ -113,13 +112,13 @@ TargetRemove.prototype = {
 
             // check if given library exists in registry
             if (!registry[this.source]) {
-                logger.warn(util.format(message.noLibrary, this.source), module);
+                console.warn(util.format(message.noLibrary, this.source), module);
                 return vow.resolve();
             }
 
             // check if given library version exists in registry
             if (!registry[this.source].versions[this.ref]) {
-                logger.warn(util.format(message.noVersion, this.source, this.ref), module);
+                console.warn(util.format(message.noVersion, this.source, this.ref), module);
                 return vow.resolve();
             }
 
