@@ -8,7 +8,6 @@ var util = require('util'),
 
     sha = require('sha1'),
     storage = require('../storage'),
-    logger = require('../logger'),
     constants = require('../constants');
 
 /**

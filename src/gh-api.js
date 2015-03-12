@@ -4,7 +4,6 @@ var Api = require('github'),
     vow = require('vow'),
     _ = require('lodash'),
 
-    logger = require('./logger'),
     config = require('./config'),
 
     gitPublic,

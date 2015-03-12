@@ -1,8 +1,7 @@
 'use strict';
 
 var util = require('util'),
-    vowFs = require('vow-fs'),
-    logger = require('../logger');
+    vowFs = require('vow-fs');
 
 /**
  * Create target folder in output directory

@@ -1,7 +1,6 @@
 'use strict';
 
 var util = require('util'),
-    logger = require('../logger'),
     utility = require('../util');
 
 /**

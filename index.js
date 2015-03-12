@@ -1,5 +1,4 @@
-var logger = require('./src/logger'),
-    TargetView = require('./src/targets/view'),
+var TargetView = require('./src/targets/view/api'),
     TargetRemove = require('./src/targets/remove'),
     TargetReplace = require('./src/targets/replace'),
     TargetPublish = require('./src/targets/publish'),
@@ -23,8 +22,6 @@ var logger = require('./src/logger'),
  * @returns {*}
  */
 exports.publish = function (version, options, isDryRun) {
-    logger.setProductionMode(options.logLevel);
-    options.isDryRun = isDryRun;
     var target = new TargetPublish(version, options);
     return target.execute().fail(function () { process.exit(1); });
 };
@@ -37,7 +34,6 @@ exports.publish = function (version, options, isDryRun) {
  * @returns {*}
  */
 exports.prepare = function (version, options) {
-    logger.setProductionMode(options.logLevel);
     var target = new TargetPrepare(version, options);
     return target.execute().fail(function () { process.exit(1); });
 };
@@ -59,7 +55,6 @@ exports.prepare = function (version, options) {
  * @returns {*}
  */
 exports.send = function (version, options, isDryRun) {
-    logger.setProductionMode(options.logLevel);
     options.isDryRun = isDryRun;
     var target = new TargetSend(version, options);
     return target.execute().fail(function () { process.exit(1); });
@@ -76,12 +71,9 @@ exports.send = function (version, options, isDryRun) {
  *      host and port configuration for read requests
  *    - {Object} post - object with host and port fields that describes
  *      host and port configuration for write|modify requests
- * - {String} logLevel - logger level (debug, info, warn, error)
  * @returns {Promise}
  */
 exports.view = function (repo, version, options) {
-    logger.setProductionMode(options.logLevel);
-    options.isCli = false;
     var target = new TargetView(repo, version, options);
     return target.execute().fail(function () { process.exit(1); });
 };
@@ -105,7 +97,6 @@ exports.view = function (repo, version, options) {
  * @returns {Promise}
  */
 exports.replace = function (repo, version, options) {
-    logger.setProductionMode(options.logLevel);
     options.isCli = false;
     var target = new TargetReplace(repo, version, options);
     return target.execute().fail(function () { process.exit(1); });
@@ -130,7 +121,6 @@ exports.replace = function (repo, version, options) {
  * @returns {*}
  */
 exports.remove = function (repo, version, options, isDryRun) {
-    logger.setProductionMode(options.logLevel);
     options.isDryRun = isDryRun;
     var target = new TargetRemove(repo, version, options);
     return target.execute().fail(function () { process.exit(1); });

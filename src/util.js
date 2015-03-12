@@ -7,8 +7,7 @@ var util = require('util'),
     Rsync = require('rsync'),
     fsExtra = require('fs-extra'),
 
-    renderer = require('./renderer'),
-    logger = require('./logger');
+    renderer = require('./renderer');
 
 /**
  * Converts markdown content into html with marked module

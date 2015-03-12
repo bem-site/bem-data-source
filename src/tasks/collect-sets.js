@@ -8,7 +8,6 @@ var util = require('util'),
     vowFs = require('vow-fs'),
 
     config = require('../config'),
-    logger = require('../logger'),
     api = require('../gh-api'),
     constants = require('../constants'),
     utility = require('../util');

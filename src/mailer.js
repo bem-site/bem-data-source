@@ -5,7 +5,6 @@ var util = require('util'),
     nm = require('nodemailer'),
     transport = require('nodemailer-smtp-transport'),
 
-    logger = require('./logger'),
     baseOptions = { encoding: 'utf-8' },
     mailer;
 

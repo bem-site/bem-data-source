@@ -9,7 +9,6 @@ var path = require('path'),
 
     storage = require('../storage'),
     config = require('../config'),
-    logger = require('../logger'),
     utility = require('../util'),
     constants = require('../constants');
 
