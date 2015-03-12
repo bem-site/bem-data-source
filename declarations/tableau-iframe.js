@@ -5,9 +5,6 @@ module.exports = {
                 folder: '',
                 pattern: 'README.md'
             }
-        },
-        tasks: [
-            require('../src/tasks/collect-sets')
-        ]
+        }
     }
 };

@@ -1,3 +1,4 @@
+/*
 var path = require('path'),
 
     should = require('should'),
@@ -108,3 +109,4 @@ describe('bem-data-source', function () {
         });
     });
 });
+*/

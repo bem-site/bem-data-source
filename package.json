@@ -22,6 +22,7 @@
     "fs-extra": "^0.16.x",
     "github": "~0.2.x",
     "glob": "4.3.x",
+    "inherit": "^2.2.x",
     "intel": "^1.0.x",
     "lodash": "^3.1.x",
     "marked": "git://github.com/dab/marked.git",
