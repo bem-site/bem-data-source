@@ -208,6 +208,7 @@ Target.prototype = {
             enb: this.getBuilderName() === 'enb',
             url: this.getUrl().replace('git:', 'http:').replace('.git', ''),
             custom: this.getCustom(),
+            showcase: this.getShowCase(),
             docs: {}
         };
     },
@@ -226,6 +227,10 @@ Target.prototype = {
             }
             return item;
         }, this);
+    },
+
+    getShowCase: function () {
+        return this.declaration.showcase || null;
     }
 };
 

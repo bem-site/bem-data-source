@@ -19,6 +19,7 @@ module.exports = function (target) {
     var result = target.createSetsResultBase();
     return readMDFilesForLibrary(target, result)
         .then(function () { return readDependencies(target, result); })
+        .then(function () { return createShowCase(target, result); })
         .then(function () { return readLevelsForLibrary(target, result); })
         .then(function () { return writeResultToFile(target, result); })
         .then(function () {
@@ -161,6 +162,19 @@ function readDependencies(target, result) {
         })
         .fail(function () {
             result.deps = null;
+        });
+}
+
+function createShowCase(target, result) {
+    if (!result.showcase) {
+        return vow.resolve();
+    }
+    return vowFs.read(path.resolve(target.getContentPath(), result.showcase.path), 'utf-8')
+        .then(function (content) {
+            result.showcase.content = content;
+        })
+        .fail(function () {
+            result.showcase.content = null;
         });
 }
 
