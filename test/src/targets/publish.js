@@ -25,7 +25,7 @@ describe('targets publish', function () {
         });
 
         it('should have valid number of tasks', function () {
-            t._tasks.should.have.length(7);
+            t._tasks.should.have.length(11);
         });
 
         it ('should return valid content path', function () {

@@ -5,132 +5,135 @@ var path = require('path'),
 
     vow = require('vow'),
     vowFs = require('vow-fs'),
+    inherit = require('inherit'),
     glob = require('glob'),
 
     storage = require('../storage'),
     config = require('../config'),
     utility = require('../util'),
-    constants = require('../constants');
+    constants = require('../constants'),
+    Base = require('./base');
 
-/**
- * Read file names in given directory recursively
- * @param {String} baseDir - path to base directory
- * @returns {*}
- */
-function readFiles(baseDir) {
-    var def = vow.defer();
-    glob('**', { cwd: baseDir, nodir: true }, function (err, files) {
-        err ? def.reject(err) : def.resolve(files);
-    });
-    return def.promise();
-}
+module.exports = inherit(Base, {
 
-/**
- * Write file to storage
- * @param {TargetPublish} target - target object
- * @param {String} filePath - path to source file
- * @returns {*}
- */
-function sendToStorage(target, filePath) {
-    var basePath = target.getTempPath(),
-        fPath = path.join(basePath, filePath),
-        key = util.format('%s/%s/%s', target.getSourceName(), target.ref, filePath);
+    run: function () {
+        var openFilesLimit = this._target.options['maxOpenFiles'] ||
+                config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
+            exampleKeys = [];
 
-    return vowFs.isSymLink(fPath)
-        .then(function (isSymlink) {
-            if (isSymlink) {
-                logger.verbose(util.format('find symlink %s', filePath), module);
-                return vow.resolve();
-            }
+        if (this._target.options.isDryRun) {
+            this._logger.info('"Publish" or "Send" command was launched in dry run mode');
+            this._logger.warn(
+                'Data for %s %s won\' be sent to storage', this._target.sourceName, this._target.ref);
+        }
 
-            return vowFs
-                .read(fPath, 'utf-8')
-                .then(function (content) {
-                    if (content && content.length) {
-                        return storage.get(target.options.storage).writeP(key, content);
-                    } else {
-                        logger.warn(util.format('content is empty for file %s', fPath), module);
-                        return vow.resolve();
-                    }
-                })
-                .then(function () {
-                    return key;
-                })
-                .fail(function (error) {
-                    logger.error(util.format('Error occur while sending file %s to mds', filePath), module);
-                    logger.error(error.message, module);
-                    throw error;
-                });
+        if (this._target.options.isDocsOnly) {
+            this._logger.warn('"Publish" commands was launched with enabled flag docs-only. ' +
+            'Examples will not be sent to mds storage');
+            return vow.resolve();
+        }
+
+        return this._readFiles(this._target.tempPath)
+            .then(function (files) {
+                // TODO this condition is needed for convertation script
+                /*
+                if (this._target.options.ignored) {
+                    files = files.filter(function (file) {
+                        return !this._target.options.ignored.some(function (pattern) {
+                            return file.match(pattern);
+                        });
+                    });
+                }
+                */
+
+                if (this._target.options.examples) {
+                    files = files.filter(function (file) {
+                        return file.indexOf(this._target.options.examples) > -1;
+                    }, this);
+                }
+
+                var portions = utility.separateArrayOnChunks(files, openFilesLimit);
+
+                this._logger.debug('example files count: %s', files.length);
+                this._logger.debug('processing will be executed in %s steps', portions.length);
+
+                var _this = this;
+                return portions.reduce(function (prev, item, index) {
+                    prev = prev.then(function () {
+                        this._logger.verbose('send files in range %s - %s',
+                            index * openFilesLimit, (index + 1) * openFilesLimit);
+
+                        var promises = item.map(function (_item) {
+                            return this._target.options.isDryRun ? vow.resolve() : this._sendFile(_item);
+                        }, this);
+
+                        return vow.all(promises).then(function (keys) {
+                            exampleKeys = exampleKeys.concat(keys);
+                            return exampleKeys;
+                        });
+                    }, _this);
+                    return prev;
+                }, vow.resolve());
+            }, this)
+            .then(function () {
+                this._logger.debug('write example registry key');
+                var examplesRegistryKey =
+                    util.format('%s/%s/%s', this._target.sourceName, this._target.ref, 'examples');
+                return this._target.options.isDryRun ? vow.resolve() :
+                    storage.get(this._target.options.storage).writeP(examplesRegistryKey, JSON.stringify(exampleKeys));
+            }, this);
+    },
+
+    /**
+     * Read file names in given directory recursively
+     * @param {String} baseDir - path to base directory
+     * @returns {*}
+     * @private
+     */
+    _readFiles: function (baseDir) {
+        var def = vow.defer();
+        glob('**', { cwd: baseDir, nodir: true }, function (err, files) {
+            err ? def.reject(err) : def.resolve(files);
         });
-}
+        return def.promise();
+    },
 
-/**
- * Executes copying built folders from content to temp
- * @param {TargetPublish} target for building
- * @returns {defer.promise|*}
- */
-module.exports = function (target) {
-    var openFilesLimit = target.options.maxOpenFiles || config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
-        exampleKeys = [];
+    /**
+     * Sends file to storage
+     * @param {String} filePath - path to source file
+     * @returns {*}
+     * @private
+     */
+    _sendFile: function (filePath) {
+        var basePath = this._target.tempPath,
+            fPath = path.join(basePath, filePath),
+            key = util.format('%s/%s/%s', this._target.sourceName, this._target.ref, filePath);
 
-    if (target.options.isDryRun) {
-        logger.info('"Publish" or "Send" command was launched in dry run mode', module);
-        logger.warn(util.format(
-            'Data for %s %s won\' be sent to storage', this.source, this.ref), module);
+        return vowFs.isSymLink(fPath)
+            .then(function (isSymlink) {
+                if (isSymlink) {
+                    this._logger.verbose('find symlink %s', filePath);
+                    return vow.resolve();
+                }
+
+                return vowFs
+                    .read(fPath, 'utf-8')
+                    .then(function (content) {
+                        if (content && content.length) {
+                            return storage.get(this._target.options.storage).writeP(key, content);
+                        } else {
+                            this._logger.warn('content is empty for file %s', fPath);
+                            return vow.resolve();
+                        }
+                    }, this)
+                    .then(function () {
+                        return key;
+                    })
+                    .fail(function (error) {
+                        this._logger.error('Error occur while sending file %s to mds', filePath);
+                        this._logger.error(error.message);
+                        throw error;
+                    }, this);
+            });
     }
-
-    if (target.options.isDocsOnly) {
-        logger.warn('"Publish" commands was launched with enabled flag docs-only. ' +
-        'Examples will not be sent to mds storage', module);
-        return vow.resolve(target);
-    }
-
-    return readFiles(target.getTempPath())
-        .then(function (files) {
-            // TODO this condition is needed for convertation script
-            if (target.options.ignored) {
-                files = files.filter(function (file) {
-                    return !target.options.ignored.some(function (pattern) {
-                        return file.match(pattern);
-                    });
-                });
-            }
-
-            if (target.options.examples) {
-                files = files.filter(function (file) {
-                    return file.indexOf(target.options.examples) > -1;
-                });
-            }
-
-            var portions = utility.separateArrayOnChunks(files, openFilesLimit);
-
-            logger.debug(util.format('example files count: %s', files.length), module);
-            logger.debug(util.format('processing will be executed in %s steps', portions.length), module);
-
-            return portions.reduce(function (prev, item, index) {
-                prev = prev.then(function () {
-                    logger.verbose(util.format('send files in range %s - %s',
-                        index * openFilesLimit, (index + 1) * openFilesLimit), module);
-
-                    var promises = item.map(function (_item) {
-                        return target.options.isDryRun ? vow.resolve() : sendToStorage(target, _item);
-                    });
-
-                    return vow.all(promises).then(function (keys) {
-                        exampleKeys = exampleKeys.concat(keys);
-                        return exampleKeys;
-                    });
-                });
-                return prev;
-            }, vow.resolve());
-        })
-        .then(function () {
-            logger.debug('write example registry key', module);
-            var examplesRegistryKey = util.format('%s/%s/%s', target.getSourceName(), target.ref, 'examples');
-            return target.options.isDryRun ? vow.resolve() :
-                storage.get(target.options.storage).writeP(examplesRegistryKey, JSON.stringify(exampleKeys));
-        })
-        .then(function () {
-            return vow.resolve(target);
-        });
-};
+});

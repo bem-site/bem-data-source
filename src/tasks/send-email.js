@@ -10,26 +10,20 @@ var util = require('util'),
     Base = require('./base');
 
 module.exports = inherit(Base, {
-    _mailer: undefined,
-    _options: undefined,
+    run: function () {
+        var o = this._target.options['mailer'] || config.get('mailer');
 
-    __constructor: function (t) {
-        this.__base(t);
-        this._options = this._target.options['mailer'] || config.get('mailer');
-
-        if (!this._options) {
+        if (!o) {
             return;
         }
-        this._mailer.init(this._options);
-    },
+        mailer.init(o);
 
-    run: function () {
         var subject = util.format('bem-data-source: success publish library [%s] version [%s]',
             this._target.sourceName, this._target.ref);
 
         return mailer.send({
-            from: this._options.from,
-            to: this._options.to,
+            from: o.from,
+            to: o.to,
             subject: subject,
             text: '',
             attachments: [

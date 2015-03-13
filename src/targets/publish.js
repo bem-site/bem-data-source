@@ -45,10 +45,9 @@ module.exports = inherit(Base, {
      * @returns {*}
      */
     execute: function () {
-        var _this = this;
         return this._tasks.reduce(function (prev, item) {
-            return prev.then(function () {
-                return item(_this);
+            return prev.then(function (r) {
+                return item.run(r);
             });
         }, vow.resolve(this.createResultBase()));
     },
@@ -83,7 +82,7 @@ module.exports = inherit(Base, {
         return path.join(process.cwd(), constants.DIRECTORY.TEMP);
     },
 
-    get options() {
+    options: function () {
         return this._options;
     }
 });

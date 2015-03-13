@@ -149,10 +149,9 @@ module.exports = inherit({
      * @returns {*}
      */
     execute: function () {
-        var _this = this;
         return this._tasks.reduce(function (prev, item) {
             return prev.then(function () {
-                return item(_this);
+                return item.run();
             });
         }, vow.resolve());
     },
