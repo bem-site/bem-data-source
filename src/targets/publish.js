@@ -3,6 +3,7 @@
 var fs = require('fs'),
     path = require('path'),
 
+    vow = require('vow'),
     inherit = require('inherit'),
     constants = require('./../constants'),
     Base = require('./base');
@@ -25,14 +26,31 @@ module.exports = inherit(Base, {
 
         this._options = options;
         this._tasks = [
-            require('../tasks/collect-sets'),
-            require('../tasks/remove-temp'),
-            require('../tasks/create-temp'),
-            require('../tasks/copy-to-temp'),
-            require('../tasks/process-examples'),
-            require('../tasks/send-doc'),
-            require('../tasks/send-email')
+            new (require('../tasks/read-md'))(this),
+            new (require('../tasks/read-deps'))(this),
+            new (require('../tasks/read-showcase'))(this),
+            new (require('../tasks/read-levels'))(this),
+            new (require('../tasks/write-result'))(this),
+            new (require('../tasks/remove-temp'))(this),
+            new (require('../tasks/create-temp'))(this),
+            new (require('../tasks/copy-to-temp'))(this),
+            new (require('../tasks/send-examples'))(this),
+            new (require('../tasks/send-doc'))(this),
+            new (require('../tasks/send-email'))(this)
         ];
+    },
+
+    /**
+     * Make chained calls for all tasks for target and call them
+     * @returns {*}
+     */
+    execute: function () {
+        var _this = this;
+        return this._tasks.reduce(function (prev, item) {
+            return prev.then(function () {
+                return item(_this);
+            });
+        }, vow.resolve(this.createResultBase()));
     },
 
     /**
@@ -63,5 +81,9 @@ module.exports = inherit(Base, {
      */
     get tempPath() {
         return path.join(process.cwd(), constants.DIRECTORY.TEMP);
+    },
+
+    get options() {
+        return this._options;
     }
 });

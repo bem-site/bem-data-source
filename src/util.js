@@ -1,12 +1,6 @@
 'use strict';
 
-var util = require('util'),
-
-    md = require('marked'),
-    vow = require('vow'),
-    Rsync = require('rsync'),
-    fsExtra = require('fs-extra'),
-
+var md = require('marked'),
     renderer = require('./renderer');
 
 /**
@@ -21,71 +15,6 @@ exports.mdToHtml = function (content) {
         sanitize: false,
         renderer: renderer.get()
     });
-};
-
-/**
- * Removes directory with all files and subdirectories
- * @param {String} path to directory on filesystem
- * @returns {*}
- */
-exports.removeDir = function (path) {
-    var def = vow.defer();
-    fsExtra.remove(path, function (err) {
-        if (err) {
-            def.reject(err);
-        }
-        def.resolve();
-    });
-
-    return def.promise();
-};
-
-/**
- * Copy file from target path to destination path
- * @param {String} target path
- * @param {String} destination path
- * @returns {*}
- */
-exports.copy = function (target, destination) {
-    var def = vow.defer();
-    fsExtra.copy(target, destination, function (err) {
-        if (err) {
-            def.reject(err);
-        }
-        def.resolve();
-    });
-
-    return def.promise();
-};
-
-/**
- * Runs rsync command with options
- * @param {Object} options - options for rsync command
- * @returns {*}
- */
-exports.rsync = function (options) {
-    var def = vow.defer(),
-        rsync = Rsync.build(options);
-
-    rsync.set('safe-links');
-    rsync.set('copy-links');
-    logger.debug(util.format('rsync command: %s', rsync.command()), module);
-    rsync.execute(function (err, code) {
-            if (err) {
-                logger.error(util.format('Rsync failed wit error %s', err.message), module);
-                def.reject(err);
-            }else {
-                def.resolve(code);
-            }
-        },
-        function (data) {
-            logger.debug(data.toString(), module);
-        },
-        function (data) {
-            logger.warn(data.toString(), module);
-        }
-    );
-    return def.promise();
 };
 
 /**
@@ -104,42 +33,3 @@ exports.separateArrayOnChunks = function (arr, chunkSize) {
 
     return arrays;
 };
-
-/**
- * Compress given file
- * @param {String} filePath - path to source file
- * @returns {*}
- */
-/*
-exports.zipFile = function (filePath) {
-    var sPath = filePath,
-        dPath = sPath + '.zip';
-
-    return vowFs.isSymLink(sPath)
-        .then(function (isSymlink) {
-            if (isSymlink) {
-                return vow.resolve();
-            }
-
-            var def = vow.defer(),
-                readStream = fs.createReadStream(sPath),
-                writeStream = fs.createWriteStream(dPath);
-
-            readStream
-                .pipe(zlib.createGzip())
-                .pipe(writeStream)
-                .on('error', function (err) {
-                    logger.warn(util.format('error occur while compressing: %s', filePath), module);
-                    def.reject(err);
-                })
-                .on('close', function () {
-                    logger.verbose(util.format('compressed file: %s', filePath), module);
-                    fs.rename(dPath, sPath, function (err) {
-                        err ? def.reject(err) : def.resolve(filePath);
-                    });
-                });
-
-            return def.promise();
-        });
-};
-*/

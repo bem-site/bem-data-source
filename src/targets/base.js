@@ -59,6 +59,10 @@ module.exports = inherit({
         return util.format('%s %s', this.sourceName, this._ref);
     },
 
+    get ref() {
+        return this._ref;
+    },
+
     /**
      * Returns name of library
      * @returns {String}

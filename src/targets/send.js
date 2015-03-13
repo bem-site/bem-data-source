@@ -7,9 +7,9 @@ module.exports = inherit(Base, {
     __constructor: function (ref, options) {
         this.__base(ref, options);
         this._tasks = [
-            require('../tasks/process-examples'),
-            require('../tasks/send-doc'),
-            require('../tasks/send-email')
+            new (require('../tasks/send-examples'))(this),
+            new (require('../tasks/send-doc'))(this),
+            new (require('../tasks/send-email'))(this)
         ];
     }
 });

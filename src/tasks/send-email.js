@@ -3,36 +3,41 @@
 var util = require('util'),
     path = require('path'),
 
-    vow = require('vow'),
+    inherit = require('inherit'),
 
     config = require('../config'),
-    mailer = require('../mailer');
+    mailer = require('../mailer'),
+    Base = require('./base');
 
-module.exports = function (target) {
-    var emailOptions = target.options['mailer'] || config.get('mailer'),
-        isEnable = emailOptions || false;
+module.exports = inherit(Base, {
+    _mailer: undefined,
+    _options: undefined,
 
-    if (!isEnable) {
-        return vow.resolve(target);
+    __constructor: function (t) {
+        this.__base(t);
+        this._options = this._target.options['mailer'] || config.get('mailer');
+
+        if (!this._options) {
+            return;
+        }
+        this._mailer.init(this._options);
+    },
+
+    run: function () {
+        var subject = util.format('bem-data-source: success publish library [%s] version [%s]',
+            this._target.sourceName, this._target.ref);
+
+        return mailer.send({
+            from: this._options.from,
+            to: this._options.to,
+            subject: subject,
+            text: '',
+            attachments: [
+                {
+                    filename: 'data.json',
+                    path: path.join(this._target.contentPath, 'data.json')
+                }
+            ]
+        });
     }
-
-    mailer.init(emailOptions);
-
-    var subject = util.format('bem-data-source: success publish library [%s] version [%s]',
-        target.getSourceName(), target.ref);
-
-    return mailer.send({
-        from: emailOptions.from,
-        to: emailOptions.to,
-        subject: subject,
-        text: '',
-        attachments: [
-            {
-                filename: 'data.json',
-                path: path.join(target.getOutputPath(), 'data.json')
-            }
-        ]
-    }).then(function () {
-        return vow.resolve(target);
-    });
-};
+});

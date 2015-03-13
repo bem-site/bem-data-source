@@ -49,7 +49,7 @@
   },
   "scripts": {
     "config": "cp config/_private.json config/private.json",
-    "mocha": "node_modules/.bin/mocha",
+    "mocha": "NODE_ENV=testing node_modules/.bin/mocha",
     "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha",
     "codestyle": "node_modules/.bin/jshint . && node_modules/.bin/jscs -c .jscs.js .",
     "cover": "istanbul cover _mocha",

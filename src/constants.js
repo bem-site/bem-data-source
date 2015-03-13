@@ -1,6 +1,5 @@
 module.exports = {
     DIRECTORY: {
-        OUTPUT: 'output',
         TEMP: 'temp'
     },
     FILE: {
