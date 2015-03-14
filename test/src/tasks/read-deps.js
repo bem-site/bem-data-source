@@ -7,7 +7,7 @@ var path = require('path'),
 describe('tasks/read-deps', function () {
     var t;
     before(function () {
-        process.chdir(path.join(process.cwd(), 'test', 'test-data'));
+        process.chdir(path.resolve(__dirname, '../../test-data'));
         t = new Target('v1.0.0', {});
     });
 
@@ -23,5 +23,9 @@ describe('tasks/read-deps', function () {
                     done();
                 });
             })
+    });
+
+    after(function () {
+        process.chdir(path.resolve(__dirname, '../../../'));
     });
 });

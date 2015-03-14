@@ -11,7 +11,7 @@ module.exports = inherit(Base, {
      * @returns {*}
      */
     run: function (result) {
-        var fPath = path.resolve(this._target.contentPath, constants.FILE.DATA);
+        var fPath = path.resolve(this._target.getContentPath(), constants.FILE.DATA);
         this._logger.debug('write result of target %s to file %s', this._target.name, fPath);
         return vowFs.write(fPath, JSON.stringify(result), { charset: 'utf8' });
     }
