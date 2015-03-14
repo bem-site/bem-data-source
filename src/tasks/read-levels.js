@@ -17,7 +17,7 @@ module.exports = inherit(Base, {
     run: function (result) {
         this._logger.debug('read level directories for library %s', this._target.name);
 
-        return vowFs.listDir(path.resolve(this._target.contentPath))
+        return vowFs.listDir(path.resolve(this._target.getContentPath()))
             .then(function (levels) {
                 var levelNames = constants.LEVELS.map(function (item) {
                     return item + this._target.docPatterns.replace('*', '');
@@ -48,7 +48,7 @@ module.exports = inherit(Base, {
      */
     _readBlocks: function (level) {
         var blockIgnores = ['.dist', '.bem', 'index', 'catalogue', 'index', 'jscatalogue'];
-        return vowFs.listDir(path.resolve(this._target.contentPath, level.name))
+        return vowFs.listDir(path.resolve(this._target.getContentPath(), level.name))
             .then(function (blocks) {
                 return vow.allResolved(
                     blocks
@@ -75,7 +75,7 @@ module.exports = inherit(Base, {
      */
     _readBlock: function (level, block) {
         return vow.allResolved(Object.keys(this._target.blockTargets).map(function (key) {
-                return vowFs.read(path.resolve(this._target.contentPath, level.name, block.name,
+                return vowFs.read(path.resolve(this._target.getContentPath(), level.name, block.name,
                     util.format(this.blockTargets[key], block.name)), 'utf-8')
                     .then(function (content) {
                         try {
