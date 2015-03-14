@@ -11,8 +11,14 @@ var fs = require('fs'),
 module.exports = inherit(Base, {
 
     _options: undefined,
+    _contentPath: undefined,
+    _tempPath: undefined,
 
     __constructor: function (ref, options) {
+        this._options = options;
+        this._contentPath = process.cwd();
+        this._tempPath = path.join(this._contentPath, constants.DIRECTORY.TEMP);
+
         var packageJson = this._readPackageJson();
         ref = ref || packageJson.version;
         ref = ref.replace(/\//g, '-');
@@ -24,7 +30,6 @@ module.exports = inherit(Base, {
             url: repository && repository.url
         }, ref);
 
-        this._options = options;
         this._tasks = [
             new (require('../tasks/read-md'))(this),
             new (require('../tasks/read-deps'))(this),
@@ -59,7 +64,7 @@ module.exports = inherit(Base, {
      */
     _readPackageJson: function () {
         try {
-            var content = fs.readFileSync(path.join(this.contentPath, 'package.json'), { encoding: 'utf-8' });
+            var content = fs.readFileSync(path.join(this._contentPath, 'package.json'), { encoding: 'utf-8' });
             return JSON.parse(content);
         } catch (err) {
             throw new Error('package.json file can not be opened or parsed');
@@ -70,16 +75,16 @@ module.exports = inherit(Base, {
      * Returns content path for target
      * @returns {String}
      */
-    get contentPath() {
-        return process.cwd();
+    getContentPath: function () {
+        return this._contentPath;
     },
 
     /**
      * Returns path temp folder
      * @returns {String}
      */
-    get tempPath() {
-        return path.join(process.cwd(), constants.DIRECTORY.TEMP);
+    getTempPath: function () {
+        return this._tempPath;
     },
 
     options: function () {

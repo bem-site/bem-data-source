@@ -10,7 +10,7 @@ module.exports = inherit(Base, {
      * @returns {*}
      */
     run: function (result) {
-        return vowFs.read(path.resolve(this._target.contentPath, 'bower.json'), 'utf-8')
+        return vowFs.read(path.resolve(this._target.getContentPath(), 'bower.json'), 'utf-8')
             .then(function (content) {
                 try {
                     content = JSON.parse(content);

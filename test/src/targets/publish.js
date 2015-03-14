@@ -29,11 +29,11 @@ describe('targets publish', function () {
         });
 
         it ('should return valid content path', function () {
-            t.contentPath.should.equal(process.cwd());
+            t.getContentPath().should.equal(process.cwd());
         });
 
         it ('should return valid temp path', function () {
-            t.tempPath.should.equal(process.cwd() + '/' + 'temp');
+            t.getTempPath().should.equal(process.cwd() + '/' + 'temp');
         });
     });
 });
