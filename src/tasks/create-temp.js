@@ -11,6 +11,6 @@ module.exports = inherit(Base, {
      */
     run: function () {
         this._logger.debug('create temp folder for target %s', this._target.name);
-        return vowFs.makeDir(this._target.tempPath);
+        return vowFs.makeDir(this._target.getTempPath());
     }
 });

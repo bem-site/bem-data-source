@@ -12,7 +12,7 @@ module.exports = inherit(Base, {
      */
     run: function () {
         this._logger.debug('remove temp folder for target %s', this._target.name);
-        return this._removeDir(this._target.tempPath);
+        return this._removeDir(this._target.getTempPath());
     },
 
     /**
