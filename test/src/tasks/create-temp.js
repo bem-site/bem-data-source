@@ -5,7 +5,7 @@ var path = require('path'),
     Target = require('../../../src/targets/publish'),
     CreateTemp = require('../../../src/tasks/create-temp');
 
-describe('tasks/remove-temp', function () {
+describe('tasks/create-temp', function () {
     var t;
     before(function () {
         process.chdir(path.resolve(__dirname, '../../test-data'));
@@ -13,7 +13,7 @@ describe('tasks/remove-temp', function () {
     });
 
     it('should create temp directory', function (done) {
-        vow.resolve()
+        return vow.resolve()
             .then(function () {
                 var rt = new CreateTemp(t);
                 return rt.run().then(function () {
@@ -22,7 +22,7 @@ describe('tasks/remove-temp', function () {
                         done();
                     });
                 });
-            })
+            });
     });
 
     after(function () {

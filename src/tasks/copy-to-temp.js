@@ -18,7 +18,7 @@ module.exports = inherit(Base, {
         return vow.all(rSyncConfiguration.targets.map(function (suffix) {
             var syncOptions = {
                 source: path.join(process.cwd(), suffix),
-                destination: path.join(this._target.tempPath),
+                destination: path.join(this._target.getTempPath()),
                 flags: 'rd'
             };
 

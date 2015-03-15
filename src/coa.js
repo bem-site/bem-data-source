@@ -1,8 +1,5 @@
 'use strict';
 
-var util = require('util'),
-    logger = require('./logger');
-
 function command() {
     return require('coa').Cmd()
         .name(process.argv[1])
@@ -15,8 +12,8 @@ function command() {
             .only()
             .act(function () {
                 var p = require('../package.json');
-                logger.info(util.format('application name: %s version %s', p.name, p.version), module);
-                return '';
+                console.info('Application name: %s version %s', p['name'], p.version);
+                return void 0;
             })
             .end()
         .cmd().name('publish').apply(require('./commands/publish')).end()

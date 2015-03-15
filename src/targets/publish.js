@@ -87,7 +87,7 @@ module.exports = inherit(Base, {
         return this._tempPath;
     },
 
-    options: function () {
+    getOptions: function () {
         return this._options;
     }
 });

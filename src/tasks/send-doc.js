@@ -14,12 +14,10 @@ var util = require('util'),
 
 module.exports = inherit(Base, {
     run: function () {
-        var
-            lib = this._target.sourceName,
-            version = this._target.ref,
-            shaKey = null;
+        var lib = this._target.sourceName,
+            version = this._target.ref;
 
-            return this._writeDataFile(lib, version, shaKey).then(function () {
+            return this._writeDataFile(lib, version).then(function (shaKey) {
                 return this._modifyRegistry(lib, version, shaKey);
             }, this);
     },
@@ -28,13 +26,14 @@ module.exports = inherit(Base, {
      * Writes data.json file with documentation to storage
      * @param {String} lib - name of library
      * @param {String} version - name of library version
-     * @param {String} shaKey unique shasum of file content
      * @returns {*}
      * @private
      */
-    _writeDataFile: function (lib, version, shaKey) {
-        var fPath = path.join(this._target.contentPath, constants.FILE.DATA),
-            key = util.format('%s/%s/%s', lib, version, constants.FILE.DATA);
+    _writeDataFile: function (lib, version) {
+        var fPath = path.join(this._target.getContentPath(), constants.FILE.DATA),
+            key = util.format('%s/%s/%s', lib, version, constants.FILE.DATA),
+            o = this._target.getOptions(),
+            shaKey;
         return vowFs.read(fPath, 'utf-8')
             .then(function (content) {
                 try {
@@ -42,9 +41,12 @@ module.exports = inherit(Base, {
                 }catch (err) {
                     shaKey = sha(util.format('%s:%s:%s', lib, version, (new Date()).toString()));
                 }
-                return this._target.options.isDryRun ? vow.resolve() :
-                    storage.get(this._target.options.storage).writeP(key, content);
-            }, this);
+                return o.isDryRun ? vow.resolve() :
+                    storage.get(o.storage).writeP(key, content);
+            }, this)
+            .then(function () {
+                return shaKey;
+            });
     },
 
     /**
@@ -56,7 +58,8 @@ module.exports = inherit(Base, {
      * @private
      */
     _modifyRegistry: function (lib, version, shaKey) {
-        return storage.get(this._target.options.storage).readP(constants.ROOT)
+        var o = this._target.getOptions();
+        return storage.get(o.storage).readP(constants.ROOT)
             .then(function (registry) {
                 registry = registry ? JSON.parse(registry) : {};
                 registry[lib] = registry[lib] || { name: lib, versions: {} };
@@ -64,8 +67,8 @@ module.exports = inherit(Base, {
                 this._logger.debug(util.format('registry: %s', JSON.stringify(registry[lib])), module);
 
                 registry[lib].versions[version] = { sha: shaKey, date: +(new Date()) };
-                return this._target.options.isDryRun ? vow.resolve() :
-                    storage.get(this._target.options.storage).writeP(constants.ROOT, JSON.stringify(registry));
+                return o.isDryRun ? vow.resolve() :
+                    storage.get(o.storage).writeP(constants.ROOT, JSON.stringify(registry));
             }, this);
     }
 });
