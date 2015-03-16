@@ -22,6 +22,7 @@ var TargetView = require('./src/targets/view/api'),
  * @returns {*}
  */
 exports.publish = function (version, options, isDryRun) {
+    options.isDryRun = isDryRun;
     var target = new TargetPublish(version, options);
     return target.execute().fail(function () { process.exit(1); });
 };

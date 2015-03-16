@@ -1,4 +1,3 @@
-/*
 var path = require('path'),
 
     should = require('should'),
@@ -9,8 +8,8 @@ var path = require('path'),
 
     emulator = require('mds-wrapper/mds-emulator.js'),
 
-    utility = require('../src/util.js'),
-    ds = require('../index.js'),
+    utility = require('../../src/util.js'),
+    ds = require('../../index.js'),
     options = {
         storage: {
             namespace: 'my-site',
@@ -28,15 +27,15 @@ var path = require('path'),
 
 describe('bem-data-source', function () {
     before(function () {
-        process.chdir(path.join(__dirname, './test-data'));
+        process.chdir(path.join(__dirname, '../test-data'));
         emulator.start(options.storage.get.port, options.storage.post.port);
     });
 
     after(function () {
         emulator.stop();
         return vow.all([
-            utility.removeDir(path.join(__dirname, './test-data/temp')),
-            vowFs.remove(path.join(__dirname, './test-data/data.json'))
+            utility.removeDir(path.join(__dirname, '../test-data/temp')),
+            vowFs.remove(path.join(__dirname, '../test-data/data.json'))
         ]);
     });
 
@@ -109,4 +108,3 @@ describe('bem-data-source', function () {
         });
     });
 });
-*/
