@@ -20,11 +20,14 @@ module.exports = inherit(Base, {
      */
     run: function (result) {
         this._logger.debug('read markdown files for library %s', this._target.name);
-        return vow.allResolved(Object.keys(this._target.mdTargets)
+        return vow
+            .allResolved(Object.keys(this._target.mdTargets)
                 .map(function (key) {
                     return this._loadMarkdown(result.docs, key);
-                }, this)
-        );
+                }, this))
+            .then(function () {
+                return result;
+            });
     },
 
     /**
