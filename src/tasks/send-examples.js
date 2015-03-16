@@ -17,23 +17,24 @@ var path = require('path'),
 module.exports = inherit(Base, {
 
     run: function () {
-        var openFilesLimit = this._target.options['maxOpenFiles'] ||
+        var o = this._target.getOptions(),
+            openFilesLimit = o['maxOpenFiles'] ||
                 config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
             exampleKeys = [];
 
-        if (this._target.options.isDryRun) {
+        if (o.isDryRun) {
             this._logger.info('"Publish" or "Send" command was launched in dry run mode');
             this._logger.warn(
                 'Data for %s %s won\' be sent to storage', this._target.sourceName, this._target.ref);
         }
 
-        if (this._target.options.isDocsOnly) {
+        if (o.isDocsOnly) {
             this._logger.warn('"Publish" commands was launched with enabled flag docs-only. ' +
             'Examples will not be sent to mds storage');
             return vow.resolve();
         }
 
-        return this._readFiles(this._target.tempPath)
+        return this._readFiles(this._target.getTempPath())
             .then(function (files) {
                 // TODO this condition is needed for convertation script
                 /*
@@ -46,9 +47,9 @@ module.exports = inherit(Base, {
                 }
                 */
 
-                if (this._target.options.examples) {
+                if (o.examples) {
                     files = files.filter(function (file) {
-                        return file.indexOf(this._target.options.examples) > -1;
+                        return file.indexOf(o.examples) > -1;
                     }, this);
                 }
 
@@ -64,7 +65,7 @@ module.exports = inherit(Base, {
                             index * openFilesLimit, (index + 1) * openFilesLimit);
 
                         var promises = item.map(function (_item) {
-                            return this._target.options.isDryRun ? vow.resolve() : this._sendFile(_item);
+                            return o.isDryRun ? vow.resolve() : this._sendFile(_item);
                         }, this);
 
                         return vow.all(promises).then(function (keys) {
@@ -79,8 +80,8 @@ module.exports = inherit(Base, {
                 this._logger.debug('write example registry key');
                 var examplesRegistryKey =
                     util.format('%s/%s/%s', this._target.sourceName, this._target.ref, 'examples');
-                return this._target.options.isDryRun ? vow.resolve() :
-                    storage.get(this._target.options.storage).writeP(examplesRegistryKey, JSON.stringify(exampleKeys));
+                return o.isDryRun ? vow.resolve() :
+                    storage.get(o.storage).writeP(examplesRegistryKey, JSON.stringify(exampleKeys));
             }, this);
     },
 
@@ -105,7 +106,7 @@ module.exports = inherit(Base, {
      * @private
      */
     _sendFile: function (filePath) {
-        var basePath = this._target.tempPath,
+        var basePath = this._target.getTempPath(),
             fPath = path.join(basePath, filePath),
             key = util.format('%s/%s/%s', this._target.sourceName, this._target.ref, filePath);
 
@@ -120,7 +121,7 @@ module.exports = inherit(Base, {
                     .read(fPath, 'utf-8')
                     .then(function (content) {
                         if (content && content.length) {
-                            return storage.get(this._target.options.storage).writeP(key, content);
+                            return storage.get(this._target.getOptions().storage).writeP(key, content);
                         } else {
                             this._logger.warn('content is empty for file %s', fPath);
                             return vow.resolve();
@@ -134,6 +135,6 @@ module.exports = inherit(Base, {
                         this._logger.error(error.message);
                         throw error;
                     }, this);
-            });
+            }, this);
     }
 });

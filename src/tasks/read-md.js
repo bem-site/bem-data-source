@@ -36,7 +36,7 @@ module.exports = inherit(Base, {
      */
     _loadMarkdown: function (result, key) {
         return vowFs
-            .listDir(path.join(this._target.contentPath, this._target.mdTargets[key].folder))
+            .listDir(path.join(this._target.getContentPath(), this._target.mdTargets[key].folder))
             .then(function (files) {
                 var languages = config.get('languages') || ['en'],
                     pattern = this._target.mdTargets[key].pattern;
@@ -67,7 +67,7 @@ module.exports = inherit(Base, {
                         .pop();
 
                     return vowFs
-                        .read(path.join(path.join(this._target.contentPath,
+                        .read(path.join(path.join(this._target.getContentPath(),
                             this._target.mdTargets[key].folder), file), 'utf-8')
                         .then(function (content) {
                             try {

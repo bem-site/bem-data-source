@@ -11,7 +11,7 @@ var util = require('util'),
 
 module.exports = inherit(Base, {
     run: function () {
-        var o = this._target.options['mailer'] || config.get('mailer');
+        var o = this._target.getOptions()['mailer'] || config.get('mailer');
 
         if (!o) {
             return;

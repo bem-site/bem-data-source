@@ -1,6 +1,6 @@
 require('./src/titles');
 require('./src/constants');
-// require('./src/gh-api');
+require('./src/gh-api');
 require('./src/logger');
 require('./src/util');
 require('./src/targets/base');
@@ -15,4 +15,5 @@ require('./src/tasks/write-result');
 require('./src/tasks/remove-temp');
 require('./src/tasks/create-temp');
 require('./src/tasks/copy-to-temp');
+require('./src/tasks/send-examples');
 require('./src/tasks/send-doc');

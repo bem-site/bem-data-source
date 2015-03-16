@@ -9,7 +9,7 @@ module.exports = inherit(Base, {
         if (!result.showcase) {
             return vow.resolve(result);
         }
-        return vowFs.read(path.resolve(this._target.contentPath, result.showcase.path), 'utf-8')
+        return vowFs.read(path.resolve(this._target.getContentPath(), result.showcase.path), 'utf-8')
             .then(function (content) {
                 result.showcase.content = content;
                 return result;
