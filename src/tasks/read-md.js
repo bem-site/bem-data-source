@@ -19,7 +19,7 @@ module.exports = inherit(Base, {
      * @returns {*}
      */
     run: function (result) {
-        this._logger.debug('read markdown files for library %s', this._target.name);
+        this._logger.info('read markdown files for library %s', this._target.name);
         return vow
             .allResolved(Object.keys(this._target.mdTargets)
                 .map(function (key) {
@@ -67,17 +67,20 @@ module.exports = inherit(Base, {
                             };
                             return toVersion(a) - toVersion(b);
                         })
-                        .pop();
+                        .pop(),
+                        mdFilePath = path.join(this._target.getContentPath(), this._target.mdTargets[key].folder, file);
 
+                    this._logger.debug('Read markdown file %s', mdFilePath);
                     return vowFs
-                        .read(path.join(path.join(this._target.getContentPath(),
-                            this._target.mdTargets[key].folder), file), 'utf-8')
+                        .read(mdFilePath, 'utf-8')
                         .then(function (content) {
                             try {
                                 result[key].content = result[key].content || {};
                                 result[key].content[lang] = utility.mdToHtml(content);
-                            }catch (e) {}
-                        });
+                            }catch (e) {
+                                this._logger.error('Error occur while parsing file %s', mdFilePath);
+                            }
+                        }, this);
                 }, this));
             }, this);
     }

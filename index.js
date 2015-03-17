@@ -72,6 +72,7 @@ exports.send = function (version, options, isDryRun) {
  *      host and port configuration for read requests
  *    - {Object} post - object with host and port fields that describes
  *      host and port configuration for write|modify requests
+ * - {String} logLevel - logger verbosity level (verbose, debug, info, warn, error)
  * @returns {Promise}
  */
 exports.view = function (repo, version, options) {
@@ -91,7 +92,7 @@ exports.view = function (repo, version, options) {
  *    - {Object} post - object with host and port fields that describes
  *      host and port configuration for write|modify requests
  *    - {String} auth header
- * - {String} logLevel - logger level (debug, info, warn, error)
+ * - {String} logLevel - logger verbosity level (verbose, debug, info, warn, error)
  * - {String} doc - doc key (readme|changelog|migration|notes) required
  * - {String} lang - language param (en|ru) required
  * - {String} url - url for new document on github (like in browser view) required
@@ -115,7 +116,7 @@ exports.replace = function (repo, version, options) {
  *    - {Object} post - object with host and port fields that describes
  *      host and port configuration for write|modify requests
  *    - {String} auth header
- * - {String} logLevel - logger level (debug, info, warn, error)
+ * - {String} logLevel - logger verbosity level (verbose, debug, info, warn, error)
  * - {Number} maxOpenFiles - number of open files which can be opened at the same time
  * @param {Boolean} isDryRun - dry run flag
  * @returns {*}

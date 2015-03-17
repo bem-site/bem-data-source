@@ -8,7 +8,7 @@ module.exports = inherit({
 
     __constructor: function (target) {
         this._target = target;
-        this._logger = new Logger(module, 'debug');
+        this._logger = new Logger(module, this._target.getOptions()['logLevel']);
     },
 
     run: function () {

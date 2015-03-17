@@ -15,7 +15,7 @@ module.exports = inherit(Base, {
      * @private
      */
     run: function (result) {
-        this._logger.debug('read level directories for library %s', this._target.name);
+        this._logger.info('read level directories for library %s', this._target.name);
 
         return vowFs.listDir(path.resolve(this._target.getContentPath()))
             .then(function (levels) {
@@ -28,6 +28,7 @@ module.exports = inherit(Base, {
                 });
 
                 return vow.allResolved(levels.map(function (level) {
+                    this._logger.debug('Read block level %s', level);
                     level = { name: level };
                     result.levels = result.levels || [];
                     result.levels.push(level);
@@ -56,6 +57,7 @@ module.exports = inherit(Base, {
                             return blockIgnores.indexOf(block) === -1;
                         })
                         .map(function (block) {
+                            this._logger.verbose('Read block %s', block);
                             block = { name: block };
                             level.blocks = level.blocks || [];
                             level.blocks.push(block);
@@ -75,8 +77,11 @@ module.exports = inherit(Base, {
      */
     _readBlock: function (level, block) {
         return vow.allResolved(Object.keys(this._target.blockTargets).map(function (key) {
-                return vowFs.read(path.resolve(this._target.getContentPath(), level.name, block.name,
-                    util.format(this.blockTargets[key], block.name)), 'utf-8')
+                var docFile = path.resolve(this._target.getContentPath(), level.name, block.name,
+                    util.format(this.blockTargets[key], block.name));
+
+                this._logger.verbose('Read doc file: %s', docFile);
+                return vowFs.read(docFile, 'utf-8')
                     .then(function (content) {
                         try {
                             block[key] = JSON.parse(content);

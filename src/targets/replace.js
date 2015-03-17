@@ -28,7 +28,7 @@ module.exports = inherit({
      * @param {Object} options - advanced options
      */
     __constructor: function (source, ref, options) {
-        this._logger = new Logger(module, 'debug');
+        this._logger = new Logger(module, options['logLevel']);
 
         this._source = source;
         this._ref = ref && ref.replace(/\//g, '-');
@@ -55,6 +55,8 @@ module.exports = inherit({
 
         var dataKey = this._getDataKey(this._source, this._ref),
             errorMsg;
+
+        this._logger.debug('file key: %s', dataKey);
         return storage.get(this._options.storage).readP(dataKey)
             .then(function (content) {
                 if (!content) {
@@ -79,6 +81,7 @@ module.exports = inherit({
 
                 // create doc of given key if it does not exists yet
                 if (!content.docs[this._options.doc]) {
+                    this._logger.warn('Doc %s does not exists yet. It will be created', this._options.doc);
                     content = this._createDoc(content);
                 }
                 return vow.all([this._loadContentFromGh(), content]);
@@ -98,6 +101,7 @@ module.exports = inherit({
         var def = vow.defer(),
             gh = new Api({}),
             o = utility.parseGhUrl(this._options.url);
+        this._logger.debug('Load content from %s', this._options.url);
         gh.get(o).getContent(o, null, function (err, res) {
             err ? def.reject(err) : def.resolve(res);
         });
@@ -111,7 +115,6 @@ module.exports = inherit({
      * @private
      */
     _createDoc: function (content) {
-        this._logger.warn('Doc with key %s does not exists. It will be created', this._options.doc);
         var languages = config.get('languages'),
             _this = this,
             _title = languages.reduce(function (prev, item) {
@@ -159,11 +162,13 @@ module.exports = inherit({
      * @private
      */
     _writeFile: function (dataKey, content) {
+        this._logger.debug('Save modified file to storage');
         var strContent = JSON.stringify(content);
         return storage.get(this._options.storage).writeP(dataKey, strContent)
             .then(function () {
+                this._logger.debug('Modified file has been saved');
                 return sha(strContent);
-            });
+            }, this);
     },
 
     /**
@@ -173,6 +178,7 @@ module.exports = inherit({
      * @private
      */
     _updateRegistry: function (shaSum) {
+        this._logger.debug('Update registry record');
         return storage.get(this._options.storage).readP(constants.ROOT)
             .then(function (registry) {
                 registry = registry ? JSON.parse(registry) : {};

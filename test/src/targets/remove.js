@@ -9,7 +9,7 @@ var path = require('path'),
 
 describe('targets remove', function () {
     it('should be initialized', function () {
-        new TargetRemove('test-library', 'v1.0.0');
+        new TargetRemove('test-library', 'v1.0.0', {});
     });
 
     describe('target remove methods', function () {

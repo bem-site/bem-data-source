@@ -117,6 +117,7 @@ module.exports = inherit(Base, {
                     return vow.resolve();
                 }
 
+                this._logger.verbose('send file %s', fPath);
                 return vowFs
                     .read(fPath, 'utf-8')
                     .then(function (content) {

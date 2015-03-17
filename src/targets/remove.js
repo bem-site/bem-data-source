@@ -27,7 +27,7 @@ module.exports = inherit({
      * @param {Object} options - advanced options
      */
     __constructor: function (source, ref, options) {
-        this._logger = new Logger(module, 'debug');
+        this._logger = new Logger(module, options['logLevel']);
 
         this._source = source;
         this._ref = ref.replace(/\//g, '-');
@@ -69,6 +69,11 @@ module.exports = inherit({
         return util.format('%s/%s/%s', this._source, this._ref, 'examples');
     },
 
+    /**
+     * Returns documentation file key in storage
+     * @returns {String}
+     * @private
+     */
     _getDocsKey: function () {
         return util.format('%s/%s/%s', this._source, this._ref, constants.FILE.DATA);
     },
@@ -76,7 +81,7 @@ module.exports = inherit({
     _removeExampleFiles: function () {
         var ps = this._getPortionSize();
 
-        this._logger.info('Start to remove example records');
+        this._logger.debug('Start to remove example records');
         return storage.get(this._options.storage).readP(this._getExamplesKey())
             .then(function (content) {
                 if (!content) {
@@ -115,7 +120,7 @@ module.exports = inherit({
      * @private
      */
     _removeDocFile: function () {
-        this._logger.info('Start to remove doc file');
+        this._logger.debug('Start to remove doc file');
         return storage.get(this._options.storage).removeP(this._getDocsKey());
     },
 
@@ -127,7 +132,7 @@ module.exports = inherit({
     _modifyRegistry: function () {
         return storage.get(this._options.storage).readP(constants.ROOT)
             .then(function (registry) {
-                this._logger.info('Start to remove library from common registry');
+                this._logger.debug('Start to remove library from common registry');
 
                 // check if registry exists
                 if (!registry) {
@@ -139,13 +144,13 @@ module.exports = inherit({
 
                 // check if given library exists in registry
                 if (!registry[this._source]) {
-                    this._logger.warn(this.__self.message.noLibrary, this._source);
+                    this._logger.error(this.__self.message.noLibrary, this._source);
                     throw new Error(util.format(this.__self.message.noLibrary, this._source));
                 }
 
                 // check if given library version exists in registry
                 if (!registry[this._source].versions[this._ref]) {
-                    this._logger.warn(this.__self.message.noVersion, this._source, this._ref);
+                    this._logger.error(this.__self.message.noVersion, this._source, this._ref);
                     throw new Error(util.format(this.__self.message.noVersion, this._source, this._ref));
                 }
 

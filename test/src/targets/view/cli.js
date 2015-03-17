@@ -8,7 +8,7 @@ var path = require('path'),
 
 describe('targets view cli', function () {
     it('should be initialized', function () {
-        new Target('test-library', 'v1.0.0');
+        new Target('test-library', 'v1.0.0', {});
     });
 
     describe('target view methods', function () {

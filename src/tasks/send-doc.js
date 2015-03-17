@@ -17,6 +17,8 @@ module.exports = inherit(Base, {
         var lib = this._target.sourceName,
             version = this._target.ref;
 
+        this._logger.info('Save documentation for library %s version %s', lib, version);
+
             return this._writeDataFile(lib, version).then(function (shaKey) {
                 return this._modifyRegistry(lib, version, shaKey);
             }, this);
@@ -34,6 +36,8 @@ module.exports = inherit(Base, {
             key = util.format('%s/%s/%s', lib, version, constants.FILE.DATA),
             o = this._target.getOptions(),
             shaKey;
+
+        this._logger.info('Write data.json file to storage for key %s', key);
         return vowFs.read(fPath, 'utf-8')
             .then(function (content) {
                 try {
@@ -45,8 +49,10 @@ module.exports = inherit(Base, {
                     storage.get(o.storage).writeP(key, content);
             }, this)
             .then(function () {
+                this._logger.info('Doc "data.json" file has been saved to storage successfully');
+                this._logger.debug('Sha sum of saved file: %s', shaKey);
                 return shaKey;
-            });
+            }, this);
     },
 
     /**

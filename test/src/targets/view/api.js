@@ -8,7 +8,7 @@ var path = require('path'),
 
 describe('targets view api', function () {
     it('should be initialized', function () {
-        new Target('test-library', 'v1.0.0');
+        new Target('test-library', 'v1.0.0', {});
     });
 
     describe('target view methods', function () {
@@ -30,8 +30,9 @@ describe('targets view api', function () {
             });
 
             it('should return null on execute', function (done) {
-                t.execute().then(function (result) {
-                    should(result).not.be.ok;
+                t.execute().fail(function (err) {
+                    err.should.be.ok;
+                    err.message.should.equal('No registry record were found');
                     done();
                 });
             });

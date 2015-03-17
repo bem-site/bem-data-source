@@ -1,13 +1,14 @@
 'use strict';
 
-var vow = require('vow'),
-    inherit = require('inherit'),
+var inherit = require('inherit'),
 
     storage = require('../../storage'),
-    constants = require('../../constants');
+    constants = require('../../constants'),
+    Logger = require('../../logger');
 
 module.exports = inherit({
 
+    _logger: undefined,
     _source: undefined,
     _ref: undefined,
     _options: undefined,
@@ -20,6 +21,8 @@ module.exports = inherit({
      * @returns {TargetView}
      */
     __constructor: function (source, ref, options) {
+        this._logger = new Logger(module, options['logLevel']);
+
         this._source = source;
         this._ref = ref && ref.replace(/\//g, '-');
         this._options = options;
@@ -32,18 +35,24 @@ module.exports = inherit({
     execute: function () {
         return storage.get(this._options.storage).readP(constants.ROOT)
             .then(function (registry) {
+                var errorMsg;
                 if (!registry) {
-                    console.warn('No registry record were found. ' +
-                    'Please try to make publish any library. Also this operation will be skipped');
-                    return null;
-                }
-                return JSON.parse(registry);
-            }, this)
-            .then(function (registry) {
-                if (!registry) {
-                    return null;
+                   errorMsg  = 'No registry record were found';
                 }
 
+                try {
+                    registry = JSON.parse(registry);
+                } catch (error) {
+                    errorMsg = 'Invalid registry record';
+                }
+                if (errorMsg) {
+                    this._logger.warn(errorMsg);
+                    throw new Error(errorMsg);
+                } else {
+                    return registry;
+                }
+            }, this)
+            .then(function (registry) {
                 // if no source and version names were given then show list of libraries in registry
                 if (!this._source) {
                     return this._getListOfLibraries(registry);
@@ -51,7 +60,7 @@ module.exports = inherit({
 
                 // check if given library exists in registry
                 if (!registry[this._source]) {
-                    console.warn('Library %s was not found in registry', this._source);
+                    this._logger.warn('Library %s was not found in registry', this._source);
                     return [];
                 }
 
@@ -61,8 +70,8 @@ module.exports = inherit({
 
                 // check if given library version exists in registry
                 if (!registry[this._source].versions[this._ref]) {
-                    console.warn('Library %s version %s was not found in registry', this._source, this._ref);
-                    return vow.resolve(null);
+                    this._logger.warn('Library %s version %s was not found in registry', this._source, this._ref);
+                    return null;
                 }
 
                 return this._getVersionInfo(registry);
