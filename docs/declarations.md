@@ -22,12 +22,13 @@ module.exports = {
 module.exports = {
     default: {
         builder: 'enb',
-        command: 'YENV=production enb make __magic__ desktop.examples desktop.tests desktop.docs ' +
-            'touch-pad.examples touch-pad.tests touch-pad.docs touch-phone.examples ' +
-            'touch-phone.tests touch-phone.docs && enb make *.pages/*',
         docDirs: '*.docs',
         rsync: {
             targets: ['*.tests', '*.examples']
+        },
+        showcase: {
+            title: 'showcase',
+            path: 'desktop.pages/showcase/showcase.html'
         },
         docs: {
             readme: {
@@ -49,19 +50,7 @@ module.exports = {
         pattern: {
             data: '%s.data.json',
             jsdoc: '%s.jsdoc.html'
-        },
-        tasks: [
-            require('../src/tasks/git-clone'),
-            require('../src/tasks/git-checkout'),
-            require('../src/tasks/npm-install'),
-            require('../src/tasks/npm-run-deps'),
-            require('../src/tasks/copy-borschik'),
-            require('../src/tasks/npm-run-build'),
-            require('../src/tasks/remove-output'),
-            require('../src/tasks/create-output'),
-            require('../src/tasks/copy-sets'),
-            require('../src/tasks/collect-sets')
-        ]
+        }
     }
 };
 ```
@@ -73,10 +62,6 @@ module.exports = {
 
 Допустимые значения `enb` и `bem-tools`. 
 Значение по умолчанию `bem-tools`.
- 
-### command 
-Cтрока с названием команды для запуска сборки. 
-Значение по умолчанию `npm run build`
 
 ###docDirs
 Шаблон директорий которые содержат файлы с документацией по блокам.
@@ -94,6 +79,15 @@ Cтрока с названием команды для запуска сбор�
 Более подробно о значении параметров `include` и `exclude` можно почитать например:
 * [rsync npm module](https://www.npmjs.org/package/rsync)
 * [rsync command](https://developer.apple.com/library/Mac/DOCUMENTATION/Darwin/Reference/ManPages/man1/rsync.1.html)
+
+### showcase
+
+Для некоторых библиотек необходимо отображать страницу с примерами всех блоков,
+так называемый showcase. Для этого в декларации указывается объект `showcase`,
+с полями:
+
+* `title` - название страницы
+* `path` - путь к с html файлу сгенерированной страницы showcase
 
 ### docs
 
@@ -138,11 +132,4 @@ pattern: {
     jsdoc: '%s.jsdoc.json'
 }
 ```
-
-### tasks 
-
-Массив с модулями код которых будет выполнен для данной цели сборки 
-в таком же порядке в каком  подключение этих модулей указано в массиве.
-
-Более подробно о модулях для сборки можно почитать [здесь](./tasks.md)
 

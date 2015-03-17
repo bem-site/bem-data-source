@@ -17,6 +17,7 @@ var TargetView = require('./src/targets/view/api'),
  *      host and port configuration for write|modify requests
  *    - {String} auth header
  * - {String} logLevel - logger level (debug, info, warn, error)
+ * - {Boolean} isDocsOnly - if this flag is set to true then sending examples to storage will be skipped
  * - {Number} maxOpenFiles - number of open files which can be opened at the same time
  * @param {Boolean} isDryRun - dry run flag
  * @returns {*}
@@ -51,6 +52,7 @@ exports.prepare = function (version, options) {
  *      host and port configuration for write|modify requests
  *    - {String} auth header
  * - {String} logLevel - logger level (debug, info, warn, error)
+ * - {Boolean} isDocsOnly - if this flag is set to true then sending examples to storage will be skipped
  * - {Number} maxOpenFiles - number of open files which can be opened at the same time
  * @param {Boolean} isDryRun - dry run flag
  * @returns {*}
