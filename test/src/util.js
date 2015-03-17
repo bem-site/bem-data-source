@@ -11,6 +11,30 @@ describe('util', function () {
         html.should.be.instanceOf(String);
     });
 
+    describe('parseGhUrl', function () {
+        it('should parse github url', function () {
+            var p = util.parseGhUrl('https://github.com/bem-site/bem-data-source/blob/master/README.md');
+            p.should.be.ok;
+            p.should.be.instanceOf(Object);
+            p.should.have.property('isPrivate');
+            p.should.have.property('user');
+            p.should.have.property('repo');
+            p.should.have.property('ref');
+            p.should.have.property('path');
+
+            p.isPrivate.should.equal(false);
+            p.user.should.equal('bem-site');
+            p.repo.should.equal('bem-data-source');
+            p.ref.should.equal('master');
+            p.path.should.equal('README.md');
+        });
+
+        it ('should throw error on non-gihub url', function () {
+            var url = 'https://www.yandex.ru/';
+            (function () { return util.parseGhUrl(url); }).should.throw('Invalid format of url ' + url);
+        });
+    });
+
     describe('separateArrayOnChunks', function () {
         var arr;
 

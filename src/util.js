@@ -1,6 +1,7 @@
 'use strict';
 
-var md = require('marked'),
+var util = require('util'),
+    md = require('marked'),
     renderer = require('./renderer');
 
 /**
@@ -15,6 +16,29 @@ exports.mdToHtml = function (content) {
         sanitize: false,
         renderer: renderer.get()
     });
+};
+
+/**
+ * Parses given gh url
+ * @param {String} url for parse
+ * @returns {Object} object with parts of parsed url
+ * @private
+ */
+exports.parseGhUrl = function (url) {
+    var regexp = /^https?:\/\/(.+?)\/(.+?)\/(.+?)\/(tree|blob)\/(.+?)\/(.+)/,
+        _url = url.match(regexp);
+
+    if (!_url) {
+        throw new Error(util.format('Invalid format of url %s', url));
+    }
+
+    return {
+        isPrivate: _url[1].indexOf('yandex') > -1,
+        user: _url[2],
+        repo: _url[3],
+        ref:  _url[5],
+        path: _url[6]
+    };
 };
 
 /**
