@@ -33,7 +33,7 @@ exports.parseGhUrl = function (url) {
     }
 
     return {
-        isPrivate: _url[1].indexOf('yandex') > -1,
+        type: _url[1].indexOf('yandex') > -1 ? 'private' : 'public',
         user: _url[2],
         repo: _url[3],
         ref:  _url[5],

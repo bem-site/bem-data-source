@@ -22,4 +22,4 @@ require('./src/targets/remove');
 require('./integration/prepare');
 require('./integration/send');
 require('./integration/publish');
-//require('./integration/all');
+require('./integration/all');

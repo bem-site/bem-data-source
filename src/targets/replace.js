@@ -35,6 +35,13 @@ module.exports = inherit({
         this._options = options;
     },
 
+    /**
+     * Returns key for data.json file in storage
+     * @param {String} source - name of source (library)
+     * @param {String} ref - name of reference (tag, branch, pr)
+     * @returns {String}
+     * @private
+     */
     _getDataKey: function (source, ref) {
         return util.format('%s/%s/%s', source, ref, constants.FILE.DATA);
     },
@@ -74,9 +81,7 @@ module.exports = inherit({
                 if (!content.docs[this._options.doc]) {
                     content = this._createDoc(content);
                 }
-
-                var gh = new Api({});
-                return vow.all([gh.getContent(utility.parseGhUrl(this._options.url)), content]);
+                return vow.all([this._loadContentFromGh(), content]);
             }, this)
             .spread(function (data, content) {
                 return this._replaceDoc(data, content);
@@ -87,6 +92,16 @@ module.exports = inherit({
             .then(function (shaSum) {
                 return this._updateRegistry(shaSum);
             }, this);
+    },
+
+    _loadContentFromGh: function () {
+        var def = vow.defer(),
+            gh = new Api({}),
+            o = utility.parseGhUrl(this._options.url);
+        gh.get(o).getContent(o, null, function (err, res) {
+            err ? def.reject(err) : def.resolve(res);
+        });
+        return def.promise();
     },
 
     /**
@@ -116,12 +131,12 @@ module.exports = inherit({
     },
 
     _replaceDoc: function (ghResponse, content) {
-        if (!ghResponse.res) {
+        if (!ghResponse) {
             throw new Error('Response can not retrieve data from github');
         }
 
         var _doc = content.docs[this._options.doc],
-            replace = utility.mdToHtml((new Buffer(ghResponse.res.content, 'base64')).toString());
+            replace = utility.mdToHtml((new Buffer(ghResponse.content, 'base64')).toString());
 
         // if lang option was not set then we should replace doc for all languages
         Object.keys(_doc.content)

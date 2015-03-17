@@ -16,13 +16,13 @@ describe('util', function () {
             var p = util.parseGhUrl('https://github.com/bem-site/bem-data-source/blob/master/README.md');
             p.should.be.ok;
             p.should.be.instanceOf(Object);
-            p.should.have.property('isPrivate');
+            p.should.have.property('type');
             p.should.have.property('user');
             p.should.have.property('repo');
             p.should.have.property('ref');
             p.should.have.property('path');
 
-            p.isPrivate.should.equal(false);
+            p.type.should.equal('public');
             p.user.should.equal('bem-site');
             p.repo.should.equal('bem-data-source');
             p.ref.should.equal('master');

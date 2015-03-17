@@ -34,7 +34,7 @@ describe('bem-data-source', function () {
     after(function () {
         emulator.stop();
         return vow.all([
-            utility.removeDir(path.join(__dirname, '../test-data/temp')),
+            vowFs.removeDir(path.join(__dirname, '../test-data/temp')),
             vowFs.remove(path.join(__dirname, '../test-data/data.json'))
         ]);
     });
@@ -51,7 +51,7 @@ describe('bem-data-source', function () {
         it('should be correct number of libraries', function (done) {
             ds.view(null, null, options)
                 .then(function (libraries) {
-                    libraries.should.have.length(1);
+                    libraries.should.have.length(6);
                     done();
                 }).done();
         });
