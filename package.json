@@ -18,11 +18,11 @@
   },
   "dependencies": {
     "chalk": "^1.0.0",
-    "coa": "^0.4.x",
+    "coa": "^1.0.x",
     "easy-table": "0.3.0",
     "fs-extra": "^0.16.x",
     "github": "~0.2.x",
-    "glob": "4.3.x",
+    "glob": "^5.0.x",
     "glob-all": "^3.0.1",
     "inherit": "^2.2.x",
     "intel": "^1.0.x",
