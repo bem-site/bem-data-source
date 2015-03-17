@@ -34,10 +34,7 @@ describe('integration send', function () {
         t.execute()
             .then(function () {
                 done();
-            })
-            .fail(function (err) {
-                done();
-            })
+            });
     });
 
     after(function () {

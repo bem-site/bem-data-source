@@ -98,7 +98,6 @@ exports.view = function (repo, version, options) {
  * @returns {Promise}
  */
 exports.replace = function (repo, version, options) {
-    options.isCli = false;
     var target = new TargetReplace(repo, version, options);
     return target.execute().fail(function () { process.exit(1); });
 };

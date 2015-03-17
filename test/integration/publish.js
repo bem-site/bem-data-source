@@ -34,9 +34,6 @@ describe('integration publish', function () {
         t.execute()
             .then(function () {
                 done();
-            })
-            .fail(function (err) {
-                done();
             });
     });
 
