@@ -5,6 +5,7 @@ var path = require('path'),
     _ = require('lodash'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
+    fsExtra = require('fs-extra'),
 
     emulator = require('mds-wrapper/mds-emulator.js'),
 
@@ -33,10 +34,8 @@ describe('bem-data-source', function () {
 
     after(function () {
         emulator.stop();
-        return vow.all([
-            vowFs.removeDir(path.join(__dirname, '../test-data/temp')),
-            vowFs.remove(path.join(__dirname, '../test-data/data.json'))
-        ]);
+        fsExtra.removeSync(path.join(__dirname, '../test-data/temp'));
+        vowFs.remove(path.join(__dirname, '../test-data/data.json'))
     });
 
     describe('#publish', function () {
