@@ -5,45 +5,70 @@ var util = require('util'),
 
     vow = require('vow'),
     vowFs = require('vow-fs'),
+    inherit = require('inherit'),
 
     sha = require('sha1'),
     storage = require('../storage'),
-    logger = require('../logger'),
-    constants = require('../constants');
+    constants = require('../constants'),
+    Base = require('./base');
 
-/**
- * Create target folder in output directory
- * @param {TargetPublish} target for building
- * @returns {defer.promise|*}
- */
-module.exports = function (target) {
-    var fPath = path.join(target.getOutputPath(), constants.FILE.DATA),
-        lib = target.getSourceName(),
-        version = target.ref,
-        key = util.format('%s/%s/%s', lib, version, constants.FILE.DATA),
-        shaKey;
+module.exports = inherit(Base, {
+    run: function () {
+        var lib = this._target.sourceName,
+            version = this._target.ref;
 
-    return vowFs.read(fPath, 'utf-8')
-        .then(function (content) {
-            try {
-                shaKey = sha(content);
-            }catch (err) {
-                shaKey = sha(util.format('%s:%s:%s', lib, version, (new Date()).toString()));
-            }
-            return target.options.isDryRun ? vow.resolve() :
-                storage.get(target.options.storage).writeP(key, content);
-        })
-        .then(function () {
-            return storage.get(target.options.storage).readP(constants.ROOT);
-        })
-        .then(function (registry) {
-            registry = registry ? JSON.parse(registry) : {};
-            registry[lib] = registry[lib] || { name: lib, versions: {} };
+            return this._writeDataFile(lib, version).then(function (shaKey) {
+                return this._modifyRegistry(lib, version, shaKey);
+            }, this);
+    },
 
-            logger.debug(util.format('registry: %s', JSON.stringify(registry[lib])), module);
+    /**
+     * Writes data.json file with documentation to storage
+     * @param {String} lib - name of library
+     * @param {String} version - name of library version
+     * @returns {*}
+     * @private
+     */
+    _writeDataFile: function (lib, version) {
+        var fPath = path.join(this._target.getContentPath(), constants.FILE.DATA),
+            key = util.format('%s/%s/%s', lib, version, constants.FILE.DATA),
+            o = this._target.getOptions(),
+            shaKey;
+        return vowFs.read(fPath, 'utf-8')
+            .then(function (content) {
+                try {
+                    shaKey = sha(content);
+                }catch (err) {
+                    shaKey = sha(util.format('%s:%s:%s', lib, version, (new Date()).toString()));
+                }
+                return o.isDryRun ? vow.resolve() :
+                    storage.get(o.storage).writeP(key, content);
+            }, this)
+            .then(function () {
+                return shaKey;
+            });
+    },
 
-            registry[lib].versions[version] = { sha: shaKey, date: +(new Date()) };
-            return target.options.isDryRun ? vow.resolve() :
-                storage.get(target.options.storage).writeP(constants.ROOT, JSON.stringify(registry));
-        });
-};
+    /**
+     * Modify storage registry
+     * @param {String} lib - name of library
+     * @param {String} version - name of library version
+     * @param {String} shaKey unique shasum of file content
+     * @returns {*}
+     * @private
+     */
+    _modifyRegistry: function (lib, version, shaKey) {
+        var o = this._target.getOptions();
+        return storage.get(o.storage).readP(constants.ROOT)
+            .then(function (registry) {
+                registry = registry ? JSON.parse(registry) : {};
+                registry[lib] = registry[lib] || { name: lib, versions: {} };
+
+                this._logger.debug(util.format('registry: %s', JSON.stringify(registry[lib])), module);
+
+                registry[lib].versions[version] = { sha: shaKey, date: +(new Date()) };
+                return o.isDryRun ? vow.resolve() :
+                    storage.get(o.storage).writeP(constants.ROOT, JSON.stringify(registry));
+            }, this);
+    }
+});

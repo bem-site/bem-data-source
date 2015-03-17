@@ -5,11 +5,12 @@ var path = require('path'),
     _ = require('lodash'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
+    fsExtra = require('fs-extra'),
 
     emulator = require('mds-wrapper/mds-emulator.js'),
 
-    utility = require('../src/util.js'),
-    ds = require('../index.js'),
+    utility = require('../../src/util.js'),
+    ds = require('../../index.js'),
     options = {
         storage: {
             namespace: 'my-site',
@@ -27,16 +28,14 @@ var path = require('path'),
 
 describe('bem-data-source', function () {
     before(function () {
-        process.chdir(path.join(__dirname, './test-data'));
+        process.chdir(path.join(__dirname, '../test-data'));
         emulator.start(options.storage.get.port, options.storage.post.port);
     });
 
     after(function () {
         emulator.stop();
-        return vow.all([
-            utility.removeDir(path.join(__dirname, './test-data/temp')),
-            vowFs.remove(path.join(__dirname, './test-data/data.json'))
-        ]);
+        fsExtra.removeSync(path.join(__dirname, '../test-data/temp'));
+        vowFs.remove(path.join(__dirname, '../test-data/data.json'))
     });
 
     describe('#publish', function () {
@@ -51,7 +50,7 @@ describe('bem-data-source', function () {
         it('should be correct number of libraries', function (done) {
             ds.view(null, null, options)
                 .then(function (libraries) {
-                    libraries.should.have.length(1);
+                    libraries.should.have.length(6);
                     done();
                 }).done();
         });

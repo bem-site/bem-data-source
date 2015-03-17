@@ -3,75 +3,91 @@
 var fs = require('fs'),
     path = require('path'),
 
+    vow = require('vow'),
+    inherit = require('inherit'),
     constants = require('./../constants'),
-    Target = require('./base'),
+    Base = require('./base');
 
-    TargetPublish  = function (ref, options) {
-        this.init(ref, options);
-    };
+module.exports = inherit(Base, {
 
-TargetPublish.prototype = Object.create(Target.prototype);
+    _options: undefined,
+    _contentPath: undefined,
+    _tempPath: undefined,
 
-TargetPublish.prototype._readPackageJson = function () {
-    var content = fs.readFileSync(path.join(process.cwd(), 'package.json'), { encoding: 'utf-8' });
-    try {
-        return JSON.parse(content);
-    } catch (err) {
-        return null;
+    __constructor: function (ref, options) {
+        this._options = options;
+        this._contentPath = process.cwd();
+        this._tempPath = path.join(this._contentPath, constants.DIRECTORY.TEMP);
+
+        var packageJson = this._readPackageJson();
+        ref = ref || packageJson.version;
+        ref = ref.replace(/\//g, '-');
+
+        var repository = packageJson['repository'];
+
+        this.__base({
+            name: packageJson.name,
+            url: repository && repository.url
+        }, ref);
+
+        this._tasks = [
+            new (require('../tasks/read-md'))(this),
+            new (require('../tasks/read-deps'))(this),
+            new (require('../tasks/read-showcase'))(this),
+            new (require('../tasks/read-levels'))(this),
+            new (require('../tasks/write-result'))(this),
+            new (require('../tasks/remove-temp'))(this),
+            new (require('../tasks/create-temp'))(this),
+            new (require('../tasks/copy-to-temp'))(this),
+            new (require('../tasks/send-examples'))(this),
+            new (require('../tasks/send-doc'))(this),
+            new (require('../tasks/send-email'))(this)
+        ];
+    },
+
+    /**
+     * Make chained calls for all tasks for target and call them
+     * @returns {*}
+     */
+    execute: function () {
+        return this._tasks.reduce(function (prev, item) {
+            return prev.then(function (r) {
+                return item.run(r);
+            });
+        }, vow.resolve(this.createResultBase()));
+    },
+
+    /**
+     * Reads and parses package.json file of library
+     * @returns {Object} parsed content of package.json file or throws error id given file doesn't exists
+     * @private
+     */
+    _readPackageJson: function () {
+        try {
+            var content = fs.readFileSync(path.join(this._contentPath, 'package.json'), { encoding: 'utf-8' });
+            return JSON.parse(content);
+        } catch (err) {
+            throw new Error('package.json file can not be opened or parsed');
+        }
+    },
+
+    /**
+     * Returns content path for target
+     * @returns {String}
+     */
+    getContentPath: function () {
+        return this._contentPath;
+    },
+
+    /**
+     * Returns path temp folder
+     * @returns {String}
+     */
+    getTempPath: function () {
+        return this._tempPath;
+    },
+
+    getOptions: function () {
+        return this._options;
     }
-};
-
-TargetPublish.prototype.init = function (ref, options) {
-    var packageJson = this._readPackageJson();
-    if (!packageJson) {
-        throw new Error('package.json file can not be parsed');
-    }
-
-    ref = ref || packageJson.version;
-    ref = ref.replace(/\//g, '-');
-
-    var repository = packageJson.repository;
-
-    Target.prototype.init.call(this, {
-        name: packageJson.name,
-        url: repository && repository.url,
-        isPrivate: true
-    }, ref);
-
-    this.options = options;
-    this.declaration.tasks = [
-        require('../tasks/collect-sets'),
-        require('../tasks/remove-temp'),
-        require('../tasks/create-temp'),
-        require('../tasks/copy-to-temp'),
-        require('../tasks/process-examples'),
-        require('../tasks/send-doc'),
-        require('../tasks/send-email')
-    ];
-};
-
-/**
- * Returns content path for target
- * @returns {String}
- */
-TargetPublish.prototype.getContentPath = function () {
-    return process.cwd();
-};
-
-/**
- * Returns output path for target
- * @returns {String}
- */
-TargetPublish.prototype.getOutputPath = function () {
-    return process.cwd();
-};
-
-/**
- * Returns output path for target
- * @returns {String}
- */
-TargetPublish.prototype.getTempPath = function () {
-    return path.join(process.cwd(), constants.DIRECTORY.TEMP);
-};
-
-module.exports = TargetPublish;
+});

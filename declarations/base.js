@@ -1,7 +1,6 @@
 module.exports = {
     default: {
         builder: 'bem-tools',
-        command: 'npm run build',
         rsync: {
             targets: ['*.sets']
         },
@@ -15,10 +14,6 @@ module.exports = {
             data: '%s.data.json',
             jsdoc: '%s.jsdoc.json'
         },
-        tasks: [
-            require('../src/tasks/collect-sets'),
-            require('../src/tasks/process-examples')
-        ],
         custom: []
     }
 };

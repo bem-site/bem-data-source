@@ -1,11 +1,9 @@
 'use strict';
 
-var util = require('util'),
-
-    _ = require('lodash'),
+var _ = require('lodash'),
 
     config = require('../config'),
-    logger = require('../logger'),
+    Logger = require('../logger'),
     TargetRemove = require('../targets/remove');
 
 module.exports = function () {
@@ -28,15 +26,16 @@ module.exports = function () {
             .flag()
             .end()
         .act(function (opts) {
-            var target = new TargetRemove(opts.repo, opts.version,
-                _.extend({ isDryRun: opts.dry }, { storage: config.get('storage') }));
+            var logger = new Logger(module, 'info'),
+                o = _.extend({ isDryRun: opts['dry'] }, { storage: config.get('storage') }),
+                target = new TargetRemove(opts.repo, opts.version, o);
             return target.execute()
                 .then(function () {
-                    logger.info('REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);
+                    logger.info('REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY');
                     process.exit(0);
                 })
                 .fail(function (err) {
-                    logger.error(util.format('REMOVE COMMAND FAILED WITH ERROR %s', err.message), module);
+                    logger.error('REMOVE COMMAND FAILED WITH ERROR %s', err.message);
                     process.exit(1);
                 });
         });

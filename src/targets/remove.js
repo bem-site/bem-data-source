@@ -3,35 +3,35 @@
 var util = require('util'),
 
     vow = require('vow'),
+    inherit = require('inherit'),
 
     storage = require('../storage'),
-    logger = require('../logger'),
     config = require('../config'),
     utility = require('../util'),
-    mailer = require('../mailer'),
     constants = require('../constants'),
+    Logger = require('../logger'),
+    Mailer = require('../mailer');
 
-    TargetRemove  = function (source, ref, options) {
-        return this.init(source, ref, options);
-    };
+module.exports = inherit({
 
-TargetRemove.prototype = {
-    source: undefined,
-    ref: undefined,
-    options: undefined,
+    _logger: undefined,
+
+    _source: undefined,
+    _ref: undefined,
+    _options: undefined,
 
     /**
      * Initialize target object
      * @param {String} source - name of source (library)
      * @param {String} ref - name of reference (tag, branch, pr)
      * @param {Object} options - advanced options
-     * @returns {TargetRemove}
      */
-    init: function (source, ref, options) {
-        this.source = source;
-        this.ref = ref.replace(/\//g, '-');
-        this.options = options;
-        return this;
+    __constructor: function (source, ref, options) {
+        this._logger = new Logger(module, 'debug');
+
+        this._source = source;
+        this._ref = ref.replace(/\//g, '-');
+        this._options = options;
     },
 
     /**
@@ -39,52 +39,84 @@ TargetRemove.prototype = {
      * @returns {*}
      */
     execute: function () {
-        if (this.options.isDryRun) {
-            logger.info('Remove command was launched in dry run mode', module);
-            logger.warn(util.format(
-                'Data for %s %s won\' be removed from storage', this.source, this.ref), module);
+        if (this._options.isDryMode) {
+            this._logger.info('Remove command was launched in dry run mode');
+            this._logger.warn('Data for %s %s won\' be removed from storage', this.source, this.ref);
+            return vow.resolve();
         }
 
-        return this._removeRecords()
-            .then(function () {
-                return this._removeFromRegistry();
-            }, this)
-            .then(function () {
-                return this._sendEmail();
+        return this._removeExampleFiles()
+            .then(this._removeDocFile.bind(this))
+            .then(this._modifyRegistry.bind(this))
+            .then(this._sendEmail.bind(this));
+    },
+
+    /**
+     * Returns files portion size for batch remove operations
+     * @returns {Number}
+     * @private
+     */
+    _getPortionSize: function () {
+        return this._options['maxOpenFiles'] || config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES;
+    },
+
+    /**
+     * Returns examples registry key in storage
+     * @returns {String}
+     * @private
+     */
+    _getExamplesKey: function () {
+        return util.format('%s/%s/%s', this._source, this._ref, 'examples');
+    },
+
+    _getDocsKey: function () {
+        return util.format('%s/%s/%s', this._source, this._ref, constants.FILE.DATA);
+    },
+
+    _removeExampleFiles: function () {
+        var ps = this._getPortionSize();
+
+        this._logger.info('Start to remove example records');
+        return storage.get(this._options.storage).readP(this._getExamplesKey())
+            .then(function (content) {
+                if (!content) {
+                    this._logger.warn('No examples were found for %s %s', this._source, this._ref);
+                    return vow.resolve();
+                }
+
+                var _this = this,
+                    keys = JSON.parse(content),
+                    portions = utility.separateArrayOnChunks(keys, ps);
+
+                this._logger.debug('example records count: %s', keys.length);
+                this._logger.debug('removing will be executed in %s steps', portions.length);
+
+                return portions.reduce(function (prev, item, index) {
+                        prev = prev.then(function () {
+                            _this._logger.verbose('remove files in range %s - %s', index * ps, (index + 1) * ps);
+                            return vow.all(item.map(function (_item) {
+                                return _this._options.isDryRun ? vow.resolve() :
+                                    storage.get(_this._options.storage).removeP(_item);
+                            }));
+                        });
+                        return prev;
+                    }, vow.resolve())
+                    .then(function () {
+                        this._logger.info('Start to remove example registry');
+                        return storage.get(this._options.storage).removeP(this._getExamplesKey());
+                    }, this);
             }, this);
     },
 
     /**
-     * Remove all file records from storage
+     * Removes documentation file for given library version
+     * Removes file for key {lib}/{version}/data.json from the storage
      * @returns {*}
      * @private
      */
-    _removeRecords: function () {
-        var portionSize = this.options.maxOpenFiles || config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
-            examplesRegistryKey = util.format('%s/%s/%s', this.source, this.ref, 'examples');
-
-        logger.info('Start to remove example records', module);
-        return storage.get(this.options.storage).readP(examplesRegistryKey)
-            .then(function (content) {
-                var _this = this,
-                    keys = JSON.parse(content),
-                    portions = utility.separateArrayOnChunks(keys, portionSize);
-
-                logger.debug(util.format('example records count: %s', keys.length), module);
-                logger.debug(util.format('removing will be executed in %s steps', portions.length), module);
-
-                return portions.reduce(function (prev, item, index) {
-                    prev = prev.then(function () {
-                        logger.debug(util.format('remove files in range %s - %s',
-                            index * portionSize, (index + 1) * portionSize), module);
-                        return vow.all(item.map(function (_item) {
-                            return _this.options.isDryRun ? vow.resolve() :
-                                storage.get(_this.options.storage).removeP(_item);
-                        }));
-                    });
-                    return prev;
-                }, vow.resolve());
-            }, this);
+    _removeDocFile: function () {
+        this._logger.info('Start to remove doc file');
+        return storage.get(this._options.storage).removeP(this._getDocsKey());
     },
 
     /**
@@ -92,71 +124,58 @@ TargetRemove.prototype = {
      * @returns {*}
      * @private
      */
-    _removeFromRegistry: function () {
-        return storage.get(this.options.storage).readP(constants.ROOT).then(function (registry) {
-            var message = {
-                noRegistry: 'No registry record were found. ' +
-                    'Please try to make publish any library. Also this operation will be skipped',
-                noLibrary: 'Library %s was not found in registry. Operation will be skipped',
-                noVersion: 'Library %s version %s was not found in registry. Operation will be skipped'
-            };
+    _modifyRegistry: function () {
+        return storage.get(this._options.storage).readP(constants.ROOT)
+            .then(function (registry) {
+                this._logger.info('Start to remove library from common registry');
 
-            logger.info('Start to remove library from common registry', module);
+                // check if registry exists
+                if (!registry) {
+                    this._logger.warn(this.__self.message.noRegistry);
+                    throw new Error(this.__self.message.noRegistry);
+                }
 
-            // check if registry exists
-            if (!registry) {
-                logger.warn(message.noRegistry, module);
-                return vow.resolve();
-            }
+                registry = JSON.parse(registry);
 
-            registry = JSON.parse(registry);
+                // check if given library exists in registry
+                if (!registry[this._source]) {
+                    this._logger.warn(this.__self.message.noLibrary, this._source);
+                    throw new Error(util.format(this.__self.message.noLibrary, this._source));
+                }
 
-            // check if given library exists in registry
-            if (!registry[this.source]) {
-                logger.warn(util.format(message.noLibrary, this.source), module);
-                return vow.resolve();
-            }
+                // check if given library version exists in registry
+                if (!registry[this._source].versions[this._ref]) {
+                    this._logger.warn(this.__self.message.noVersion, this._source, this._ref);
+                    throw new Error(util.format(this.__self.message.noVersion, this._source, this._ref));
+                }
 
-            // check if given library version exists in registry
-            if (!registry[this.source].versions[this.ref]) {
-                logger.warn(util.format(message.noVersion, this.source, this.ref), module);
-                return vow.resolve();
-            }
-
-            // should to do nothing if command was launched in dry mode
-            if (this.options.isDryRun) {
-                return vow.resolve();
-            }
-
-            delete registry[this.source].versions[this.ref];
-            return storage.get(this.options.storage).writeP(constants.ROOT, JSON.stringify(registry));
-        }, this);
+                delete registry[this._source].versions[this._ref];
+                return storage.get(this._options.storage).writeP(constants.ROOT, JSON.stringify(registry));
+            }, this);
     },
 
     /**
-     * Sends email notification
+     * Sends e-mail with information about removed library version
      * @returns {*}
      * @private
      */
     _sendEmail: function () {
-        var emailOptions = this.options['mailer'] || config.get('mailer'),
-            isEnable = emailOptions || false;
-        if (!isEnable) {
-            return vow.resolve();
+        var o = this._options['mailer'] || config.get('mailer');
+        if (!o) {
+            this._logger.warn('No e-mail options were set');
+            return;
         }
 
-        mailer.init(emailOptions);
+        var mailer = new Mailer(o),
+            subject = util.format('bem-data-source: success remove library [%s] version [%s]', this._source, this._ref);
 
-        var subject = util.format('bem-data-source: success remove library [%s] version [%s]',
-            this.source, this.ref);
-
-        return mailer.send({
-            from: emailOptions.from,
-            to: emailOptions.to,
-            subject: subject,
-            text: ''
-        });
+        return mailer.send({ from: o.from, to: o.to, subject: subject, text: '' });
     }
-};
-
-module.exports = TargetRemove;
+}, {
+    message: {
+        noRegistry: 'No registry record were found. Please try to make publish any library. ' +
+        'Also this operation will be skipped',
+        noLibrary: 'Library %s was not found in registry. Operation will be skipped',
+        noVersion: 'Library %s version %s was not found in registry. Operation will be skipped'
+    }
+});

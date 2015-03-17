@@ -1,11 +1,9 @@
 'use strict';
 
-var util = require('util'),
-
-    _ = require('lodash'),
+var _ = require('lodash'),
 
     config = require('../config'),
-    logger = require('../logger'),
+    Logger = require('../logger'),
     TargetReplace = require('../targets/replace');
 
 module.exports = function () {
@@ -37,19 +35,17 @@ module.exports = function () {
             .req()
             .end()
         .act(function (opts) {
-            var target = new TargetReplace(opts.repo, opts.version, _.extend({
-                isCli: true,
-                doc: opts.doc,
-                lang: opts.lang,
-                url: opts.url
-            }, { storage: config.get('storage') }));
+            var logger = new Logger(module, 'info'),
+                o = _.extend({ doc: opts.doc, lang: opts.lang, url: opts.url },
+                    { storage: config.get('storage') }),
+                target = new TargetReplace(opts.repo, opts.version, o);
             return target.execute()
                 .then(function () {
-                    logger.info('REPLACE COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);
+                    logger.info('REPLACE COMMAND HAS BEEN FINISHED SUCCESSFULLY');
                     process.exit(0);
                 })
                 .fail(function (err) {
-                    logger.error(util.format('REPLACE COMMAND FAILED WITH ERROR %s', err.message), module);
+                    logger.error('REPLACE COMMAND FAILED WITH ERROR %s', err.message);
                     process.exit(1);
                 });
         });

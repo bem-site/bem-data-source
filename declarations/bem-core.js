@@ -1,9 +1,6 @@
 module.exports = {
     default: {
         builder: 'enb',
-        command: 'YENV=production bower install && npm run libs && enb make __magic__ desktop.examples ' +
-            'desktop.tests desktop.docs touch-pad.examples touch-pad.tests touch-pad.docs ' +
-            'touch-phone.examples touch-phone.tests touch-phone.docs',
         docDirs: '*.docs',
         rsync: {
             targets: ['*.docs', '*.examples']
@@ -43,10 +40,6 @@ module.exports = {
                 },
                 url: '/tags/{lib}-v2.3.0'
             }
-        ],
-        tasks: [
-            require('../src/tasks/collect-sets'),
-            require('../src/tasks/process-examples')
         ]
     }
 };

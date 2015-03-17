@@ -1,7 +1,6 @@
 module.exports = {
     default: {
         builder: 'enb',
-        command: 'YENV=production magic run docs examples',
         docDirs: '*.docs',
         rsync: {
             levels: ['desktop', 'touch'],
@@ -24,9 +23,6 @@ module.exports = {
         pattern: {
             data: '%s.data.json',
             jsdoc: '%s.jsdoc.html'
-        },
-        tasks: [
-            require('../src/tasks/collect-sets')
-        ]
+        }
     }
 };

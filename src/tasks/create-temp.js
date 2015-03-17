@@ -1,15 +1,16 @@
 'use strict';
 
-var util = require('util'),
+var inherit = require('inherit'),
     vowFs = require('vow-fs'),
-    logger = require('../logger');
+    Base = require('./base');
 
-/**
- * Create target folder in output directory
- * @param {Target} target for building
- * @returns {defer.promise|*}
- */
-module.exports = function (target) {
-    logger.debug(util.format('create temp folder for target %s', target.getName()), module);
-    return vowFs.makeDir(target.getTempPath()).then(function () { return target; });
-};
+module.exports = inherit(Base, {
+    /**
+     * Create target folder in output directory
+     * @returns {defer.promise|*}
+     */
+    run: function () {
+        this._logger.debug('create temp folder for target %s', this._target.name);
+        return vowFs.makeDir(this._target.getTempPath());
+    }
+});

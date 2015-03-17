@@ -1,19 +1,15 @@
 'use strict';
 
-var TargetPublish = require('./publish'),
-    TargetSend  = function (ref, options) {
-        this.init(ref, options);
-    };
+var inherit = require('inherit'),
+    Base = require('./publish');
 
-TargetSend.prototype = Object.create(TargetPublish.prototype);
-
-TargetSend.prototype.init = function (ref, options) {
-    TargetPublish.prototype.init.call(this, ref, options);
-    this.declaration.tasks = [
-        require('../tasks/process-examples'),
-        require('../tasks/send-doc'),
-        require('../tasks/send-email')
-    ];
-};
-
-module.exports = TargetSend;
+module.exports = inherit(Base, {
+    __constructor: function (ref, options) {
+        this.__base(ref, options);
+        this._tasks = [
+            new (require('../tasks/send-examples'))(this),
+            new (require('../tasks/send-doc'))(this),
+            new (require('../tasks/send-email'))(this)
+        ];
+    }
+});

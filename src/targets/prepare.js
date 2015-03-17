@@ -1,20 +1,20 @@
 'use strict';
 
-var TargetPublish = require('./publish'),
-    TargetPrepare  = function (ref, options) {
-        this.init(ref, options);
-    };
+var inherit = require('inherit'),
+    Base = require('./publish');
 
-TargetPrepare.prototype = Object.create(TargetPublish.prototype);
-
-TargetPrepare.prototype.init = function (ref, options) {
-    TargetPublish.prototype.init.call(this, ref, options);
-    this.declaration.tasks = [
-        require('../tasks/collect-sets'),
-        require('../tasks/remove-temp'),
-        require('../tasks/create-temp'),
-        require('../tasks/copy-to-temp')
-    ];
-};
-
-module.exports = TargetPrepare;
+module.exports = inherit(Base, {
+    __constructor: function (ref, options) {
+        this.__base(ref, options);
+        this._tasks = [
+            new (require('../tasks/read-md'))(this),
+            new (require('../tasks/read-deps'))(this),
+            new (require('../tasks/read-showcase'))(this),
+            new (require('../tasks/read-levels'))(this),
+            new (require('../tasks/write-result'))(this),
+            new (require('../tasks/remove-temp'))(this),
+            new (require('../tasks/create-temp'))(this),
+            new (require('../tasks/copy-to-temp'))(this)
+        ];
+    }
+});

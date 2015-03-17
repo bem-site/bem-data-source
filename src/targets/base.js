@@ -1,54 +1,50 @@
 'use strict';
 
 var util = require('util'),
-    path = require('path'),
 
+    inherit = require('inherit'),
     _ = require('lodash'),
+    vow = require('vow'),
 
-    titles = require('./../titles'),
-    constants = require('./../constants'),
+    titles = require('../titles');
 
-    Target = function (source, ref, type) {
-        return this.init(source, ref, type);
-    };
-
-Target.prototype = {
-    source: null,
-    ref: null,
-    type: null,
-    declaration: null,
+module.exports = inherit({
+    _source: undefined,
+    _ref: undefined,
+    _declaration: undefined,
+    _tasks: undefined,
 
     /**
-     * Initialize target for build
-     *
-     * @param {Object} source
-     * @param {String} ref - name of tag or branch
-     * @param {String} type of reference
-     * @returns {Target}
+     * Constructor function
+     * @param {Object} source object. Should have fields:
+     * - {String} name of library (from package.json file)
+     * - {String} url of library (from source field of package.json file)
+     * @param {String} ref - version of library
+     * @private
      */
-    init: function (source, ref, type) {
-        this.source = source;
-        this.ref = ref;
-        this.type = type;
-        this.declaration = this.makeDeclaration();
-        return this;
+    __constructor: function (source, ref) {
+        this._source = source;
+        this._ref = ref;
+        this._declaration = this._makeDeclaration();
+        this._tasks = [];
     },
 
     /**
      * Retrieve merged declaration for library
-     * @returns {Boolean|*}
+     * @returns {Object}
+     * @private
      */
-    makeDeclaration: function () {
+    _makeDeclaration: function () {
         var base = require('../../declarations/base'),
             lib;
 
         try {
-            lib = require('../../declarations/' + this.getSourceName());
+            lib = require('../../declarations/' + this.sourceName);
         }catch (err) {
             lib = { default: {} };
         }
 
-        var declaration = _.extend(base.default, lib.default);
+        var declaration = _.extend({}, base.default, lib.default);
         if (lib.default.docs && _.isObject(lib.default.docs)) {
             declaration.docs = _.extend(base.default.docs, lib.default.docs);
         }
@@ -59,158 +55,69 @@ Target.prototype = {
      * Returns human readable name for target
      * @returns {String}
      */
-    getName: function () {
-        return util.format('%s %s', this.getSourceName(), this.ref);
+    get name() {
+        return util.format('%s %s', this.sourceName, this._ref);
+    },
+
+    get ref() {
+        return this._ref;
     },
 
     /**
      * Returns name of library
      * @returns {String}
      */
-    getSourceName: function () {
-        return this.source.name;
-    },
-
-    /**
-     * Returns source privacy flag
-     * @returns {boolean}
-     */
-    getSourcePrivacy: function () {
-        return this.source.isPrivate;
+    get sourceName() {
+        return this._source.name;
     },
 
     /**
      * Return gh url for library
      * @returns {String}
      */
-    getUrl: function () {
-        return this.source.url;
+    get url() {
+        return this._source.url;
     },
 
     /**
      * Return part of declaration corresponding to docs
      * @returns {*}
      */
-    getMdTargets: function () {
-        return this.declaration.docs;
+    get mdTargets() {
+        return this._declaration.docs;
     },
 
     /**
      * Returns name patters of folders that should be copied to output folder
      * @returns {*}
      */
-    getBlockTargets: function () {
-        return this.declaration.pattern;
+    get blockTargets() {
+        return this._declaration.pattern;
     },
 
     /**
-     * Returns value if build command
-     * @returns {String}
-     */
-    getBuildCommand: function () {
-        return this.declaration.command;
-    },
-
-    /**
-     * Returns array of masks for folder names that should be copied
-     * from content to output directory
+     * Returns array of masks for folder names
+     * that should be synchronized to output directory before sending them to remote host
      * @returns {Array}
      */
-    getRsyncConfiguration: function () {
-        return this.declaration.rsync;
+    get rsyncConfiguration() {
+        return this._declaration.rsync;
     },
 
     /**
      *
      * @returns {*}
      */
-    getDocPatterns: function () {
-        return this.declaration.docDirs;
+    get docPatterns() {
+        return this._declaration.docDirs;
     },
 
     /**
-     * Returns name of builder
-     * @returns {String}
-     */
-    getBuilderName: function () {
-        return this.declaration.builder;
-    },
-
-    /**
-     *
+     * Returns object with localized titles for library documents
      * @returns {*|exports}
      */
-    getTitles: function () {
+    get titles() {
         return titles;
-    },
-
-    /**
-     * Returns array of tasks that should be executed for target
-     * in the same order as they were written
-     * @returns {Array}
-     */
-    getTasks: function () {
-        if (this.source.docsOnly) {
-            return [
-                require('./../tasks/collect-sets')
-            ];
-        }
-
-        return this.declaration.tasks;
-    },
-
-    /**
-     * Returns path of library in output folder
-     * @returns {String}
-     */
-    getContentPath: function () {
-        return path.join(path.join(constants.DIRECTORY.CONTENT, this.getSourceName()), this.ref.replace(/\//g, '-'));
-    },
-
-    /**
-     * Returns path of library in output folder
-     * @returns {String}
-     */
-    getOutputPath: function () {
-        return path.join(path.join(constants.DIRECTORY.OUTPUT, this.getSourceName()), this.ref.replace(/\//g, '-'));
-    },
-
-    /**
-    * Returns output path for target
-    * @returns {String}
-    */
-    getTempPath: function () {
-        return this.getOutputPath();
-    },
-
-    /**
-     * Make chained calls for all tasks for target and call them
-     * @returns {*}
-     */
-    execute: function () {
-        var _this = this,
-            initial = this.getTasks().shift();
-        return this.getTasks().reduce(function (prev, item) {
-            return prev.then(function () {
-                return item(_this);
-            });
-        }, initial(_this));
-    },
-
-    /**
-     *
-     * @returns {{repo: *, ref: *, url: string}}
-     */
-    createSetsResultBase: function () {
-        return {
-            repo: this.getSourceName(),
-            ref: this.ref,
-            enb: this.getBuilderName() === 'enb',
-            url: this.getUrl().replace('git:', 'http:').replace('.git', ''),
-            custom: this.getCustom(),
-            showcase: this.getShowCase(),
-            docs: {}
-        };
     },
 
     /**
@@ -218,20 +125,50 @@ Target.prototype = {
      * and set actual library name and version to url pattern
      * @returns {*}
      */
-    getCustom: function () {
-        return (this.declaration.custom).map(function (item) {
+    get custom() {
+        return this._declaration.custom.map(function (item) {
             if (item.url) {
                 item.url = item.url
-                    .replace('{lib}', this.getSourceName())
-                    .replace('{ref}', this.ref);
+                    .replace('{lib}', this.sourceName)
+                    .replace('{ref}', this._ref);
             }
             return item;
         }, this);
     },
 
-    getShowCase: function () {
-        return this.declaration.showcase || null;
-    }
-};
+    /**
+     * Retrieves optional showcase setting for build showcase page for library
+     * @returns {*|exports.default.showcase|null}
+     */
+    get showCase() {
+        return this._declaration.showcase || null;
+    },
 
-module.exports = Target;
+    /**
+     * Make chained calls for all tasks for target and call them
+     * @returns {*}
+     */
+    execute: function () {
+        return this._tasks.reduce(function (prev, item) {
+            return prev.then(function () {
+                return item.run();
+            });
+        }, vow.resolve());
+    },
+
+    /**
+     * Creates result backbone object for build full data.json file
+     * @returns {{repo: *, ref: *, url: string}}
+     */
+    createResultBase: function () {
+        return {
+            repo: this.sourceName,
+            ref: this._ref,
+            enb: this._declaration.builder === 'enb',
+            url: this.url.replace('git:', 'http:').replace('.git', ''),
+            custom: this.custom,
+            showcase: this.showCase,
+            docs: {}
+        };
+    }
+});

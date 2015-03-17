@@ -1,7 +1,6 @@
 module.exports = {
     default: {
         builder: 'enb',
-        command: 'npm run build',
         pattern: {
             data: '%s.data.json',
             jsdoc: '%s.jsdoc.json'
@@ -17,9 +16,6 @@ module.exports = {
             include: ['_.*js', '_*.ru.js', '_*.css', '_*.ie.css', '_*.ie6.css', '_*.ie7.css',
                 '_*.ie8.css', '_*.ie9.css', '*.bemjson.js'
             ]
-        },
-        tasks: [
-            require('../src/tasks/collect-sets')
-        ]
+        }
     }
 };

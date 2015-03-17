@@ -9,9 +9,6 @@ module.exports = {
                 folder: '',
                 pattern: 'CHANGELOG.md'
             }
-        },
-        tasks: [
-            require('../src/tasks/collect-sets')
-        ]
+        }
     }
 };
