@@ -1,11 +1,9 @@
 'use strict';
 
-var util = require('util'),
-
-    _ = require('lodash'),
+var _ = require('lodash'),
 
     config = require('../config'),
-    logger = require('../logger'),
+    Logger = require('../logger'),
     Target = require('../targets/publish');
 
 module.exports = function () {
@@ -31,21 +29,22 @@ module.exports = function () {
             .flag()
             .end()
         .act(function (opts) {
-            logger.info('PUBLISH:', module);
-            logger.info(util.format('repository version %s', opts.version), module);
+            var logger = new Logger(module, 'info');
+            logger.info('PUBLISH:');
+            logger.info('repository version %s', opts.version);
             var target = new Target(opts.version,
                 _.extend({
                     isCli: true,
-                    isDryRun: opts.dry,
+                    isDryRun: opts['dry'],
                     isDocsOnly: opts['docs-only'],
                     examples: opts.examples
                 }, { storage: config.get('storage') }));
                 target.execute().then(function () {
-                    logger.info('PUBLISH COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);
+                    logger.info('PUBLISH COMMAND HAS BEEN FINISHED SUCCESSFULLY');
                     process.exit(0);
                 })
                 .fail(function (err) {
-                    logger.error(util.format('PUBLISH COMMAND FAILED WITH ERROR %s', err.message), module);
+                    logger.error('PUBLISH COMMAND FAILED WITH ERROR %s', err.message);
                     process.exit(1);
                 });
         });

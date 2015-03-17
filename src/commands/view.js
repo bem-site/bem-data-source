@@ -1,12 +1,8 @@
 'use strict';
 
-var util = require('util'),
-
-    _ = require('lodash'),
-
-    config = require('../config'),
-    logger = require('../logger'),
-    TargetView = require('../targets/view');
+var config = require('../config'),
+    Logger = require('../logger'),
+    TargetView = require('../targets/view/cli');
 
 module.exports = function () {
     return this
@@ -21,15 +17,15 @@ module.exports = function () {
             .short('v').long('version')
             .end()
         .act(function (opts) {
-            var target = new TargetView(opts.repo, opts.version,
-                _.extend({ isCli: true }, { storage: config.get('storage') }));
+            var logger = new Logger(module, 'info'),
+                target = new TargetView(opts.repo, opts.version, { storage: config.get('storage') });
             return target.execute()
                 .then(function () {
-                    logger.info('VIEW COMMAND HAS BEEN FINISHED SUCCESSFULLY', module);
+                    logger.info('VIEW COMMAND HAS BEEN FINISHED SUCCESSFULLY');
                     process.exit(0);
                 })
                 .fail(function (err) {
-                    logger.error(util.format('VIEW COMMAND FAILED WITH ERROR %s', err.message), module);
+                    logger.error('VIEW COMMAND FAILED WITH ERROR %s', err.message);
                     process.exit(1);
                 });
         });
