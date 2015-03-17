@@ -20,6 +20,6 @@ require('./src/tasks/send-examples');
 require('./src/tasks/send-doc');
 require('./src/targets/remove');
 require('./integration/prepare');
-require('./integration/send');
-require('./integration/publish');
+//require('./integration/send');
+//require('./integration/publish');
 require('./integration/all');
