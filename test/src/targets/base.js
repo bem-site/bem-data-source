@@ -79,7 +79,8 @@ describe('targets base', function () {
         });
 
         it('should not have showcase', function () {
-            should(t.showCase).not.be.ok;
+            should(t.showCase).be.ok;
+            t.showCase.should.be.instanceOf(Object);
         });
 
         it('should createResultBase', function () {
@@ -101,7 +102,7 @@ describe('targets base', function () {
             rb.url.should.equal('http://github.com/test/test-library');
 
             rb.custom.should.be.instanceOf(Array).and.have.length(0);
-            should(rb.showCase).not.be.ok;
+            rb.showcase.should.be.ok;
 
             rb.docs.should.be.instanceOf(Object);
             Object.keys(rb.docs).should.have.length(0);

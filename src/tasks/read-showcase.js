@@ -22,7 +22,7 @@ module.exports = inherit(Base, {
             }, this)
             .fail(function () {
                 this._logger.error('Showcase file was not found or it is invalid');
-                result.showcase.content = null;
+                result.showcase = null;
                 return result;
             }, this);
     }
