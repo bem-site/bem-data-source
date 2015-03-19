@@ -1,6 +1,6 @@
 {
   "name": "bem-data-source",
-  "version": "1.3.4",
+  "version": "1.4.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/bem/bem-data-source.git"
@@ -25,7 +25,6 @@
     "glob": "^5.0.x",
     "glob-all": "^3.0.1",
     "inherit": "^2.2.x",
-    "intel": "^1.0.x",
     "lodash": "^3.1.x",
     "marked": "git://github.com/dab/marked.git",
     "mds-wrapper": "^1.2.x",
