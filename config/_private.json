@@ -1,16 +1,33 @@
 {
   "storage": {
-    "namespace": "your site namespace",
-    "get": {
-      "host": "",
-      "port": 80
+    "common": {
+      "namespace": "your namespace",
+      "get": {},
+      "post": {},
+      "auth": "",
+      "debug": false,
+      "timeout": 300000
     },
-    "post": {
-      "host": "",
-      "port": 1111
+    "testing": {
+      "get": {
+        "host": "testing host for read data",
+        "port": 80
+      },
+      "post": {
+        "host": "testing host for modify data",
+        "port": 1111
+      }
     },
-    "auth": "your personal auth token",
-    "timeout": 3000
+    "production": {
+      "get": {
+        "host": "production host for read data",
+        "port": 80
+      },
+      "post": {
+        "host": "production host for modify data",
+        "port": 1111
+      }
+    }
   },
   "mailer": {
     "host": "your e-mail-host",

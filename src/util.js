@@ -2,7 +2,33 @@
 
 var util = require('util'),
     md = require('marked'),
+    _ = require('lodash'),
+
     renderer = require('./renderer');
+
+exports.getStorageConfiguration = function (config, env) {
+    var common;
+
+    if (!config) {
+        throw new Error('storage configuration were not set');
+    }
+
+    common = config['common'];
+
+    if (!common) {
+        throw new Error('common storage configuration were not found');
+    }
+
+    if (!config['testing']) {
+        throw new Error('testing storage configuration were not found');
+    }
+
+    if (!config['production']) {
+        throw new Error('production storage configuration were not found');
+    }
+
+    return _.extend({}, common, config[env]);
+};
 
 /**
  * Converts markdown content into html with marked module

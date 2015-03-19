@@ -1,9 +1,11 @@
 'use strict';
 
-var _ = require('lodash'),
+var util = require('util'),
+    _ = require('lodash'),
 
     config = require('../config'),
     Logger = require('../logger'),
+    utility = require('../util'),
     Target = require('../targets/publish');
 
 module.exports = function () {
@@ -28,17 +30,32 @@ module.exports = function () {
             .short('d').long('dry')
             .flag()
             .end()
+        .opt()
+            .name('storage').title('Storage environment: (testing|production)')
+            .short('s').long('storage')
+            .def('testing')
+            .val(function (v) {
+                if (['testing', 'production'].indexOf(v) === -1) {
+                    this.reject(util.format('%s is not available storage environment', v));
+                }
+                return v;
+            })
+            .end()
         .act(function (opts) {
             var logger = new Logger(module, 'info');
             logger.info('PUBLISH:');
-            logger.info('repository version %s', opts.version);
+            logger.info('library version: %s', opts.version);
+            logger.info('dry mode is set to %s', opts['dry']);
+            logger.info('docs-only is set to %s', opts['docs-only']);
+            logger.info('storage environment: %s', opts['storage']);
+
             var target = new Target(opts.version,
                 _.extend({
                     isCli: true,
                     isDryRun: opts['dry'],
                     isDocsOnly: opts['docs-only'],
                     examples: opts.examples
-                }, { storage: config.get('storage') }));
+                }, { storage: utility.getStorageConfiguration(config.get('storage'), opts['storage']) }));
                 target.execute().then(function () {
                     logger.info('PUBLISH COMMAND HAS BEEN FINISHED SUCCESSFULLY');
                     process.exit(0);

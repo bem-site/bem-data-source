@@ -1,9 +1,11 @@
 'use strict';
 
-var _ = require('lodash'),
+var util = require('util'),
+    _ = require('lodash'),
 
     config = require('../config'),
     Logger = require('../logger'),
+    utility = require('../util'),
     TargetReplace = require('../targets/replace');
 
 module.exports = function () {
@@ -23,6 +25,12 @@ module.exports = function () {
         .opt()
             .name('doc').title('Document key: readme|changelog|migration|notes')
             .short('d').long('doc')
+            .val(function (v) {
+                if (['readme', 'changelog', 'migration', 'notes'].indexOf(v) === -1) {
+                    this.reject(util.format('%s is not available doc', v));
+                }
+                return v;
+            })
             .req()
             .end()
         .opt()
@@ -34,10 +42,27 @@ module.exports = function () {
             .short('u').long('url')
             .req()
             .end()
+        .opt()
+            .name('storage').title('Storage environment: (testing|production)')
+            .short('s').long('storage')
+            .def('testing')
+            .val(function (v) {
+                if (['testing', 'production'].indexOf(v) === -1) {
+                    this.reject(util.format('%s is not available storage environment', v));
+                }
+                return v;
+            })
+            .end()
         .act(function (opts) {
             var logger = new Logger(module, 'info'),
-                o = _.extend({ doc: opts.doc, lang: opts.lang, url: opts.url },
-                    { storage: config.get('storage') }),
+                o = _.extend({
+                        doc: opts.doc,
+                        lang: opts.lang,
+                        url: opts.url
+                    },
+                    {
+                        storage: utility.getStorageConfiguration(config.get('storage'), opts['storage'])
+                    }),
                 target = new TargetReplace(opts.repo, opts.version, o);
             return target.execute()
                 .then(function () {
