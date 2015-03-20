@@ -30,8 +30,13 @@ module.exports = function () {
             })
             .end()
         .act(function (opts) {
-            var logger = new Logger(module, 'info'),
-                target = new TargetView(opts.repo, opts.version, {
+            var logger = new Logger(module, 'info');
+            logger.info('VIEW:');
+            logger.info('library name: %s', opts['repo'] || 'N/A');
+            logger.info('library version: %s', opts['version'] || 'N/A');
+            logger.info('storage environment: %s', opts['storage']);
+
+            var target = new TargetView(opts.repo, opts.version, {
                     storage: utility.getStorageConfiguration(config.get('storage'), opts['storage'])
                 });
             target.execute()

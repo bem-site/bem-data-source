@@ -54,8 +54,15 @@ module.exports = function () {
             })
             .end()
         .act(function (opts) {
-            var logger = new Logger(module, 'info'),
-                o = _.extend({
+            var logger = new Logger(module, 'info');
+            logger.info('library name: %s', opts['repo']);
+            logger.info('library version: %s', opts['version']);
+            logger.info('documentation key: %s', opts['doc']);
+            logger.info('language key: %s', opts['lang'] || 'all');
+            logger.info('url of replace document: %s', opts['url']);
+            logger.info('storage environment: %s', opts['storage']);
+
+            var o = _.extend({
                         doc: opts.doc,
                         lang: opts.lang,
                         url: opts.url
