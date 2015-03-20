@@ -64,14 +64,13 @@ module.exports = function () {
                         storage: utility.getStorageConfiguration(config.get('storage'), opts['storage'])
                     }),
                 target = new TargetReplace(opts.repo, opts.version, o);
-            return target.execute()
+            target.execute()
                 .then(function () {
                     logger.info('REPLACE COMMAND HAS BEEN FINISHED SUCCESSFULLY');
-                    process.exit(0);
                 })
                 .fail(function (err) {
                     logger.error('REPLACE COMMAND FAILED WITH ERROR %s', err.message);
-                    process.exit(1);
-                });
+                })
+                .done();
         });
 };

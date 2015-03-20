@@ -50,14 +50,13 @@ module.exports = function () {
                 o = _.extend({ isDryRun: opts['dry'] },
                     { storage: utility.getStorageConfiguration(config.get('storage'), opts['storage']) });
             target = new TargetRemove(opts.repo, opts.version, o);
-            return target.execute()
+            target.execute()
                 .then(function () {
                     logger.info('REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY');
-                    process.exit(0);
                 })
                 .fail(function (err) {
                     logger.error('REMOVE COMMAND FAILED WITH ERROR %s', err.message);
-                    process.exit(1);
-                });
+                })
+                .done();
         });
 };

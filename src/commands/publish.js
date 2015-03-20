@@ -56,13 +56,13 @@ module.exports = function () {
                     isDocsOnly: opts['docs-only'],
                     examples: opts.examples
                 }, { storage: utility.getStorageConfiguration(config.get('storage'), opts['storage']) }));
-                target.execute().then(function () {
-                    logger.info('PUBLISH COMMAND HAS BEEN FINISHED SUCCESSFULLY');
-                    process.exit(0);
-                })
-                .fail(function (err) {
-                    logger.error('PUBLISH COMMAND FAILED WITH ERROR %s', err.message);
-                    process.exit(1);
-                });
+                target.execute()
+                    .then(function () {
+                        logger.info('PUBLISH COMMAND HAS BEEN FINISHED SUCCESSFULLY');
+                    })
+                    .fail(function (err) {
+                        logger.error('PUBLISH COMMAND FAILED WITH ERROR %s', err.message);
+                    })
+                    .done();
         });
 };

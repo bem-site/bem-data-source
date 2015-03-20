@@ -34,14 +34,13 @@ module.exports = function () {
                 target = new TargetView(opts.repo, opts.version, {
                     storage: utility.getStorageConfiguration(config.get('storage'), opts['storage'])
                 });
-            return target.execute()
+            target.execute()
                 .then(function () {
                     logger.info('VIEW COMMAND HAS BEEN FINISHED SUCCESSFULLY');
-                    process.exit(0);
                 })
                 .fail(function (err) {
                     logger.error('VIEW COMMAND FAILED WITH ERROR %s', err.message);
-                    process.exit(1);
-                });
+                })
+                .done();
         });
 };
