@@ -177,6 +177,7 @@ module.exports = inherit({
                 storageTo.readP(constants.ROOT)
             ])
             .spread(function (registryFrom, registryTo) {
+                registryFrom = JSON.parse(registryFrom);
                 registryTo = registryTo ? JSON.parse(registryTo) : {};
                 registryTo[this._source] = registryTo[this._source] || { name: this._source, versions: {} };
 
