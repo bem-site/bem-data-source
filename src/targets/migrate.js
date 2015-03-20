@@ -109,7 +109,14 @@ module.exports = inherit({
             examplesKey = util.format('%s/%s/examples', this._source, this._ref);
         return storage.get(this._options.storageFrom).readP(examplesKey)
             .then(function (examples) {
-                if (!examples || !examples.length) {
+                if (!examples) {
+                    this._logger.warn('No examples were found for %s %s. This step will be skipped',
+                        this._source, this._ref);
+                }
+
+                examples = JSON.parse(examples);
+
+                if (!examples.length) {
                     this._logger.warn('No examples were found for %s %s. This step will be skipped',
                         this._source, this._ref);
                     return;
