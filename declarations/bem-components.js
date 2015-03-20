@@ -23,7 +23,10 @@ module.exports = {
             },
             changelog: {
                 folder: '',
-                pattern: 'CHANGELOG.md'
+                pattern: {
+                    en: 'CHANGELOG.md',
+                    ru: 'CHANGELOG.ru.md'
+                }
             },
             migration: {
                 folder: '',
