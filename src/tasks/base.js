@@ -13,5 +13,6 @@ module.exports = inherit({
 
     run: function () {
         this._logger.debug('Execute base task');
+        return true;
     }
 });

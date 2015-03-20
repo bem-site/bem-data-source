@@ -9,6 +9,7 @@ require('./src/targets/prepare');
 require('./src/targets/send');
 require('./src/targets/view/api');
 require('./src/targets/view/cli');
+require('./src/tasks/base');
 require('./src/tasks/read-md');
 require('./src/tasks/read-deps');
 require('./src/tasks/read-showcase');
