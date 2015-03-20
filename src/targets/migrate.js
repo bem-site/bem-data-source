@@ -88,6 +88,7 @@ module.exports = inherit({
                     this._logger.warn('content of file %s is empty', filePath);
                     return vow.resolve();
                 }
+                this._logger.debug('migrate: %s', filePath);
                 return storageTo.writeP(filePath, content);
             }, this)
             .fail(function (error) {
@@ -129,7 +130,7 @@ module.exports = inherit({
                 var _this = this;
                 return portions.reduce(function (prev, item, index) {
                     prev = prev.then(function () {
-                        this._logger.verbose('migrate files in range %s - %s',
+                        this._logger.debug('migrate files in range %s - %s',
                             index * openFilesLimit, (index + 1) * openFilesLimit);
 
                         var promises = item.map(function (_item) {
