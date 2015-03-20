@@ -10,7 +10,7 @@ var util = require('util'),
 Logger.prototype = {
 
     _DEFAULT_LOG_MODE: 'development',
-    _DEFAULT_LOG_LEVEL: 'info',
+    _DEFAULT_LOG_LEVEL: 'debug',
     _STYLES: {
         verbose: ['magenta'],
         debug: ['cyan'],
