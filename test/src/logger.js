@@ -8,7 +8,7 @@ var path = require('path'),
 describe('logger', function () {
     it('should can be initialized without params in default mode', function () {
         var loggerDefault = new Logger(module);
-        loggerDefault._mode.should.equal('testing');
+        loggerDefault._mode.should.equal('development');
         loggerDefault._level.should.equal('info');
     });
 
