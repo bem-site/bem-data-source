@@ -47,7 +47,7 @@ module.exports = function () {
             logger.info('storage environment: %s', opts['storage']);
 
             var target,
-                o = _.extend({ isDryRun: opts['dry'] },
+                o = _.extend({ isDryMode: opts['dry'] },
                     { storage: utility.getStorageConfiguration(config.get('storage'), opts['storage']) });
             target = new TargetRemove(opts.repo, opts.version, o);
             target.execute()
