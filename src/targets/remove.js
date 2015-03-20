@@ -41,7 +41,7 @@ module.exports = inherit({
     execute: function () {
         if (this._options.isDryMode) {
             this._logger.info('Remove command was launched in dry run mode');
-            this._logger.warn('Data for %s %s won\' be removed from storage', this.source, this.ref);
+            this._logger.warn('Data for %s %s won\' be removed from storage', this._source, this._ref);
             return vow.resolve();
         }
 

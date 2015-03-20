@@ -1,7 +1,9 @@
 'use strict';
 
-var config = require('../config'),
+var util = require('util'),
+    config = require('../config'),
     Logger = require('../logger'),
+    utility = require('../util'),
     TargetView = require('../targets/view/cli');
 
 module.exports = function () {
@@ -16,17 +18,34 @@ module.exports = function () {
             .name('version').title('Version of repository (tag or branch)')
             .short('v').long('version')
             .end()
+        .opt()
+            .name('storage').title('Storage environment: (testing|production)')
+            .short('s').long('storage')
+            .def('testing')
+            .val(function (v) {
+                if (['testing', 'production'].indexOf(v) === -1) {
+                    this.reject(util.format('%s is not available storage environment', v));
+                }
+                return v;
+            })
+            .end()
         .act(function (opts) {
-            var logger = new Logger(module, 'info'),
-                target = new TargetView(opts.repo, opts.version, { storage: config.get('storage') });
-            return target.execute()
+            var logger = new Logger(module, 'info');
+            logger.info('VIEW:');
+            logger.info('library name: %s', opts['repo'] || 'N/A');
+            logger.info('library version: %s', opts['version'] || 'N/A');
+            logger.info('storage environment: %s', opts['storage']);
+
+            var target = new TargetView(opts.repo, opts.version, {
+                    storage: utility.getStorageConfiguration(config.get('storage'), opts['storage'])
+                });
+            target.execute()
                 .then(function () {
                     logger.info('VIEW COMMAND HAS BEEN FINISHED SUCCESSFULLY');
-                    process.exit(0);
                 })
                 .fail(function (err) {
                     logger.error('VIEW COMMAND FAILED WITH ERROR %s', err.message);
-                    process.exit(1);
-                });
+                })
+                .done();
         });
 };

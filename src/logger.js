@@ -9,8 +9,8 @@ var util = require('util'),
 
 Logger.prototype = {
 
-    _DEFAULT_LOG_MODE: 'testing',
-    _DEFAULT_LOG_LEVEL: 'info',
+    _DEFAULT_LOG_MODE: 'development',
+    _DEFAULT_LOG_LEVEL: 'debug',
     _STYLES: {
         verbose: ['magenta'],
         debug: ['cyan'],
@@ -90,7 +90,7 @@ Logger.prototype = {
      * @private
      */
     _log: function (level, args) {
-        return this._logger.verbose(this._prefixString(level) + util.format.apply(this, args));
+        return this._logger[level](this._prefixString(level) + util.format.apply(this, args));
     },
 
     /**

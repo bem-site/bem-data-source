@@ -1,9 +1,11 @@
 'use strict';
 
-var _ = require('lodash'),
+var util = require('util'),
+    _ = require('lodash'),
 
     config = require('../config'),
     Logger = require('../logger'),
+    utility = require('../util'),
     TargetRemove = require('../targets/remove');
 
 module.exports = function () {
@@ -25,18 +27,36 @@ module.exports = function () {
             .short('d').long('dry')
             .flag()
             .end()
+        .opt()
+            .name('storage').title('Storage environment: (testing|production)')
+            .short('s').long('storage')
+            .def('testing')
+            .val(function (v) {
+                if (['testing', 'production'].indexOf(v) === -1) {
+                    this.reject(util.format('%s is not available storage environment', v));
+                }
+                return v;
+            })
+        .end()
         .act(function (opts) {
-            var logger = new Logger(module, 'info'),
-                o = _.extend({ isDryRun: opts['dry'] }, { storage: config.get('storage') }),
-                target = new TargetRemove(opts.repo, opts.version, o);
-            return target.execute()
+            var logger = new Logger(module, 'info');
+            logger.info('REMOVE:');
+            logger.info('library name: %s', opts['repo']);
+            logger.info('library version: %s', opts['version']);
+            logger.info('dry mode is set to %s', opts['dry']);
+            logger.info('storage environment: %s', opts['storage']);
+
+            var target,
+                o = _.extend({ isDryMode: opts['dry'] },
+                    { storage: utility.getStorageConfiguration(config.get('storage'), opts['storage']) });
+            target = new TargetRemove(opts.repo, opts.version, o);
+            target.execute()
                 .then(function () {
                     logger.info('REMOVE COMMAND HAS BEEN FINISHED SUCCESSFULLY');
-                    process.exit(0);
                 })
                 .fail(function (err) {
                     logger.error('REMOVE COMMAND FAILED WITH ERROR %s', err.message);
-                    process.exit(1);
-                });
+                })
+                .done();
         });
 };

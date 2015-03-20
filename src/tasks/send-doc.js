@@ -70,7 +70,7 @@ module.exports = inherit(Base, {
                 registry = registry ? JSON.parse(registry) : {};
                 registry[lib] = registry[lib] || { name: lib, versions: {} };
 
-                this._logger.debug(util.format('registry: %s', JSON.stringify(registry[lib])), module);
+                this._logger.debug('registry: %s', JSON.stringify(registry[lib]));
 
                 registry[lib].versions[version] = { sha: shaKey, date: +(new Date()) };
                 return o.isDryRun ? vow.resolve() :
