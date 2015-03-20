@@ -79,17 +79,16 @@ module.exports = inherit({
      * @private
      */
     _migrateFile: function (filePath) {
-        var key = util.format('%s/%s/%s', this._source, this._ref, filePath),
-            storageFrom = storage.get(this._options.storageFrom),
+        var storageFrom = storage.get(this._options.storageFrom),
             storageTo = storage.get(this._options.storageTo);
 
-        return storageFrom.readP(key)
+        return storageFrom.readP(filePath)
             .then(function (content) {
                 if (!content) {
                     this._logger.warn('content of file %s is empty', filePath);
                     return vow.resolve();
                 }
-                return storageTo.writeP(key, content);
+                return storageTo.writeP(filePath, content);
             }, this)
             .fail(function (error) {
                 this._logger.error('Error occur while sending file %s', filePath);
@@ -151,7 +150,7 @@ module.exports = inherit({
      * @private
      */
     _migrateExamplesRegistry: function () {
-        return this._migrateFile('examples');
+        return this._migrateFile(util.format('%s/%s/examples', this._source, this._ref));
     },
 
     /**
@@ -160,7 +159,7 @@ module.exports = inherit({
      * @private
      */
     _migrateDocFile: function () {
-        return this._migrateFile(constants.FILE.DATA);
+        return this._migrateFile(util.format('%s/%s/%s', this._source, this._ref, constants.FILE.DATA));
     },
 
     /**
