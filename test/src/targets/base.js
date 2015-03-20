@@ -76,6 +76,11 @@ describe('targets base', function () {
         it('should process custom nodes', function () {
             t.custom.should.be.ok;
             t.custom.should.be.instanceOf(Array);
+
+            t.custom.should.have.length(1);
+            t.custom[0].should.be.instanceOf(Object);
+            t.custom[0].should.have.property('url');
+            t.custom[0 ].url.should.equal('/tags/test-library-v1.0.0');
         });
 
         it('should not have showcase', function () {
@@ -101,7 +106,7 @@ describe('targets base', function () {
             rb.enb.should.be.instanceOf(Boolean).and.equal(true);
             rb.url.should.equal('http://github.com/test/test-library');
 
-            rb.custom.should.be.instanceOf(Array).and.have.length(0);
+            rb.custom.should.be.instanceOf(Array).and.have.length(1);
             rb.showcase.should.be.ok;
 
             rb.docs.should.be.instanceOf(Object);

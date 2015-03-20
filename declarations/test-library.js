@@ -20,6 +20,15 @@ module.exports = {
         showcase: {
             title: 'showcase',
             path: 'desktop.pages/showcase/showcase.html'
-        }
+        },
+        custom: [
+            {
+                title: {
+                    en: 'Documentation',
+                    ru: 'Документация'
+                },
+                url: '/tags/{lib}-{ref}'
+            }
+        ]
     }
 };
