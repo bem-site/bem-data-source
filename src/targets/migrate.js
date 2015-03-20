@@ -181,7 +181,7 @@ module.exports = inherit({
                 registryTo = registryTo ? JSON.parse(registryTo) : {};
                 registryTo[this._source] = registryTo[this._source] || { name: this._source, versions: {} };
 
-                this._logger.debug(util.format('registry: %s', JSON.stringify(registryTo[this._source])), module);
+                this._logger.debug('registry: %s', JSON.stringify(registryTo[this._source]));
 
                 registryTo[this._source].versions[this._ref] = registryFrom[this._source].versions[this._ref];
                 return storage.get(o.storageTo).writeP(constants.ROOT, JSON.stringify(registryTo));
