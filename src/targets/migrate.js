@@ -39,7 +39,14 @@ module.exports = inherit({
      */
     execute: function () {
         var o = this._options;
-        storage.get(o.storageFrom).readP(constants.ROOT)
+
+        if (o.isDryRun) {
+            this._logger.info('Remove command was launched in dry run mode');
+            this._logger.warn('Data for %s %s won\' be migrate', this._source, this._ref);
+            return vow.resolve();
+        }
+
+        return storage.get(o.storageFrom).readP(constants.ROOT)
             .then(function (registry) {
                 if (!registry) {
                     throw new Error('No registry for %s were found', o.storageFrom.get.host);
@@ -62,7 +69,7 @@ module.exports = inherit({
                     .then(this._migrateExamplesRegistry.bind(this))
                     .then(this._migrateDocFile.bind(this))
                     .then(this._updateRegistry.bind(this));
-            });
+            }, this);
     },
 
     /**
