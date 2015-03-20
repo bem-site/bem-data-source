@@ -58,7 +58,7 @@ module.exports = function () {
             var logger = new Logger(module, 'info');
             logger.info('MIGRATE:');
             logger.info('library name: %s', opts['repo']);
-            logger.info('library version: %s', opts['ref']);
+            logger.info('library version: %s', opts['version']);
             logger.info('docs-only is set to %s', opts['docs-only']);
             logger.info('dry mode is set to %s', opts['dry']);
             logger.info('storage from environment: %s', opts['from']);

@@ -42,7 +42,7 @@ module.exports = function () {
             var logger = new Logger(module, 'info');
             logger.info('REMOVE:');
             logger.info('library name: %s', opts['repo']);
-            logger.info('library version: %s', opts['ref']);
+            logger.info('library version: %s', opts['version']);
             logger.info('dry mode is set to %s', opts['dry']);
             logger.info('storage environment: %s', opts['storage']);
 
