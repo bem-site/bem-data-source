@@ -94,6 +94,19 @@ describe('bem-data-source', function () {
         });
     });
 
+    describe('#replace remove doc', function () {
+        it('should be valid done', function (done) {
+            var o = {
+                doc: 'readme',
+                url: 'null'
+            };
+            ds.replace('test-library', 'v1.0.0', _.extend({}, options, o))
+                .then(function () {
+                    done();
+                }).done();
+        });
+    });
+
     describe('#remove', function () {
         it('should be valid done', function (done) {
             ds.remove('test-library', 'v1.0.0', options, false)

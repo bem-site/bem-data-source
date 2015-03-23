@@ -79,15 +79,24 @@ module.exports = inherit({
                     content.docs = {};
                 }
 
+                if (this._options.url === 'null') {
+                    this._logger.warn('Null value for url param was set. Doc %s for lang %s will be removed',
+                        this._options.doc, this._options.lang);
+                    content = this._removeDoc(content);
+                    return content;
+                }
+
                 // create doc of given key if it does not exists yet
                 if (!content.docs[this._options.doc]) {
                     this._logger.warn('Doc %s does not exists yet. It will be created', this._options.doc);
                     content = this._createDoc(content);
                 }
-                return vow.all([this._loadContentFromGh(), content]);
-            }, this)
-            .spread(function (data, content) {
-                return this._replaceDoc(data, content);
+
+                return vow
+                    .all([this._loadContentFromGh(), content])
+                    .spread(function (data, content) {
+                        return this._replaceDoc(data, content);
+                    }, this);
             }, this)
             .then(function (content) {
                 return this._writeFile(dataKey, content);
@@ -151,6 +160,22 @@ module.exports = inherit({
             });
 
         content.docs[this._options.doc] = _doc;
+        return content;
+    },
+
+    /**
+     * Removes doc from data.json
+     * @param {Object} content
+     * @returns {*}
+     * @private
+     */
+    _removeDoc: function (content) {
+        var docKey = this._options.doc;
+
+        if (!content.docs[docKey]) {
+            this._logger.warn('Doc %s does not exists', docKey);
+        }
+        content.docs[docKey] = undefined;
         return content;
     },
 
