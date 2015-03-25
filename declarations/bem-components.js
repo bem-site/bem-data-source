@@ -10,7 +10,10 @@ module.exports = {
             '*.template.bemdecl.js', '*.template.deps.js']
         },
         showcase: {
-            title: 'showcase',
+            title: {
+                en: 'Showcase',
+                ru: 'Витрина'
+            },
             path: 'desktop.pages/showcase/showcase.html'
         },
         docs: {
