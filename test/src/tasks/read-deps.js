@@ -13,8 +13,12 @@ describe('tasks/read-deps', function () {
     });
 
     describe('should release empty deps on', function () {
-        before(function () {
-            vowFs.move(path.join(process.cwd(), 'bower.json'), path.join(process.cwd(), '_bower.json'));
+        before(function (done) {
+            vowFs.move(path.join(process.cwd(), 'bower.json'), path.join(process.cwd(), '_bower.json'))
+                .then(function () {
+                    done();
+                })
+                .done();
         });
 
         it ('missing bower.json file', function (done) {
@@ -33,8 +37,12 @@ describe('tasks/read-deps', function () {
         });
 
         describe ('invalid bower.json file', function () {
-            before(function () {
-                vowFs.write(path.join(process.cwd(), 'bower.json'), 'invalid json data', 'utf-8');
+            before(function (done) {
+                vowFs.write(path.join(process.cwd(), 'bower.json'), 'invalid json data', 'utf-8')
+                    .then(function () {
+                        done();
+                    })
+                    .done();
             });
 
             it ('it should fail', function (done) {
@@ -48,13 +56,21 @@ describe('tasks/read-deps', function () {
                     });
             });
 
-            after(function () {
-                vowFs.remove(path.join(process.cwd(), 'bower.json'));
+            after(function (done) {
+                vowFs.remove(path.join(process.cwd(), 'bower.json'))
+                    .then(function () {
+                        done();
+                    })
+                    .done();
             });
         });
 
-        after(function () {
-            vowFs.move(path.join(process.cwd(), '_bower.json'), path.join(process.cwd(), 'bower.json'));
+        after(function (done) {
+            vowFs.move(path.join(process.cwd(), '_bower.json'), path.join(process.cwd(), 'bower.json'))
+                .then(function () {
+                    done();
+                })
+                .done();
         });
     });
 
@@ -62,13 +78,17 @@ describe('tasks/read-deps', function () {
         vow.resolve(t.createResultBase())
             .then(function (result1) {
                 var rd = new ReadDependencies(t);
-                return rd.run(result1).then(function (result2) {
-                    result2.deps.should.be.ok;
-                    result2.deps.should.be.instanceOf(Object);
-                    result2.deps.should.have.property('bem-bl');
-                    result2.deps['bem-bl'].should.equal('git://github.com/bem/bem-bl.git#^2.0.2');
-                    done();
-                });
+                return rd.run(result1)
+                    .then(function (result2) {
+                        result2.deps.should.be.ok;
+                        result2.deps.should.be.instanceOf(Object);
+                        result2.deps.should.have.property('bem-bl');
+                        result2.deps['bem-bl'].should.equal('git://github.com/bem/bem-bl.git#^2.0.2');
+                        done();
+                    })
+                    .fail(function (err) {
+                        done();
+                    });
             });
     });
 

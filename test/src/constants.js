@@ -35,7 +35,7 @@ describe('constants', function () {
     });
 
     it('should have valid LEVELS property', function () {
-        constants.LEVELS.should.be.instanceOf(Array).and.have.length(3);
+        constants.LEVELS.should.be.instanceOf(Array).and.have.length(4);
         constants.LEVELS.indexOf('desktop').should.greaterThan(-1);
         constants.LEVELS.indexOf('touch-pad').should.greaterThan(-1);
         constants.LEVELS.indexOf('touch-phone').should.greaterThan(-1);

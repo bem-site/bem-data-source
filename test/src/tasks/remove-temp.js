@@ -7,10 +7,12 @@ var path = require('path'),
 
 describe('tasks/remove-temp', function () {
     var t;
-    before(function () {
+    before(function (done) {
         process.chdir(path.resolve(__dirname, '../../test-data'));
         t = new Target('v1.0.0', {});
-        vowFs.makeDir(t.getTempPath());
+        vowFs.makeDir(t.getTempPath()).then(function () {
+            done();
+        });
     });
 
     it('should remove temp directory', function (done) {
