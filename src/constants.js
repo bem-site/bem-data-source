@@ -6,6 +6,6 @@ module.exports = {
         DATA: 'data.json'
     },
     ROOT: 'root',
-    LEVELS: ['desktop', 'touch-pad', 'touch-phone'],
+    LEVELS: ['desktop', 'touch', 'touch-pad', 'touch-phone'],
     MAXIMUM_OPEN_FILES: 100
 };
