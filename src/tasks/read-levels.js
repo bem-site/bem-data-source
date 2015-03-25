@@ -78,8 +78,7 @@ module.exports = inherit(Base, {
     _readBlock: function (level, block) {
         return vow.allResolved(Object.keys(this._target.blockTargets).map(function (key) {
                 var docFile = path.resolve(this._target.getContentPath(), level.name, block.name,
-                    util.format(this.blockTargets[key], block.name));
-
+                    util.format(this._target.blockTargets[key], block.name));
                 this._logger.verbose('Read doc file: %s', docFile);
                 return vowFs.read(docFile, 'utf-8')
                     .then(function (content) {
