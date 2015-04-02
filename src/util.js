@@ -2,9 +2,8 @@
 
 var util = require('util'),
     md = require('marked'),
-    _ = require('lodash'),
-
-    renderer = require('./renderer');
+    bmdr = require('bem-md-renderer'),
+    _ = require('lodash');
 
 exports.getStorageConfiguration = function (config, env) {
     var common;
@@ -40,7 +39,7 @@ exports.mdToHtml = function (content) {
         gfm: true,
         pedantic: false,
         sanitize: false,
-        renderer: renderer.get()
+        renderer: bmdr.getRenderer()
     });
 };
 
