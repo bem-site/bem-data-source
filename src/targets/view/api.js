@@ -4,7 +4,7 @@ var inherit = require('inherit'),
 
     storage = require('../../storage'),
     constants = require('../../constants'),
-    Logger = require('../../logger');
+    Logger = require('bem-site-logger');
 
 module.exports = inherit({
 
@@ -21,11 +21,10 @@ module.exports = inherit({
      * @returns {TargetView}
      */
     __constructor: function (source, ref, options) {
-        this._logger = new Logger(module, options['logLevel']);
-
+        this._options = options;
         this._source = source;
         this._ref = ref && ref.replace(/\//g, '-');
-        this._options = options;
+        this._logger = Logger.setOptions(options.logger).createLogger(module);
     },
 
     /**

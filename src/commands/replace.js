@@ -3,8 +3,8 @@
 var util = require('util'),
     _ = require('lodash'),
 
+    Logger = require('bem-site-logger'),
     config = require('../config'),
-    Logger = require('../logger'),
     utility = require('../util'),
     TargetReplace = require('../targets/replace');
 
@@ -54,7 +54,7 @@ module.exports = function () {
             })
             .end()
         .act(function (opts) {
-            var logger = new Logger(module, 'info');
+            var logger = Logger.setOptions(config.get('logger')).createLogger(module);
             logger.info('library name: %s', opts['repo']);
             logger.info('library version: %s', opts['version']);
             logger.info('documentation key: %s', opts['doc']);
@@ -65,7 +65,8 @@ module.exports = function () {
             var o = _.extend({
                         doc: opts.doc,
                         lang: opts.lang,
-                        url: opts.url
+                        url: opts.url,
+                        logger: config.get('logger')
                     },
                     {
                         storage: utility.getStorageConfiguration(config.get('storage'), opts['storage'])

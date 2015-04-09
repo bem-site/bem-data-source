@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "bem-md-renderer": "0.2.0",
+    "bem-site-logger": "^0.0.x",
     "chalk": "^1.0.0",
     "coa": "^1.0.x",
     "easy-table": "0.3.0",

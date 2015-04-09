@@ -4,8 +4,8 @@ var util = require('util'),
     _ = require('lodash'),
 
     config = require('../config'),
-    Logger = require('../logger'),
     utility = require('../util'),
+    Logger = require('bem-site-logger'),
     TargetRemove = require('../targets/remove');
 
 module.exports = function () {
@@ -39,7 +39,7 @@ module.exports = function () {
             })
         .end()
         .act(function (opts) {
-            var logger = new Logger(module, 'info');
+            var logger = Logger.setOptions(config.get('logger')).createLogger(module);
             logger.info('REMOVE:');
             logger.info('library name: %s', opts['repo']);
             logger.info('library version: %s', opts['version']);
@@ -47,7 +47,7 @@ module.exports = function () {
             logger.info('storage environment: %s', opts['storage']);
 
             var target,
-                o = _.extend({ isDryMode: opts['dry'] },
+                o = _.extend({ isDryMode: opts['dry'], logger: config.get('logger') },
                     { storage: utility.getStorageConfiguration(config.get('storage'), opts['storage']) });
             target = new TargetRemove(opts.repo, opts.version, o);
             target.execute()

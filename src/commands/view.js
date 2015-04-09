@@ -1,8 +1,8 @@
 'use strict';
 
 var util = require('util'),
+    Logger = require('bem-site-logger'),
     config = require('../config'),
-    Logger = require('../logger'),
     utility = require('../util'),
     TargetView = require('../targets/view/cli');
 
@@ -30,13 +30,14 @@ module.exports = function () {
             })
             .end()
         .act(function (opts) {
-            var logger = new Logger(module, 'info');
+            var logger = Logger.setOptions(config.get('logger')).createLogger(module);
             logger.info('VIEW:');
             logger.info('library name: %s', opts['repo'] || 'N/A');
             logger.info('library version: %s', opts['version'] || 'N/A');
             logger.info('storage environment: %s', opts['storage']);
 
             var target = new TargetView(opts.repo, opts.version, {
+                    logger: config.get('logger'),
                     storage: utility.getStorageConfiguration(config.get('storage'), opts['storage'])
                 });
             target.execute()

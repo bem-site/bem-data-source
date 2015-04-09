@@ -5,11 +5,11 @@ var util = require('util'),
     vow = require('vow'),
     inherit = require('inherit'),
 
+    Logger = require('bem-site-logger'),
     storage = require('../storage'),
     config = require('../config'),
     utility = require('../util'),
     constants = require('../constants'),
-    Logger = require('../logger'),
     Mailer = require('../mailer');
 
 module.exports = inherit({
@@ -27,11 +27,10 @@ module.exports = inherit({
      * @param {Object} options - advanced options
      */
     __constructor: function (source, ref, options) {
-        this._logger = new Logger(module, options['logLevel']);
-
+        this._options = options;
         this._source = source;
         this._ref = ref.replace(/\//g, '-');
-        this._options = options;
+        this._logger = Logger.setOptions(options.logger).createLogger(module);
     },
 
     /**

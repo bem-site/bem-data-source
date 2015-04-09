@@ -3,7 +3,7 @@
 var _ = require('lodash'),
     inherit = require('inherit'),
     Api = require('github'),
-    Logger = require('./logger'),
+    Logger = require('bem-site-logger'),
 
     Base = inherit({
         _api: undefined,
@@ -12,7 +12,7 @@ var _ = require('lodash'),
 
         __constructor: function (options) {
             this._options = options;
-            this._logger = new Logger(module, 'verbose');
+            this._logger = Logger.createLogger(module);
         },
 
         /**

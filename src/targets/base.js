@@ -170,7 +170,5 @@ module.exports = inherit({
             showcase: this.showCase,
             docs: {}
         };
-    },
-
-
+    }
 });

@@ -4,7 +4,7 @@ var util = require('util'),
     _ = require('lodash'),
 
     config = require('../config'),
-    Logger = require('../logger'),
+    Logger = require('bem-site-logger'),
     utility = require('../util'),
     Target = require('../targets/publish');
 
@@ -42,7 +42,7 @@ module.exports = function () {
             })
             .end()
         .act(function (opts) {
-            var logger = new Logger(module, 'info');
+            var logger = Logger.setOptions(config.get('logger')).createLogger(module);
             logger.info('PUBLISH:');
             logger.info('library version: %s', opts.version);
             logger.info('dry mode is set to %s', opts['dry']);
@@ -54,7 +54,8 @@ module.exports = function () {
                     isCli: true,
                     isDryRun: opts['dry'],
                     isDocsOnly: opts['docs-only'],
-                    examples: opts.examples
+                    examples: opts.examples,
+                    logger: config.get('logger')
                 }, { storage: utility.getStorageConfiguration(config.get('storage'), opts['storage']) }));
                 target.execute()
                     .then(function () {

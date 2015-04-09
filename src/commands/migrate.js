@@ -1,8 +1,8 @@
 var util = require('util'),
     _ = require('lodash'),
 
+    Logger = require('bem-site-logger'),
     config = require('../config'),
-    Logger = require('../logger'),
     utility = require('../util'),
     Target = require('../targets/migrate');
 
@@ -55,7 +55,7 @@ module.exports = function () {
             })
             .end()
         .act(function (opts) {
-            var logger = new Logger(module, 'info');
+            var logger = Logger.setOptions(config.get('logger')).createLogger(module);
             logger.info('MIGRATE:');
             logger.info('library name: %s', opts['repo']);
             logger.info('library version: %s', opts['version']);
@@ -67,7 +67,8 @@ module.exports = function () {
             var target = new Target(opts.repo, opts.version,
                 _.extend({
                     isDryRun: opts['dry'],
-                    isDocsOnly: opts['docs-only']
+                    isDocsOnly: opts['docs-only'],
+                    logger: config.get('logger')
                 }, {
                     storageFrom: utility.getStorageConfiguration(config.get('storage'), opts['from']),
                     storageTo: utility.getStorageConfiguration(config.get('storage'), opts['to'])

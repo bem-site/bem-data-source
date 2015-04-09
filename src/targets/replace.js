@@ -6,13 +6,13 @@ var util = require('util'),
     vow = require('vow'),
 
     inherit = require('inherit'),
+    Logger = require('bem-site-logger'),
     Api = require('../gh-api'),
     config = require('../config'),
     titles = require('../titles'),
     utility = require('../util'),
     constants = require('../constants'),
-    storage = require('../storage'),
-    Logger = require('../logger');
+    storage = require('../storage');
 
 module.exports = inherit({
 
@@ -28,11 +28,11 @@ module.exports = inherit({
      * @param {Object} options - advanced options
      */
     __constructor: function (source, ref, options) {
-        this._logger = new Logger(module, options['logLevel']);
-
+        this._options = options;
         this._source = source;
         this._ref = ref && ref.replace(/\//g, '-');
-        this._options = options;
+
+        this._logger = Logger.setOptions(options.logger).createLogger(module);
     },
 
     /**

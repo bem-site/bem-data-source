@@ -1,9 +1,9 @@
 var _ = require('lodash'),
     vow = require('vow'),
     inherit = require('inherit'),
+    Logger = require('bem-site-logger'),
     nm = require('nodemailer'),
-    transport = require('nodemailer-smtp-transport'),
-    Logger = require('./logger');
+    transport = require('nodemailer-smtp-transport');
 
 module.exports = inherit({
     _mailer: undefined,
@@ -13,7 +13,7 @@ module.exports = inherit({
      * Initialize mailer module
      */
     __constructor: function (options) {
-        this._logger = new Logger(module, 'debug');
+        this._logger = Logger.createLogger(module);
         var o = _.extend({}, this.__self.baseOptions, options);
         this._mailer = new nm.createTransport(transport({
             host: o.host,

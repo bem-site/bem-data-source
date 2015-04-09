@@ -1,5 +1,5 @@
 var inherit = require('inherit'),
-    Logger = require('../logger');
+    Logger = require('bem-site-logger');
 
 module.exports = inherit({
 
@@ -8,7 +8,7 @@ module.exports = inherit({
 
     __constructor: function (target) {
         this._target = target;
-        this._logger = new Logger(module, this._target.getOptions()['logLevel']);
+        this._logger = Logger.setOptions(target.getOptions()['logger']).createLogger(module);
     },
 
     run: function () {
