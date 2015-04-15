@@ -30,11 +30,14 @@ module.exports = {
                     en: 'CHANGELOG.md',
                     ru: 'CHANGELOG.ru.md'
                 }
+            },
+            migration: {
+                folder: '',
+                pattern: {
+		    en: 'MIGRATION.md',
+		    ru: 'MIGRATION.ru.md'
+		}
             }
-            //migration: {
-            //    folder: '',
-            //    pattern: 'MIGRATION.md'
-            //}
         },
         pattern: {
             data: '%s.data.json',
