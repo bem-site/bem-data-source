@@ -2,6 +2,7 @@
 
 var util = require('util'),
 
+    _ = require('lodash'),
     vow = require('vow'),
     inherit = require('inherit'),
     Logger = require('bem-site-logger'),
@@ -120,7 +121,7 @@ module.exports = inherit({
                     return;
                 }
 
-                var portions = utility.separateArrayOnChunks(examples, openFilesLimit);
+                var portions = _.chunk(examples, openFilesLimit);
 
                 this._logger.debug('example files count: %s', examples.length);
                 this._logger.debug('processing will be executed in %s steps', portions.length);

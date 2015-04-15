@@ -65,20 +65,3 @@ exports.parseGhUrl = function (url) {
         path: _url[6]
     };
 };
-
-/**
- * Separates array into small array with given chunkSize length
- * @param {Array} arr - array for separate
- * @param {Number} chunkSize - size of chunk
- * @returns {Array}
- */
-exports.separateArrayOnChunks = function (arr, chunkSize) {
-    var _arr = arr.slice(0),
-        arrays = [];
-
-    while (_arr.length > 0) {
-        arrays.push(_arr.splice(0, chunkSize));
-    }
-
-    return arrays;
-};

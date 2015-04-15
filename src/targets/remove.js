@@ -94,7 +94,7 @@ module.exports = inherit({
 
                 var _this = this,
                     keys = JSON.parse(content),
-                    portions = utility.separateArrayOnChunks(keys, ps);
+                    portions = _.chunk(keys, ps);
 
                 this._logger.debug('example records count: %s', keys.length);
                 this._logger.debug('removing will be executed in %s steps', portions.length);
