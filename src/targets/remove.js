@@ -13,7 +13,8 @@ var util = require('util'),
     storage = require('../storage'),
     config = require('../config'),
     utility = require('../util'),
-    constants = require('../constants');
+    constants = require('../constants'),
+    Registry = require('../model/registry');
 
 module.exports = inherit({
 
@@ -132,33 +133,15 @@ module.exports = inherit({
      * @private
      */
     _modifyRegistry: function () {
-        return storage.get(this._options.storage).readP(constants.ROOT)
-            .then(function (registry) {
-                this._logger.debug('Start to remove library from common registry');
-
-                // check if registry exists
-                if (!registry) {
-                    this._logger.warn(this.__self.message.noRegistry);
-                    throw new Error(this.__self.message.noRegistry);
-                }
-
-                registry = JSON.parse(registry);
-
-                // check if given library exists in registry
-                if (!registry[this._source]) {
-                    this._logger.error(this.__self.message.noLibrary, this._source);
-                    throw new Error(util.format(this.__self.message.noLibrary, this._source));
-                }
-
-                // check if given library version exists in registry
-                if (!registry[this._source].versions[this._ref]) {
-                    this._logger.error(this.__self.message.noVersion, this._source, this._ref);
-                    throw new Error(util.format(this.__self.message.noVersion, this._source, this._ref));
-                }
-
-                delete registry[this._source].versions[this._ref];
-                return storage.get(this._options.storage).writeP(constants.ROOT, JSON.stringify(registry));
-            }, this);
+        this._logger.debug('Start to remove library from common registry');
+        var registry = new Registry(this._options);
+        return registry.load()
+            .then(function () {
+                return registry.removeVersion(this._source, this._ref);
+            }, this)
+            .then(function () {
+                return registry.save();
+            });
     },
 
     /**
@@ -179,11 +162,4 @@ module.exports = inherit({
         subject = util.format('bem-data-source: success remove library [%s] version [%s]', this._source, this._ref);
         return vowNode.promisify(mailer.sendHtml).call(mailer, o.from, o.to, subject, '<h2>' + subject + '</h2>');
     }
-}, {
-    message: {
-        noRegistry: 'No registry record were found. Please try to make publish any library. ' +
-        'Also this operation will be skipped',
-        noLibrary: 'Library %s was not found in registry. Operation will be skipped',
-        noVersion: 'Library %s version %s was not found in registry. Operation will be skipped'
-    }
-});
+}, {});

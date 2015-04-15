@@ -30,11 +30,12 @@ describe('targets view api', function () {
             });
 
             it('should return null on execute', function (done) {
-                t.execute().fail(function (err) {
-                    err.should.be.ok;
-                    err.message.should.equal('No registry record were found');
-                    done();
-                });
+                t.execute()
+                    .then(function (result) {
+                        result.should.be.ok;
+                        result.should.be.instanceOf(Array).and.have.length(0);
+                        done();
+                    });
             });
 
             after(function () {

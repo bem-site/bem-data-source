@@ -5,6 +5,7 @@ var fs = require('fs'),
 
     vow = require('vow'),
     inherit = require('inherit'),
+    fsExtra = require('fs-extra'),
     constants = require('./../constants'),
     Base = require('./base');
 
@@ -63,12 +64,7 @@ module.exports = inherit(Base, {
      * @private
      */
     _readPackageJson: function () {
-        try {
-            var content = fs.readFileSync(path.join(this._contentPath, 'package.json'), { encoding: 'utf-8' });
-            return JSON.parse(content);
-        } catch (err) {
-            throw new Error('package.json file can not be opened or parsed');
-        }
+        return fsExtra.readJSONFileSync(path.join(this._contentPath, 'package.json'));
     },
 
     /**

@@ -10,6 +10,7 @@ var util = require('util'),
     sha = require('sha1'),
     storage = require('../storage'),
     constants = require('../constants'),
+    Registry = require('../model/registry'),
     Base = require('./base');
 
 module.exports = inherit(Base, {
@@ -64,17 +65,13 @@ module.exports = inherit(Base, {
      * @private
      */
     _modifyRegistry: function (lib, version, shaKey) {
-        var o = this._target.getOptions();
-        return storage.get(o.storage).readP(constants.ROOT)
-            .then(function (registry) {
-                registry = registry ? JSON.parse(registry) : {};
-                registry[lib] = registry[lib] || { name: lib, versions: {} };
-
-                this._logger.debug('registry: %s', JSON.stringify(registry[lib]));
-
-                registry[lib].versions[version] = { sha: shaKey, date: +(new Date()) };
-                return o.isDryRun ? vow.resolve() :
-                    storage.get(o.storage).writeP(constants.ROOT, JSON.stringify(registry));
+        var registry = new Registry(this._target.getOptions());
+        return registry.load()
+            .then(function () {
+                return registry.updateOrCreateVersion(lib, version, shaKey);
+            })
+            .then(function () {
+                return this._target.getOptions().isDryRun ? vow.resolve() : registry.save();
             }, this);
     }
 });

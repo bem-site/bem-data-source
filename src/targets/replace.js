@@ -12,7 +12,8 @@ var util = require('util'),
     titles = require('../titles'),
     utility = require('../util'),
     constants = require('../constants'),
-    storage = require('../storage');
+    storage = require('../storage'),
+    Registry = require('../model/registry');
 
 module.exports = inherit({
 
@@ -204,15 +205,13 @@ module.exports = inherit({
      */
     _updateRegistry: function (shaSum) {
         this._logger.debug('Update registry record');
-        return storage.get(this._options.storage).readP(constants.ROOT)
-            .then(function (registry) {
-                registry = registry ? JSON.parse(registry) : {};
-                registry[this._source] = registry[this._source] || { name: this._source, versions: {} };
-                registry[this._source].versions[this._ref] = {
-                    sha: shaSum,
-                    date: +(new Date())
-                };
-                return storage.get(this._options.storage).writeP(constants.ROOT, JSON.stringify(registry));
+        var registry = new Registry(this._options);
+        return registry.load()
+            .then(function () {
+                return registry.updateOrCreateVersion(this._source, this._ref, shaSum);
+            }, this)
+            .then(function () {
+                return registry.save();
             }, this);
     }
 });

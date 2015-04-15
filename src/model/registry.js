@@ -1,4 +1,5 @@
-var inherit = require('inherit'),
+var util = require('util'),
+    inherit = require('inherit'),
     Logger = require('bem-site-logger'),
     constants = require('../constants'),
     storage = require('../storage');
@@ -17,28 +18,24 @@ module.exports = inherit({
     load: function () {
         return storage.get(this._options.storage).readP(constants.ROOT)
             .then(function (registry) {
-                var errorMsg;
                 if (!registry) {
-                    errorMsg  = 'No registry record were found';
+                    this._logger.warn('No registry record were found. Empty registry record will be created');
+                    registry = {};
                 }
 
                 try {
                     registry = JSON.parse(registry);
                 } catch (error) {
-                    errorMsg = 'Invalid registry record';
+                    this._logger.warn('Invalid registry record. Empty registry record will be created');
+                    registry = {};
                 }
-                if (errorMsg) {
-                    this._logger.warn(errorMsg);
-                    throw new Error(errorMsg);
-                } else {
-                    this._registry = registry;
-                    return this._registry;
-                }
+                this._registry = registry;
+                return this._registry;
             }, this);
     },
 
     save: function () {
-
+        return storage.get(this._options.storage).writeP(constants.ROOT, JSON.stringify(this._registry));
     },
 
     getLibraries: function () {
@@ -57,11 +54,31 @@ module.exports = inherit({
         return this._registry[library].versions[version];
     },
 
-    updateOrCreateVersion: function (lib, version, shaKey) {
-
+    updateOrCreateVersion: function (library, version, shaKey) {
+        this._registry[library] = this.getLibrary(library) || { name: library, versions: {} };
+        this._logger.debug('registry: %s', JSON.stringify(this.getLibrary(library)));
+        this._registry[library].versions[version] = { sha: shaKey, date: +(new Date()) };
+        return this;
     },
 
-    removeVersion: function (lib, version) {
+    removeVersion: function (library, version) {
+        var errMessage;
 
+        // check if given library exists in registry
+        if (!this.getLibrary(library)) {
+            errMessage = util.format('Library %s was not found in registry', library);
+            this._logger.error(errMessage);
+            throw new Error(errMessage);
+        }
+
+        // check if given library version exists in registry
+        if (!this.getLibrary(library).versions[version]) {
+            errMessage = util.format('Library %s version %s was not found in registry', library, version);
+            this._logger.error(errMessage);
+            throw new Error(errMessage);
+        }
+
+        delete this._registry[library].versions[version];
+        return this;
     }
 }, {});
