@@ -26,36 +26,24 @@ describe('tasks/send-examples', function () {
         var t = new Target('v1.0.0', _.extend({}, options, { isDryRun: true })),
             se = new SendExamples(t);
         vow.resolve()
-            .then(function () {
-                return se.run();
-            })
-            .then(function () {
-                done();
-            });
+            .then(function () { return se.run(); })
+            .then(function () { done(); });
     });
 
     it('should not send-examples with docs only option', function (done) {
         var t = new Target('v1.0.0', _.extend({}, options, { isDocsOnly: true })),
             se = new SendExamples(t);
         vow.resolve()
-            .then(function () {
-                return se.run();
-            })
-            .then(function () {
-                done();
-            });
+            .then(function () { return se.run(); })
+            .then(function () { done(); });
     });
 
     it('should send-examples', function (done) {
         var t = new Target('v1.0.0', options),
             se = new SendExamples(t);
         vow.resolve()
-            .then(function () {
-                return se.run();
-            })
-            .then(function () {
-                done();
-            });
+            .then(function () { return se.run(); })
+            .then(function () { done(); });
     });
 
     after(function () {

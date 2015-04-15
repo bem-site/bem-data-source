@@ -38,7 +38,8 @@
     "rsync": "^0.4.0",
     "sha1": "~1.1.0",
     "vow": "~0.4.1",
-    "vow-fs": "~0.3.0"
+    "vow-fs": "~0.3.0",
+    "vow-node": "^0.2.x"
   },
   "devDependencies": {
     "mocha": "~2.2.x",

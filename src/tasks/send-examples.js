@@ -3,23 +3,25 @@
 var path = require('path'),
     util = require('util'),
 
+    _ = require('lodash'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
+    vowNode = require('vow-node'),
     inherit = require('inherit'),
     glob = require('glob'),
 
     storage = require('../storage'),
     config = require('../config'),
-    utility = require('../util'),
     constants = require('../constants'),
     Base = require('./base');
 
 module.exports = inherit(Base, {
 
+    RETRY_AMOUNT: 5,
+
     run: function () {
         var o = this._target.getOptions(),
-            openFilesLimit = o['maxOpenFiles'] ||
-                config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
+            ofl = o['maxOpenFiles'] || config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
             exampleKeys = [];
 
         if (o.isDryRun) {
@@ -34,38 +36,24 @@ module.exports = inherit(Base, {
             return vow.resolve();
         }
 
-        return this._readFiles(this._target.getTempPath())
+        return vowNode.promisify(glob)('**', { cwd: this._target.getTempPath(), nodir: true })
             .then(function (files) {
-                // TODO this condition is needed for convertation script
-                /*
-                if (this._target.options.ignored) {
-                    files = files.filter(function (file) {
-                        return !this._target.options.ignored.some(function (pattern) {
-                            return file.match(pattern);
-                        });
-                    });
-                }
-                */
-
                 if (o.examples) {
                     files = files.filter(function (file) {
                         return file.indexOf(o.examples) > -1;
                     }, this);
                 }
 
-                var portions = utility.separateArrayOnChunks(files, openFilesLimit);
-
                 this._logger.debug('example files count: %s', files.length);
-                this._logger.debug('processing will be executed in %s steps', portions.length);
 
                 var _this = this;
-                return portions.reduce(function (prev, item, index) {
-                    prev = prev.then(function () {
-                        this._logger.verbose('send files in range %s - %s',
-                            index * openFilesLimit, (index + 1) * openFilesLimit);
 
+                return _.chunk(files, ofl).reduce(function (prev, item, index, arr) {
+                    _this._logger.debug('processing will be executed in %s steps', arr.length);
+                    prev = prev.then(function () {
+                        this._logger.verbose('send files in range %s - %s', index * ofl, (index + 1) * ofl);
                         var promises = item.map(function (_item) {
-                            return o.isDryRun ? vow.resolve() : this._sendFile(_item);
+                            return o.isDryRun ? vow.resolve() : this._sendFile(_item, 0);
                         }, this);
 
                         return vow.all(promises).then(function (keys) {
@@ -86,26 +74,13 @@ module.exports = inherit(Base, {
     },
 
     /**
-     * Read file names in given directory recursively
-     * @param {String} baseDir - path to base directory
-     * @returns {*}
-     * @private
-     */
-    _readFiles: function (baseDir) {
-        var def = vow.defer();
-        glob('**', { cwd: baseDir, nodir: true }, function (err, files) {
-            err ? def.reject(err) : def.resolve(files);
-        });
-        return def.promise();
-    },
-
-    /**
      * Sends file to storage
      * @param {String} filePath - path to source file
+     * @param {Number} attempt - number of attempt
      * @returns {*}
      * @private
      */
-    _sendFile: function (filePath) {
+    _sendFile: function (filePath, attempt) {
         var basePath = this._target.getTempPath(),
             fPath = path.join(basePath, filePath),
             key = util.format('%s/%s/%s', this._target.sourceName, this._target.ref, filePath);
@@ -132,9 +107,13 @@ module.exports = inherit(Base, {
                         return key;
                     })
                     .fail(function (error) {
-                        this._logger.error('Error occur while sending file %s to mds', filePath);
-                        this._logger.error(error.message);
-                        throw error;
+                        this._logger.warn('Error occur while sending %s to mds for attempt %s', filePath, attempt);
+                        if (attempt < this.RETRY_AMOUNT) {
+                            return this._sendFile(filePath, ++attempt);
+                        } else {
+                            this._logger.error(error.message);
+                            throw error;
+                        }
                     }, this);
             }, this);
     }
