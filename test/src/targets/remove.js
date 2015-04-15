@@ -19,7 +19,13 @@ describe('targets remove', function () {
                     get: { host: '127.0.0.1', port: 3000 },
                     post: { host: '127.0.0.1', port: 3001 },
                     auth: ''
-                }
+                },
+                mailer: {
+                    host: 'stub',
+                    port: 25,
+                    from: 'bem-data-source@legoprovider.dev.yandex-team.ru',
+                    to: ['bemer@yandex-team.ru']
+            }
             };
 
         before(function () {

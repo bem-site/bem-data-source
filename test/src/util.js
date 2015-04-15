@@ -99,7 +99,7 @@ describe('util', function () {
     });
 
     describe('parseGhUrl', function () {
-        it('should parse github url', function () {
+        it('should parse open github url', function () {
             var p = util.parseGhUrl('https://github.com/bem-site/bem-data-source/blob/master/README.md');
             p.should.be.ok;
             p.should.be.instanceOf(Object);
@@ -112,6 +112,23 @@ describe('util', function () {
             p.type.should.equal('public');
             p.user.should.equal('bem-site');
             p.repo.should.equal('bem-data-source');
+            p.ref.should.equal('master');
+            p.path.should.equal('README.md');
+        });
+
+        it('should parse open github url', function () {
+            var p = util.parseGhUrl('https://github.yandex-team.ru/bem/bem-info/blob/master/README.md');
+            p.should.be.ok;
+            p.should.be.instanceOf(Object);
+            p.should.have.property('type');
+            p.should.have.property('user');
+            p.should.have.property('repo');
+            p.should.have.property('ref');
+            p.should.have.property('path');
+
+            p.type.should.equal('private');
+            p.user.should.equal('bem');
+            p.repo.should.equal('bem-info');
             p.ref.should.equal('master');
             p.path.should.equal('README.md');
         });

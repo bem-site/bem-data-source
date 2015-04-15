@@ -2,15 +2,18 @@
 
 var util = require('util'),
 
+    _ = require('lodash'),
     vow = require('vow'),
+    vowNode = require('vow-node'),
     inherit = require('inherit'),
 
     Logger = require('bem-site-logger'),
+    MailSender = require('bem-site-mail-sender'),
+
     storage = require('../storage'),
     config = require('../config'),
     utility = require('../util'),
-    constants = require('../constants'),
-    Mailer = require('../mailer');
+    constants = require('../constants');
 
 module.exports = inherit({
 
@@ -164,16 +167,17 @@ module.exports = inherit({
      * @private
      */
     _sendEmail: function () {
-        var o = this._options['mailer'] || config.get('mailer');
+        var mailer,
+            subject,
+            o = this._options['mailer'] || config.get('mailer');
         if (!o) {
             this._logger.warn('No e-mail options were set');
             return;
         }
 
-        var mailer = new Mailer(o),
-            subject = util.format('bem-data-source: success remove library [%s] version [%s]', this._source, this._ref);
-
-        return mailer.send({ from: o.from, to: o.to, subject: subject, text: '' });
+        mailer = new MailSender(_.pick(o, ['host', 'port']));
+        subject = util.format('bem-data-source: success remove library [%s] version [%s]', this._source, this._ref);
+        return vowNode.promisify(mailer.sendHtml).call(mailer, o.from, o.to, subject, '<h2>' + subject + '</h2>');
     }
 }, {
     message: {
