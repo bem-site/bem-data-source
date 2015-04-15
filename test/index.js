@@ -2,12 +2,15 @@ require('./src/titles');
 require('./src/constants');
 require('./src/gh-api');
 require('./src/util');
+require('./src/model/registry');
+
 require('./src/targets/base');
 require('./src/targets/publish');
 require('./src/targets/prepare');
 require('./src/targets/send');
 require('./src/targets/view/api');
 require('./src/targets/view/cli');
+
 require('./src/tasks/base');
 require('./src/tasks/read-md');
 require('./src/tasks/read-deps');
@@ -24,3 +27,4 @@ require('./integration/prepare');
 //require('./integration/send');
 //require('./integration/publish');
 require('./integration/all');
+
