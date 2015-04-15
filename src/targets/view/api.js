@@ -2,9 +2,8 @@
 
 var inherit = require('inherit'),
 
-    storage = require('../../storage'),
-    constants = require('../../constants'),
-    Logger = require('bem-site-logger');
+    Logger = require('bem-site-logger'),
+    Registry = require('../../model/registry');
 
 module.exports = inherit({
 
@@ -12,6 +11,7 @@ module.exports = inherit({
     _source: undefined,
     _ref: undefined,
     _options: undefined,
+    _registry: undefined,
 
     /**
      * Initialize target object
@@ -25,6 +25,7 @@ module.exports = inherit({
         this._source = source;
         this._ref = ref && ref.replace(/\//g, '-');
         this._logger = Logger.setOptions(options.logger).createLogger(module);
+        this._registry = new Registry(this._options);
     },
 
     /**
@@ -32,29 +33,11 @@ module.exports = inherit({
      * @returns {*}
      */
     execute: function () {
-        return storage.get(this._options.storage).readP(constants.ROOT)
-            .then(function (registry) {
-                var errorMsg;
-                if (!registry) {
-                   errorMsg  = 'No registry record were found';
-                }
-
-                try {
-                    registry = JSON.parse(registry);
-                } catch (error) {
-                    errorMsg = 'Invalid registry record';
-                }
-                if (errorMsg) {
-                    this._logger.warn(errorMsg);
-                    throw new Error(errorMsg);
-                } else {
-                    return registry;
-                }
-            }, this)
+        return this._registry.load()
             .then(function (registry) {
                 // if no source and version names were given then show list of libraries in registry
                 if (!this._source) {
-                    return this._getListOfLibraries(registry);
+                    return this.getListOfLibraries();
                 }
 
                 // check if given library exists in registry
@@ -64,7 +47,7 @@ module.exports = inherit({
                 }
 
                 if (!this._ref) {
-                    return this._getListOfVersions(registry);
+                    return this.getListOfVersions();
                 }
 
                 // check if given library version exists in registry
@@ -73,37 +56,31 @@ module.exports = inherit({
                     return null;
                 }
 
-                return this._getVersionInfo(registry);
+                return this.getVersionInfo();
             }, this);
     },
 
     /**
      * Returns list of libraries in storage for current namespace
-     * @param {Object} registry object
      * @returns {*}
-     * @private
      */
-    _getListOfLibraries: function (registry) {
-        return Object.keys(registry);
+    getListOfLibraries: function () {
+        return this._registry.getLibraries();
     },
 
     /**
      * Returns list of versions for given library. Also prints this information to console
-     * @param {String} registry - object
      * @returns {*}
-     * @private
      */
-    _getListOfVersions: function (registry) {
-        return Object.keys(registry[this._source].versions);
+    getListOfVersions: function () {
+        return this._registry.getVersions(this._source);
     },
 
     /**
      * Returns version info object. Also prints this information to console
-     * @param {Object} registry object
      * @returns {*}
-     * @private
      */
-    _getVersionInfo: function (registry) {
-        return registry[this._source].versions[this._ref];
+    getVersionInfo: function () {
+        return this._registry.getVersion(this._source, this._ref);
     }
 });

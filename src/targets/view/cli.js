@@ -8,14 +8,12 @@ module.exports = inherit(Base, {
 
     /**
      * Returns list of libraries in storage for current namespace
-     * @param {Object} registry object
      * @returns {*}
-     * @private
      */
-    _getListOfLibraries: function (registry) {
+    getListOfLibraries: function () {
         var table = new Table();
         console.info('Libraries:');
-        Object.keys(registry).forEach(function (libraryName) {
+        this._registry.getLibraries().forEach(function (libraryName) {
             table.cell('Name', libraryName);
             table.newRow();
         });
@@ -24,18 +22,16 @@ module.exports = inherit(Base, {
 
     /**
      * Returns list of versions for given library. Also prints this information to console
-     * @param {String} registry - object
      * @returns {*}
-     * @private
      */
-    _getListOfVersions: function (registry) {
-        var lib = registry[this._source],
+    getListOfVersions: function () {
+        var lib = this._registry.getLibrary(this._source),
             table = new Table();
 
         console.info('Library: %s', lib.name);
         console.info('Versions:');
 
-        Object.keys(lib.versions).forEach(function (versionName) {
+        this._registry.getVersions(this._source).forEach(function (versionName) {
             var version = lib.versions[versionName];
             table.cell('Library', this._source);
             table.cell('Name', versionName);
@@ -48,12 +44,10 @@ module.exports = inherit(Base, {
 
     /**
      * Returns version info object. Also prints this information to console
-     * @param {Object} registry object
      * @returns {*}
-     * @private
      */
-    _getVersionInfo: function (registry) {
-        var version = registry[this._source].versions[this._ref],
+    getVersionInfo: function () {
+        var version = this._registry.getVersion(this._source, this._ref),
             table = new Table();
 
         table.cell('Library', this._source);
