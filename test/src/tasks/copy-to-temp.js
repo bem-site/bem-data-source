@@ -12,6 +12,39 @@ describe('tasks/copy-to-temp', function () {
         t = new Target('v1.0.0', {});
     });
 
+    it('_onDebug', function () {
+        var rt = new CopyToTemp(t);
+        rt._onDebug('foo');
+    });
+
+    it('_onWarn', function () {
+        var rt = new CopyToTemp(t);
+        rt._onWarn('foo');
+    });
+
+    it ('_getCBFunction', function () {
+        var def = vow.defer(),
+            rt = new CopyToTemp(t);
+        rt._getCBFunction(def).should.be.ok;
+        rt._getCBFunction(def).should.be.instanceOf(Function);
+    });
+
+    it ('callback function on error', function () {
+        var def = vow.defer(),
+            rt = new CopyToTemp(t);
+
+        rt._getCBFunction(def).call(rt, new Error('custom error'));
+        def.promise().isRejected().should.equal(true);
+    });
+
+    it ('callback function on success', function () {
+        var def = vow.defer(),
+            rt = new CopyToTemp(t);
+
+        rt._getCBFunction(def).call(rt, null, 0);
+        def.promise().isResolved().should.equal(true);
+    });
+
     it('should rsync temp directory', function (done) {
         var rt = new CopyToTemp(t);
         return vow.resolve()

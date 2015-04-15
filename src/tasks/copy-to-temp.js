@@ -36,34 +36,39 @@ module.exports = inherit(Base, {
         }, this));
     },
 
+    _onDebug: function (data) {
+        this._logger.debug(data.toString());
+    },
+
+    _onWarn: function (data) {
+        this._logger.warn(data.toString());
+    },
+
+    _getCBFunction: function (defer) {
+        var _this = this;
+        return function (err, code) {
+            if (err) {
+                _this._logger.error('Rsync failed with error %s', err.message);
+                defer.reject(err);
+            }else {
+                defer.resolve(code);
+            }
+        };
+    },
+
     /**
      * Runs rsync command with options
      * @param {Object} options - options for rsync command
      * @returns {*}
      */
     _sync: function (options) {
-        var _this = this,
-            def = vow.defer(),
+        var def = vow.defer(),
             rsync = Rsync.build(options);
 
         rsync.set('safe-links');
         rsync.set('copy-links');
         this._logger.debug('rsync command: %s', rsync.command());
-        rsync.execute(function (err, code) {
-                if (err) {
-                    _this._logger.error('Rsync failed wit error %s', err.message);
-                    def.reject(err);
-                }else {
-                    def.resolve(code);
-                }
-            },
-            function (data) {
-                _this._logger.debug(data.toString());
-            },
-            function (data) {
-                _this._logger.warn(data.toString());
-            }
-        );
+        rsync.execute(this._getCBFunction(def), this._onDebug, this._onWarn);
         return def.promise();
     }
 });
