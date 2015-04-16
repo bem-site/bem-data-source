@@ -22,6 +22,7 @@ require('./src/tasks/create-temp');
 require('./src/tasks/copy-to-temp');
 require('./src/tasks/send-examples');
 require('./src/tasks/send-doc');
+require('./src/tasks/send-email');
 require('./src/targets/remove');
 require('./integration/prepare');
 //require('./integration/send');

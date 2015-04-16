@@ -4,6 +4,7 @@ var util = require('util'),
     path = require('path'),
 
     _ = require('lodash'),
+    vow = require('vow'),
     inherit = require('inherit'),
     vowNode = require('vow-node'),
     MailSender = require('bem-site-mail-sender'),
@@ -20,7 +21,7 @@ module.exports = inherit(Base, {
 
         if (!o) {
             this._logger.warn('No e-mail options were set. Sending e-mail will be skipped');
-            return;
+            return vow.resolve();
         }
 
         mailer = new MailSender(_.pick(o, ['host', 'port']));
