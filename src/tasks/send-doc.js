@@ -25,6 +25,14 @@ module.exports = inherit(Base, {
             }, this);
     },
 
+    _generateShaKey: function (lib, version, content) {
+        try {
+            return sha(content);
+        }catch (err) {
+            return sha(util.format('%s:%s:%s', lib, version, (new Date()).toString()));
+        }
+    },
+
     /**
      * Writes data.json file with documentation to storage
      * @param {String} lib - name of library
@@ -41,11 +49,7 @@ module.exports = inherit(Base, {
         this._logger.info('Write data.json file to storage for key %s', key);
         return vowFs.read(fPath, 'utf-8')
             .then(function (content) {
-                try {
-                    shaKey = sha(content);
-                }catch (err) {
-                    shaKey = sha(util.format('%s:%s:%s', lib, version, (new Date()).toString()));
-                }
+                shaKey = this._generateShaKey(lib, version, content);
                 return o.isDryRun ? vow.resolve() :
                     storage.get(o.storage).writeP(key, content);
             }, this)
