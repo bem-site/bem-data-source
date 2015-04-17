@@ -42,6 +42,33 @@ var _ = require('lodash'),
 
             this._logger.verbose('Load data from: %s %s %s %s', o.user, o.repo, o.ref, o.path);
             return this._api.repos.getContent(c, callback);
+        },
+
+        /**
+         * Returns promisified true value if given repo has issues
+         * @param {Object} options - object with fields:
+         *   - type {String} type of repository privacy ('public' or 'private')
+         *   - user {String} name of user or organization which this repository is belong to
+         *   - repo {String} name of repository
+         * @param {Object} headers - optional header params
+         * @param {Function} callback function
+         * @returns {*}
+         */
+        hasIssues: function (options, headers, callback) {
+            var c = _.extend({}, options, headers ? { headers: headers } : {});
+
+            if (process.env['NODE_ENV'] === 'testing') {
+                callback && callback(null, true);
+                return;
+            }
+
+            this._api.repos.get(c, function (err, res) {
+                if (err || !res) {
+                    callback && callback(err);
+                }else {
+                    callback && callback(null, res['has_issues']);
+                }
+            });
         }
     }, {
         CONFIG: {

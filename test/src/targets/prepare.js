@@ -25,7 +25,7 @@ describe('targets prepare', function () {
         });
 
         it('should have valid number of tasks', function () {
-            t._tasks.should.have.length(8);
+            t._tasks.should.have.length(9);
         });
     });
 });

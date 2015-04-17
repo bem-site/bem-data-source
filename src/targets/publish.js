@@ -32,6 +32,7 @@ module.exports = inherit(Base, {
         }, ref);
 
         this._tasks = [
+            new (require('../tasks/check-issues'))(this),
             new (require('../tasks/read-md'))(this),
             new (require('../tasks/read-deps'))(this),
             new (require('../tasks/read-showcase'))(this),

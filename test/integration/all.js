@@ -38,6 +38,22 @@ describe('bem-data-source', function () {
         vowFs.remove(path.join(__dirname, '../test-data/data.json'))
     });
 
+    describe('#prepare', function () {
+        it('should be valid done', function (done) {
+            ds.prepare('v1.0.0', options).then(function () {
+                done();
+            }).done();
+        });
+    });
+
+    describe('#send', function () {
+        it('should be valid done', function (done) {
+            ds.send('v1.0.0', options, false).then(function () {
+                done();
+            }).done();
+        });
+    });
+
     describe('#publish', function () {
         it('should be valid done', function (done) {
             ds.publish('v1.0.0', options, false).then(function () {

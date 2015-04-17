@@ -7,6 +7,7 @@ module.exports = inherit(Base, {
     __constructor: function (ref, options) {
         this.__base(ref, options);
         this._tasks = [
+            new (require('../tasks/check-issues'))(this),
             new (require('../tasks/read-md'))(this),
             new (require('../tasks/read-deps'))(this),
             new (require('../tasks/read-showcase'))(this),
