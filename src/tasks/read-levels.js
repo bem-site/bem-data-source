@@ -1,5 +1,7 @@
 var util = require('util'),
     path = require('path'),
+
+    _ = require('lodash'),
     inherit = require('inherit'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
@@ -19,22 +21,26 @@ module.exports = inherit(Base, {
 
         return vowFs.listDir(path.resolve(this._target.getContentPath()))
             .then(function (levels) {
-                var levelNames = constants.LEVELS.map(function (item) {
-                    return item + this._target.docPatterns.replace('*', '');
-                }, this);
+                var promises = _.chain(constants.LEVELS)
+                    .map(function (item) {
+                        return item + this._target.docPatterns.replace('*', '');
+                    }, this)
+                    .thru(function (levelNames) {
+                        return levels.filter(function (item) {
+                            return levelNames.indexOf(item) !== -1;
+                        });
+                    })
+                    .map(function (level) {
+                        this._logger.debug('Read block level %s', level);
+                        level = { name: level };
+                        result.levels = result.levels || [];
+                        result.levels.push(level);
 
-                levels = levels.filter(function (item) {
-                    return levelNames.indexOf(item) !== -1;
-                });
+                        return this._readBlocks(level);
+                    }, this)
+                    .value();
 
-                return vow.allResolved(levels.map(function (level) {
-                    this._logger.debug('Read block level %s', level);
-                    level = { name: level };
-                    result.levels = result.levels || [];
-                    result.levels.push(level);
-
-                    return this._readBlocks(level);
-                }, this));
+                return vow.allResolved(promises);
             }, this)
             .then(function () {
                 return result;
@@ -51,20 +57,21 @@ module.exports = inherit(Base, {
         var blockIgnores = ['.dist', '.bem', 'index', 'catalogue', 'index', 'jscatalogue'];
         return vowFs.listDir(path.resolve(this._target.getContentPath(), level.name))
             .then(function (blocks) {
-                return vow.allResolved(
-                    blocks
-                        .filter(function (block) {
-                            return blockIgnores.indexOf(block) === -1;
-                        })
-                        .map(function (block) {
-                            this._logger.verbose('Read block %s', block);
-                            block = { name: block };
-                            level.blocks = level.blocks || [];
-                            level.blocks.push(block);
+                var promises = _.chain(blocks)
+                    .filter(function (block) {
+                        return blockIgnores.indexOf(block) === -1;
+                    })
+                    .map(function (block) {
+                        this._logger.verbose('Read block %s', block);
+                        block = { name: block };
+                        level.blocks = level.blocks || [];
+                        level.blocks.push(block);
 
-                            return this._readBlock(level, block);
-                        }, this)
-                );
+                        return this._readBlock(level, block);
+                    }, this)
+                    .value();
+
+                return vow.allResolved(promises);
             }, this);
     },
 
@@ -82,11 +89,7 @@ module.exports = inherit(Base, {
                 this._logger.verbose('Read doc file: %s', docFile);
                 return vowFs.read(docFile, 'utf-8')
                     .then(function (content) {
-                        try {
-                            block[key] = JSON.parse(content);
-                        }catch (e) {
-                            block[key] = content;
-                        }
+                        try { block[key] = JSON.parse(content); } catch (e) { block[key] = content; }
                     })
                     .fail(function () {
                         block[key] = null;
