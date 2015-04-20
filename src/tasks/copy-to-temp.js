@@ -51,6 +51,7 @@ module.exports = inherit(Base, {
                 _this._logger.error('Rsync failed with error %s', err.message);
                 defer.reject(err);
             }else {
+                _this.logger.info('Rsync has been finished successfully with exist code %s', code);
                 defer.resolve(code);
             }
         };
