@@ -48,8 +48,7 @@ module.exports = inherit(Base, {
 
                 var _this = this;
 
-                return _.chunk(files, ofl).reduce(function (prev, item, index, arr) {
-                    _this._logger.debug('processing will be executed in %s steps', arr.length);
+                return _.chunk(files, ofl).reduce(function (prev, item, index) {
                     prev = prev.then(function () {
                         this._logger.verbose('send files in range %s - %s', index * ofl, (index + 1) * ofl);
                         var promises = item.map(function (_item) {
