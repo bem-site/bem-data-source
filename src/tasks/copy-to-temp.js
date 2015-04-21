@@ -62,7 +62,7 @@ module.exports = inherit(Base, {
         rsync.set('safe-links');
         rsync.set('copy-links');
         this._logger.debug('rsync command: %s', rsync.command());
-        rsync.execute(this._getCBFunction(def), this._onDebug, this._onWarn);
+        rsync.execute(this._getCBFunction(def), this._onDebug.bind(this), this._onWarn.bind(this));
         return def.promise();
     }
 });
