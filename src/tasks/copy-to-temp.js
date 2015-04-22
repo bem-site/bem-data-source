@@ -1,10 +1,13 @@
 'use strict';
 
-var path = require('path'),
+var fs = require('fs'),
+    path = require('path'),
+    _ = require('lodash'),
     vow = require('vow'),
     inherit = require('inherit'),
     Rsync = require('rsync'),
 
+    constants = require('../constants'),
     Base = require('./base');
 
 module.exports = inherit(Base, {
@@ -14,8 +17,12 @@ module.exports = inherit(Base, {
      * @returns {defer.promise|*}
      */
     run: function () {
-        var rSyncConfiguration = this._target.rsyncConfiguration;
-        return vow.all(rSyncConfiguration.targets.map(function (suffix) {
+        var rSyncConfiguration = this._target.rsyncConfiguration,
+            rSyncTargets = rSyncConfiguration.targets.filter(function (suffix) {
+                return this._isRsyncTargetExists(suffix);
+            }, this);
+
+        return vow.all(rSyncTargets.map(function (suffix) {
             var syncOptions = {
                 source: path.join(process.cwd(), suffix),
                 destination: path.join(this._target.getTempPath()),
@@ -36,14 +43,46 @@ module.exports = inherit(Base, {
         }, this));
     },
 
+    /**
+     * Checks for directories with given suffix
+     * @param {String} suffix
+     * @returns {boolean} check result
+     * @private
+     */
+    _isRsyncTargetExists: function (suffix) {
+        return constants.LEVELS
+            .map(function (level) {
+                return path.join(process.cwd(), level + suffix.replace('*', ''));
+            })
+            .some(function (levelPath) {
+                return fs.existsSync(levelPath);
+            });
+    },
+
+    /**
+     * Debug handler
+     * @param {Buffer} data
+     * @private
+     */
     _onDebug: function (data) {
         this._logger.debug(data.toString());
     },
 
+    /**
+     * Warning handler
+     * @param {Buffer} data
+     * @private
+     */
     _onWarn: function (data) {
         this._logger.warn(data.toString());
     },
 
+    /**
+     * Returns callback function for rsync finalization handling
+     * @param {Deferred} defer - deferred object
+     * @returns {Function} callback function
+     * @private
+     */
     _getCBFunction: function (defer) {
         return function (err, code) {
             err ? defer.reject(err) : defer.resolve(code);
