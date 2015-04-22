@@ -16,7 +16,7 @@ var TargetView = require('./src/targets/view/api'),
  *    - {Object} post - object with host and port fields that describes
  *      host and port configuration for write|modify requests
  *    - {String} auth header
- * - {String} logLevel - logger level (debug, info, warn, error)
+ * - {Object} logger - logger settings
  * - {Boolean} isDocsOnly - if this flag is set to true then sending examples to storage will be skipped
  * - {Number} maxOpenFiles - number of open files which can be opened at the same time
  * @param {Boolean} isDryRun - dry run flag
@@ -32,7 +32,7 @@ exports.publish = function (version, options, isDryRun) {
  * Prepare library data for sending storage
  * @param {String} version - name of version (branch|tag|pr)
  * @param {Object} options - options object with fields:
- * - {String} logLevel - logger level (debug, info, warn, error)
+ * - {Object} logger - logger settings
  * @returns {*}
  */
 exports.prepare = function (version, options) {
@@ -51,7 +51,7 @@ exports.prepare = function (version, options) {
  *    - {Object} post - object with host and port fields that describes
  *      host and port configuration for write|modify requests
  *    - {String} auth header
- * - {String} logLevel - logger level (debug, info, warn, error)
+ * - {Object} logger - logger settings
  * - {Boolean} isDocsOnly - if this flag is set to true then sending examples to storage will be skipped
  * - {Number} maxOpenFiles - number of open files which can be opened at the same time
  * @param {Boolean} isDryRun - dry run flag
@@ -74,7 +74,7 @@ exports.send = function (version, options, isDryRun) {
  *      host and port configuration for read requests
  *    - {Object} post - object with host and port fields that describes
  *      host and port configuration for write|modify requests
- * - {String} logLevel - logger verbosity level (verbose, debug, info, warn, error)
+ * - {Object} logger - logger settings
  * @returns {Promise}
  */
 exports.view = function (repo, version, options) {
@@ -94,7 +94,7 @@ exports.view = function (repo, version, options) {
  *    - {Object} post - object with host and port fields that describes
  *      host and port configuration for write|modify requests
  *    - {String} auth header
- * - {String} logLevel - logger verbosity level (verbose, debug, info, warn, error)
+ * - {Object} logger - logger settings
  * - {String} doc - doc key (readme|changelog|migration|notes) required
  * - {String} lang - language param (en|ru) required
  * - {String} url - url for new document on github (like in browser view) required
@@ -118,7 +118,7 @@ exports.replace = function (repo, version, options) {
  *    - {Object} post - object with host and port fields that describes
  *      host and port configuration for write|modify requests
  *    - {String} auth header
- * - {String} logLevel - logger verbosity level (verbose, debug, info, warn, error)
+ * - {Object} logger - logger settings
  * - {Number} maxOpenFiles - number of open files which can be opened at the same time
  * @param {Boolean} isDryRun - dry run flag
  * @returns {*}
