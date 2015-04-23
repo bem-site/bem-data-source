@@ -90,6 +90,22 @@ describe('util', function () {
         });
     });
 
+    describe('isHtml', function () {
+        it('should return false for md content', function () {
+            var content = fs.readFileSync('README.md', { encoding: 'utf-8' }),
+                isHtml = util.isHtml(content);
+
+            isHtml.should.be.equal(false);
+        });
+
+        it('should return true for html content', function () {
+            var content = '<h1>test-library 0.0.1</h1><h2>test-library1 0.0.2</h2><table width="100%"></table>',
+                isHtml = util.isHtml(content);
+
+            isHtml.should.be.equal(true);
+        });
+    });
+
     describe('mdToHtml', function () {
         var md = fs.readFileSync('README.md', { encoding: 'utf-8' }),
             html = util.mdToHtml(md);
