@@ -374,6 +374,10 @@ npm run istanbul
 npm run codestyle
 ```
 
-Ответственный за разработку @bemer
+Особая благодарность за помощь в разработке:
 
+* Ильченко Николай (http://github.com/tavriaforever)
+* Константинова Гела (http://github.com/gela-d)
+
+Ответственный за разработку @bemer
 Вопросы и пожелания присылать по адресу: bemer@yandex-team.ru

@@ -11,7 +11,8 @@
   ],
   "contributors": [
     "Andrey Kuznetsov <andrey.kuznetsov48@yandex.ua> (http://github.com/tormozz48)",
-    "Nikolay Ilchenko <tavria@yandex-team.ru> (http://github.com/tavriaforever)"
+    "Nikolay Ilchenko <tavria@yandex-team.ru> (http://github.com/tavriaforever)",
+    "Gela Konstantinova <gela-d@yandex-team.ru> (http://github.com/gela-d)"
   ],
   "engines": {
     "node": ">= 0.8.0"
