@@ -3,6 +3,7 @@ module.exports = {
         builder: 'enb',
         docDirs: '*.docs',
         rsync: {
+            levels: ['desktop', 'touch'],
             targets: ['*.docs', '*.examples']
         },
         docs: {
