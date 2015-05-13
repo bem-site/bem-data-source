@@ -24,7 +24,11 @@ module.exports = {
         builder: 'enb',
         docDirs: '*.docs',
         rsync: {
-            targets: ['*.tests', '*.examples']
+            levels: ['desktop', 'touch'],
+            targets: ['*.examples', '*.pages'],
+            exclude: ['*.bemdecl.js', '*.browser.bemhtml.js', '*.browser.js',
+                '*.deps.js', '*.js-js.bemdecl.js', '*.js.bemdecl.js', '*.js.deps.js', '*.pre.js',
+                '*.template.bemdecl.js', '*.template.deps.js']
         },
         showcase: {
             title: 'showcase',
@@ -67,7 +71,9 @@ module.exports = {
 Шаблон директорий которые содержат файлы с документацией по блокам.
 
 ### rsync
-Объект с допустимыми полями `targets`, `include`, `exclude`.
+Объект с допустимыми полями `levels`, `targets`, `include`, `exclude`.
+
+* `levels` - массив с именами уровней переопределения (без суффиксов)
 
 * `targets` - массив паттернов для папок примеров и прощих папок, которые должны быть
 идентифицированы как результат сборки. Директории попадающие под этот паттерн
