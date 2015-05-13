@@ -124,7 +124,11 @@ module.exports = inherit({
      */
     _removeDocFile: function () {
         this._logger.debug('Start to remove doc file');
-        return storage.get(this._options.storage).removeP(this._getDocsKey());
+        return storage.get(this._options.storage).removeP(this._getDocsKey()).fail(function (error) {
+            this._logger.error('Error occur while removing documentation file %s', this._getDocsKey());
+            this._logger.error(error.message);
+            return vow.resolve();
+        }, this);
     },
 
     /**

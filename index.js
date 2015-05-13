@@ -25,7 +25,7 @@ var TargetView = require('./src/targets/view/api'),
 exports.publish = function (version, options, isDryRun) {
     options.isDryRun = isDryRun;
     var target = new TargetPublish(version, options);
-    return target.execute().fail(function () { process.exit(1); });
+    return target.execute();
 };
 
 /**
@@ -37,7 +37,7 @@ exports.publish = function (version, options, isDryRun) {
  */
 exports.prepare = function (version, options) {
     var target = new TargetPrepare(version, options);
-    return target.execute().fail(function () { process.exit(1); });
+    return target.execute();
 };
 
 /**
@@ -60,7 +60,7 @@ exports.prepare = function (version, options) {
 exports.send = function (version, options, isDryRun) {
     options.isDryRun = isDryRun;
     var target = new TargetSend(version, options);
-    return target.execute().fail(function () { process.exit(1); });
+    return target.execute();
 };
 
 /**
@@ -79,7 +79,7 @@ exports.send = function (version, options, isDryRun) {
  */
 exports.view = function (repo, version, options) {
     var target = new TargetView(repo, version, options);
-    return target.execute().fail(function () { process.exit(1); });
+    return target.execute();
 };
 
 /**
@@ -102,7 +102,7 @@ exports.view = function (repo, version, options) {
  */
 exports.replace = function (repo, version, options) {
     var target = new TargetReplace(repo, version, options);
-    return target.execute().fail(function () { process.exit(1); });
+    return target.execute();
 };
 
 /**
@@ -126,5 +126,5 @@ exports.replace = function (repo, version, options) {
 exports.remove = function (repo, version, options, isDryRun) {
     options.isDryRun = isDryRun;
     var target = new TargetRemove(repo, version, options);
-    return target.execute().fail(function () { process.exit(1); });
+    return target.execute();
 };
