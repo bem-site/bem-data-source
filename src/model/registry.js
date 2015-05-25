@@ -1,4 +1,5 @@
 var util = require('util'),
+    vow = require('vow'),
     inherit = require('inherit'),
     Logger = require('bem-site-logger'),
     constants = require('../constants'),
@@ -39,7 +40,7 @@ module.exports = inherit({
             .fail(function () {
                 this._logger.warn('No registry record were found. Empty registry record will be created');
                 this._registry = {};
-                return this._registry;
+                return vow.resolve(this._registry);
             }, this);
     },
 
