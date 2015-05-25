@@ -35,6 +35,11 @@ module.exports = inherit({
                 }
                 this._registry = registry;
                 return this._registry;
+            }, this)
+            .fail(function () {
+                this._logger.warn('No registry record were found. Empty registry record will be created');
+                this._registry = {};
+                return this._registry;
             }, this);
     },
 
