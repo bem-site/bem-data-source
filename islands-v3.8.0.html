@@ -1,0 +1,63 @@
+<h1 id="islands-380"><a href="#islands-380" class="anchor"></a>islands 3.8.0</h1>
+<p>Стабильный срез библиотек <code>islands-*</code> под общим номером 3.8.0.</p>
+<h2 id="Общие-изменения"><a href="#Общие-изменения" class="anchor"></a>Общие изменения:</h2>
+<ul>
+    <li>Исправлены XSS уязвимости в блоках <code>input</code>, <code>select</code>, <code>b-form-attach</code></li>
+    <li>Блоки <code>images</code>, <code>serp</code>, <code>serp-ru</code>, <code>video</code>, <code>b-country-flag</code>, <code>b-geolocation</code>, <code>b-head-logo</code>, <code>b-layout-table</code>, <code>b-mooa-panel</code>, <code>b-mooa</code>, <code>b-pager</code>, <code>b-related-list</code>, <code>b-static-text</code>, <code>i-ctr</code>, <code>i-error-reporter</code>, <code>i-geodata</code>, <code>i-https</code>, <code>i-oframebust</code>, <code>i-services-request-controller</code>, <code>l-head</code>, <code>l-page</code>, <code>notification-panel-notice</code>, <code>navigation</code> объявлены устаревшими (deprecated) и будут удалены в islands@4.0.0</li>
+    <li>Блоки <code>header2</code>, <code>tabs-menu</code>, <code>tabs-panes</code>, <code>tabs</code> объявлены стабильными</li>
+</ul>
+<h2 id="islands-components-380"><a href="#islands-components-380" class="anchor"></a>islands-components 3.8.0</h2>
+<ul>
+    <li>Устранена XSS уязвимость в блоке <code>select</code></li>
+    <li>Разработана новая версия обще-портальной кнопки — <a href="https://lego.yandex-team.ru/libs/islands-components/v3.8.0/desktop/button2/">button2</a>, которая заменит собой <code>button</code></li>
+    <li><p>В блоке <code>input</code> в поле <code>placeholder</code> появилась возможность использовать <code>BEMJSON</code>. Теперь можно передавать локализационные ключи</p>
+<pre><code class="lang-js">  {
+    block: &#39;input&#39;,
+    placeholder: {
+    block: &#39;i-bem&#39;,
+    elem: &#39;i18n&#39;,
+    keyset: &#39;keyset&#39;,
+    key: &#39;key&#39;
+    },
+    ...
+    }
+</code></pre>
+    </li>
+    <li><p>В блоках <code>alert</code>, <code>dropdown</code>, <code>select</code> и <code>suggest</code> заменен <code>block.destruct</code> на <code>BEM.DOM.destruct</code>. Теперь вложенные блоки тоже уничтожаются.</p>
+    </li>
+    <li>В блок <code>attach</code> добавлены переводы на все поддерживаемые языки</li>
+    <li>В блоке <code>checkbox</code> элемент <code>tick</code> смещен на 4px вверх, чтобы компенсировать увеличение его высоты в версии <code>3.7.1</code>. Теперь его не нужно дополнительно выравнивать.</li>
+    <li>Исправлена ошибка при уничтожении блока <code>dropdown</code></li>
+    <li>Блоки <code>tabs-menu</code>, <code>tabs-panes</code>, <code>tabs</code> объявлены стабильными</li>
+</ul>
+<h2 id="islands-user-370"><a href="#islands-user-370" class="anchor"></a>islands-user 3.7.0</h2>
+<ul>
+    <li>Дизайн блока <code>ticker</code> стал более плоским: пропала белая рамка вокруг индикатора.<ul>
+        <li>У блока изменились размеры: он сдвинулся на 2px вверх и влево за счёт пустых областей</li>
+        <li>Высота и ширина уменьшились на 2px</li>
+    </ul>
+    </li>
+    <li>В блок <code>user</code>, где используется <code>ticker</code>, были внесены изменения: индикатор сдвинулся вниз и вправо на 2px, что уравновесило изменения в блоке</li>
+    <li>Блок <code>notification-panel-notice</code> объявлен устаревшим и будет удален в следующей мажорной версии</li>
+</ul>
+<h2 id="islands-page-360"><a href="#islands-page-360" class="anchor"></a>islands-page 3.6.0</h2>
+<ul>
+    <li>Устранена XSS уязвимость в блоке <code>input</code></li>
+    <li>В блок <code>search2</code> добавлен элемент <code>hidden</code>. Он представляет из себя не что иное как <code>&lt;input type=&#39;hidden&#39;&gt;</code> и предназначен для добавления в форму скрытых полей, которые при отправке добавляются браузером в качестве cgi параметров.</li>
+    <li>Появилась возможность добавлять иконки в инпут (слева/справа от инпута), не мешая кнопке <code>очистить</code> (<code>[X]</code>)</li>
+    <li>Блок <code>header2</code> объявлен стабильным</li>
+    <li>Блок <code>navigation</code> объявлен устаревшим и будет удален в следующей мажорной версии</li>
+</ul>
+<h2 id="islands-icons-330"><a href="#islands-icons-330" class="anchor"></a>islands-icons 3.3.0</h2>
+<ul>
+    <li>Блоки <code>images</code>, <code>serp</code>, <code>serp-ru</code>, <code>video</code> объявлены устаревшими и будут удалены в следующей мажорной версии</li>
+    <li>В блок <code>service-icon</code> добавлены иконки сервисов <code>advertising</code>, <code>direct</code>, <code>metrika</code>, <code>site</code>, <code>webmaster</code></li>
+</ul>
+<h2 id="islands-romochka-361"><a href="#islands-romochka-361" class="anchor"></a>islands-romochka 3.6.1</h2>
+<ul>
+    <li>Исправлена XSS уязвимость в блоке <code>b-form-attach</code></li>
+    <li>Исправлены ошибки в блоках <code>b-bage</code>, <code>b-slider-dots</code>, <code>i-counter</code>, <code>i-flashcookie</code>, <code>keycodes</code></li>
+    <li>Исправлены циклические <code>mustDeps</code></li>
+    <li>В блоке <code>i-services</code> обновлены переводы</li>
+    <li>Блоки <code>b-country-flag</code>, <code>b-geolocation</code>, <code>b-head-logo</code>, <code>b-layout-table</code>, <code>b-mooa-panel</code>, <code>b-mooa</code>, <code>b-pager</code>, <code>b-related-list</code>, <code>b-static-text</code>, <code>i-ctr</code>, <code>i-error-reporter</code>, <code>i-geodata</code>, <code>i-https</code>, <code>i-oframebust</code>, <code>i-services-request-controller</code>, <code>l-head</code>, <code>l-page</code> объявлены устаревшими и будут удалены в следующей мажорной версии</li>
+</ul>
