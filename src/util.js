@@ -29,22 +29,14 @@ exports.getStorageConfiguration = function (config, env) {
     return _.extend({}, common, config[env]);
 };
 
-// this method has been taken from cheerio module code
-// https://github.com/cheeriojs/cheerio/blob/master/lib/cheerio.js#L122
 /**
  * Checks if given string is html string
  * @param {String} str (can be markdown or html string)
  * @returns {boolean}
  */
 exports.isHtml = function (str) {
-    if (str.charAt(0) === '<' &&
-        str.charAt(str.length - 1) === '>' &&
-        str.length >= 3) {
-        return true;
-    }
-
-    var match = /^(?:[^#<]*(<[\w\W]+>)[^>]*$|#([\w\-]*)$)/.exec(str);
-    return !!(match && match[1]);
+    var length = str.length;
+    return str.charAt(0) === '<' && str.charAt(length - 1) === '>' && length >= 3;
 };
 
 /**
@@ -60,7 +52,7 @@ exports.mdToHtml = function (content) {
     return md(content, {
         gfm: true,
         pedantic: false,
-        sanitize: false,
+        sanitize: true,
         renderer: bmdr.getRenderer()
     });
 };
