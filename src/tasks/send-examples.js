@@ -19,6 +19,11 @@ module.exports = inherit(Base, {
 
     RETRY_AMOUNT: 5,
 
+    /**
+     * Creates glob pattern for example
+     * +(desktop.examples|touch-pad.examples|touch-phone.examples)/**
+     * @returns {Array}
+     */
     createGlobPattern: function () {
         var conf = this._target.rsyncConfiguration,
             levels = constants.LEVELS,
