@@ -1,7 +1,6 @@
 'use strict';
 
-var fs = require('fs'),
-    path = require('path'),
+var path = require('path'),
 
     vow = require('vow'),
     inherit = require('inherit'),
@@ -38,9 +37,6 @@ module.exports = inherit(Base, {
             new (require('../tasks/read-showcase'))(this),
             new (require('../tasks/read-levels'))(this),
             new (require('../tasks/write-result'))(this),
-            new (require('../tasks/remove-temp'))(this),
-            new (require('../tasks/create-temp'))(this),
-            new (require('../tasks/copy-to-temp'))(this),
             new (require('../tasks/send-examples'))(this),
             new (require('../tasks/send-doc'))(this),
             new (require('../tasks/send-email'))(this)

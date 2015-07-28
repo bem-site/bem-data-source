@@ -19,6 +19,26 @@ module.exports = inherit(Base, {
 
     RETRY_AMOUNT: 5,
 
+    /**
+     * Creates glob pattern for example
+     * +(desktop.examples|touch-pad.examples|touch-phone.examples)/**
+     * @returns {Array}
+     */
+    createGlobPattern: function () {
+        var conf = this._target.rsyncConfiguration,
+            levels = constants.LEVELS,
+            folders = [];
+
+        levels.forEach(function (level) {
+            conf.targets.forEach(function (suffix) {
+                folders.push(level + suffix.replace('*', ''));
+            });
+        });
+
+        folders = '+(' + folders.join('|') + ')/**';
+        return folders;
+    },
+
     run: function () {
         var o = this._target.getOptions(),
             ofl = o['maxOpenFiles'] || config.get('maxOpenFiles') || constants.MAXIMUM_OPEN_FILES,
@@ -36,12 +56,22 @@ module.exports = inherit(Base, {
             return vow.resolve();
         }
 
-        return vowNode.promisify(glob)('**', { cwd: this._target.getTempPath(), nodir: true })
+        return vowNode.promisify(glob)(this.createGlobPattern(), { cwd: process.cwd(), nodir: true })
             .then(function (files) {
                 if (o.examples) {
                     files = files.filter(function (file) {
                         return file.indexOf(o.examples) > -1;
                     }, this);
+                }
+
+                var excludeRules = this._target.rsyncConfiguration.exclude;
+
+                if (excludeRules && excludeRules.length) {
+                    files = files.filter(function (file) {
+                        return excludeRules.every(function (rule) {
+                            return path.basename(file).indexOf(rule.replace('*', '')) === -1;
+                        });
+                    });
                 }
 
                 this._logger.debug('example files count: %s', files.length);
@@ -80,7 +110,7 @@ module.exports = inherit(Base, {
      * @private
      */
     _sendFile: function (filePath, attempt) {
-        var basePath = this._target.getTempPath(),
+        var basePath = process.cwd(),
             fPath = path.join(basePath, filePath),
             key = util.format('%s/%s/%s', this._target.sourceName, this._target.ref, filePath);
 
