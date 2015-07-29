@@ -34,8 +34,10 @@ exports.getStorageConfiguration = function (config, env) {
  * @param {String} str (can be markdown or html string)
  * @returns {boolean}
  */
-exports.isHtml = function (str) {
-    var length = str.length;
+exports.isHtml = function (content) {
+    var str = content.trim(),
+        length = str.length;
+
     return str.charAt(0) === '<' && str.charAt(length - 1) === '>' && length >= 3;
 };
 
