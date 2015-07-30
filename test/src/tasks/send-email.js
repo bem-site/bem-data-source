@@ -59,19 +59,19 @@ describe('tasks/send-email', function () {
     });
 
     describe('invalid mail options or if e-mail server is in maintenance', function () {
-        var t, sd;
+        var target, sendEmail;
 
         before(function () {
-            var o = _.extend({}, options, { mailer: {
+            var opts = _.extend({}, options, { mailer: {
                 host: 'invalid host',
                 port: 25
             } });
-            t = new Target('v1.0.0', o);
-            sd = new SendEmail(t);
+            target = new Target('v1.0.0', opts);
+            sendEmail = new SendEmail(target);
         });
 
         it('should allow fail case', function () {
-            return sd.run()
+            return sendEmail.run()
                 .then(function (result) {
                     result.should.equal(true);
                 });
