@@ -47,7 +47,7 @@ describe('Registry', function () {
 
         describe('invalid registry', function () {
             before(function (done) {
-                storage.get(options.storage).write(constants.ROOT, 1, function () {
+                storage.get(options.storage).write(constants.ROOT, JSON.stringify(function () {}), function () {
                     done();
                 });
             });
