@@ -58,6 +58,26 @@ describe('tasks/send-email', function () {
         });
     });
 
+    describe('invalid mail options or if e-mail server is in maintenance', function () {
+        var t, sd;
+
+        before(function () {
+            var o = _.extend({}, options, { mailer: {
+                host: 'invalid host',
+                port: 25
+            } });
+            t = new Target('v1.0.0', o);
+            sd = new SendEmail(t);
+        });
+
+        it('should allow fail case', function () {
+            return sd.run()
+                .then(function (result) {
+                    result.should.equal(true);
+                });
+        });
+    });
+
     after(function () {
         process.chdir(path.resolve(__dirname, '../../../'));
     });

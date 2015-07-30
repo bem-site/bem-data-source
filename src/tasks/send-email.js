@@ -35,6 +35,12 @@ module.exports = inherit(Base, {
             filename: 'data.json',
             path: path.join(this._target.getContentPath(), 'data.json')
         };
-        return vowNode.promisify(mailer.sendWithAttachments).call(mailer, o.from, o.to, subject, '', [attachment]);
+        return vowNode.promisify(mailer.sendWithAttachments)
+            .call(mailer, o.from, o.to, subject, '', [attachment])
+            .fail(function (error) {
+                this._logger.warn('Error occur while sending e-mail');
+                this._logger.warn('Error: %s', error.message);
+                return vow.resolve(true);
+            }, this);
     }
 });
