@@ -114,36 +114,28 @@ module.exports = inherit(Base, {
             fPath = path.join(basePath, filePath),
             key = util.format('%s/%s/%s', this._target.sourceName, this._target.ref, filePath);
 
-        return vowFs.isSymLink(fPath)
-            .then(function (isSymlink) {
-                if (isSymlink) {
-                    this._logger.verbose('find symlink %s', filePath);
-                    return vow.resolve();
-                }
-
-                this._logger.verbose('send file %s', fPath);
-                return vowFs
-                    .read(fPath, 'utf-8')
-                    .then(function (content) {
-                        if (content && content.length) {
-                            return storage.get(this._target.getOptions().storage).writeP(key, content);
-                        } else {
-                            this._logger.warn('content is empty for file %s', fPath);
-                            return vow.resolve();
-                        }
-                    }, this)
-                    .then(function () {
-                        return key;
-                    })
-                    .fail(function (error) {
-                        this._logger.warn('Error occur while sending %s to mds for attempt %s', filePath, attempt);
-                        if (attempt < this.RETRY_AMOUNT) {
-                            return this._sendFile(filePath, ++attempt);
-                        } else {
-                            this._logger.error(error.message);
-                            throw error;
-                        }
-                    }, this);
-            }, this);
+            this._logger.verbose('send file %s', fPath);
+            return vowFs
+                .read(fPath, 'utf-8')
+                .then(function (content) {
+                    if (content && content.length) {
+                        return storage.get(this._target.getOptions().storage).writeP(key, content);
+                    } else {
+                        this._logger.warn('content is empty for file %s', fPath);
+                        return vow.resolve();
+                    }
+                }, this)
+                .then(function () {
+                    return key;
+                })
+                .fail(function (error) {
+                    this._logger.warn('Error occur while sending %s to mds for attempt %s', filePath, attempt);
+                    if (attempt < this.RETRY_AMOUNT) {
+                        return this._sendFile(filePath, ++attempt);
+                    } else {
+                        this._logger.error(error.message);
+                        throw error;
+                    }
+                }, this);
     }
 });
