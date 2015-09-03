@@ -164,6 +164,12 @@ module.exports = inherit({
 
         mailer = new MailSender(_.pick(o, ['host', 'port']));
         subject = util.format('bem-data-source: success remove library [%s] version [%s]', this._source, this._ref);
-        return vowNode.promisify(mailer.sendHtml).call(mailer, o.from, o.to, subject, '<h2>' + subject + '</h2>');
+        return vowNode.promisify(mailer.sendHtml)
+            .call(mailer, o.from, o.to, subject, '<h2>' + subject + '</h2>')
+            .fail(function (error) {
+                this._logger.warn('Error occur while sending e-mail');
+                this._logger.warn('Error: %s', error.message);
+                return vow.resolve(true);
+            }, this);
     }
 }, {});
