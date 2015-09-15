@@ -29,10 +29,14 @@ module.exports = inherit(Base, {
             levels = constants.LEVELS,
             folders = [];
 
-        levels.forEach(function (level) {
-            conf.targets.forEach(function (suffix) {
-                folders.push(level + suffix.replace('*', ''));
-            });
+        conf.targets.forEach(function (suffix) {
+            if (suffix.indexOf('*') > -1) {
+                levels.forEach(function (level) {
+                    folders.push(level + suffix.replace('*', ''));
+                });
+            } else {
+                folders.push(suffix);
+            }
         });
 
         folders = '+(' + folders.join('|') + ')/**';
@@ -116,7 +120,7 @@ module.exports = inherit(Base, {
 
             this._logger.verbose('send file %s', fPath);
             return vowFs
-                .read(fPath, 'utf-8')
+                .read(fPath)
                 .then(function (content) {
                     if (content && content.length) {
                         return storage.get(this._target.getOptions().storage).writeP(key, content);
