@@ -120,7 +120,7 @@ module.exports = inherit(Base, {
 
             this._logger.verbose('send file %s', fPath);
             return vowFs
-                .read(fPath, 'utf-8')
+                .read(fPath)
                 .then(function (content) {
                     if (content && content.length) {
                         return storage.get(this._target.getOptions().storage).writeP(key, content);
