@@ -7,7 +7,7 @@ module.exports = {
         },
         docDirs: '*.docs',
         rsync: {
-            targets: ['*.examples', '*.bundles', 'common.blocks'],
+            targets: ['*.examples', '*.bundles', 'static'],
             exclude: ['*.browser.bemhtml.js', '*.tr.js',
                 '*.all.js', '*.keysets.ru.js', '*.keysets.en.js', '*.pre.js',
                 '*.json', '*.md', '*.deps.js', '*.bemdecl.js', '*.en.html', '*.optimized.js',
