@@ -12,7 +12,9 @@ module.exports = {
         },
         pattern: {
             data: '%s.data.json',
-            jsdoc: '%s.jsdoc.json'
+            jsdoc: '%s.jsdoc.json',
+            blocksData: '%s.source-files.json',
+            examplesData: '%s.examples-files.json'
         },
         custom: []
     }

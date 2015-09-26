@@ -19,7 +19,9 @@ module.exports = {
         },
         pattern: {
             data: '%s.data.json',
-            jsdoc: '%s.js-doc.html'
+            jsdoc: '%s.js-doc.html',
+            blocksData: '%s.source-files.json',
+            examplesData: '%s.examples-files.json'
         }
     }
 };

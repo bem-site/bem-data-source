@@ -22,7 +22,9 @@ module.exports = {
         },
         pattern: {
             data: '%s.data.json',
-            jsdoc: '%s.jsdoc.html'
+            jsdoc: '%s.jsdoc.html',
+            blocksData: '%s.source-files.json',
+            examplesData: '%s.examples-files.json'
         }
     }
 };
