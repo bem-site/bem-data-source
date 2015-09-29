@@ -14,6 +14,11 @@ module.exports = {
                 '*.tr.html', '*.ru.html', '*.lang.ru.js', '*.map', '*.symlink', '*.includes.js'
             ]
         },
+        docs: {
+            readme: { folder: '', pattern: 'README.md' },
+            migration: { folder: 'releases', pattern: 'migration.md' },
+            notes: { folder: 'releases', pattern: 'release-notes.md' }
+        },
         showcase: {
             title: {
                 en: 'Showcase',
