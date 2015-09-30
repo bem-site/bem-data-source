@@ -17,6 +17,10 @@ module.exports = function () {
             .short('v').long('version')
             .end()
         .opt()
+            .name('source-url').title('Source URL of blocks and example files')
+            .short('u').long('source-url')
+            .end()
+        .opt()
             .name('docs-only').title('Publish only documentation files')
             .short('docs-only').long('docs-only')
             .flag()
@@ -49,14 +53,16 @@ module.exports = function () {
             logger.info('docs-only is set to %s', opts['docs-only']);
             logger.info('storage environment: %s', opts['storage']);
 
-            var target = new Target(opts.version,
-                _.extend({
+            var target = new Target(opts.version, {
                     isCli: true,
-                    isDryRun: opts['dry'],
+                    isDryRun: opts.dry,
                     isDocsOnly: opts['docs-only'],
                     examples: opts.examples,
-                    logger: config.get('logger')
-                }, { storage: utility.getStorageConfiguration(config.get('storage'), opts['storage']) }));
+                    logger: config.get('logger'),
+                    sourceUrl: opts['source-url'],
+                    storage: utility.getStorageConfiguration(config.get('storage'), opts.storage)
+                });
+
                 target.execute()
                     .then(function () {
                         logger.info('PUBLISH COMMAND HAS BEEN FINISHED SUCCESSFULLY');

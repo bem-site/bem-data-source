@@ -166,6 +166,7 @@ module.exports = inherit({
             ref: this._ref,
             enb: this._declaration.builder === 'enb',
             url: this.url.replace('git:', 'http:').replace('.git', ''),
+            sourceUrl: this.sourceUrl,
             custom: this.custom,
             showcase: this.showCase,
             docs: {}
