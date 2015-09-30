@@ -46,7 +46,7 @@ module.exports = inherit({
 
         var declaration = _.extend({}, base.default, lib.default);
         if (lib.default.docs && _.isObject(lib.default.docs)) {
-            declaration.docs = _.extend(base.default.docs, lib.default.docs);
+            declaration.docs = lib.default.docs;
         }
         return declaration;
     },
