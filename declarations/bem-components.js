@@ -34,14 +34,16 @@ module.exports = {
             migration: {
                 folder: '',
                 pattern: {
-		    en: 'MIGRATION.md',
-		    ru: 'MIGRATION.ru.md'
-		}
+                    en: 'MIGRATION.md',
+                    ru: 'MIGRATION.ru.md'
+                }
             }
         },
         pattern: {
             data: '%s.data.json',
-            jsdoc: '%s.jsdoc.json'
+            jsdoc: '%s.jsdoc.json',
+            blocksData: '%s.source-files.json',
+            examplesData: '%s.examples-files.json'
         }
     }
 };

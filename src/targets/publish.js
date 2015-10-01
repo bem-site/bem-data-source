@@ -27,7 +27,8 @@ module.exports = inherit(Base, {
 
         this.__base({
             name: packageJson.name,
-            url: repository && repository.url
+            url: repository && repository.url,
+            sourceUrl: options.sourceUrl
         }, ref);
 
         this._tasks = [
@@ -36,6 +37,7 @@ module.exports = inherit(Base, {
             new (require('../tasks/read-deps'))(this),
             new (require('../tasks/read-showcase'))(this),
             new (require('../tasks/read-levels'))(this),
+            new (require('../tasks/add-source-url'))(this),
             new (require('../tasks/write-result'))(this),
             new (require('../tasks/send-examples'))(this),
             new (require('../tasks/send-doc'))(this),
