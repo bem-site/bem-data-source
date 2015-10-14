@@ -54,7 +54,7 @@ exports.mdToHtml = function (content) {
     return md(content, {
         gfm: true,
         pedantic: false,
-        sanitize: true,
+        sanitize: false,
         renderer: bmdr.getRenderer()
     });
 };

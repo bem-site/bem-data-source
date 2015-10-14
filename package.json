@@ -18,7 +18,7 @@
     "node": ">= 0.8.0"
   },
   "dependencies": {
-    "bem-md-renderer": "0.2.0",
+    "bem-md-renderer": "0.3.0",
     "bem-site-logger": "^0.0.x",
     "bem-site-mail-sender": "^0.0.x",
     "coa": "^1.0.x",
