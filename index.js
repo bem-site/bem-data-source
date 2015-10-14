@@ -33,6 +33,7 @@ exports.publish = function (version, options, isDryRun) {
  * @param {String} version - name of version (branch|tag|pr)
  * @param {Object} options - options object with fields:
  * - {Object} logger - logger settings
+ * - {Boolean} sourceUrl - url to original sources on gh
  * @returns {*}
  */
 exports.prepare = function (version, options) {
