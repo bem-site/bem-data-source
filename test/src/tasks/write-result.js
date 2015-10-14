@@ -15,14 +15,14 @@ describe('tasks/write-result', function () {
     it('should write doc structure into data.json file', function () {
         return vow.resolve(target.createResultBase())
             .then(function (result) {
-                return (new WriteResult(target)).run(result)
+                return (new WriteResult(target)).run(result);
             })
             .then(function () {
-                return vowFs.read(path.join(process.cwd(), 'data.json'), 'utf-8')
+                return vowFs.read(path.join(process.cwd(), 'data.json'), 'utf-8');
             })
             .then(function (content) {
                 content = JSON.parse(content);
-                return should.deepEqual(content, target.createResultBase());
+                return should.deepEqual(content, JSON.parse(JSON.stringify(target.createResultBase())));
             });
     });
 
