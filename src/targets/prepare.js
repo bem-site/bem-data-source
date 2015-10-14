@@ -12,6 +12,7 @@ module.exports = inherit(Base, {
             new (require('../tasks/read-deps'))(this),
             new (require('../tasks/read-showcase'))(this),
             new (require('../tasks/read-levels'))(this),
+            new (require('../tasks/add-source-url'))(this),
             new (require('../tasks/write-result'))(this)
         ];
     }
