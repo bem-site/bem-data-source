@@ -61,15 +61,28 @@ module.exports = inherit(Base, {
                 };
 
                 return vow.allResolved(Object.keys(pattern).map(function (lang) {
+                    var toVersion = function (str) {
+                        return str.replace(pattern[lang], '')
+                            .replace('-', '')
+                            .replace(/\./g  , '');
+                    };
                     var docPath = files
                         .filter(function (item) {
                             return item.indexOf(pattern[lang]) !== -1;
                         })
+                        .filter(function(item) {
+                            return !_.isNaN(+toVersion(item));
+                        })
                         .sort(function (a, b) {
-                            var toVersion = function (str) {
-                                return str.replace(pattern[lang], '').replace('-', '').replace('.', '');
-                            };
-                            return toVersion(a) - toVersion(b);
+                            var _a = +toVersion(a);
+                            var _b = +toVersion(b);
+                            if(_a > _b) {
+                                return 1;
+                            }else if(_a < _b){
+                                return -1;
+                            }else {
+                                return 0;
+                            }
                         })
                         .map(function (item) {
                             result.docs[key].url = result.docs[key].url || {};
