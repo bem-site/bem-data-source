@@ -74,8 +74,8 @@ module.exports = inherit(Base, {
                             return !_.isNaN(+toVersion(item));
                         })
                         .sort(function (a, b) {
-                            var _a = toVersion(a);
-                            var _b = toVersion(b);
+                            var _a = +toVersion(a);
+                            var _b = +toVersion(b);
                             if(_a > _b) {
                                 return 1;
                             }else if(_a < _b){
