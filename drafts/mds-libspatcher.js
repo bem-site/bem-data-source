@@ -31,7 +31,7 @@ var fs = require('fs'),
         post: {
             host: 'storage-int.mdst.yandex.net'
         },
-        auth: 'Basic YmVtLWluZm86NzAyNzE4ODM5NjgwNWE1YWZkMGZlYzZkNTUyY2QwMzc=',
+        auth: 'Basic ' + process.env['BASIC_AUTH_TOKEN'],
         timeout: 300000,
         debug: true
     }),
@@ -113,7 +113,7 @@ Patcher.prototype.put = function(opts) {
         // { sha: '75677bea1c8eefcf09e93ca4911f5bfe50ce2ee4', date: 1423135990241 }
         //console.log('data', data['bem-components'].versions['v2.0.0']);
         // +(new Date())
-        
+
         mds.write(key, data.toString(), function(err) {
             if(err) throw err;
 
@@ -140,10 +140,10 @@ Patcher.prototype.updateRegistry = function(lib, version, shaSum) {
         //console.log('edited root data', data['bem-components'].versions['v2.0.0']);
 
         data = JSON.stringify(data);
-          
+
         mds.write('root', data.toString(), function (err) {
             if (err) throw err;
-        
+
             console.log('\nRegistry updated!');
         });
     });
