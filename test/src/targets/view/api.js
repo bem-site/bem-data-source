@@ -31,9 +31,8 @@ describe('targets view api', function () {
 
             it('should return null on execute', function (done) {
                 t.execute()
-                    .then(function (result) {
-                        result.should.be.ok;
-                        result.should.be.instanceOf(Array).and.have.length(0);
+                .fail(function (error) {
+                        should.equal(error.message, 'Registry is null');
                         done();
                     });
             });

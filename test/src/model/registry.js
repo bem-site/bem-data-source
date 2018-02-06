@@ -37,9 +37,8 @@ describe('Registry', function () {
         it('missed registry', function (done) {
             var registry = new Registry(options);
             registry.load()
-                .then(function (result) {
-                    should.deepEqual(result, {});
-                    should.deepEqual(registry._registry, {});
+                .fail(function (error) {
+                    should.equal(error.message, 'Registry is null');
                     done();
                 })
                 .done();
@@ -55,9 +54,8 @@ describe('Registry', function () {
             it('success', function (done) {
                 var registry = new Registry(options);
                 registry.load()
-                    .then(function (result) {
-                        should.deepEqual(result, {});
-                        should.deepEqual(registry._registry, {});
+                    .fail(function (error) {
+                        should.equal(error.message, 'Registry is null');
                         done();
                     })
                     .done();

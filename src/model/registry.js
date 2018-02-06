@@ -21,26 +21,39 @@ module.exports = inherit({
      * @returns {*}
      */
     load: function () {
-        return storage.get(this._options.storage).readP(constants.ROOT)
+        var self = this;
+
+        function retry(tries) {
+            return storage.get(self._options.storage).readP(constants.ROOT)
+                .then(function (registry) {
+                    self._logger.info(registry); // write to log for backup root file
+
+                    return JSON.parse(registry);
+                })
+                .fail(function () {
+                    if (!tries) {
+                        throw new Error('Cannot read root file from MDS');
+                    }
+
+                    return retry(tries - 1);
+            });
+        };
+
+        return retry(3)
             .then(function (registry) {
                 if (!registry) {
-                    this._logger.warn('No registry record were found. Empty registry record will be created');
-                    registry = {};
+                    throw new Error('Registry is null');
                 }
 
-                try {
-                    registry = JSON.parse(registry);
-                } catch (error) {
-                    this._logger.warn('Invalid registry record. Empty registry record will be created');
-                    registry = {};
-                }
                 this._registry = registry;
+
                 return this._registry;
             }, this)
-            .fail(function () {
-                this._logger.warn('No registry record were found. Empty registry record will be created');
-                this._registry = {};
-                return vow.resolve(this._registry);
+            .fail(function (error) {
+                this._logger.warn('No registry record were found.');
+                this._logger.warn(error);
+
+                throw error;
             }, this);
     },
 
