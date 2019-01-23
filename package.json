@@ -31,7 +31,7 @@
     "lodash": "^3.1.x",
     "marked": "^0.x",
     "mds-wrapper": "^1.4.x",
-    "nconf": "~0.7.1",
+    "nconf": "^0.10.0",
     "request": "^2.53.x",
     "rsync": "^0.4.0",
     "semver": "^5.6.0",
