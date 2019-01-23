@@ -7,6 +7,7 @@ var path = require('path'),
     inherit = require('inherit'),
     vow = require('vow'),
     vowFs = require('vow-fs'),
+    semver = require('semver'),
 
     config = require('../config'),
     utility = require('../util'),
@@ -62,35 +63,22 @@ module.exports = inherit(Base, {
 
                 return vow.allResolved(Object.keys(pattern).map(function (lang) {
                     var toVersion = function (str) {
-                        return str.replace(pattern[lang], '')
-                            .replace('-', '')
-                            .replace(/\./g  , '');
+                        return str.replace(pattern[lang], '').replace('-', '');
                     };
                     var docPath = files
                         .filter(function (item) {
-                            return item.indexOf(pattern[lang]) !== -1;
-                        })
-                        .filter(function(item) {
-                            return !_.isNaN(+toVersion(item));
+                            return item.indexOf(pattern[lang]) !== -1 &&
+                                !_.isNaN(+toVersion(item).replace(/\./g, ''));
                         })
                         .sort(function (a, b) {
-                            var _a = +toVersion(a);
-                            var _b = +toVersion(b);
-                            if(_a > _b) {
-                                return 1;
-                            }else if(_a < _b){
-                                return -1;
-                            }else {
-                                return 0;
-                            }
+                            return semver.compare(toVersion(b), toVersion(a));
                         })
                         .map(function (item) {
                             result.docs[key].url = result.docs[key].url || {};
                             result.docs[key].url[lang] = util.format('%s/blob/%s/%s',
                                 result.url, result.ref, path.join(this._target.mdTargets[key].folder, item));
                             return path.join(this._target.getContentPath(), this._target.mdTargets[key].folder, item);
-                        }, this)
-                        .pop();
+                        }, this)[0];
 
                     this._logger.debug('Read markdown file %s', docPath);
                     return vowFs
