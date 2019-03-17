@@ -60,7 +60,7 @@ module.exports = inherit(Base, {
             return vow.resolve();
         }
 
-        return vowNode.promisify(glob)(this.createGlobPattern(), { cwd: process.cwd(), nodir: true })
+        return vowNode.promisify(glob)(this.createGlobPattern(), { cwd: process.cwd(), nodir: true, dot: true })
             .then(function (files) {
                 if (o.examples) {
                     files = files.filter(function (file) {
